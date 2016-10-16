@@ -32,49 +32,46 @@ import maya.mel as mel
 
 # appleseed-maya imports.
 from logger import logger
+from callbacks import hyperShadePanelBuildCreateMenuCallback
+from callbacks import hyperShadePanelBuildCreateSubMenuCallback
+from callbacks import buildRenderNodeTreeListerContentCallback
+from renderglobals import createAppleseedTab, updateAppleseedTab
 
-def _hyperShadePanelBuildCreateMenuCallback():
-    pm.menuItem(label="appleseed")
-    pm.menuItem(divider=True)
-
-def _hyperShadePanelBuildCreateSubMenuCallback():
-    return "shader/surface"
-
-def _buildRenderNodeTreeListerContentCallback(tl, postCommand, filterString):
-    melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
-        tl,
-        postCommand,
-        "appleseed/Materials",
-        "appleseed/material",
-        "-asShader",
-        ""
-    )
-    logger.debug("buildRenderNodeTreeListerContentCallback: mel = %s" % melCmd)
-    pm.mel.eval(melCmd)
-
-    melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
-        tl,
-        postCommand,
-        "appleseed/Textures",
-        "appleseed/texture",
-        "-asUtility",
-        ""
-    )
-    logger.debug("buildRenderNodeTreeListerContentCallback: mel = %s" % melCmd)
-    pm.mel.eval(melCmd)
-
-def register():
-    logger.info("Registering appleseed renderer.")
-    pm.renderer("appleseed", rendererUIName="appleseed")
-
-    # Render procedures.
-    renderProc = '''
+def _createMelProcedures():
+    mel.eval('''
         global proc appleseedRenderProcedure(int $width, int $height, int $doShadows, int $doGlowPass, string $camera, string $option)
         {
+            python("from appleseed_maya.renderglobals import createGlobalNodes");
+            python("createGlobalNodes()");
             appleseedRender -w $width -h $height -c $camera -o $option;
         }
         '''
-    mel.eval(renderProc)
+    )
+
+    mel.eval('''
+        global proc appleseedCreateTabProcedure()
+        {
+            python("from appleseed_maya.renderglobals import createAppleseedTab");
+            python("createAppleseedTab()");
+        }
+        '''
+    )
+    mel.eval('''
+        global proc appleseedUpdateTabProcedure()
+        {
+            python("from appleseed_maya.renderglobals import updateAppleseedTab");
+            python("updateAppleseedTab()");
+        }
+        '''
+    )
+
+def register():
+    logger.info("Registering appleseed renderer.")
+
+    _createMelProcedures()
+
+    # Renderer.
+    pm.renderer("appleseed", rendererUIName="appleseed")
     pm.renderer(
         "appleseed",
         edit=True,
@@ -98,19 +95,29 @@ def register():
             )
         )
 
+    pm.renderer(
+        "appleseed",
+        edit=True,
+        addGlobalsTab=(
+            "Appleseed",
+            "appleseedCreateTabProcedure",
+            "appleseedUpdateTabProcedure"
+            )
+        )
+
     # Callbacks
     pm.callbacks(
-        addCallback=_hyperShadePanelBuildCreateMenuCallback,
+        addCallback=hyperShadePanelBuildCreateMenuCallback,
         hook="hyperShadePanelBuildCreateMenu",
         owner="appleseed"
     )
     pm.callbacks(
-        addCallback=_hyperShadePanelBuildCreateSubMenuCallback,
+        addCallback=hyperShadePanelBuildCreateSubMenuCallback,
         hook="hyperShadePanelBuildCreateSubMenu",
         owner="appleseed"
     )
     pm.callbacks(
-        addCallback=_buildRenderNodeTreeListerContentCallback,
+        addCallback=buildRenderNodeTreeListerContentCallback,
         hook='buildRenderNodeTreeListerContent',
         owner="appleseed"
     )

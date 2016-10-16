@@ -46,6 +46,10 @@ class RenderGlobalsNode
     static MStatus initialize();
 
     virtual MStatus compute(const MPlug& plug, MDataBlock& dataBlock);
+
+  private:
+    static MObject m_samples;
+    static MObject m_passes;
 };
 
 #endif  // !APPLESEED_MAYA_RENDER_GLOBALS_NODE_H

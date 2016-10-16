@@ -37,10 +37,14 @@
 #include "renderer/api/utility.h"
 
 // Maya headers.
+#include <maya/MFnNumericAttribute.h>
 
 
 MString RenderGlobalsNode::nodeName("appleseedRenderGlobals");
 MTypeId RenderGlobalsNode::id(RenderGlobalsNodeTypeId);
+
+//MObject RenderGlobalsNode::m_samples;
+//MObject RenderGlobalsNode::m_passes;
 
 void* RenderGlobalsNode::creator()
 {
@@ -49,7 +53,16 @@ void* RenderGlobalsNode::creator()
 
 MStatus RenderGlobalsNode::initialize()
 {
-    return MStatus::kSuccess;
+    MStatus status;
+    MFnNumericAttribute numAttrFn;
+
+    m_samples = numAttrFn.create("samples", "samples", MFnNumericData::kInt, 64, &status);
+    status = addAttribute(m_samples);
+
+    m_passes = numAttrFn.create("passes", "passes", MFnNumericData::kInt, 1, &status);
+    status = addAttribute(m_passes);
+
+    return status;
 }
 
 MStatus RenderGlobalsNode::compute(const MPlug& plug, MDataBlock& dataBlock)

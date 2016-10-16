@@ -38,6 +38,32 @@
 #include <maya/MSelectionList.h>
 #include <maya/MSyntax.h>
 
+
+namespace
+{
+
+MObject getAppleseedGlobalsNode()
+{
+    /*
+    MObject obj;
+    MStatus stat;
+    MSelectionList list;
+
+    // Attempt to add the given name to the selection list,
+    // then get the corresponding dependency node handle.
+    if (!list.add(name) || !list.getDependNode(0, obj))
+        return MObject();
+
+    // Successful.
+    stat = MStatus::kSuccess;
+    return obj;
+    */
+    return MObject();
+}
+
+} // unnamed
+
+
 MString FinalRenderCommand::cmdName("appleseedRender");
 
 MSyntax FinalRenderCommand::syntaxCreator()

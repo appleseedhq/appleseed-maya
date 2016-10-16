@@ -27,4 +27,34 @@
 #
 
 # Maya imports.
+import maya.cmds as mc
 import pymel.core as pm
+
+# appleseed-maya imports.
+from logger import logger
+
+
+def createGlobalNodes():
+    if mc.objExists("AppleseedRenderOptions"):
+        return
+
+    sel = mc.ls(sl=True)
+    mc.createNode(
+        "appleseedRenderGlobals",
+        name="AppleseedRenderOptions",
+        shared=True,
+        skipSelect=True)
+    mc.lockNode("AppleseedRenderOptions")
+    mc.select(sel, replace=True)
+    logger.debug("Created appleseed render global node")
+
+def createAppleseedTab():
+
+    # Create default nodes if needed.
+    createGlobalNodes()
+
+    # Update the newly created tab.
+    updateAppleseedTab()
+
+def updateAppleseedTab():
+    pass
