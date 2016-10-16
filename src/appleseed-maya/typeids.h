@@ -29,15 +29,13 @@
 #ifndef APPLESEED_MAYA_TYPEIDS_H
 #define APPLESEED_MAYA_TYPEIDS_H
 
-// For now we use site-internal Maya type ids.
-// TODO: Get our own set of Maya yype ids from Autodesk.
 
 enum AppleseedMayaTypeIds
 {
-    FirstTypeId = 0x30000,
+    FirstTypeId = 0x001279c0,
     RenderGlobalsNodeTypeId = FirstTypeId,
 
-    LastTypeId = 0x3FFFF
+    LastTypeId =  0x00127a3f
 };
 
 #endif  // !APPLESEED_MAYA_TYPEIDS_H
