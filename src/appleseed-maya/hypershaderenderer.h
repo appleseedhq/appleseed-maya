@@ -69,6 +69,4 @@ class HypershadeRenderer
     virtual MStatus translateShader(const MUuid& id, const MObject& node);
 };
 
-#endif
-
 #endif  // !APPLESEED_MAYA_HYPERSHADE_RENDERER_H

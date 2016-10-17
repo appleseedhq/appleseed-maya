@@ -73,8 +73,10 @@ link_directories (${Boost_LIBRARY_DIRS})
 #--------------------------------------------------------------------------------------------------
 
 find_package (Appleseed)
-find_package (Maya)
 find_package (OpenGL)
+
+find_package (Maya)
+message("Maya API version = ${MAYA_API_VERSION}")
 
 
 #--------------------------------------------------------------------------------------------------

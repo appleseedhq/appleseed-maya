@@ -43,8 +43,8 @@
 MString RenderGlobalsNode::nodeName("appleseedRenderGlobals");
 MTypeId RenderGlobalsNode::id(RenderGlobalsNodeTypeId);
 
-//MObject RenderGlobalsNode::m_samples;
-//MObject RenderGlobalsNode::m_passes;
+MObject RenderGlobalsNode::m_samples;
+MObject RenderGlobalsNode::m_passes;
 
 void* RenderGlobalsNode::creator()
 {

@@ -78,7 +78,7 @@ MStatus initializePlugin(MObject plugin)
         status = MSwatchRenderRegister::registerSwatchRender(SwatchRenderer::name, SwatchRenderer::creator);
 
 #if MAYA_API_VERSION >= 201600
-    status = plugin.registerRenderer(HypershadeRenderer::name, HypershadeRenderer::creator);
+    status = fnPlugin.registerRenderer(HypershadeRenderer::name, HypershadeRenderer::creator);
 #endif
 
     AppleseedSession::instance().initialize();
@@ -94,7 +94,7 @@ MStatus uninitializePlugin(MObject plugin)
     MStatus status;
 
 #if MAYA_API_VERSION >= 201600
-    status = plugin.deregisterRenderer(HypershadeRenderer::name);
+    status = fnPlugin.deregisterRenderer(HypershadeRenderer::name);
 #endif
 
     if (MGlobal::mayaState() != MGlobal::kBatch)

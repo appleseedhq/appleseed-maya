@@ -40,12 +40,14 @@ set (appleseed_maya_sources
     appleseed-maya/swatchrenderer.h
 )
 
-if (${MAYA_API_VERSION} GREATER OR EQUAL 201600)
+if (${MAYA_API_VERSION} EQUAL 201600 OR ${MAYA_API_VERSION} GREATER 201600)
     set (appleseed_maya_sources
         ${appleseed_maya_sources}
         appleseed-maya/hypershaderenderer.cpp
         appleseed-maya/hypershaderenderer.h
     )
+else()
+    message("Detected Maya API version ${MAYA_API_VERSION}, skipping hypershade renderer")
 endif()
 
 add_library (appleseedMaya SHARED
