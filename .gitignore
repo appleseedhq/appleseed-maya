@@ -1,2 +1,3 @@
 build/
 *.pyc
+src/appleseedmaya/version.h

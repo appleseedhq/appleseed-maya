@@ -26,30 +26,36 @@
 # THE SOFTWARE.
 #
 
+
+configure_file (${PROJECT_SOURCE_DIR}/src/appleseedmaya/version.h.in
+                ${PROJECT_SOURCE_DIR}/src/appleseedmaya/version.h)
+
+include_directories (${PROJECT_SOURCE_DIR}/src)
+
 set (appleseed_maya_sources
-    appleseed-maya/appleseedsession.cpp
-    appleseed-maya/appleseedsession.h
-    appleseed-maya/envlightnode.cpp
-    appleseed-maya/envlightnode.h
-    appleseed-maya/pluginmain.cpp
-    appleseed-maya/rendercommands.cpp
-    appleseed-maya/rendercommands.h
-    appleseed-maya/renderglobalsnode.cpp
-    appleseed-maya/renderglobalsnode.h
-    appleseed-maya/shadingnoderegistry.cpp
-    appleseed-maya/shadingnoderegistry.h
-    appleseed-maya/swatchrenderer.cpp
-    appleseed-maya/swatchrenderer.h
+    appleseedmaya/appleseedsession.cpp
+    appleseedmaya/appleseedsession.h
+    appleseedmaya/config.h
+    appleseedmaya/envlightnode.cpp
+    appleseedmaya/envlightnode.h
+    appleseedmaya/pluginmain.cpp
+    appleseedmaya/rendercommands.cpp
+    appleseedmaya/rendercommands.h
+    appleseedmaya/renderglobalsnode.cpp
+    appleseedmaya/renderglobalsnode.h
+    appleseedmaya/shadingnoderegistry.cpp
+    appleseedmaya/shadingnoderegistry.h
+    appleseedmaya/swatchrenderer.cpp
+    appleseedmaya/swatchrenderer.h
+    appleseedmaya/version.h.in
 )
 
 if (${MAYA_API_VERSION} EQUAL 201600 OR ${MAYA_API_VERSION} GREATER 201600)
     set (appleseed_maya_sources
         ${appleseed_maya_sources}
-        appleseed-maya/hypershaderenderer.cpp
-        appleseed-maya/hypershaderenderer.h
+        appleseedmaya/hypershaderenderer.cpp
+        appleseedmaya/hypershaderenderer.h
     )
-else()
-    message("Detected Maya API version ${MAYA_API_VERSION}, skipping hypershade renderer")
 endif()
 
 add_library (appleseedMaya SHARED

@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016 Haggi Krey, The appleseedhq Organization
+// Copyright (c) 2016 Esteban Tovagliari, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,46 +26,19 @@
 // THE SOFTWARE.
 //
 
-// Interface header.
-#include "renderglobalsnode.h"
+#ifndef APPLESEED_MAYA_VERSION_H
+#define APPLESEED_MAYA_VERSION_H
 
-// appleseed-maya headers.
-#include "status.h"
-#include "typeids.h"
+#define APPLESEED_MAYA_VERSION_MAJOR     ${appleseed_maya_version_major}
+#define APPLESEED_MAYA_VERSION_MINOR     ${appleseed_maya_version_minor}
+#define APPLESEED_MAYA_VERSION_PATCH     ${appleseed_maya_version_patch}
 
-// appleseed.renderer headers.
-#include "renderer/api/utility.h"
+#define APPLESEED_MAYA_VERSION               \
+    APPLESEED_MAYA_VERSION_MAJOR * 10000 +   \
+    APPLESEED_MAYA_VERSION_MINOR * 100 +     \
+    APPLESEED_MAYA_VERSION_PATCH
 
-// Maya headers.
-#include <maya/MFnNumericAttribute.h>
+#define APPLESEED_MAYA_VERSION_STRING        \
+    "${appleseed_maya_version_major}.${appleseed_maya_version_minor}.${appleseed_maya_version_patch}"
 
-
-const MString RenderGlobalsNode::nodeName("appleseedRenderGlobals");
-const MTypeId RenderGlobalsNode::id(RenderGlobalsNodeTypeId);
-
-MObject RenderGlobalsNode::m_samples;
-MObject RenderGlobalsNode::m_passes;
-
-void* RenderGlobalsNode::creator()
-{
-    return new RenderGlobalsNode();
-}
-
-MStatus RenderGlobalsNode::initialize()
-{
-    MStatus status;
-    MFnNumericAttribute numAttrFn;
-
-    m_samples = numAttrFn.create("samples", "samples", MFnNumericData::kInt, 64, &status);
-    status = addAttribute(m_samples);
-
-    m_passes = numAttrFn.create("passes", "passes", MFnNumericData::kInt, 1, &status);
-    status = addAttribute(m_passes);
-
-    return status;
-}
-
-MStatus RenderGlobalsNode::compute(const MPlug& plug, MDataBlock& dataBlock)
-{
-    return MS::kSuccess;
-}
+#endif  // !APPLESEED_MAYA_VERSION_H

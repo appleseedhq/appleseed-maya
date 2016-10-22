@@ -27,34 +27,51 @@
 //
 
 // Interface header.
-#include "appleseedsession.h"
-
-// standard headers.
+#include "appleseedmaya/envlightnode.h"
 
 // Maya headers.
-#include <maya/MGlobal.h>
+#include <maya/MFnUnitAttribute.h>
 
-// appleseed.renderer headers.
-#include "renderer/api/project.h"
+// appleseed-maya headers.
+#include "appleseedmaya/config.h"
+#include "appleseedmaya/typeids.h"
 
 
-namespace asf = foundation;
-namespace asr = renderer;
+const MString EnvLightNode::nodeName("appleseedEnvLight");
+const MTypeId EnvLightNode::id(EnvLightNodeTypeId);
+const MString EnvLightNode::drawDbClassification("drawdb/geometry/appleseedEnvLight");
+const MString EnvLightNode::drawRegistrantId("appleseedMaya");
 
-AppleseedSession::AppleseedSession() {}
-
-AppleseedSession& AppleseedSession::instance()
+void* EnvLightNode::creator()
 {
-    static AppleseedSession gSession;
-    return gSession;
+    return new EnvLightNode();
 }
 
-void AppleseedSession::initialize()
+MStatus EnvLightNode::initialize()
 {
-    MGlobal::displayInfo("Initializing appleseed session");
+    MStatus status;
+    return status;
 }
 
-void AppleseedSession::uninitialize()
+MStatus EnvLightNode::compute(const MPlug& plug, MDataBlock& dataBlock)
 {
-    MGlobal::displayInfo("Uninitializing appleseed session");
+    return MS::kUnknownParameter;
+}
+
+void EnvLightNode::draw(
+    M3dView& view,
+    const MDagPath & path,
+    M3dView::DisplayStyle style,
+    M3dView::DisplayStatus status)
+{
+}
+
+bool EnvLightNode::isBounded() const
+{
+    return true;
+}
+
+MBoundingBox EnvLightNode::boundingBox() const
+{
+    return MBoundingBox();
 }

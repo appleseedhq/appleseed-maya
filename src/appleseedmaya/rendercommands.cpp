@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "rendercommands.h"
+#include "appleseedmaya/rendercommands.h"
 
 // Standard headers.
 #include <iostream>
@@ -39,7 +39,7 @@
 #include <maya/MSyntax.h>
 
 // appleseed-maya headers.
-#include "status.h"
+#include "appleseedmaya/config.h"
 
 
 namespace

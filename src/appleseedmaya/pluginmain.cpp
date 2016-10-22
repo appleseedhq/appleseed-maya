@@ -32,24 +32,26 @@
 #include <maya/MSwatchRenderRegister.h>
 
 // appleseed-maya headers.
-#include "appleseedsession.h"
+#include "appleseedmaya/appleseedsession.h"
 #if MAYA_API_VERSION >= 201600
-    #include "hypershaderenderer.h"
+    #include "appleseedmaya/hypershaderenderer.h"
 #endif
-#include "envlightnode.h"
-#include "rendercommands.h"
-#include "renderglobalsnode.h"
-#include "status.h"
-#include "shadingnoderegistry.h"
-#include "swatchrenderer.h"
+#include "appleseedmaya/config.h"
+#include "appleseedmaya/envlightnode.h"
+#include "appleseedmaya/rendercommands.h"
+#include "appleseedmaya/renderglobalsnode.h"
+#include "appleseedmaya/shadingnoderegistry.h"
+#include "appleseedmaya/swatchrenderer.h"
 
 
-#ifdef _WIN32
-__declspec(dllexport)
-#endif
-MStatus initializePlugin(MObject plugin)
+APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
 {
-    MFnPlugin fnPlugin(plugin, "appleseedhq", "0.1.0", "Any");
+    MFnPlugin fnPlugin(
+        plugin,
+        APPLESEED_MAYA_VENDOR_STRING,
+        APPLESEED_MAYA_VERSION_STRING,
+        "Any");
+
     MStatus status;
 
     status = fnPlugin.registerNode(
@@ -57,6 +59,9 @@ MStatus initializePlugin(MObject plugin)
         RenderGlobalsNode::id,
         RenderGlobalsNode::creator,
         RenderGlobalsNode::initialize);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseed-maya: failed to register render globals node");
 
     status = fnPlugin.registerNode(
         EnvLightNode::nodeName,
@@ -65,59 +70,110 @@ MStatus initializePlugin(MObject plugin)
         EnvLightNode::initialize,
         MPxNode::kLocatorNode,
         &EnvLightNode::drawDbClassification);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseed-maya: failed to register env light locator");
+
 
     status = fnPlugin.registerCommand(
         FinalRenderCommand::cmdName,
         FinalRenderCommand::creator,
         FinalRenderCommand::syntaxCreator);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseed-maya: failed to register render command");
 
     status = fnPlugin.registerCommand(
         ProgressiveRenderCommand::cmdName,
         ProgressiveRenderCommand::creator,
         ProgressiveRenderCommand::syntaxCreator);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseed-maya: failed to register render command");
 
+    // Make sure that the modules we need can be imported...
     //status = MGlobal::executePythonCommand("import appleseed", true, false);
     //status = MGlobal::executePythonCommand("import appleseed_maya", true, false);
 
     status = MGlobal::executePythonCommand("import appleseed_maya.register; appleseed_maya.register.register()", true, false);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseed-maya: failed to initialize renderer");
 
     status = ShadingNodeRegistry::registerShadingNodes(plugin);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseed-maya: failed to register shading nodes");
 
     if (MGlobal::mayaState() != MGlobal::kBatch)
+    {
         status = MSwatchRenderRegister::registerSwatchRender(SwatchRenderer::name, SwatchRenderer::creator);
+        APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+            status,
+            "appleseed-maya: failed to register swatch renderer");
+    }
 
 #if MAYA_API_VERSION >= 201600
     status = fnPlugin.registerRenderer(HypershadeRenderer::name, HypershadeRenderer::creator);
+
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseed-maya: failed to register hypershade renderer");
 #endif
 
     AppleseedSession::instance().initialize();
     return status;
 }
 
-#ifdef _WIN32
-__declspec(dllexport)
-#endif
-MStatus uninitializePlugin(MObject plugin)
+APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
 {
     MFnPlugin fnPlugin(plugin);
     MStatus status;
 
 #if MAYA_API_VERSION >= 201600
     status = fnPlugin.deregisterRenderer(HypershadeRenderer::name);
+    APPLESEED_MAYA_CHECK_MSTATUS_MSG(
+        status,
+        "appleseed-maya: failed to deregister hypershade renderer");
 #endif
 
     if (MGlobal::mayaState() != MGlobal::kBatch)
+    {
         status = MSwatchRenderRegister::unregisterSwatchRender(SwatchRenderer::name);
+        APPLESEED_MAYA_CHECK_MSTATUS_MSG(
+            status,
+            "appleseed-maya: failed to deregister swatch renderer");
+    }
 
     status = ShadingNodeRegistry::unregisterShadingNodes(plugin);
+    APPLESEED_MAYA_CHECK_MSTATUS_MSG(
+        status,
+        "appleseed-maya: failed to deregister shading nodes");
 
     status = fnPlugin.deregisterCommand(FinalRenderCommand::cmdName);
+    APPLESEED_MAYA_CHECK_MSTATUS_MSG(
+        status,
+        "appleseed-maya: failed to deregister render command");
+
     status = fnPlugin.deregisterCommand(ProgressiveRenderCommand::cmdName);
+    APPLESEED_MAYA_CHECK_MSTATUS_MSG(
+        status,
+        "appleseed-maya: failed to deregister render command");
 
     status = fnPlugin.deregisterNode(EnvLightNode::id);
+    APPLESEED_MAYA_CHECK_MSTATUS_MSG(
+        status,
+        "appleseed-maya: failed to deregister env light locator");
+
     status = fnPlugin.deregisterNode(RenderGlobalsNode::id);
+    APPLESEED_MAYA_CHECK_MSTATUS_MSG(
+        status,
+        "appleseed-maya: failed to deregister render globals node");
 
     status = MGlobal::executePythonCommand("import appleseed_maya.register; appleseed_maya.register.unregister()", true, false);
+    APPLESEED_MAYA_CHECK_MSTATUS_MSG(
+        status,
+        "appleseed-maya: failed to uninitialize render");
 
     AppleseedSession::instance().uninitialize();
     return status;

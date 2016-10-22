@@ -27,51 +27,32 @@
 //
 
 // Interface header.
-#include "envlightnode.h"
+#include "appleseedmaya/swatchrenderer.h"
 
 // Maya headers.
-#include <maya/MFnUnitAttribute.h>
-
-// appleseed-maya headers.
-#include "status.h"
-#include "typeids.h"
+#include <maya/MImage.h>
 
 
-const MString EnvLightNode::nodeName("appleseedEnvLight");
-const MTypeId EnvLightNode::id(EnvLightNodeTypeId);
-const MString EnvLightNode::drawDbClassification("drawdb/geometry/appleseedEnvLight");
-const MString EnvLightNode::drawRegistrantId("appleseedMaya");
+const MString SwatchRenderer::name("AppleseedRenderSwatch");
+const MString SwatchRenderer::fullName("swatch/AppleseedRenderSwatch");
 
-void* EnvLightNode::creator()
+MSwatchRenderBase* SwatchRenderer::creator(
+    MObject dependNode,
+    MObject renderNode,
+    int     imageResolution)
 {
-    return new EnvLightNode();
+    return new SwatchRenderer(dependNode, renderNode, imageResolution);
 }
 
-MStatus EnvLightNode::initialize()
-{
-    MStatus status;
-    return status;
-}
-
-MStatus EnvLightNode::compute(const MPlug& plug, MDataBlock& dataBlock)
-{
-    return MS::kUnknownParameter;
-}
-
-void EnvLightNode::draw(
-    M3dView& view,
-    const MDagPath & path,
-    M3dView::DisplayStyle style,
-    M3dView::DisplayStatus status)
+SwatchRenderer::SwatchRenderer(
+    MObject dependNode,
+    MObject renderNode,
+    int     imageResolution)
+  : MSwatchRenderBase(dependNode, renderNode, imageResolution)
 {
 }
 
-bool EnvLightNode::isBounded() const
+bool SwatchRenderer::doIteration()
 {
     return true;
-}
-
-MBoundingBox EnvLightNode::boundingBox() const
-{
-    return MBoundingBox();
 }

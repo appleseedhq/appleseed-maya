@@ -27,32 +27,34 @@
 //
 
 // Interface header.
-#include "swatchrenderer.h"
+#include "appleseedmaya/appleseedsession.h"
+
+// standard headers.
 
 // Maya headers.
-#include <maya/MImage.h>
+#include <maya/MGlobal.h>
+
+// appleseed.renderer headers.
+#include "renderer/api/project.h"
 
 
-const MString SwatchRenderer::name("AppleseedRenderSwatch");
-const MString SwatchRenderer::fullName("swatch/AppleseedRenderSwatch");
+namespace asf = foundation;
+namespace asr = renderer;
 
-MSwatchRenderBase* SwatchRenderer::creator(
-    MObject dependNode,
-    MObject renderNode,
-    int     imageResolution)
+AppleseedSession::AppleseedSession() {}
+
+AppleseedSession& AppleseedSession::instance()
 {
-    return new SwatchRenderer(dependNode, renderNode, imageResolution);
+    static AppleseedSession gSession;
+    return gSession;
 }
 
-SwatchRenderer::SwatchRenderer(
-    MObject dependNode,
-    MObject renderNode,
-    int     imageResolution)
-  : MSwatchRenderBase(dependNode, renderNode, imageResolution)
+void AppleseedSession::initialize()
 {
+    MGlobal::displayInfo("Initializing appleseed session");
 }
 
-bool SwatchRenderer::doIteration()
+void AppleseedSession::uninitialize()
 {
-    return true;
+    MGlobal::displayInfo("Uninitializing appleseed session");
 }
