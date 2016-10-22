@@ -40,8 +40,8 @@
 #include <maya/MFnNumericAttribute.h>
 
 
-MString RenderGlobalsNode::nodeName("appleseedRenderGlobals");
-MTypeId RenderGlobalsNode::id(RenderGlobalsNodeTypeId);
+const MString RenderGlobalsNode::nodeName("appleseedRenderGlobals");
+const MTypeId RenderGlobalsNode::id(RenderGlobalsNodeTypeId);
 
 MObject RenderGlobalsNode::m_samples;
 MObject RenderGlobalsNode::m_passes;
@@ -67,5 +67,5 @@ MStatus RenderGlobalsNode::initialize()
 
 MStatus RenderGlobalsNode::compute(const MPlug& plug, MDataBlock& dataBlock)
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }

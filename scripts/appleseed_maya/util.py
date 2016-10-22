@@ -27,26 +27,6 @@
 #
 
 # Maya imports.
-import maya.mel as mel
+import pymel.core as pm
 
 
-def createRenderMelProcedures():
-    mel.eval('''
-        global proc appleseedRenderProcedure(int $width, int $height, int $doShadows, int $doGlowPass, string $camera, string $option)
-        {
-            python("from appleseed_maya.renderglobals import createGlobalNodes");
-            python("createGlobalNodes()");
-            appleseedRender -w $width -h $height -c $camera -o $option;
-        }
-        '''
-    )
-
-    mel.eval('''
-        global proc appleseedBatchRenderProcedure(string $option)
-        {
-            python("from appleseed_maya.renderglobals import createGlobalNodes");
-            python("createGlobalNodes()");
-            appleseedRender -batch -o $option;
-        }
-        '''
-    )

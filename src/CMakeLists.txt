@@ -29,6 +29,8 @@
 set (appleseed_maya_sources
     appleseed-maya/appleseedsession.cpp
     appleseed-maya/appleseedsession.h
+    appleseed-maya/envlightnode.cpp
+    appleseed-maya/envlightnode.h
     appleseed-maya/pluginmain.cpp
     appleseed-maya/rendercommands.cpp
     appleseed-maya/rendercommands.h

@@ -91,7 +91,7 @@ class AppleseedShadingNode
 
     static MStatus initialize()
     {
-        return MStatus::kSuccess;
+        return MS::kSuccess;
     }
 
     virtual void postConstructor()
@@ -196,7 +196,7 @@ MStatus ShadingNodeRegistry::registerShadingNodes(MObject plugin)
         }
     */
 
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus ShadingNodeRegistry::unregisterShadingNodes(MObject plugin)
@@ -208,5 +208,5 @@ MStatus ShadingNodeRegistry::unregisterShadingNodes(MObject plugin)
     for (OSLShaderInfoMap::const_iterator it = gShadersInfo.begin(), e = gShadersInfo.end(); it != e; ++it)
         pluginFn.deregisterNode(MTypeId(it->first));
 
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }

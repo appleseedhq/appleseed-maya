@@ -39,8 +39,8 @@ class RenderGlobalsNode
   : public MPxNode
 {
   public:
-    static MString nodeName;
-    static MTypeId id;
+    static const MString nodeName;
+    static const MTypeId id;
 
     static void* creator();
     static MStatus initialize();

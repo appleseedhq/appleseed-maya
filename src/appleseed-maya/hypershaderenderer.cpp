@@ -47,12 +47,12 @@ bool HypershadeRenderer::isSafeToUnload()
 
 MStatus HypershadeRenderer::startAsync(const JobParams& params)
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus HypershadeRenderer::stopAsync()
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 bool HypershadeRenderer::isRunningAsync()
@@ -62,76 +62,76 @@ bool HypershadeRenderer::isRunningAsync()
 
 MStatus HypershadeRenderer::beginSceneUpdate()
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus HypershadeRenderer::endSceneUpdate()
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus HypershadeRenderer::destroyScene()
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus HypershadeRenderer::setProperty(const MUuid& id, const MString& name, bool value)
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus HypershadeRenderer::setProperty(const MUuid& id, const MString& name, int value)
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus HypershadeRenderer::setProperty(const MUuid& id, const MString& name, float value)
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus HypershadeRenderer::setProperty(const MUuid& id, const MString& name, const MString& value)
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus HypershadeRenderer::setShader(const MUuid& id, const MUuid& shaderId)
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus HypershadeRenderer::setResolution(unsigned int w, unsigned int h)
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 
 MStatus HypershadeRenderer::translateMesh(const MUuid& id, const MObject& node)
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus HypershadeRenderer::translateLightSource(const MUuid& id, const MObject& node)
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus HypershadeRenderer::translateCamera(const MUuid& id, const MObject& node)
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus HypershadeRenderer::translateEnvironment(const MUuid& id, EnvironmentType type)
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus HypershadeRenderer::translateTransform(const MUuid& id, const MUuid& childId, const MMatrix& matrix)
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }
 
 MStatus HypershadeRenderer::translateShader(const MUuid& id, const MObject& node)
 {
-    return MStatus::kSuccess;
+    return MS::kSuccess;
 }

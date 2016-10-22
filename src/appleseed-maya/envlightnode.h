@@ -26,17 +26,41 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_TYPEIDS_H
-#define APPLESEED_MAYA_TYPEIDS_H
+#ifndef APPLESEED_MAYA_ENV_LIGHT_NODE_H
+#define APPLESEED_MAYA_ENV_LIGHT_NODE_H
+
+// Maya headers.
+#include <maya/MObject.h>
+#include <maya/MPxLocatorNode.h>
+#include <maya/MString.h>
+#include <maya/MTypeId.h>
 
 
-enum AppleseedMayaTypeIds
+class EnvLightNode
+  : public MPxLocatorNode
 {
-    FirstTypeId = 0x001279c0,
-    RenderGlobalsNodeTypeId = FirstTypeId,
-    EnvLightNodeTypeId,
+  public:
+    static const MString nodeName;
+    static const MTypeId id;
+    static const MString drawDbClassification;
+    static const MString drawRegistrantId;
 
-    LastTypeId =  0x00127a3f
+    static void* creator();
+    static MStatus initialize();
+
+    virtual MStatus compute(const MPlug& plug, MDataBlock& data);
+
+    virtual void draw(
+        M3dView& view,
+        const MDagPath& path,
+        M3dView::DisplayStyle style,
+        M3dView::DisplayStatus status);
+
+    virtual bool isBounded() const;
+    virtual MBoundingBox boundingBox() const;
+
+  private:
+    static MObject m_displaySize;
 };
 
-#endif  // !APPLESEED_MAYA_TYPEIDS_H
+#endif  // !APPLESEED_MAYA_ENV_LIGHT_NODE_H

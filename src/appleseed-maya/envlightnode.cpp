@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016 Esteban Tovagliari, The appleseedhq Organization
+// Copyright (c) 2016 Haggi Krey, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,17 +26,52 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_TYPEIDS_H
-#define APPLESEED_MAYA_TYPEIDS_H
+// Interface header.
+#include "envlightnode.h"
+
+// Maya headers.
+#include <maya/MFnUnitAttribute.h>
+
+// appleseed-maya headers.
+#include "status.h"
+#include "typeids.h"
 
 
-enum AppleseedMayaTypeIds
+const MString EnvLightNode::nodeName("appleseedEnvLight");
+const MTypeId EnvLightNode::id(EnvLightNodeTypeId);
+const MString EnvLightNode::drawDbClassification("drawdb/geometry/appleseedEnvLight");
+const MString EnvLightNode::drawRegistrantId("appleseedMaya");
+
+void* EnvLightNode::creator()
 {
-    FirstTypeId = 0x001279c0,
-    RenderGlobalsNodeTypeId = FirstTypeId,
-    EnvLightNodeTypeId,
+    return new EnvLightNode();
+}
 
-    LastTypeId =  0x00127a3f
-};
+MStatus EnvLightNode::initialize()
+{
+    MStatus status;
+    return status;
+}
 
-#endif  // !APPLESEED_MAYA_TYPEIDS_H
+MStatus EnvLightNode::compute(const MPlug& plug, MDataBlock& dataBlock)
+{
+    return MS::kUnknownParameter;
+}
+
+void EnvLightNode::draw(
+    M3dView& view,
+    const MDagPath & path,
+    M3dView::DisplayStyle style,
+    M3dView::DisplayStatus status)
+{
+}
+
+bool EnvLightNode::isBounded() const
+{
+    return true;
+}
+
+MBoundingBox EnvLightNode::boundingBox() const
+{
+    return MBoundingBox();
+}

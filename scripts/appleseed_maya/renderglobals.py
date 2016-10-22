@@ -28,7 +28,7 @@
 
 # Maya imports.
 import maya.cmds as mc
-import pymel.core as pm
+import maya.mel as mel
 
 # appleseed-maya imports.
 from logger import logger
@@ -58,3 +58,21 @@ def createAppleseedTab():
 
 def updateAppleseedTab():
     pass
+
+def createRenderTabsMelProcedures():
+    mel.eval('''
+        global proc appleseedCreateTabProcedure()
+        {
+            python("from appleseed_maya.renderglobals import createAppleseedTab");
+            python("createAppleseedTab()");
+        }
+        '''
+    )
+    mel.eval('''
+        global proc appleseedUpdateTabProcedure()
+        {
+            python("from appleseed_maya.renderglobals import updateAppleseedTab");
+            python("updateAppleseedTab()");
+        }
+        '''
+    )

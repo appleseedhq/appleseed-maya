@@ -26,21 +26,22 @@
 // THE SOFTWARE.
 //
 
+// Maya headers.
+#include <maya/MGlobal.h>
+#include <maya/MFnPlugin.h>
+#include <maya/MSwatchRenderRegister.h>
+
 // appleseed-maya headers.
 #include "appleseedsession.h"
 #if MAYA_API_VERSION >= 201600
     #include "hypershaderenderer.h"
 #endif
+#include "envlightnode.h"
 #include "rendercommands.h"
 #include "renderglobalsnode.h"
 #include "status.h"
 #include "shadingnoderegistry.h"
 #include "swatchrenderer.h"
-
-// Maya headers.
-#include <maya/MGlobal.h>
-#include <maya/MFnPlugin.h>
-#include <maya/MSwatchRenderRegister.h>
 
 
 #ifdef _WIN32
@@ -57,6 +58,14 @@ MStatus initializePlugin(MObject plugin)
         RenderGlobalsNode::creator,
         RenderGlobalsNode::initialize);
 
+    status = fnPlugin.registerNode(
+        EnvLightNode::nodeName,
+        EnvLightNode::id,
+        EnvLightNode::creator,
+        EnvLightNode::initialize,
+        MPxNode::kLocatorNode,
+        &EnvLightNode::drawDbClassification);
+
     status = fnPlugin.registerCommand(
         FinalRenderCommand::cmdName,
         FinalRenderCommand::creator,
@@ -70,7 +79,7 @@ MStatus initializePlugin(MObject plugin)
     //status = MGlobal::executePythonCommand("import appleseed", true, false);
     //status = MGlobal::executePythonCommand("import appleseed_maya", true, false);
 
-    status = MGlobal::executePythonCommand("import appleseed_maya.renderer; appleseed_maya.renderer.register()", true, false);
+    status = MGlobal::executePythonCommand("import appleseed_maya.register; appleseed_maya.register.register()", true, false);
 
     status = ShadingNodeRegistry::registerShadingNodes(plugin);
 
@@ -105,9 +114,10 @@ MStatus uninitializePlugin(MObject plugin)
     status = fnPlugin.deregisterCommand(FinalRenderCommand::cmdName);
     status = fnPlugin.deregisterCommand(ProgressiveRenderCommand::cmdName);
 
+    status = fnPlugin.deregisterNode(EnvLightNode::id);
     status = fnPlugin.deregisterNode(RenderGlobalsNode::id);
 
-    status = MGlobal::executePythonCommand("import appleseed_maya.renderer; appleseed_maya.renderer.unregister()", true, false);
+    status = MGlobal::executePythonCommand("import appleseed_maya.register; appleseed_maya.register.unregister()", true, false);
 
     AppleseedSession::instance().uninitialize();
     return status;

@@ -29,14 +29,17 @@
 // Interface header.
 #include "rendercommands.h"
 
-// appleseed-maya headers.
-#include "status.h"
+// Standard headers.
+#include <iostream>
 
 // Maya headers.
 #include <maya/MArgDatabase.h>
 #include <maya/MGlobal.h>
 #include <maya/MSelectionList.h>
 #include <maya/MSyntax.h>
+
+// appleseed-maya headers.
+#include "status.h"
 
 
 namespace
@@ -55,7 +58,7 @@ MObject getAppleseedGlobalsNode()
         return MObject();
 
     // Successful.
-    stat = MStatus::kSuccess;
+    stat = MS::kSuccess;
     return obj;
     */
     return MObject();
@@ -83,7 +86,11 @@ void* FinalRenderCommand::creator()
 
 MStatus FinalRenderCommand::doIt(const MArgList& args)
 {
-    return MStatus::kSuccess;
+    std::cout << "Appleseed Render:\n";
+    std::cout << "-----------------\n";
+
+    std::cout << std::endl;
+    return MS::kSuccess;
 }
 
 MString ProgressiveRenderCommand::cmdName("appleseedProgressiveRender");
@@ -101,5 +108,9 @@ void* ProgressiveRenderCommand::creator()
 
 MStatus ProgressiveRenderCommand::doIt(const MArgList& args)
 {
-    return MStatus::kSuccess;
+    std::cout << "Appleseed IPR:\n";
+    std::cout << "--------------\n";
+
+    std::cout << std::endl;
+    return MS::kSuccess;
 }
