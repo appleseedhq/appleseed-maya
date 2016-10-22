@@ -43,14 +43,16 @@
 #include <maya/MPxNode.h>
 
 // Boost headers.
-//#include "boost/filesystem.hpp"
+#include "boost/filesystem/path.hpp"
 
 // Standard library headers.
 #include <cstdlib>
 #include <map>
 #include <string>
+#include <vector>
 
 
+namespace bfs = boost::filesystem;
 namespace asr = renderer;
 namespace asf = foundation;
 
@@ -166,6 +168,25 @@ MStatus ShadingNodeRegistry::registerShadingNodes(MObject plugin)
     MFnPlugin pluginFn(plugin);
 
     MGlobal::displayInfo("appleseed: Registering shading nodes...");
+
+    // Build list of dirs to look for shaders:
+    std::vector<bfs::path> oso_shader_paths;
+
+    // Relative to plugin?
+    // pluginFn.loadPath() / .. / shaders ?
+
+    // env vars
+    // APPLESEED_SEARCHPATH
+
+    // query = asr::ShaderQueryFactory::create(...);
+
+    for(size_t i = 0, e = oso_shader_paths.size(); i < e; ++i)
+    {
+        // create directory iterator (recursive?)
+        // find all oso files
+        // read metadata
+        // register nodes if needed
+    }
 
     /*
         query = asr::ShaderQueryFactory::create(...);

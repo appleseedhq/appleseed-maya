@@ -42,11 +42,11 @@ def createRenderMelProcedures():
     )
 
     mel.eval('''
-        global proc appleseedBatchRenderProcedure(string $option)
+        global proc appleseedBatchRenderProcedure(string $options)
         {
             python("from appleseed_maya.renderglobals import createGlobalNodes");
             python("createGlobalNodes()");
-            appleseedRender -batch -o $option;
+            appleseedRender -batch -o $options;
         }
         '''
     )

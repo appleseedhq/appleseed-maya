@@ -26,6 +26,9 @@
 # THE SOFTWARE.
 #
 
+# Standard imports.
+import os
+
 # Maya imports.
 import pymel.core as pm
 import maya.mel as mel
@@ -45,15 +48,21 @@ def register():
     createRenderMelProcedures()
     createRenderTabsMelProcedures()
 
-    # Renderer.
+    # Register render.
     pm.renderer("appleseed", rendererUIName="appleseed")
+
+    # Final Render procedures.
     pm.renderer(
         "appleseed",
         edit=True,
         renderProcedure="appleseedRenderProcedure",
-        commandRenderProcedure="appleseedRenderProcedure",
+        commandRenderProcedure="appleseedBatchRenderProcedure",
         batchRenderProcedure="appleseedBatchRenderProcedure"
+        # TODO: add missing procedures here...
         )
+
+    # IPR Render procedures.
+    # TODO: add this...
 
     # Globals
     pm.renderer("appleseed", edit=True, addGlobalsNode="defaultRenderGlobals")
@@ -79,6 +88,40 @@ def register():
             "appleseedUpdateTabProcedure"
             )
         )
+
+    # Misc.
+
+    # It seems Maya cannot find the icons using relative paths,
+    # even if XBMLANGPATH is set correctly.
+    # Find our icon in XBMLANGPATH manually.
+    appleseedIconPath = None
+    for iconPath in os.environ.get('XBMLANGPATH').split(os.pathsep):
+        if os.path.exists(os.path.join(iconPath, "appleseed.png")):
+            appleseedIconPath = os.path.join(iconPath, "appleseed.png")
+
+    if appleseedIconPath:
+        pm.renderer(
+            "appleseed",
+            edit=True,
+            logoImageName=appleseedIconPath
+        )
+
+        # This does not work (syntax error), but it works in the script window...
+        mel.eval('''
+            global proc appleseedLogoCallback()
+            {
+                // evalDeferred("showHelp -absolute \"http://appleseedhq.net\"");
+            }
+            '''
+        )
+
+        pm.renderer(
+            "appleseed",
+            edit=True,
+            logoCallbackProcedure="appleseedLogoCallback"
+        )
+    else:
+        logger.info("appleseedMaya: skipping logo registration. Logo not found")
 
     # Callbacks
     pm.callbacks(
