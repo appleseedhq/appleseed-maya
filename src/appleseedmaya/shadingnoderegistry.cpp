@@ -88,6 +88,7 @@ std::map<std::string, OSLShaderInfo> gShadersInfo;
 
 bool registerShader(
     const bfs::path& shaderPath,
+    MFnPlugin& pluginFn,
     asr::ShaderQuery& query)
 {
     if(query.open(shaderPath.string().c_str()))
@@ -151,6 +152,7 @@ bool registerShader(
 
 void registerShadersInDirectory(
     const bfs::path& shaderDir,
+    MFnPlugin& pluginFn,
     asr::ShaderQuery& query)
 {
     try
@@ -168,7 +170,7 @@ void registerShadersInDirectory(
                     {
                         std::cout << "Found shader " << shaderPath << std::endl;
 
-                        if(!registerShader(shaderPath, *query))
+                        if(!registerShader(shaderPath, pluginFn, query))
                             std::cout << "  Register failed for shader " << shaderPath << std::endl;
                     }
                 }
@@ -207,7 +209,7 @@ MStatus ShadingNodeRegistry::registerShadingNodes(MObject plugin)
     for(int i = shaderPaths.size() - 1; i >= 0; --i)
     {
         std::cout << "Looking for shaders in " << shaderPaths[i] << std::endl;
-        registerShadersInDirectory(shaderPaths[i], *query);
+        registerShadersInDirectory(shaderPaths[i], pluginFn, *query);
     }
 
     return MS::kSuccess;
