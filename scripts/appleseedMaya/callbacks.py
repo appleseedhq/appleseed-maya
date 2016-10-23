@@ -30,7 +30,7 @@
 import pymel.core as pm
 import maya.mel as mel
 
-# appleseed-maya imports.
+# appleseedMaya imports.
 from logger import logger
 
 
@@ -45,8 +45,8 @@ def buildRenderNodeTreeListerContentCallback(tl, postCommand, filterString):
     melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
         tl,
         postCommand,
-        "Appleseed/Materials",
-        "appleseed/material",
+        "Appleseed/Surface",
+        "appleseed/surface",
         "-asShader",
         ""
     )
@@ -63,3 +63,38 @@ def buildRenderNodeTreeListerContentCallback(tl, postCommand, filterString):
     )
     logger.debug("buildRenderNodeTreeListerContentCallback: mel = %s" % melCmd)
     mel.eval(melCmd)
+
+def createRenderNode(nodeType=None, postCommand=None):
+    nodeClass = None
+    for cl in pm.getClassification(nodeType):
+        if "appleseed/surface" in cl.lower():
+            nodeClass = "shader"
+        if "appleseed/texture" in cl.lower():
+            nodeClass = "texture"
+
+    if nodeClass == "shader":
+        mat = pm.shadingNode(nodeType, asShader=True)
+        shadingGroup = pm.sets(renderable=True, noSurfaceShader=True, empty=True, name="{0}SG".format(mat))
+        mat.outColor >> shadingGroup.surfaceShader
+    else:
+        mat = pm.shadingNode(nodeType, asTexture=True)
+
+    if postCommand is not None:
+        postCommand = postCommand.replace("%node", str(mat))
+        postCommand = postCommand.replace("%type", '\"\"')
+        pm.mel.eval(postCommand)
+    return ""
+
+def createRenderNodeCallback(postCommand, nodeType):
+    logger.debug("createRenderNodeCallback called!")
+
+    for c in pm.getClassification(nodeType):
+        if 'appleseed' in c.lower():
+            buildNodeCmd = "import appleseedMaya.callbacks; appleseedMaya.callbacks.createRenderNode(nodeType=\\\"{0}\\\", postCommand='{1}')".format(nodeType, postCommand)
+            buildNodeCmd = "string $cmd = \"{0}\"; python($cmd);".format(buildNodeCmd)
+            return buildNodeCmd
+
+def connectNodeToNodeOverrideCallback(srcNode, destNode):
+    dn = pm.PyNode(destNode)
+    sn = pm.PyNode(srcNode)
+    return 1

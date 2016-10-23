@@ -35,6 +35,8 @@ include_directories (${PROJECT_SOURCE_DIR}/src)
 set (appleseed_maya_sources
     appleseedmaya/appleseedsession.cpp
     appleseedmaya/appleseedsession.h
+    appleseedmaya/appleseedtranslator.cpp
+    appleseedmaya/appleseedtranslator.h
     appleseedmaya/config.h
     appleseedmaya/envlightnode.cpp
     appleseedmaya/envlightnode.h
@@ -43,8 +45,12 @@ set (appleseed_maya_sources
     appleseedmaya/rendercommands.h
     appleseedmaya/renderglobalsnode.cpp
     appleseedmaya/renderglobalsnode.h
+    appleseedmaya/shadingnode.cpp
+    appleseedmaya/shadingnode.h
     appleseedmaya/shadingnoderegistry.cpp
     appleseedmaya/shadingnoderegistry.h
+    appleseedmaya/shadingnodetemplatebuilder.cpp
+    appleseedmaya/shadingnodetemplatebuilder.h
     appleseedmaya/swatchrenderer.cpp
     appleseedmaya/swatchrenderer.h
     appleseedmaya/version.h.in

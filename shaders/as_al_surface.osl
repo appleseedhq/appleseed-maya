@@ -1,0 +1,13 @@
+
+
+shader as_al_surface
+[[
+    string help = "alShaders alSurface",
+    string mayaName = "alSurface",
+    string mayaClassification = "shader/surface"
+]]
+(
+    output closure color outColor = 0
+)
+{
+}

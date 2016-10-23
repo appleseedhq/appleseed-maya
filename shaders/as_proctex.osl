@@ -1,0 +1,21 @@
+
+shader as_proctex
+[[
+    string mayaName = "asProctex",
+    int mayaTypeId = 0x00127a3e,
+    string mayaClassification = "appleseed/texture:textures/other"
+]]
+(
+    output color out_outColor = color(0.0)
+    [[
+        string param_name = "outColor",
+        string param_type = "color"
+    ]],
+    output float out_outAlpha = 0.0
+    [[
+        string param_name = "outAlpha",
+        string param_type = "float"
+    ]]
+)
+{
+}

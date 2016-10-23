@@ -29,7 +29,7 @@
 // Interface header.
 #include "appleseedmaya/renderglobalsnode.h"
 
-// appleseed-maya headers.
+// appleseed maya headers.
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/typeids.h"
 
@@ -59,22 +59,22 @@ MStatus RenderGlobalsNode::initialize()
     m_samples = numAttrFn.create("samples", "samples", MFnNumericData::kInt, 64, &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
-        "appleseed-maya: Failed to create render globals node attribute");
+        "appleseedMaya: Failed to create render globals node attribute");
 
     status = addAttribute(m_samples);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
-        "appleseed-maya: Failed to add render globals node attribute");
+        "appleseedMaya: Failed to add render globals node attribute");
 
     m_passes = numAttrFn.create("passes", "passes", MFnNumericData::kInt, 1, &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
-        "appleseed-maya: Failed to create render globals node attribute");
+        "appleseedMaya: Failed to create render globals node attribute");
 
     status = addAttribute(m_passes);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
-        "appleseed-maya: Failed to add render globals node attribute");
+        "appleseedMaya: Failed to add render globals node attribute");
 
     return status;
 }

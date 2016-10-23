@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016 Haggi Krey, The appleseedhq Organization
+// Copyright (c) 2016 Esteban Tovagliari, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,49 +26,23 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SESSION_H
-#define APPLESEED_MAYA_SESSION_H
+#ifndef APPLESEED_MAYA_SHADING_NODE_TEMPLATE_BUILDER_H
+#define APPLESEED_MAYA_SHADING_NODE_TEMPLATE_BUILDER_H
 
-// boost headers.
-#include "boost/filesystem/path.hpp"
-
-// Maya headers.
-#include <maya/MString.h>
-
-// appleseed.foundation headers.
-#include "foundation/utility/autoreleaseptr.h"
-
-// appleseed.renderer headers.
 
 // Forward declarations.
-namespace renderer { class Project; }
+class OSLShaderInfo;
 
-
-class AppleseedSession
+class ShadingNodeTemplateBuilder
 {
   public:
-
-    // Constructor. (IPR or Batch)
-    AppleseedSession();
-
-    // Constructor. (Scene export)
-    explicit AppleseedSession(const MString& fileName);
-
-    // Destructor.
-    ~AppleseedSession();
+    explicit ShadingNodeTemplateBuilder(const OSLShaderInfo& shaderInfo);
 
   private:
 
-    // Non-copyable
-    AppleseedSession(const AppleseedSession&);
-    AppleseedSession& operator=(const AppleseedSession&);
-
-    void createProject();
-
-    foundation::auto_release_ptr<renderer::Project> m_project;
-
-    MString m_fileName;
-    boost::filesystem::path m_projectPath;
+    // Non-copyable.
+    ShadingNodeTemplateBuilder(const ShadingNodeTemplateBuilder&);
+    ShadingNodeTemplateBuilder& operator=(const ShadingNodeTemplateBuilder&);
 };
 
-#endif  // !APPLESEED_MAYA_SESSION_H
+#endif  // !APPLESEED_MAYA_SHADAPPLESEED_MAYA_SHADING_NODE_TEMPLATE_BUILDER_HING_NODE_H

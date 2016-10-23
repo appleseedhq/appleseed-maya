@@ -33,38 +33,47 @@ import os
 import pymel.core as pm
 import maya.mel as mel
 
-# appleseed-maya imports.
+# appleseedMaya imports.
 from logger import logger
 from renderer import createRenderMelProcedures
-from renderglobals import createRenderTabsMelProcedures
-from callbacks import hyperShadePanelBuildCreateMenuCallback
-from callbacks import hyperShadePanelBuildCreateSubMenuCallback
-from callbacks import buildRenderNodeTreeListerContentCallback
+from renderGlobals import createRenderTabsMelProcedures
+from translator import createTranslatorMelProcedures
+from callbacks import *
 
 
 def register():
     logger.info("Registering appleseed renderer.")
 
-    createRenderMelProcedures()
-    createRenderTabsMelProcedures()
-
     # Register render.
     pm.renderer("appleseed", rendererUIName="appleseed")
 
     # Final Render procedures.
+    createRenderMelProcedures()
     pm.renderer(
         "appleseed",
         edit=True,
         renderProcedure="appleseedRenderProcedure",
         commandRenderProcedure="appleseedBatchRenderProcedure",
-        batchRenderProcedure="appleseedBatchRenderProcedure"
-        # TODO: add missing procedures here...
+        batchRenderProcedure="appleseedBatchRenderProcedure",
+        cancelBatchRenderProcedure="batchRender",
+        renderRegionProcedure="mayaRenderRegion"
         )
 
-    # IPR Render procedures.
-    # TODO: add this...
+    # Ipr Render procedures.
+    pm.renderer(
+        "appleseed",
+        edit=True,
+        iprRenderProcedure="appleseedIprRenderProcedure",
+        isRunningIprProcedure="appleseedIsRunningIprRenderProcedure",
+        startIprRenderProcedure="appleseedStartIprRenderProcedure",
+        stopIprRenderProcedure="appleseedStopIprRenderProcedure",
+        refreshIprRenderProcedure="appleseedRefreshIprRenderProcedure",
+        pauseIprRenderProcedure="appleseedPauseIprRenderProcedure",
+        changeIprRegionProcedure="appleseedChangeIprRegionProcedure",
+        )
 
     # Globals
+    createRenderTabsMelProcedures()
     pm.renderer("appleseed", edit=True, addGlobalsNode="defaultRenderGlobals")
     pm.renderer("appleseed", edit=True, addGlobalsNode="defaultResolution")
     pm.renderer("appleseed", edit=True, addGlobalsNode="appleseedRenderGlobals")
@@ -89,7 +98,7 @@ def register():
             )
         )
 
-    # Misc.
+    # Icons.
 
     # It seems Maya cannot find the icons using relative paths,
     # even if XBMLANGPATH is set correctly.
@@ -123,6 +132,9 @@ def register():
     else:
         logger.info("appleseedMaya: skipping logo registration. Logo not found")
 
+    # Translator
+    createTranslatorMelProcedures()
+
     # Callbacks
     pm.callbacks(
         addCallback=hyperShadePanelBuildCreateMenuCallback,
@@ -139,6 +151,15 @@ def register():
         hook='buildRenderNodeTreeListerContent',
         owner="appleseed"
     )
+
+    pm.callbacks(
+        addCallback=createRenderNodeCallback,
+        hook='createRenderNodeCommand',
+        owner="appleseed")
+    pm.callbacks(
+        addCallback=connectNodeToNodeOverrideCallback,
+        hook='connectNodeToNodeOverrideCallback',
+        owner="appleseed")
 
 def unregister():
     logger.info("Unregistering appleseed renderer.")

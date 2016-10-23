@@ -26,49 +26,17 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SESSION_H
-#define APPLESEED_MAYA_SESSION_H
-
-// boost headers.
-#include "boost/filesystem/path.hpp"
+// Interface header.
+#include "appleseedmaya/shadingnodetemplatebuilder.h"
 
 // Maya headers.
-#include <maya/MString.h>
-
-// appleseed.foundation headers.
-#include "foundation/utility/autoreleaseptr.h"
 
 // appleseed.renderer headers.
 
-// Forward declarations.
-namespace renderer { class Project; }
+// appleseed maya headers.
+#include <appleseedmaya/shadingnoderegistry.h>
 
 
-class AppleseedSession
+ShadingNodeTemplateBuilder::ShadingNodeTemplateBuilder(const OSLShaderInfo& shaderInfo)
 {
-  public:
-
-    // Constructor. (IPR or Batch)
-    AppleseedSession();
-
-    // Constructor. (Scene export)
-    explicit AppleseedSession(const MString& fileName);
-
-    // Destructor.
-    ~AppleseedSession();
-
-  private:
-
-    // Non-copyable
-    AppleseedSession(const AppleseedSession&);
-    AppleseedSession& operator=(const AppleseedSession&);
-
-    void createProject();
-
-    foundation::auto_release_ptr<renderer::Project> m_project;
-
-    MString m_fileName;
-    boost::filesystem::path m_projectPath;
-};
-
-#endif  // !APPLESEED_MAYA_SESSION_H
+}

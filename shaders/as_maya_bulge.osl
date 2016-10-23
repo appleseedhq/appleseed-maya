@@ -1,0 +1,20 @@
+
+shader as_maya_bulge
+[[
+    string mayaName = "bulge",
+    string mayaClassification = "textures/2d"
+]]
+(
+    output color out_outColor = color(0.0)
+    [[
+        string param_name = "outColor",
+        string param_type = "color"
+    ]],
+    output float out_outAlpha = 0.0
+    [[
+        string param_name = "outAlpha",
+        string param_type = "float"
+    ]]
+)
+{
+}

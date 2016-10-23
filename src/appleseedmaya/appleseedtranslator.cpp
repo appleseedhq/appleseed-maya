@@ -26,49 +26,40 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SESSION_H
-#define APPLESEED_MAYA_SESSION_H
-
-// boost headers.
-#include "boost/filesystem/path.hpp"
+// Interface header.
+#include "appleseedmaya/appleseedtranslator.h"
 
 // Maya headers.
-#include <maya/MString.h>
 
-// appleseed.foundation headers.
-#include "foundation/utility/autoreleaseptr.h"
-
-// appleseed.renderer headers.
-
-// Forward declarations.
-namespace renderer { class Project; }
+// appleseed maya headers.
 
 
-class AppleseedSession
+const MString AppleseedTranslator::translatorName("appleseed");
+
+AppleseedTranslator::AppleseedTranslator()
 {
-  public:
+}
 
-    // Constructor. (IPR or Batch)
-    AppleseedSession();
+void* AppleseedTranslator::creator()
+{
+    return new AppleseedTranslator();
+}
 
-    // Constructor. (Scene export)
-    explicit AppleseedSession(const MString& fileName);
+MString AppleseedTranslator::defaultExtension() const
+{
+    return "appleseed";
+}
 
-    // Destructor.
-    ~AppleseedSession();
+MStatus AppleseedTranslator::writer(
+    const MFileObject&                  file,
+    const MString&                      opts,
+    MPxFileTranslator::FileAccessMode   mode)
+{
+    // TODO: implement this...
+    return MS::kSuccess;
+}
 
-  private:
-
-    // Non-copyable
-    AppleseedSession(const AppleseedSession&);
-    AppleseedSession& operator=(const AppleseedSession&);
-
-    void createProject();
-
-    foundation::auto_release_ptr<renderer::Project> m_project;
-
-    MString m_fileName;
-    boost::filesystem::path m_projectPath;
-};
-
-#endif  // !APPLESEED_MAYA_SESSION_H
+bool AppleseedTranslator::haveWriteMethod() const
+{
+    return true;
+}

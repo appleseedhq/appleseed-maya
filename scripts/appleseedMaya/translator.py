@@ -27,52 +27,14 @@
 #
 
 # Maya imports.
-import maya.cmds as mc
 import maya.mel as mel
 
-# appleseed-maya imports.
-from logger import logger
 
-
-def createGlobalNodes():
-    if mc.objExists("AppleseedRenderOptions"):
-        return
-
-    sel = mc.ls(sl=True)
-    mc.createNode(
-        "appleseedRenderGlobals",
-        name="AppleseedRenderOptions",
-        shared=True,
-        skipSelect=True)
-    mc.lockNode("AppleseedRenderOptions")
-    mc.select(sel, replace=True)
-    logger.debug("Created appleseed render global node")
-
-def createAppleseedTab():
-
-    # Create default nodes if needed.
-    createGlobalNodes()
-
-    # Update the newly created tab.
-    updateAppleseedTab()
-
-def updateAppleseedTab():
-    pass
-
-def createRenderTabsMelProcedures():
+def createTranslatorMelProcedures():
     mel.eval('''
-        global proc appleseedCreateTabProcedure()
+        global proc appleseedTranslatorOpts(string $parent, string $action, string $initialSettings, string $resultCallback)
         {
-            python("from appleseed_maya.renderglobals import createAppleseedTab");
-            python("createAppleseedTab()");
-        }
-        '''
-    )
-    mel.eval('''
-        global proc appleseedUpdateTabProcedure()
-        {
-            python("from appleseed_maya.renderglobals import updateAppleseedTab");
-            python("updateAppleseedTab()");
+            // todo: implement this...
         }
         '''
     )

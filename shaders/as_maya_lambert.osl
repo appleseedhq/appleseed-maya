@@ -1,0 +1,12 @@
+
+
+shader as_maya_lambert
+[[
+    string mayaName = "lambert",
+    string mayaClassification = "shader/surface"
+]]
+(
+    output closure color outColor = 0
+)
+{
+}

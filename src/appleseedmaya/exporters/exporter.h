@@ -26,49 +26,29 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SESSION_H
-#define APPLESEED_MAYA_SESSION_H
+#ifndef APPLESEED_MAYA_EXPORTERS_EXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_EXPORTER_H
 
 // boost headers.
-#include "boost/filesystem/path.hpp"
 
 // Maya headers.
-#include <maya/MString.h>
 
 // appleseed.foundation headers.
-#include "foundation/utility/autoreleaseptr.h"
 
 // appleseed.renderer headers.
 
 // Forward declarations.
-namespace renderer { class Project; }
 
 
-class AppleseedSession
+class Exporter
 {
   public:
-
-    // Constructor. (IPR or Batch)
-    AppleseedSession();
-
-    // Constructor. (Scene export)
-    explicit AppleseedSession(const MString& fileName);
-
-    // Destructor.
-    ~AppleseedSession();
 
   private:
 
     // Non-copyable
-    AppleseedSession(const AppleseedSession&);
-    AppleseedSession& operator=(const AppleseedSession&);
-
-    void createProject();
-
-    foundation::auto_release_ptr<renderer::Project> m_project;
-
-    MString m_fileName;
-    boost::filesystem::path m_projectPath;
+    Exporter(const Exporter&);
+    Exporter& operator=(const Exporter&);
 };
 
-#endif  // !APPLESEED_MAYA_SESSION_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_EXPORTER_H

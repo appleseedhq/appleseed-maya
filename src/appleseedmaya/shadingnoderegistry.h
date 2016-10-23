@@ -29,21 +29,78 @@
 #ifndef APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
 #define APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
 
+// Standard headers.
+#include <string>
+#include <vector>
+
 // Maya headers.
 #include <maya/MObject.h>
 #include <maya/MStatus.h>
 
 // appleseed.foundation headers.
-#include "foundation/core/concepts/noncopyable.h"
+#include "foundation/utility/containers/dictionary.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/shadergroup.h"
+
+
+struct OSLShaderInfo
+{
+    OSLShaderInfo();
+
+    explicit OSLShaderInfo(const renderer::ShaderQuery& q);
+
+    bool getMetadataValue(const char *key, std::string& value)
+    {
+        if(metadata.dictionaries().exist(key))
+        {
+            const foundation::Dictionary& dict = metadata.dictionary(key);
+            value = dict.get("value");
+            return true;
+        }
+
+        return false;
+    }
+
+    template <typename T>
+    bool getMetadataValue(const char *key, T& value) const
+    {
+        if(metadata.dictionaries().exist(key))
+        {
+            const foundation::Dictionary& dict = metadata.dictionary(key);
+            value = dict.get<T>("value");
+            return true;
+        }
+
+        return false;
+    }
+
+    std::string shaderName;
+    std::string shaderType;
+
+    std::string mayaName;
+    std::string mayaClassification;
+    unsigned int typeId;
+
+    foundation::Dictionary metadata;
+    std::vector<foundation::Dictionary> paramInfo;
+};
 
 
 class ShadingNodeRegistry
-  : public foundation::NonCopyable
 {
   public:
 
     static MStatus registerShadingNodes(MObject plugin);
     static MStatus unregisterShadingNodes(MObject plugin);
+
+    static const OSLShaderInfo *getShaderInfo(const MString& nodeName);
+
+  private:
+
+    // Non-copyable.
+    ShadingNodeRegistry(const ShadingNodeRegistry&);
+    ShadingNodeRegistry& operator=(const ShadingNodeRegistry&);
 };
 
 #endif  // !APPLESEED_MAYA_SHADING_NODE_REGISTRY_H

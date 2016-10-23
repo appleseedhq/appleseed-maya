@@ -33,7 +33,7 @@
 #include <maya/MGlobal.h>
 #include <maya/MStatus.h>
 
-// appleseed-maya headers.
+// appleseed maya headers.
 #include "appleseedmaya/version.h"
 
 // Windows dll exports

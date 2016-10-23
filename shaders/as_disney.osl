@@ -1,0 +1,14 @@
+
+
+shader as_disney_material
+[[
+    string help = "Material based on the Disney BRDF",
+    string mayaName = "asDisney",
+    int mayaTypeId = 0x00127a3d,
+    string mayaClassification = "appleseed/surface:shader/surface:swatch/AppleseedRenderSwatch"
+]]
+(
+    output closure color outColor = 0
+)
+{
+}
