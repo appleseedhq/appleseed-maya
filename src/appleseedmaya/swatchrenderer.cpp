@@ -50,6 +50,7 @@ SwatchRenderer::SwatchRenderer(
     int     imageResolution)
   : MSwatchRenderBase(dependNode, renderNode, imageResolution)
 {
+    image().create(imageResolution, imageResolution);
 }
 
 bool SwatchRenderer::doIteration()

@@ -70,17 +70,21 @@ namespace bfs = boost::filesystem;
 namespace asf = foundation;
 namespace asr = renderer;
 
+asf::auto_release_ptr<AppleseedSession> AppleseedSession::createExportSession(
+    const MString& fileName)
+{
+    MGlobal::displayInfo("Creating appleseed export session");
+
+    return asf::auto_release_ptr<AppleseedSession>(new AppleseedSession(fileName));
+}
+
 AppleseedSession::AppleseedSession()
 {
-    MGlobal::displayInfo("Creating appleseed session");
-
     createProject();
 }
 
 AppleseedSession::AppleseedSession(const MString& fileName) : m_fileName(fileName)
 {
-    MGlobal::displayInfo("Creating appleseed session");
-
     m_projectPath = bfs::path(fileName.asChar()).parent_path();
 
     // Create a dir to store the geom files if it does not exist yet.
@@ -103,6 +107,11 @@ AppleseedSession::AppleseedSession(const MString& fileName) : m_fileName(fileNam
 AppleseedSession::~AppleseedSession()
 {
     MGlobal::displayInfo("Deleting appleseed session");
+}
+
+void AppleseedSession::release()
+{
+    delete this;
 }
 
 void AppleseedSession::createProject()

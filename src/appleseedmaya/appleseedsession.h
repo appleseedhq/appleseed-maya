@@ -48,6 +48,13 @@ class AppleseedSession
 {
   public:
 
+    static foundation::auto_release_ptr<AppleseedSession> createExportSession(
+        const MString& fileName);
+
+    virtual void release();
+
+  private:
+
     // Constructor. (IPR or Batch)
     AppleseedSession();
 
@@ -56,8 +63,6 @@ class AppleseedSession
 
     // Destructor.
     ~AppleseedSession();
-
-  private:
 
     // Non-copyable
     AppleseedSession(const AppleseedSession&);

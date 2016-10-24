@@ -59,10 +59,10 @@ MStatus EnvLightNode::compute(const MPlug& plug, MDataBlock& dataBlock)
 }
 
 void EnvLightNode::draw(
-    M3dView& view,
-    const MDagPath & path,
-    M3dView::DisplayStyle style,
-    M3dView::DisplayStatus status)
+    M3dView&                view,
+    const MDagPath &        path,
+    M3dView::DisplayStyle   style,
+    M3dView::DisplayStatus  status)
 {
 }
 

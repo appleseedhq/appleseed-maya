@@ -42,7 +42,7 @@ class SwatchRenderer
     static MSwatchRenderBase* creator(
         MObject dependNode,
         MObject renderNode,
-        int imageResolution);
+        int     imageResolution);
 
     SwatchRenderer(
         MObject dependNode,

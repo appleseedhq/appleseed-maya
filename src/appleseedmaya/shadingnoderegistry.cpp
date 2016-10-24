@@ -140,8 +140,13 @@ bool registerShader(
                 return false;
             }
 
-            // Build a template for the node.
+            // Build and register an AE template for the node.
             ShadingNodeTemplateBuilder aeBuilder(shaderInfo);
+
+            // While debugging...
+            aeBuilder.logAETemplate();
+
+            aeBuilder.registerAETemplate();
         }
 
         return true;

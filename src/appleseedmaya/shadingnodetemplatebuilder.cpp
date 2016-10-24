@@ -29,7 +29,12 @@
 // Interface header.
 #include "appleseedmaya/shadingnodetemplatebuilder.h"
 
+// Standard headers.
+#include <iostream>
+#include <sstream>
+
 // Maya headers.
+#include <maya/MGlobal.h>
 
 // appleseed.renderer headers.
 
@@ -39,4 +44,38 @@
 
 ShadingNodeTemplateBuilder::ShadingNodeTemplateBuilder(const OSLShaderInfo& shaderInfo)
 {
+    std::stringstream ss;
+    ss << "global proc AE" << shaderInfo.mayaName << "Template(string $nodeName)\n";
+    ss << "{\n";
+    ss << "    AEswatchDisplay $nodeName;\n"; // <-- this crashes Maya.
+    ss << "    editorTemplate -beginScrollLayout;\n";
+    /*
+                editorTemplate -beginLayout "Group name" -collapse 0;
+                    editorTemplate -addControl "...";
+                editorTemplate -endLayout;
+    */
+	ss << "    AEdependNodeTemplate $nodeName;\n";
+	ss << "    editorTemplate -addExtraControls;\n";
+	ss << "    editorTemplate -endScrollLayout;\n";
+    ss << "}\n";
+
+    m_melTemplate = ss.str();
 }
+
+MStatus ShadingNodeTemplateBuilder::registerAETemplate() const
+{
+    return MGlobal::executeCommand(m_melTemplate.c_str());
+}
+
+void ShadingNodeTemplateBuilder::logAETemplate() const
+{
+    std::cout << m_melTemplate << std::endl;
+}
+
+/*
+global proc AEphongNodeTemplate( string $nodeName )
+{
+	AEswatchDisplay $nodeName;
+	editorTemplate -beginScrollLayout;
+}
+*/

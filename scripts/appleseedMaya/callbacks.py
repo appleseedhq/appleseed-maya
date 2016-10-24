@@ -35,7 +35,7 @@ from logger import logger
 
 
 def hyperShadePanelBuildCreateMenuCallback():
-    pm.menuItem(label="appleseed")
+    pm.menuItem(label="Appleseed")
     pm.menuItem(divider=True)
 
 def hyperShadePanelBuildCreateSubMenuCallback():
