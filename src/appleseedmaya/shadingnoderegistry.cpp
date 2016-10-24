@@ -58,6 +58,41 @@ namespace asr = renderer;
 namespace asf = foundation;
 
 
+OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
+  : arrayLen(-1)
+{
+    paramName = paramInfo.get("name");
+    mayaName = paramName;
+
+    paramType = paramInfo.get("type");
+    validDefault = paramInfo.get<bool>("validdefault");
+
+    if(validDefault)
+    {
+        //T default_value = ...
+    }
+
+    isOutput = paramInfo.get<bool>("isoutput");
+    isClosure = paramInfo.get<bool>("isclosure");
+    isStruct = paramInfo.get<bool>("isstruct");
+
+    if(isStruct)
+        structName = paramInfo.get("structname");
+
+    isArray = paramInfo.get<bool>("isarray");
+
+    if(isArray)
+        arrayLen = paramInfo.get<int>("arraylen");
+    else
+        arrayLen = -1;
+
+    if(paramInfo.dictionaries().exist("metadata"))
+    {
+        OSLMetadataExtractor metadata(paramInfo.dictionary("metadata"));
+        // todo: get metadata here...
+    }
+}
+
 OSLShaderInfo::OSLShaderInfo()
     : typeId(0)
 {
@@ -68,25 +103,60 @@ OSLShaderInfo::OSLShaderInfo(const asr::ShaderQuery& q)
 {
     shaderName = q.get_shader_name();
     shaderType = q.get_shader_type();
-    metadata = q.get_metadata();
+    OSLMetadataExtractor metadata(q.get_metadata());
 
-    getMetadataValue("mayaName", mayaName);
-    getMetadataValue("mayaClassification", mayaClassification);
-    getMetadataValue<unsigned int>("mayaTypeId", typeId);
+    metadata.getValue("mayaName", mayaName);
+    metadata.getValue("mayaClassification", mayaClassification);
+    metadata.getValue<unsigned int>("mayaTypeId", typeId);
 
     paramInfo.reserve(q.get_num_params());
     for (size_t i = 0, e = q.get_num_params(); i < e; ++i)
-        paramInfo.push_back(q.get_param_info(i));
+        paramInfo.push_back(OSLParamInfo(q.get_param_info(i)));
 }
 
 
 namespace
 {
 
+void logParam(const OSLParamInfo& p)
+{
+    std::cout << "  Name = " << p.paramName << " type = " << p.paramType << "\n";
+    std::cout << "    ValidDefault = " << p.validDefault << "\n";
+    std::cout << "    IsOutput = " << p.isOutput << "\n";
+    std::cout << "    IsClosure = " << p.isClosure << "\n";
+
+    if(p.isArray)
+        std::cout << "    ArrayLen = " << p.arrayLen << "\n";
+
+    if(p.isStruct)
+        std::cout << "    StructName = " << p.structName << "\n";
+}
+
+void logShader(const OSLShaderInfo& s)
+{
+    std::cout << "------------------------\n";
+
+    std::cout << "Name = " << s.shaderName << " type = " << s.shaderType << "\n";
+    std::cout << "Maya Name = " << s.mayaName << "\n";
+    std::cout << "Maya Classification = " << s.mayaClassification << "\n";
+
+    if(s.typeId)
+        std::cout << "Maya TypeId = " << s.typeId << "\n";
+
+    std::cout << "Params:\n";
+    std::cout << "-------\n\n";
+
+    for(size_t i = 0, e = s.paramInfo.size(); i < e; ++i)
+        logParam(s.paramInfo[i]);
+
+    std::cout << "------------------------\n";
+    std::cout << std::endl;
+}
+
 typedef std::map<std::string, OSLShaderInfo> OSLShaderInfoMap;
 std::map<std::string, OSLShaderInfo> gShadersInfo;
 
-bool registerShader(
+bool doRegisterShader(
     const bfs::path& shaderPath,
     MFnPlugin& pluginFn,
     asr::ShaderQuery& query)
@@ -117,6 +187,9 @@ bool registerShader(
         }
 
         gShadersInfo[shaderInfo.mayaName] = shaderInfo;
+
+        // while debugging...
+        logShader(shaderInfo);
 
         if(shaderInfo.typeId != 0)
         {
@@ -153,6 +226,31 @@ bool registerShader(
     }
 
     return false;
+}
+
+bool registerShader(
+    const bfs::path& shaderPath,
+    MFnPlugin& pluginFn,
+    asr::ShaderQuery& query)
+{
+    try
+    {
+        doRegisterShader(shaderPath, pluginFn, query);
+    }
+    catch(const asf::StringException& e)
+    {
+        std::cout << "Exception while querying " << shaderPath
+                  << ", what = " << e.string() << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << "Exception while querying " << shaderPath
+                  << ", what = " << e.what() << std::endl;
+    }
+    catch(...)
+    {
+        std::cout << "Unknown exception while querying " << shaderPath << std::endl;
+    }
 }
 
 void registerShadersInDirectory(

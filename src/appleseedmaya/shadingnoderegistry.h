@@ -44,17 +44,24 @@
 #include "renderer/api/shadergroup.h"
 
 
-struct OSLShaderInfo
+class OSLMetadataExtractor
 {
-    OSLShaderInfo();
-
-    explicit OSLShaderInfo(const renderer::ShaderQuery& q);
-
-    bool getMetadataValue(const char *key, std::string& value)
+  public:
+    explicit OSLMetadataExtractor(const foundation::Dictionary& metadata)
+      : m_metadata(metadata)
     {
-        if(metadata.dictionaries().exist(key))
+    }
+
+    bool exists(const char *key) const
+    {
+        return m_metadata.dictionaries().exist(key);
+    }
+
+    bool getValue(const char *key, std::string& value)
+    {
+        if(exists(key))
         {
-            const foundation::Dictionary& dict = metadata.dictionary(key);
+            const foundation::Dictionary& dict = m_metadata.dictionary(key);
             value = dict.get("value");
             return true;
         }
@@ -63,17 +70,62 @@ struct OSLShaderInfo
     }
 
     template <typename T>
-    bool getMetadataValue(const char *key, T& value) const
+    bool getValue(const char *key, T& value) const
     {
-        if(metadata.dictionaries().exist(key))
+        if(exists(key))
         {
-            const foundation::Dictionary& dict = metadata.dictionary(key);
+            const foundation::Dictionary& dict = m_metadata.dictionary(key);
             value = dict.get<T>("value");
             return true;
         }
 
         return false;
     }
+
+  private:
+
+    // Non-copyable.
+    OSLMetadataExtractor(const OSLMetadataExtractor&);
+    OSLMetadataExtractor& operator=(const OSLMetadataExtractor&);
+
+    const foundation::Dictionary& m_metadata;
+};
+
+class OSLParamInfo
+{
+  public:
+    explicit OSLParamInfo(const foundation::Dictionary& paramInfo);
+
+    // Query info.
+    std::string paramName;
+    std::string paramType;
+    bool validDefault;
+    //T default_value
+    bool isOutput;
+    bool isClosure;
+    bool isStruct;
+    std::string structName;
+    bool isArray;
+    int arrayLen;
+
+    // Standard metadata info.
+    std::string label;
+    std::string help;
+    std::string page;
+    std::string widget;
+    std::string options;
+    // More standard metadata options...
+
+    // appleseedMaya custom metadata.
+    std::string mayaName;
+};
+
+class OSLShaderInfo
+{
+  public:
+    OSLShaderInfo();
+
+    explicit OSLShaderInfo(const renderer::ShaderQuery& q);
 
     std::string shaderName;
     std::string shaderType;
@@ -82,8 +134,7 @@ struct OSLShaderInfo
     std::string mayaClassification;
     unsigned int typeId;
 
-    foundation::Dictionary metadata;
-    std::vector<foundation::Dictionary> paramInfo;
+    std::vector<OSLParamInfo> paramInfo;
 };
 
 
