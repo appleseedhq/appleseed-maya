@@ -47,6 +47,8 @@ set (appleseed_maya_sources
     appleseedmaya/renderglobalsnode.h
     appleseedmaya/shadingnode.cpp
     appleseedmaya/shadingnode.h
+    appleseedmaya/shadingnodemetadata.cpp
+    appleseedmaya/shadingnodemetadata.h
     appleseedmaya/shadingnoderegistry.cpp
     appleseedmaya/shadingnoderegistry.h
     appleseedmaya/shadingnodetemplatebuilder.cpp

@@ -48,8 +48,16 @@ class RenderGlobalsNode
     virtual MStatus compute(const MPlug& plug, MDataBlock& dataBlock);
 
   private:
-    static MObject m_samples;
+    // Attributes (same options as appleseed.max).
+    static MObject m_pixelSamples;
     static MObject m_passes;
+    static MObject m_tileSize;
+    static MObject m_gi;
+    static MObject m_caustics;
+    static MObject m_bounces;
+    static MObject m_backgroundEmitsLight;
+    static MObject m_renderingThreads;
+    static MObject m_envLightNode;
 };
 
 #endif  // !APPLESEED_MAYA_RENDER_GLOBALS_NODE_H

@@ -72,6 +72,54 @@ void ShadingNode::postConstructor()
     numAttrFn.setWritable(false);
     depNodeFn.addAttribute(outColor, MFnDependencyNode::kLocalDynamicAttr);
 
+    for (size_t i = 0, e = m_shaderInfo->paramInfo.size(); i < e; ++i)
+    {
+        const OSLParamInfo& p = m_shaderInfo->paramInfo[i];
+
+        MObject attr;
+
+        if(p.paramType == "color")
+        {
+        }
+        else if(p.paramType == "float")
+        {
+        }
+        else if(p.paramType == "float[2]")
+        {
+        }
+        else if(p.paramType == "int")
+        {
+        }
+        else if(p.paramType == "normal")
+        {
+        }
+        else if(p.paramType == "point")
+        {
+        }
+        else if(p.paramType == "pointer")
+        {
+            // closures.
+        }
+        else if(p.paramType == "vector")
+        {
+        }
+        else if(p.paramType == "string")
+        {
+        }
+
+        if(attr.isNull())
+            continue;
+
+        if(p.isOutput)
+        {
+        }
+        else
+        {
+        }
+
+        depNodeFn.addAttribute(outColor, MFnDependencyNode::kLocalDynamicAttr);
+    }
+
     /*
     MFnNumericAttribute nAttr;
     // more FnAttribute types here...

@@ -29,6 +29,7 @@
 # Maya imports.
 import maya.cmds as mc
 import maya.mel as mel
+import pymel.core as pm
 
 # appleseedMaya imports.
 from logger import logger
@@ -49,9 +50,72 @@ def createGlobalNodes():
     logger.debug("Created appleseed render global node")
 
 def createAppleseedTab():
-
-    # Create default nodes if needed.
+    # Create default render globals node if needed.
     createGlobalNodes()
+
+    parentForm = pm.setParent(query=True)
+    pm.setUITemplate("renderGlobalsTemplate", pushTemplate=True)
+    pm.setUITemplate("attributeEditorTemplate", pushTemplate=True)
+
+    columnWidth = 400
+
+    with pm.scrollLayout("appleseedScrollLayout", horizontalScrollBarThickness=0):
+        with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
+            with pm.frameLayout(label="Sampling", collapsable=True, collapse=False):
+                with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
+                    pm.connectControl(
+                        pm.intFieldGrp(label="Pixel Samples", numberOfFields = 1),
+                        pm.Attribute("appleseedRenderGlobals.samples"),
+                        index=2)
+                    pm.connectControl(
+                        pm.intFieldGrp(label="Render Passes", numberOfFields = 1),
+                        pm.Attribute("appleseedRenderGlobals.passes"),
+                        index=2)
+                    pm.connectControl(
+                        pm.intFieldGrp(label="Tile Size", numberOfFields = 1),
+                        pm.Attribute("appleseedRenderGlobals.tileSize"),
+                        index=2)
+
+            with pm.frameLayout(label="Lighting", collapsable=True, collapse=False):
+                with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
+                    pm.connectControl(
+                        pm.checkBoxGrp(label="Global Illumination"),
+                        pm.Attribute("appleseedRenderGlobals.gi"),
+                        index=2)
+                    pm.connectControl(
+                        pm.checkBoxGrp(label="Caustics"),
+                        pm.Attribute("appleseedRenderGlobals.caustics"),
+                        index=2)
+                    pm.connectControl(
+                        pm.intFieldGrp(label="GI Bounces", numberOfFields = 1),
+                        pm.Attribute("appleseedRenderGlobals.bounces"),
+                        index=2)
+                    pm.connectControl(
+                        pm.checkBoxGrp(label="Background Emits Light"),
+                        pm.Attribute("appleseedRenderGlobals.bgLight"),
+                        index=2)
+
+            with pm.frameLayout(label="Environment Light", collapsable=True, collapse=False):
+                pm.text(label="Environment light options here...")
+
+            with pm.frameLayout(label="System", collapsable=True, collapse=False):
+                with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
+                    pm.connectControl(
+                        pm.intFieldGrp(label="Threads", numberOfFields = 1),
+                        pm.Attribute("appleseedRenderGlobals.threads"),
+                        index=2)
+
+    pm.setUITemplate("renderGlobalsTemplate", popTemplate=True)
+    pm.setUITemplate("attributeEditorTemplate", popTemplate=True)
+    pm.formLayout(
+        parentForm,
+        edit=True,
+        attachForm=[
+            ("appleseedScrollLayout", "top", 0),
+            ("appleseedScrollLayout", "bottom", 0),
+            ("appleseedScrollLayout", "left", 0),
+            ("appleseedScrollLayout", "right", 0)
+        ])
 
     # Update the newly created tab.
     updateAppleseedTab()

@@ -1,9 +1,9 @@
 
 shader as_proctex
 [[
-    string mayaName = "asProctex",
-    int mayaTypeId = 0x00127a3e,
-    string mayaClassification = "appleseed/texture:textures/other"
+    string maya_node_name = "asProctex",
+    int maya_type_id = 0x00127a3e,
+    string maya_classification = "appleseed/texture:textures/other"
 ]]
 (
     output color out_outColor = color(0.0)

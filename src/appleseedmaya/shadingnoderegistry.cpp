@@ -58,70 +58,13 @@ namespace asr = renderer;
 namespace asf = foundation;
 
 
-OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
-  : arrayLen(-1)
-{
-    paramName = paramInfo.get("name");
-    mayaName = paramName;
-
-    paramType = paramInfo.get("type");
-    validDefault = paramInfo.get<bool>("validdefault");
-
-    if(validDefault)
-    {
-        //T default_value = ...
-    }
-
-    isOutput = paramInfo.get<bool>("isoutput");
-    isClosure = paramInfo.get<bool>("isclosure");
-    isStruct = paramInfo.get<bool>("isstruct");
-
-    if(isStruct)
-        structName = paramInfo.get("structname");
-
-    isArray = paramInfo.get<bool>("isarray");
-
-    if(isArray)
-        arrayLen = paramInfo.get<int>("arraylen");
-    else
-        arrayLen = -1;
-
-    if(paramInfo.dictionaries().exist("metadata"))
-    {
-        OSLMetadataExtractor metadata(paramInfo.dictionary("metadata"));
-        // todo: get metadata here...
-    }
-}
-
-OSLShaderInfo::OSLShaderInfo()
-    : typeId(0)
-{
-}
-
-OSLShaderInfo::OSLShaderInfo(const asr::ShaderQuery& q)
-    : typeId(0)
-{
-    shaderName = q.get_shader_name();
-    shaderType = q.get_shader_type();
-    OSLMetadataExtractor metadata(q.get_metadata());
-
-    metadata.getValue("mayaName", mayaName);
-    metadata.getValue("mayaClassification", mayaClassification);
-    metadata.getValue<unsigned int>("mayaTypeId", typeId);
-
-    paramInfo.reserve(q.get_num_params());
-    for (size_t i = 0, e = q.get_num_params(); i < e; ++i)
-        paramInfo.push_back(OSLParamInfo(q.get_param_info(i)));
-}
-
-
 namespace
 {
 
 void logParam(const OSLParamInfo& p)
 {
     std::cout << "  Name = " << p.paramName << " type = " << p.paramType << "\n";
-    std::cout << "    ValidDefault = " << p.validDefault << "\n";
+    std::cout << "    Maya Attribute = " << p.mayaAttributeName << "\n";
     std::cout << "    IsOutput = " << p.isOutput << "\n";
     std::cout << "    IsClosure = " << p.isClosure << "\n";
 
@@ -130,6 +73,8 @@ void logParam(const OSLParamInfo& p)
 
     if(p.isStruct)
         std::cout << "    StructName = " << p.structName << "\n";
+
+    std::cout << "    ValidDefault = " << p.validDefault << "\n";
 }
 
 void logShader(const OSLShaderInfo& s)
@@ -312,7 +257,7 @@ MStatus ShadingNodeRegistry::registerShadingNodes(MObject plugin)
     for(int i = shaderPaths.size() - 1; i >= 0; --i)
     {
         std::cout << "Looking for shaders in " << shaderPaths[i] << std::endl;
-        registerShadersInDirectory(shaderPaths[i], pluginFn, *query);
+        //registerShadersInDirectory(shaderPaths[i], pluginFn, *query);
     }
 
     return MS::kSuccess;
