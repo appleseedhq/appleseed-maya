@@ -36,7 +36,7 @@ def createRenderMelProcedures():
         {
             python("from appleseedMaya.renderGlobals import createGlobalNodes");
             python("createGlobalNodes()");
-            //appleseedRender -w $width -h $height -c $camera -o $option;
+            appleseedRender -w $width -h $height -c $camera;
         }
         '''
     )
@@ -46,7 +46,15 @@ def createRenderMelProcedures():
         {
             python("from appleseedMaya.renderGlobals import createGlobalNodes");
             python("createGlobalNodes()");
-            //appleseedRender -batch -o $options;
+            appleseedRender -batch $options;
+        }
+        '''
+    )
+
+    mel.eval('''
+        global proc appleseedCancelBatchRenderProcedure()
+        {
+            batchRender;
         }
         '''
     )
@@ -56,7 +64,7 @@ def createRenderMelProcedures():
         {
             python("from appleseedMaya.renderGlobals import createGlobalNodes");
             python("createGlobalNodes()");
-            //...
+            appleseedProgressiveRender -w $width -h $height -c $camera -action "render";
         }
         '''
     )
@@ -66,7 +74,7 @@ def createRenderMelProcedures():
         {
             python("from appleseedMaya.renderGlobals import createGlobalNodes");
             python("createGlobalNodes()");
-            //...
+            appleseedProgressiveRender -w $resolutionX -h $resolutionY -c $camera -action "start";
         }
         '''
     )
@@ -74,7 +82,7 @@ def createRenderMelProcedures():
     mel.eval('''
         global proc appleseedStopIprRenderProcedure()
         {
-            //...
+            appleseedProgressiveRender -action "stop";
         }
         '''
     )
@@ -82,7 +90,7 @@ def createRenderMelProcedures():
     mel.eval('''
         global proc appleseedRefreshIprRenderProcedure()
         {
-            //...
+            appleseedProgressiveRender -action "refresh";
         }
         '''
     )
@@ -90,7 +98,7 @@ def createRenderMelProcedures():
     mel.eval('''
         global proc appleseedIsRunningIprRenderProcedure()
         {
-            //...
+            appleseedProgressiveRender -action "running";
         }
         '''
     )
@@ -98,7 +106,7 @@ def createRenderMelProcedures():
     mel.eval('''
         global proc appleseedPauseIprRenderProcedure(string $editor, int $pause)
         {
-            //...
+            appleseedProgressiveRender -action "pause";
         }
         '''
     )
@@ -106,7 +114,7 @@ def createRenderMelProcedures():
     mel.eval('''
         global proc appleseedChangeIprRegionProcedure(string $renderPanel)
         {
-            //...
+            appleseedProgressiveRender -action "region";
         }
         '''
     )

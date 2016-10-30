@@ -73,9 +73,9 @@ MSyntax FinalRenderCommand::syntaxCreator()
 {
     MSyntax syntax;
     syntax.addFlag("-c", "-camera", MSyntax::kString);
-    syntax.addFlag("-w", "-width", MSyntax::kLong);
+    syntax.addFlag("-w", "-width" , MSyntax::kLong);
     syntax.addFlag("-h", "-height", MSyntax::kLong);
-    syntax.addFlag("-o", "-option", MSyntax::kString);
+    syntax.addFlag("-b", "-batch" , MSyntax::kString);
     return syntax;
 }
 
@@ -89,6 +89,21 @@ MStatus FinalRenderCommand::doIt(const MArgList& args)
     std::cout << "Appleseed Render:\n";
     std::cout << "-----------------\n";
 
+    MStatus status;
+    MArgDatabase argData(syntax(), args, &status);
+
+    int width = -1;
+    if (argData.isFlagSet("-width", &status))
+        status = argData.getFlagArgument("-width", 0, width);
+
+    int height = -1;
+    if (argData.isFlagSet("-height", &status))
+        status = argData.getFlagArgument("-height", 0, height);
+
+    MString cameraName;
+    if (argData.isFlagSet("-camera", &status))
+        status = argData.getFlagArgument("-camera", 0, cameraName);
+
     std::cout << std::endl;
     return MS::kSuccess;
 }
@@ -98,6 +113,10 @@ MString ProgressiveRenderCommand::cmdName("appleseedProgressiveRender");
 MSyntax ProgressiveRenderCommand::syntaxCreator()
 {
     MSyntax syntax;
+    syntax.addFlag("-c", "-camera", MSyntax::kString);
+    syntax.addFlag("-w", "-width" , MSyntax::kLong);
+    syntax.addFlag("-h", "-height", MSyntax::kLong);
+    syntax.addFlag("-a", "-action" , MSyntax::kString);
     return syntax;
 }
 
@@ -110,6 +129,59 @@ MStatus ProgressiveRenderCommand::doIt(const MArgList& args)
 {
     std::cout << "Appleseed IPR:\n";
     std::cout << "--------------\n";
+
+    MStatus status;
+    MArgDatabase argData(syntax(), args, &status);
+
+    int width = -1;
+    if (argData.isFlagSet("-width", &status))
+        status = argData.getFlagArgument("-width", 0, width);
+
+    int height = -1;
+    if (argData.isFlagSet("-height", &status))
+        status = argData.getFlagArgument("-height", 0, height);
+
+    MString cameraName;
+    if (argData.isFlagSet("-camera", &status))
+        status = argData.getFlagArgument("-camera", 0, cameraName);
+
+    MString action;
+    if (argData.isFlagSet("-action", &status))
+        status = argData.getFlagArgument("-action", 0, action);
+
+    if(action == "start")
+    {
+        // ...
+    }
+    else if(action == "stop")
+    {
+        // ...
+    }
+    else if(action == "refresh")
+    {
+        // ...
+    }
+    else if(action == "running")
+    {
+        // ...
+    }
+    else if(action == "pause")
+    {
+        // ...
+    }
+    else if(action == "region")
+    {
+        // ...
+    }
+    else if(action.length() == 0)
+    {
+        // default action here
+    }
+    else
+    {
+        MGlobal::displayError("appleseedProgressiveRender: Unknown action argument.");
+        return MS::kFailure;
+    }
 
     std::cout << std::endl;
     return MS::kSuccess;

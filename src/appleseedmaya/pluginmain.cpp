@@ -36,6 +36,7 @@
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/rendercommands.h"
 #include "appleseedmaya/renderglobalsnode.h"
+#include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/shadingnoderegistry.h"
 #include "appleseedmaya/swatchrenderer.h"
 #if MAYA_API_VERSION >= 201600
@@ -134,6 +135,11 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to register appleseed translator");
 
+    status = AppleseedSession::initialize(fnPlugin.loadPath());
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to initialize session");
+
     MGlobal::displayInfo("appleseedMaya: Registration done!");
 
     return status;
@@ -143,6 +149,11 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
 {
     MFnPlugin fnPlugin(plugin);
     MStatus status;
+
+    status = AppleseedSession::uninitialize();
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to uninitialize session");
 
 #if MAYA_API_VERSION >= 201600
     status = fnPlugin.deregisterRenderer(HypershadeRenderer::name);

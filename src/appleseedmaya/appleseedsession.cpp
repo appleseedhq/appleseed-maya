@@ -34,9 +34,13 @@
 // boost headers.
 #include "boost/filesystem/convenience.hpp"
 #include "boost/filesystem/operations.hpp"
+#include "boost/scoped_ptr.hpp"
 
 // Maya headers.
+#include <maya/MFnDependencyNode.h>
 #include <maya/MGlobal.h>
+#include <maya/MSelectionList.h>
+#include <maya/MObject.h>
 
 // appleseed.foundation headers.
 #include "foundation/platform/timers.h"
@@ -70,12 +74,64 @@ namespace bfs = boost::filesystem;
 namespace asf = foundation;
 namespace asr = renderer;
 
-asf::auto_release_ptr<AppleseedSession> AppleseedSession::createExportSession(
-    const MString& fileName)
+namespace
 {
-    MGlobal::displayInfo("Creating appleseed export session");
 
-    return asf::auto_release_ptr<AppleseedSession>(new AppleseedSession(fileName));
+// Plugin path.
+bfs::path g_pluginPath;
+
+// Global session.
+boost::scoped_ptr<AppleseedSession> g_globalSession;
+
+} // unnamed
+
+MStatus AppleseedSession::initialize(const MString& pluginPath)
+{
+    g_pluginPath = pluginPath.asChar();
+    return MS::kSuccess;
+}
+
+MStatus AppleseedSession::uninitialize()
+{
+    g_globalSession.reset();
+    return MS::kSuccess;
+}
+
+void AppleseedSession::beginProjectExport(
+    const MString& fileName,
+    const Options& options)
+{
+    assert(g_globalSession.get() == 0);
+
+    g_globalSession.reset(new AppleseedSession(fileName));
+    g_globalSession->exportScene(options);
+}
+
+void AppleseedSession::endProjectExport()
+{
+    assert(g_globalSession.get());
+}
+
+void AppleseedSession::beginFinalRender(
+    const Options& options)
+{
+    assert(g_globalSession.get() == 0);
+}
+
+void AppleseedSession::endFinalRender()
+{
+    assert(g_globalSession.get());
+}
+
+void AppleseedSession::beginProgressiveRender(
+    const Options& options)
+{
+    assert(g_globalSession.get() == 0);
+}
+
+void AppleseedSession::endProgressiveRender()
+{
+    assert(g_globalSession.get());
 }
 
 AppleseedSession::AppleseedSession()
@@ -106,12 +162,7 @@ AppleseedSession::AppleseedSession(const MString& fileName) : m_fileName(fileNam
 
 AppleseedSession::~AppleseedSession()
 {
-    MGlobal::displayInfo("Deleting appleseed session");
-}
-
-void AppleseedSession::release()
-{
-    delete this;
+    delete m_renderer;
 }
 
 void AppleseedSession::createProject()
@@ -166,4 +217,50 @@ void AppleseedSession::createProject()
     // Instance the main assembly
     asf::auto_release_ptr<asr::AssemblyInstance> assemblyInstance = asr::AssemblyInstanceFactory::create("assembly_inst", asr::ParamArray(), "assembly");
     m_project->get_scene()->assembly_instances().insert(assemblyInstance);
+}
+
+void AppleseedSession::exportScene(const Options& options)
+{
+    exportRenderGlobals(options);
+}
+
+void AppleseedSession::exportRenderGlobals(const Options& options)
+{
+    MStatus status;
+
+    MSelectionList selList;
+    selList.add("defaultRenderGlobals");
+    MObject defaultRenderGlobalsNode;
+    MFnDependencyNode defaultGlobalsDepFn;
+    if(!selList.isEmpty())
+    {
+        selList.getDependNode(0, defaultRenderGlobalsNode);
+        defaultGlobalsDepFn.setObject(defaultRenderGlobalsNode);
+    }
+
+    selList.clear();
+    selList.add("appleseedRenderGlobals");
+    MObject appleseedRenderGlobalsNode;
+    MFnDependencyNode appleseedGlobalsDepFn;
+    if(!selList.isEmpty())
+    {
+        selList.getDependNode(0, appleseedRenderGlobalsNode);
+        appleseedGlobalsDepFn.setObject(appleseedRenderGlobalsNode);
+    }
+
+    // ...
+}
+
+bool AppleseedSession::writeProject() const
+{
+    return writeProject(m_fileName.asChar());
+}
+
+bool AppleseedSession::writeProject(const char* fileName) const
+{
+    return asr::ProjectFileWriter::write(
+        *m_project,
+        fileName,
+        asr::ProjectFileWriter::OmitHandlingAssetFiles |
+        asr::ProjectFileWriter::OmitWritingGeometryFiles);
 }

@@ -33,12 +33,17 @@
 #include "boost/filesystem/path.hpp"
 
 // Maya headers.
+#include <maya/MStatus.h>
 #include <maya/MString.h>
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
 
 // appleseed.renderer headers.
+#include "renderer/api/rendering.h"
+
+// appleseed.maya headers.
+#include "appleseedmaya/renderercontroller.h"
 
 // Forward declarations.
 namespace renderer { class Project; }
@@ -48,10 +53,57 @@ class AppleseedSession
 {
   public:
 
-    static foundation::auto_release_ptr<AppleseedSession> createExportSession(
-        const MString& fileName);
+    static MStatus initialize(const MString& pluginPath);
+    static MStatus uninitialize();
 
-    virtual void release();
+    struct Options
+    {
+        Options()
+          : m_width(-1)
+          , m_height(-1)
+          , m_ipr(false)
+          , m_selectionOnly(false)
+          , m_sequence(false)
+          , m_firstFrame(0)
+          , m_lastFrame(0)
+        {
+        }
+
+        // Common options.
+        int m_width;
+        int m_height;
+        MString m_camera;
+
+        // Final render options.
+
+        // IPR options.
+        bool m_ipr;
+
+        // Export options.
+        bool m_selectionOnly;
+        bool m_sequence;
+        int m_firstFrame;
+        int m_lastFrame;
+    };
+
+    static void beginProjectExport(
+        const MString& fileName,
+        const Options& options);
+
+    static void endProjectExport();
+
+    static void beginFinalRender(
+        const Options& options);
+
+    static void endFinalRender();
+
+    static void beginProgressiveRender(
+        const Options& options);
+
+    static void endProgressiveRender();
+
+    // Destructor.
+    ~AppleseedSession();
 
   private:
 
@@ -61,19 +113,26 @@ class AppleseedSession
     // Constructor. (Scene export)
     explicit AppleseedSession(const MString& fileName);
 
-    // Destructor.
-    ~AppleseedSession();
-
     // Non-copyable
     AppleseedSession(const AppleseedSession&);
     AppleseedSession& operator=(const AppleseedSession&);
 
     void createProject();
 
+    void exportScene(const Options& options);
+
+    void exportRenderGlobals(const Options& options);
+
+    bool writeProject() const;
+    bool writeProject(const char* fileName) const;
+
     foundation::auto_release_ptr<renderer::Project> m_project;
 
     MString m_fileName;
     boost::filesystem::path m_projectPath;
+
+    renderer::MasterRenderer *m_renderer;
+    RendererController m_rendererController;
 };
 
 #endif  // !APPLESEED_MAYA_SESSION_H

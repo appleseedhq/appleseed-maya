@@ -43,6 +43,7 @@ set (appleseed_maya_sources
     appleseedmaya/pluginmain.cpp
     appleseedmaya/rendercommands.cpp
     appleseedmaya/rendercommands.h
+    appleseedmaya/renderercontroller.h
     appleseedmaya/renderglobalsnode.cpp
     appleseedmaya/renderglobalsnode.h
     appleseedmaya/shadingnode.cpp

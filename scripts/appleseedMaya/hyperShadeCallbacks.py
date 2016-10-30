@@ -95,6 +95,4 @@ def createRenderNodeCallback(postCommand, nodeType):
             return buildNodeCmd
 
 def connectNodeToNodeOverrideCallback(srcNode, destNode):
-    dn = pm.PyNode(destNode)
-    sn = pm.PyNode(srcNode)
     return 1

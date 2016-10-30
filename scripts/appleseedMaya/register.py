@@ -36,7 +36,7 @@ import maya.mel as mel
 
 # appleseedMaya imports.
 from aetemplate import appleseedAETemplateCallback
-from callbacks import *
+from hyperShadeCallbacks import *
 from extensionAttributes import addExtensionAttributes
 from logger import logger
 from renderer import createRenderMelProcedures
@@ -60,7 +60,7 @@ def register():
         renderProcedure="appleseedRenderProcedure",
         commandRenderProcedure="appleseedBatchRenderProcedure",
         batchRenderProcedure="appleseedBatchRenderProcedure",
-        cancelBatchRenderProcedure="batchRender",
+        cancelBatchRenderProcedure="appleseedCancelBatchRenderProcedure",
         renderRegionProcedure="mayaRenderRegion"
         )
 
