@@ -1,3 +1,4 @@
+
 #
 # This source file is part of appleseed.
 # Visit http://appleseedhq.net/ for additional information and resources.
@@ -25,17 +26,21 @@
 # THE SOFTWARE.
 #
 
+# Maya imports.
 import pymel.core as pm
 
 # appleseedMaya imports.
 from appleseedMaya.logger import logger
 
 
-class AEappleseedNodeTemplate(pm.ui.AETemplate):
+class AEappleseedEnvLightTemplate(pm.ui.AETemplate):
     def __init__(self, nodeName):
-        super(AEappleseedNodeTemplate, self).__init__(nodeName)
+        super(AEappleseedEnvLightTemplate, self).__init__(nodeName)
+        pm.mel.AEswatchDisplay(nodeName)
+        self.beginScrollLayout()
         self.buildBody(nodeName)
-        logger.debug("Built custom appleseed AETemplate.")
+        self.addExtraControls("ExtraControls")
+        self.endScrollLayout()
 
     def addControl(self, control, label=None, **kwargs):
         pm.ui.AETemplate.addControl(self, control, label=label, **kwargs)
@@ -44,12 +49,5 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         pm.ui.AETemplate.beginLayout(self, name, collapse=collapse)
 
     def buildBody(self, nodeName):
-        self.thisNode = pm.PyNode(nodeName)
-
-        if self.thisNode.type() == "mesh":
-            self.beginLayout("Appleseed" ,collapse=1)
-            self.addControl("as_medium_priority", label="Medium Priority")
-            self.endLayout()
-
-def appleseedAETemplateCallback(nodeName):
-    AEappleseedNodeTemplate(nodeName)
+        # todo: implement this...
+        pass

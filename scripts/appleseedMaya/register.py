@@ -28,12 +28,14 @@
 
 # Standard imports.
 import os
+import fnmatch
 
 # Maya imports.
 import pymel.core as pm
 import maya.mel as mel
 
 # appleseedMaya imports.
+from aetemplate import appleseedAETemplateCallback
 from callbacks import *
 from extensionAttributes import addExtensionAttributes
 from logger import logger
@@ -41,6 +43,8 @@ from renderer import createRenderMelProcedures
 from renderGlobals import createRenderTabsMelProcedures
 from translator import createTranslatorMelProcedures
 
+
+thisDir = os.path.normpath(os.path.dirname(__file__))
 
 def register():
     logger.info("Registering appleseed renderer.")
@@ -101,6 +105,21 @@ def register():
 
     # Extension attributes.
     addExtensionAttributes()
+
+    # AE templates.
+    pm.callbacks(
+        addCallback=appleseedAETemplateCallback,
+        hook="AETemplateCustomContent",
+        owner="appleseed")
+
+    # Manually load templates in aetemplate folder.
+    templatesDir =  os.path.join(thisDir, "aetemplate")
+    logger.debug("Registering AETemplates in %s" % templatesDir)
+    for file in os.listdir(templatesDir):
+        if fnmatch.fnmatch(file, '*template.py'):
+            templateModule = file.replace(".py", "")
+            logger.debug("Registering AE template %s" % templateModule)
+            mel.eval('python("import appleseedMaya.aetemplate.%s")' % templateModule)
 
     # Hypershader callbacks
     pm.callbacks(

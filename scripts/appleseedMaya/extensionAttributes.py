@@ -27,9 +27,31 @@
 #
 
 # Maya imports.
-import maya.mel as mel
+import maya.cmds as mc
+
+# appleseedMaya imports.
+from logger import logger
 
 
 def addExtensionAttributes():
     # todo: implement this.
-    pass
+
+    # Camera extension attributes.
+    # ...
+
+    # Light extension attributes.
+    # ...
+
+    # ...
+
+    # Mesh extension attributes.
+    mc.addExtension(
+        nodeType='mesh',
+        longName='as_medium_priority',
+        attributeType='byte',
+        defaultValue=0,
+        minValue=0,
+        category='appleseedMaya')
+    logger.debug("Added mesh extension attributes.")
+
+    # ...
