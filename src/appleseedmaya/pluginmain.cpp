@@ -34,7 +34,6 @@
 // appleseed maya headers.
 #include "appleseedmaya/appleseedtranslator.h"
 #include "appleseedmaya/config.h"
-#include "appleseedmaya/envlightnode.h"
 #include "appleseedmaya/rendercommands.h"
 #include "appleseedmaya/renderglobalsnode.h"
 #include "appleseedmaya/shadingnoderegistry.h"
@@ -42,6 +41,9 @@
 #if MAYA_API_VERSION >= 201600
     #include "appleseedmaya/hypershaderenderer.h"
 #endif
+
+// Must be last to avoid conflicts with symbols defined in X headers.
+#include "appleseedmaya/envlightnode.h"
 
 
 APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)

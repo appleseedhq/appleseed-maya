@@ -34,11 +34,12 @@ import pymel.core as pm
 import maya.mel as mel
 
 # appleseedMaya imports.
+from callbacks import *
+from extensionAttributes import addExtensionAttributes
 from logger import logger
 from renderer import createRenderMelProcedures
 from renderGlobals import createRenderTabsMelProcedures
 from translator import createTranslatorMelProcedures
-from callbacks import *
 
 
 def register():
@@ -98,44 +99,10 @@ def register():
             )
         )
 
-    # Icons.
+    # Extension attributes.
+    addExtensionAttributes()
 
-    # It seems Maya cannot find the icons using relative paths,
-    # even if XBMLANGPATH is set correctly.
-    # Find our icon in XBMLANGPATH manually.
-    appleseedIconPath = None
-    for iconPath in os.environ.get('XBMLANGPATH').split(os.pathsep):
-        if os.path.exists(os.path.join(iconPath, "appleseed.png")):
-            appleseedIconPath = os.path.join(iconPath, "appleseed.png")
-
-    if appleseedIconPath:
-        pm.renderer(
-            "appleseed",
-            edit=True,
-            logoImageName=appleseedIconPath
-        )
-
-        # This does not work (syntax error), but it works in the script window...
-        mel.eval('''
-            global proc appleseedLogoCallback()
-            {
-                // evalDeferred("showHelp -absolute \"http://appleseedhq.net\"");
-            }
-            '''
-        )
-
-        pm.renderer(
-            "appleseed",
-            edit=True,
-            logoCallbackProcedure="appleseedLogoCallback"
-        )
-    else:
-        logger.info("appleseedMaya: skipping logo registration. Logo not found")
-
-    # Translator
-    createTranslatorMelProcedures()
-
-    # Callbacks
+    # Hypershader callbacks
     pm.callbacks(
         addCallback=hyperShadePanelBuildCreateMenuCallback,
         hook="hyperShadePanelBuildCreateMenu",
@@ -160,6 +127,43 @@ def register():
         addCallback=connectNodeToNodeOverrideCallback,
         hook='connectNodeToNodeOverrideCallback',
         owner="appleseed")
+
+    # Appleseed translator.
+    createTranslatorMelProcedures()
+
+
+    # Icons.
+
+    # It seems Maya cannot find the icons using relative paths,
+    # even if XBMLANGPATH is set correctly.
+    # Find our icon in XBMLANGPATH manually.
+    appleseedIconPath = None
+    for iconPath in os.environ.get('XBMLANGPATH').split(os.pathsep):
+        if os.path.exists(os.path.join(iconPath, "appleseed.png")):
+            appleseedIconPath = os.path.join(iconPath, "appleseed.png")
+
+    if appleseedIconPath:
+        pm.renderer(
+            "appleseed",
+            edit=True,
+            logoImageName=appleseedIconPath
+        )
+
+        mel.eval('''
+            global proc appleseedLogoCallback()
+            {
+                evalDeferred("showHelp -absolute \\\"http://appleseedhq.net\\\"");
+            }
+            '''
+        )
+
+        pm.renderer(
+            "appleseed",
+            edit=True,
+            logoCallbackProcedure="appleseedLogoCallback"
+        )
+    else:
+        logger.info("appleseedMaya: skipping logo registration. Logo not found")
 
 def unregister():
     logger.info("Unregistering appleseed renderer.")

@@ -29,27 +29,7 @@
 # Maya imports.
 import maya.mel as mel
 
-def appleseedTranslatorOptions(parent, action, initialSettings, resultCallback):
-    if initialSettings:
-        pass
 
-    if action == "post":
-        pass
-    elif action == "query":
-        pass
-
-
-def createTranslatorMelProcedures():
-    mel.eval('''
-        global proc appleseedTranslatorOpts(string $parent, string $action, string $initialSettings, string $resultCallback)
-        {
-            python("from appleseedMaya.translator import appleseedTranslatorOptions");
-            string $pythonCmd = "appleseedTranslatorOptions(";
-            $pythonCmd = $pythonCmd + "\\\"" + $parent + "\\\", ";
-            $pythonCmd = $pythonCmd + "\\\"" + $action + "\\\", ";
-            $pythonCmd = $pythonCmd + "\\\"" + $initialSettings + "\\\", ";
-            $pythonCmd = $pythonCmd + "\\\"" + $resultCallback + "\\\")";
-            python($pythonCmd);
-        }
-        '''
-    )
+def addExtensionAttributes():
+    # todo: implement this.
+    pass
