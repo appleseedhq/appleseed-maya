@@ -26,34 +26,28 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDER_COMMANDS_H
-#define APPLESEED_MAYA_RENDER_COMMANDS_H
+// Interface header.
+#include "appleseedmaya/nodeexporters/meshexporter.h"
+#include "appleseedmaya/nodeexporters/nodeexporterfactory.h"
+
+// Standard headers.
 
 // Maya headers.
-#include <maya/MPxCommand.h>
 
-class FinalRenderCommand
-  : public MPxCommand
+// appleseed maya headers.
+
+
+void MeshExporter::registerExporter()
 {
-  public:
-    static MString cmdName;
+    NodeExporterFactory::registerDagNodeExporter("mesh", &MeshExporter::create);
+}
 
-    static MSyntax syntaxCreator();
-    static void* creator();
-
-    virtual MStatus doIt(const MArgList& args);
-};
-
-class ProgressiveRenderCommand
-  : public MPxCommand
+DagNodeExporter *MeshExporter::create(const MDagPath& path)
 {
-  public:
-    static MString cmdName;
+    return new MeshExporter(path);
+}
 
-    static MSyntax syntaxCreator();
-    static void* creator();
-
-    virtual MStatus doIt(const MArgList& args);
-};
-
-#endif  // !APPLESEED_MAYA_RENDER_COMMAND_H
+MeshExporter::MeshExporter(const MDagPath& path)
+  : DagNodeExporter(path)
+{
+}

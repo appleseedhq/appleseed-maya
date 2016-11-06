@@ -40,6 +40,14 @@ set (appleseed_maya_sources
     appleseedmaya/config.h
     appleseedmaya/envlightnode.cpp
     appleseedmaya/envlightnode.h
+    appleseedmaya/nodeexporters/dagnodeexporter.cpp
+    appleseedmaya/nodeexporters/dagnodeexporter.h
+    appleseedmaya/nodeexporters/meshexporter.cpp
+    appleseedmaya/nodeexporters/meshexporter.h
+    appleseedmaya/nodeexporters/nodeexporter.cpp
+    appleseedmaya/nodeexporters/nodeexporter.h
+    appleseedmaya/nodeexporters/nodeexporterfactory.cpp
+    appleseedmaya/nodeexporters/nodeexporterfactory.h
     appleseedmaya/pluginmain.cpp
     appleseedmaya/rendercommands.cpp
     appleseedmaya/rendercommands.h

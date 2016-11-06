@@ -34,15 +34,20 @@ def appleseedTranslatorOptions(parent, action, initialSettings, resultCallback):
         pass
 
     if action == "post":
+        # TODO: build UI here...
         pass
     elif action == "query":
-        pass
-
+        options = ""
+        # TODO: build options string here...
+        mel.eval('%s "%s"' % (resultCallback, options))
 
 def createTranslatorMelProcedures():
     mel.eval('''
         global proc appleseedTranslatorOpts(string $parent, string $action, string $initialSettings, string $resultCallback)
         {
+            python("from appleseedMaya.renderGlobals import createGlobalNodes");
+            python("createGlobalNodes()");
+
             python("from appleseedMaya.translator import appleseedTranslatorOptions");
             string $pythonCmd = "appleseedTranslatorOptions(";
             $pythonCmd = $pythonCmd + "\\\"" + $parent + "\\\", ";

@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016 Haggi Krey, The appleseedhq Organization
+// Copyright (c) 2016 Esteban Tovagliari, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,8 +29,12 @@
 #ifndef APPLESEED_MAYA_SESSION_H
 #define APPLESEED_MAYA_SESSION_H
 
-// boost headers.
+// Standard headers.
+
+// Boost headers.
 #include "boost/filesystem/path.hpp"
+#include "boost/ptr_container/ptr_vector.hpp"
+#include "boost/scoped_ptr.hpp"
 
 // Maya headers.
 #include <maya/MStatus.h>
@@ -43,9 +47,13 @@
 #include "renderer/api/rendering.h"
 
 // appleseed.maya headers.
+#include "appleseedmaya/nodeexporters/dagnodeexporter.h"
+#include "appleseedmaya/nodeexporters/nodeexporterfactory.h"
 #include "appleseedmaya/renderercontroller.h"
 
+
 // Forward declarations.
+class MDagPath;
 namespace renderer { class Project; }
 
 
@@ -55,6 +63,14 @@ class AppleseedSession
 
     static MStatus initialize(const MString& pluginPath);
     static MStatus uninitialize();
+
+    enum SessionMode
+    {
+        NoSession,
+        ExportSession,
+        FinalRenderSession,
+        ProgressiveRenderSession
+    };
 
     struct Options
     {
@@ -102,13 +118,10 @@ class AppleseedSession
 
     static void endProgressiveRender();
 
-    // Destructor.
-    ~AppleseedSession();
-
   private:
 
     // Constructor. (IPR or Batch)
-    AppleseedSession();
+    explicit AppleseedSession(SessionMode mode);
 
     // Constructor. (Scene export)
     explicit AppleseedSession(const MString& fileName);
@@ -121,18 +134,25 @@ class AppleseedSession
 
     void exportScene(const Options& options);
 
-    void exportRenderGlobals(const Options& options);
+    void exportGlobals(const Options& options);
+    void exportDefaultRenderGlobals(const Options& options);
+    void exportAppleseedRenderGlobals(const Options& options);
+
+    void exportDagNode(const MDagPath& path);
 
     bool writeProject() const;
-    bool writeProject(const char* fileName) const;
+
+    SessionMode m_mode;
 
     foundation::auto_release_ptr<renderer::Project> m_project;
 
     MString m_fileName;
     boost::filesystem::path m_projectPath;
 
-    renderer::MasterRenderer *m_renderer;
+    boost::scoped_ptr<renderer::MasterRenderer> m_renderer;
     RendererController m_rendererController;
+
+    boost::ptr_vector<DagNodeExporter> m_exporters;
 };
 
 #endif  // !APPLESEED_MAYA_SESSION_H

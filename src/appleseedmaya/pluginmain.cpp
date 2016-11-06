@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016 Haggi Krey, The appleseedhq Organization
+// Copyright (c) 2016 Esteban Tovagliari, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@
 // appleseed maya headers.
 #include "appleseedmaya/appleseedtranslator.h"
 #include "appleseedmaya/config.h"
+#include "appleseedmaya/nodeexporters/nodeexporterfactory.h"
 #include "appleseedmaya/rendercommands.h"
 #include "appleseedmaya/renderglobalsnode.h"
 #include "appleseedmaya/appleseedsession.h"
@@ -46,6 +47,24 @@
 // Must be last to avoid conflicts with symbols defined in X headers.
 #include "appleseedmaya/envlightnode.h"
 
+// Utility functions.
+namespace
+{
+
+MStatus executePythonCommand(const MString& cmd)
+{
+    return MGlobal::executePythonCommand(
+        cmd,
+#ifndef NDEBUG
+        true,   // show output in script editor in debug mode.
+#else
+        false,   // do not show output in script editor in release mode.
+#endif
+        false
+    );
+}
+
+} // unnamed
 
 APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
 {
@@ -94,10 +113,17 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         "appleseedMaya: failed to register render command");
 
     // Make sure that the modules we need can be imported...
-    //status = MGlobal::executePythonCommand("import appleseed", true, false);
-    //status = MGlobal::executePythonCommand("import appleseedMaya", true, false);
+    status = executePythonCommand("import appleseed");
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to import required python modules");
 
-    status = MGlobal::executePythonCommand("import appleseedMaya.register; appleseedMaya.register.register()", true, false);
+    status = executePythonCommand("import appleseedMaya");
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to import required python modules");
+
+    status = executePythonCommand("import appleseedMaya.register; appleseedMaya.register.register()");
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: failed to initialize renderer");
@@ -135,7 +161,17 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to register appleseed translator");
 
-    status = AppleseedSession::initialize(fnPlugin.loadPath());
+    MString pluginPath = fnPlugin.loadPath(&status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to get plugin path");
+
+    status = NodeExporterFactory::initialize(pluginPath);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to initialize node exporters factory");
+
+    status = AppleseedSession::initialize(pluginPath);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: failed to initialize session");
@@ -154,6 +190,11 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: failed to uninitialize session");
+
+    status = NodeExporterFactory::uninitialize();
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to uninitialize node exporters factory");
 
 #if MAYA_API_VERSION >= 201600
     status = fnPlugin.deregisterRenderer(HypershadeRenderer::name);

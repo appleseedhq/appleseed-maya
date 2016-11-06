@@ -26,34 +26,15 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDER_COMMANDS_H
-#define APPLESEED_MAYA_RENDER_COMMANDS_H
+// Interface header.
+#include "appleseedmaya/nodeexporters/dagnodeexporter.h"
+
+// Standard headers.
 
 // Maya headers.
-#include <maya/MPxCommand.h>
 
-class FinalRenderCommand
-  : public MPxCommand
+// appleseed maya headers.
+
+DagNodeExporter::DagNodeExporter(const MDagPath& path)
 {
-  public:
-    static MString cmdName;
-
-    static MSyntax syntaxCreator();
-    static void* creator();
-
-    virtual MStatus doIt(const MArgList& args);
-};
-
-class ProgressiveRenderCommand
-  : public MPxCommand
-{
-  public:
-    static MString cmdName;
-
-    static MSyntax syntaxCreator();
-    static void* creator();
-
-    virtual MStatus doIt(const MArgList& args);
-};
-
-#endif  // !APPLESEED_MAYA_RENDER_COMMAND_H
+}

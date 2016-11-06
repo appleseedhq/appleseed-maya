@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016 Haggi Krey, The appleseedhq Organization
+// Copyright (c) 2016 Esteban Tovagliari, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,9 +29,13 @@
 // Interface header.
 #include "appleseedmaya/appleseedtranslator.h"
 
+// Standard headers.
+#include <iostream>
+
 // Maya headers.
 
 // appleseed maya headers.
+#include "appleseedmaya/appleseedsession.h"
 
 
 const MString AppleseedTranslator::translatorName("appleseed");
@@ -55,7 +59,22 @@ MStatus AppleseedTranslator::writer(
     const MString&                      opts,
     MPxFileTranslator::FileAccessMode   mode)
 {
-    // TODO: implement this...
+    std::cout << "AppleseedTranslator::write called, options = " << opts << std::endl;
+
+    AppleseedSession::Options options;
+    // todo: parse opts here...
+
+    if(MPxFileTranslator::kExportAccessMode == mode)
+    {
+        options.m_selectionOnly = false;
+    }
+    else if(MPxFileTranslator::kExportActiveAccessMode == mode)
+    {
+        options.m_selectionOnly = true;
+    }
+
+    AppleseedSession::beginProjectExport(file.fullName(), options);
+    AppleseedSession::endProjectExport();
     return MS::kSuccess;
 }
 

@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016 Haggi Krey, The appleseedhq Organization
+// Copyright (c) 2016 Esteban Tovagliari, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,16 +29,19 @@
 // Interface header.
 #include "appleseedmaya/appleseedsession.h"
 
-// standard headers.
+// Standard headers.
 
-// boost headers.
+// Boost headers.
 #include "boost/filesystem/convenience.hpp"
 #include "boost/filesystem/operations.hpp"
 #include "boost/scoped_ptr.hpp"
 
 // Maya headers.
+#include <maya/MDagPath.h>
+#include <maya/MFnDagNode.h>
 #include <maya/MFnDependencyNode.h>
 #include <maya/MGlobal.h>
+#include <maya/MItDag.h>
 #include <maya/MSelectionList.h>
 #include <maya/MObject.h>
 
@@ -78,22 +81,25 @@ namespace
 {
 
 // Plugin path.
-bfs::path g_pluginPath;
+bfs::path gPluginPath;
 
 // Global session.
-boost::scoped_ptr<AppleseedSession> g_globalSession;
+boost::scoped_ptr<AppleseedSession> gGlobalSession;
+
+// Utility functions
+// ...
 
 } // unnamed
 
 MStatus AppleseedSession::initialize(const MString& pluginPath)
 {
-    g_pluginPath = pluginPath.asChar();
+    gPluginPath = pluginPath.asChar();
     return MS::kSuccess;
 }
 
 MStatus AppleseedSession::uninitialize()
 {
-    g_globalSession.reset();
+    gGlobalSession.reset();
     return MS::kSuccess;
 }
 
@@ -101,45 +107,60 @@ void AppleseedSession::beginProjectExport(
     const MString& fileName,
     const Options& options)
 {
-    assert(g_globalSession.get() == 0);
+    assert(gGlobalSession.get() == 0);
 
-    g_globalSession.reset(new AppleseedSession(fileName));
-    g_globalSession->exportScene(options);
+    // TODO: handle frame ranges here...
+    gGlobalSession.reset(new AppleseedSession(fileName));
+    gGlobalSession->exportScene(options);
+    gGlobalSession->writeProject();
 }
 
 void AppleseedSession::endProjectExport()
 {
-    assert(g_globalSession.get());
+    assert(gGlobalSession.get());
+
+    gGlobalSession.reset();
 }
 
 void AppleseedSession::beginFinalRender(
     const Options& options)
 {
-    assert(g_globalSession.get() == 0);
+    assert(gGlobalSession.get() == 0);
+
+    gGlobalSession.reset(new AppleseedSession(FinalRenderSession));
 }
 
 void AppleseedSession::endFinalRender()
 {
-    assert(g_globalSession.get());
+    assert(gGlobalSession.get());
+
+    gGlobalSession.reset();
 }
 
 void AppleseedSession::beginProgressiveRender(
     const Options& options)
 {
-    assert(g_globalSession.get() == 0);
+    assert(gGlobalSession.get() == 0);
+
+    gGlobalSession.reset(new AppleseedSession(ProgressiveRenderSession));
 }
 
 void AppleseedSession::endProgressiveRender()
 {
-    assert(g_globalSession.get());
+    assert(gGlobalSession.get());
+
+    gGlobalSession.reset();
 }
 
-AppleseedSession::AppleseedSession()
+AppleseedSession::AppleseedSession(SessionMode mode)
+  : m_mode(mode)
 {
     createProject();
 }
 
-AppleseedSession::AppleseedSession(const MString& fileName) : m_fileName(fileName)
+AppleseedSession::AppleseedSession(const MString& fileName)
+  : m_fileName(fileName)
+  , m_mode(ExportSession)
 {
     m_projectPath = bfs::path(fileName.asChar()).parent_path();
 
@@ -158,11 +179,6 @@ AppleseedSession::AppleseedSession(const MString& fileName) : m_fileName(fileNam
     // Set the project filename and add the project directory to the search paths.
     m_project->set_path(m_fileName.asChar());
     m_project->search_paths().set_root_path(m_projectPath.string().c_str());
-}
-
-AppleseedSession::~AppleseedSession()
-{
-    delete m_renderer;
 }
 
 void AppleseedSession::createProject()
@@ -197,6 +213,8 @@ void AppleseedSession::createProject()
     cfg_params->insert_path("uniform_pixel_renderer.samples", "64");
 
     // Create some basic project entities.
+
+    // Create the frame.
     asf::auto_release_ptr<asr::Frame> frame(
         asr::FrameFactory::create("beauty", asr::ParamArray().insert("resolution", "640 480")));
     m_project->set_frame(frame);
@@ -221,12 +239,25 @@ void AppleseedSession::createProject()
 
 void AppleseedSession::exportScene(const Options& options)
 {
-    exportRenderGlobals(options);
+    exportGlobals(options);
+
+    MDagPath path;
+    for(MItDag it(MItDag::kDepthFirst); !it.isDone(); it.next())
+    {
+        it.getPath(path);
+        exportDagNode(path);
+    }
 }
 
-void AppleseedSession::exportRenderGlobals(const Options& options)
+void AppleseedSession::exportGlobals(const Options& options)
 {
-    MStatus status;
+    exportDefaultRenderGlobals(options);
+    exportAppleseedRenderGlobals(options);
+}
+
+void AppleseedSession::exportDefaultRenderGlobals(const Options& options)
+{
+    std::cout << "Exporting default render globals" << std::endl;
 
     MSelectionList selList;
     selList.add("defaultRenderGlobals");
@@ -238,7 +269,14 @@ void AppleseedSession::exportRenderGlobals(const Options& options)
         defaultGlobalsDepFn.setObject(defaultRenderGlobalsNode);
     }
 
-    selList.clear();
+    // ...
+}
+
+void AppleseedSession::exportAppleseedRenderGlobals(const Options& options)
+{
+    std::cout << "Exporting appleseed render globals" << std::endl;
+
+    MSelectionList selList;
     selList.add("appleseedRenderGlobals");
     MObject appleseedRenderGlobalsNode;
     MFnDependencyNode appleseedGlobalsDepFn;
@@ -251,16 +289,33 @@ void AppleseedSession::exportRenderGlobals(const Options& options)
     // ...
 }
 
-bool AppleseedSession::writeProject() const
+void AppleseedSession::exportDagNode(const MDagPath& path)
 {
-    return writeProject(m_fileName.asChar());
+    MFnDagNode dagNodeFn(path);
+
+    // todo: test here visibility flags, intermediate objects, .., ...
+
+    DagNodeExporter *exporter = NodeExporterFactory::createDagNodeExporter(path);
+
+    if(exporter)
+    {
+        m_exporters.push_back(exporter);
+
+        std::cout << "Created exporter for node: " << path.partialPathName() << "\n";
+    }
+    else
+        std::cout << "Skipping unknown node: " << path.partialPathName() << "\n";
+
+    std::cout << "  type       = " << dagNodeFn.typeName() << "\n";
+    std::cout << "  apiTypeStr = " << path.node().apiTypeStr() << "\n";
+    std::cout << std::endl;
 }
 
-bool AppleseedSession::writeProject(const char* fileName) const
+bool AppleseedSession::writeProject() const
 {
     return asr::ProjectFileWriter::write(
         *m_project,
-        fileName,
+        m_fileName.asChar(),
         asr::ProjectFileWriter::OmitHandlingAssetFiles |
         asr::ProjectFileWriter::OmitWritingGeometryFiles);
 }

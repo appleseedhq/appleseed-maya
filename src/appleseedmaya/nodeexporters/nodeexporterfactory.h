@@ -26,34 +26,41 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDER_COMMANDS_H
-#define APPLESEED_MAYA_RENDER_COMMANDS_H
+#ifndef APPLESEED_MAYA_NODEEXPORTERS_NODEEXPORTER_FACTORY_H
+#define APPLESEED_MAYA_NODEEXPORTERS_NODEEXPORTER_FACTORY_H
+
+// Standard headers.
+#include<string>
+
+// Boost headers.
 
 // Maya headers.
-#include <maya/MPxCommand.h>
+#include <maya/MDagPath.h>
+#include <maya/MStatus.h>
+#include <maya/MString.h>
 
-class FinalRenderCommand
-  : public MPxCommand
+// appleseed.foundation headers.
+
+// appleseed.renderer headers.
+
+// Forward declarations.
+class DagNodeExporter;
+
+
+class NodeExporterFactory
 {
   public:
-    static MString cmdName;
 
-    static MSyntax syntaxCreator();
-    static void* creator();
+    typedef DagNodeExporter* (*CreateDagNodeExporterFn)(const MDagPath&);
 
-    virtual MStatus doIt(const MArgList& args);
+    static MStatus initialize(const MString& pluginPath);
+    static MStatus uninitialize();
+
+    static void registerDagNodeExporter(
+      const std::string&      mayaTypeName,
+      CreateDagNodeExporterFn createFn);
+
+    static DagNodeExporter* createDagNodeExporter(const MDagPath& path);
 };
 
-class ProgressiveRenderCommand
-  : public MPxCommand
-{
-  public:
-    static MString cmdName;
-
-    static MSyntax syntaxCreator();
-    static void* creator();
-
-    virtual MStatus doIt(const MArgList& args);
-};
-
-#endif  // !APPLESEED_MAYA_RENDER_COMMAND_H
+#endif  // !APPLESEED_MAYA_NODEEXPORTERS_NODEEXPORTER_FACTORY_H

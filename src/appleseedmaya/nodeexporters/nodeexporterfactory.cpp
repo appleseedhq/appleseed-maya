@@ -26,34 +26,59 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDER_COMMANDS_H
-#define APPLESEED_MAYA_RENDER_COMMANDS_H
+// Interface header.
+#include "appleseedmaya/nodeexporters/nodeexporterfactory.h"
+
+// Standard headers.
+#include <cassert>
+#include <map>
+#include <iostream>
 
 // Maya headers.
-#include <maya/MPxCommand.h>
+#include <maya/MFnDagNode.h>
 
-class FinalRenderCommand
-  : public MPxCommand
+// appleseed maya headers.
+#include "appleseedmaya/nodeexporters/meshexporter.h"
+
+
+namespace
 {
-  public:
-    static MString cmdName;
 
-    static MSyntax syntaxCreator();
-    static void* creator();
+typedef std::map<std::string, NodeExporterFactory::CreateDagNodeExporterFn> CreateDagExporterMapType;
+CreateDagExporterMapType gDagNodeExporters;
 
-    virtual MStatus doIt(const MArgList& args);
-};
+} // unnamed
 
-class ProgressiveRenderCommand
-  : public MPxCommand
+MStatus NodeExporterFactory::initialize(const MString& pluginPath)
 {
-  public:
-    static MString cmdName;
+    MeshExporter::registerExporter();
+    return MS::kSuccess;
+}
 
-    static MSyntax syntaxCreator();
-    static void* creator();
+MStatus NodeExporterFactory::uninitialize()
+{
+    return MS::kSuccess;
+}
 
-    virtual MStatus doIt(const MArgList& args);
-};
+void NodeExporterFactory::registerDagNodeExporter(
+    const std::string&      mayaTypeName,
+    CreateDagNodeExporterFn createFn)
+{
+    assert(createFn != 0);
 
-#endif  // !APPLESEED_MAYA_RENDER_COMMAND_H
+    gDagNodeExporters[mayaTypeName] = createFn;
+
+    std::cout << "NodeExporterFactory: registered dag node exporter for node: "
+              << mayaTypeName << std::endl;
+}
+
+DagNodeExporter* NodeExporterFactory::createDagNodeExporter(const MDagPath& path)
+{
+    MFnDagNode dagNodeFn(path);
+    CreateDagExporterMapType::const_iterator it = gDagNodeExporters.find(dagNodeFn.typeName().asChar());
+
+    if(it == gDagNodeExporters.end())
+        return 0;
+
+    return it->second(path);
+}

@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016 Haggi Krey, The appleseedhq Organization
+// Copyright (c) 2016 Esteban Tovagliari, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,29 +26,38 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_EXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_EXPORTER_H
+#ifndef APPLESEED_MAYA_NODEEXPORTERS_DAGNODEEXPORTER_H
+#define APPLESEED_MAYA_NODEEXPORTERS_DAGNODEEXPORTER_H
 
-// boost headers.
+// Boost headers.
 
 // Maya headers.
+#include <maya/MDagPath.h>
 
 // appleseed.foundation headers.
 
 // appleseed.renderer headers.
 
+// appleseed maya headers.
+#include "appleseedmaya/nodeexporters/nodeexporter.h"
+
 // Forward declarations.
 
 
-class Exporter
+class DagNodeExporter
+  : public NodeExporter
 {
   public:
+
+  protected:
+
+    explicit DagNodeExporter(const MDagPath& path);
 
   private:
 
     // Non-copyable
-    Exporter(const Exporter&);
-    Exporter& operator=(const Exporter&);
+    DagNodeExporter(const DagNodeExporter&);
+    DagNodeExporter& operator=(const DagNodeExporter&);
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_EXPORTER_H
+#endif  // !APPLESEED_MAYA_NODEEXPORTERS_DAGNODEEXPORTER_H
