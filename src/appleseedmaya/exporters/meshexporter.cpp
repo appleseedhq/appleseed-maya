@@ -27,18 +27,30 @@
 //
 
 // Interface header.
-#include "appleseedmaya/nodeexporters/nodeexporter.h"
+#include "appleseedmaya/exporters/meshexporter.h"
 
-// Standard headers.
+// appleseed.renderer headers.
+#include "renderer/api/object.h"
+#include "renderer/api/scene.h"
 
-// Maya headers.
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/exporterfactory.h"
 
-// appleseed maya headers.
 
-NodeExporter::NodeExporter()
+namespace asf = foundation;
+namespace asr = renderer;
+
+void MeshExporter::registerExporter()
 {
+    NodeExporterFactory::registerDagNodeExporter("mesh", &MeshExporter::create);
 }
 
-NodeExporter::~NodeExporter()
+DagNodeExporter *MeshExporter::create(const MDagPath& path, asr::Scene& scene)
+{
+    return new MeshExporter(path, scene);
+}
+
+MeshExporter::MeshExporter(const MDagPath& path, asr::Scene& scene)
+  : ShapeExporter(path, scene)
 {
 }

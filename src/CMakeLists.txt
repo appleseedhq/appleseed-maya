@@ -40,14 +40,20 @@ set (appleseed_maya_sources
     appleseedmaya/config.h
     appleseedmaya/envlightnode.cpp
     appleseedmaya/envlightnode.h
-    appleseedmaya/nodeexporters/dagnodeexporter.cpp
-    appleseedmaya/nodeexporters/dagnodeexporter.h
-    appleseedmaya/nodeexporters/meshexporter.cpp
-    appleseedmaya/nodeexporters/meshexporter.h
-    appleseedmaya/nodeexporters/nodeexporter.cpp
-    appleseedmaya/nodeexporters/nodeexporter.h
-    appleseedmaya/nodeexporters/nodeexporterfactory.cpp
-    appleseedmaya/nodeexporters/nodeexporterfactory.h
+    appleseedmaya/exporters/cameraexporter.cpp
+    appleseedmaya/exporters/cameraexporter.h
+    appleseedmaya/exporters/dagnodeexporter.cpp
+    appleseedmaya/exporters/dagnodeexporter.h
+    appleseedmaya/exporters/exporterfactory.cpp
+    appleseedmaya/exporters/exporterfactory.h
+    appleseedmaya/exporters/lightexporter.cpp
+    appleseedmaya/exporters/lightexporter.h
+    appleseedmaya/exporters/meshexporter.cpp
+    appleseedmaya/exporters/meshexporter.h
+    appleseedmaya/exporters/mpxnodeexporter.cpp
+    appleseedmaya/exporters/mpxnodeexporter.h
+    appleseedmaya/exporters/shapeexporter.cpp
+    appleseedmaya/exporters/shapeexporter.h
     appleseedmaya/pluginmain.cpp
     appleseedmaya/rendercommands.cpp
     appleseedmaya/rendercommands.h

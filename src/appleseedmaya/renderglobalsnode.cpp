@@ -29,7 +29,7 @@
 // Interface header.
 #include "appleseedmaya/renderglobalsnode.h"
 
-// appleseed maya headers.
+// appleseed.maya headers.
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/typeids.h"
 

@@ -31,10 +31,10 @@
 #include <maya/MFnPlugin.h>
 #include <maya/MSwatchRenderRegister.h>
 
-// appleseed maya headers.
+// appleseed.maya headers.
 #include "appleseedmaya/appleseedtranslator.h"
 #include "appleseedmaya/config.h"
-#include "appleseedmaya/nodeexporters/nodeexporterfactory.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/rendercommands.h"
 #include "appleseedmaya/renderglobalsnode.h"
 #include "appleseedmaya/appleseedsession.h"
@@ -46,6 +46,7 @@
 
 // Must be last to avoid conflicts with symbols defined in X headers.
 #include "appleseedmaya/envlightnode.h"
+
 
 // Utility functions.
 namespace

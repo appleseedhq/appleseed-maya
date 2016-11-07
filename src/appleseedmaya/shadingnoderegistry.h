@@ -43,7 +43,7 @@
 // appleseed.renderer headers.
 #include "renderer/api/shadergroup.h"
 
-// appleseed maya headers.
+// appleseed.maya headers.
 #include "appleseedmaya/shadingnodemetadata.h"
 
 

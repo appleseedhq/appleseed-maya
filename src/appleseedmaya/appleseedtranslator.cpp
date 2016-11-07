@@ -32,9 +32,7 @@
 // Standard headers.
 #include <iostream>
 
-// Maya headers.
-
-// appleseed maya headers.
+// appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
 
 

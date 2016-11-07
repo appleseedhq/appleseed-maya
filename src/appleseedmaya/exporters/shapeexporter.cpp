@@ -27,58 +27,21 @@
 //
 
 // Interface header.
-#include "appleseedmaya/nodeexporters/nodeexporterfactory.h"
+#include "appleseedmaya/exporters/shapeexporter.h"
 
-// Standard headers.
-#include <cassert>
-#include <map>
-#include <iostream>
+// appleseed.renderer headers.
+#include "renderer/api/object.h"
+#include "renderer/api/scene.h"
 
-// Maya headers.
-#include <maya/MFnDagNode.h>
-
-// appleseed maya headers.
-#include "appleseedmaya/nodeexporters/meshexporter.h"
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/exporterfactory.h"
 
 
-namespace
+namespace asf = foundation;
+namespace asr = renderer;
+
+
+ShapeExporter::ShapeExporter(const MDagPath& path, asr::Scene& scene)
+  : DagNodeExporter(path, scene)
 {
-
-typedef std::map<std::string, NodeExporterFactory::CreateDagNodeExporterFn> CreateDagExporterMapType;
-CreateDagExporterMapType gDagNodeExporters;
-
-} // unnamed
-
-MStatus NodeExporterFactory::initialize(const MString& pluginPath)
-{
-    MeshExporter::registerExporter();
-    return MS::kSuccess;
-}
-
-MStatus NodeExporterFactory::uninitialize()
-{
-    return MS::kSuccess;
-}
-
-void NodeExporterFactory::registerDagNodeExporter(
-    const std::string&      mayaTypeName,
-    CreateDagNodeExporterFn createFn)
-{
-    assert(createFn != 0);
-
-    gDagNodeExporters[mayaTypeName] = createFn;
-
-    std::cout << "NodeExporterFactory: registered dag node exporter for node: "
-              << mayaTypeName << std::endl;
-}
-
-DagNodeExporter* NodeExporterFactory::createDagNodeExporter(const MDagPath& path)
-{
-    MFnDagNode dagNodeFn(path);
-    CreateDagExporterMapType::const_iterator it = gDagNodeExporters.find(dagNodeFn.typeName().asChar());
-
-    if(it == gDagNodeExporters.end())
-        return 0;
-
-    return it->second(path);
 }

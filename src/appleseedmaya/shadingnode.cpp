@@ -33,9 +33,7 @@
 #include <maya/MFnDependencyNode.h>
 #include <maya/MFnNumericAttribute.h>
 
-// appleseed.renderer headers.
-
-// appleseed maya headers.
+// appleseed.maya headers.
 #include <appleseedmaya/shadingnoderegistry.h>
 
 

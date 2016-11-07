@@ -32,7 +32,7 @@
 // Maya headers.
 #include <maya/MFnUnitAttribute.h>
 
-// appleseed maya headers.
+// appleseed.maya headers.
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/typeids.h"
 

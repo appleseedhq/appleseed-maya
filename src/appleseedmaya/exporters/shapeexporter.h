@@ -26,71 +26,31 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SESSION_H
-#define APPLESEED_MAYA_SESSION_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
 
-// Maya headers.
-#include <maya/MStatus.h>
-#include <maya/MString.h>
+// Standard headers.
+#include<string>
+
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/dagnodeexporter.h"
+
+// Forward declarations.
+namespace renderer { class Scene; }
 
 
-class AppleseedSession
+class ShapeExporter
+  : public DagNodeExporter
 {
-  public:
+  protected:
 
-    static MStatus initialize(const MString& pluginPath);
-    static MStatus uninitialize();
+    ShapeExporter(const MDagPath& path, renderer::Scene& scene);
 
-    enum SessionMode
-    {
-        NoSession,
-        ExportSession,
-        FinalRenderSession,
-        ProgressiveRenderSession
-    };
+  private:
 
-    struct Options
-    {
-        Options()
-          : m_width(-1)
-          , m_height(-1)
-          , m_ipr(false)
-          , m_selectionOnly(false)
-        {
-        }
-
-        // Common options.
-        int m_width;
-        int m_height;
-        MString m_camera;
-
-        // Final render options.
-
-        // IPR options.
-        bool m_ipr;
-
-        // Export options.
-        bool m_selectionOnly;
-    };
-
-    static void beginProjectExport(
-        const MString& fileName,
-        const Options& options);
-
-    static void endProjectExport();
-
-    static void beginFinalRender(
-        const Options& options);
-
-    static void endFinalRender();
-
-    static void beginProgressiveRender(
-        const Options& options);
-
-    static void endProgressiveRender();
-
-    static SessionMode mode();
-    static const Options& options();
+    // Non-copyable
+    ShapeExporter(const ShapeExporter&);
+    ShapeExporter& operator=(const ShapeExporter&);
 };
 
-#endif  // !APPLESEED_MAYA_SESSION_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H

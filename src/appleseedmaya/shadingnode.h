@@ -32,9 +32,9 @@
 // Maya headers.
 #include <maya/MPxNode.h>
 
-
 // Forward declarations.
 class OSLShaderInfo;
+
 
 class ShadingNode
   : public MPxNode

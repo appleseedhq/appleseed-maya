@@ -26,15 +26,39 @@
 // THE SOFTWARE.
 //
 
-// Interface header.
-#include "appleseedmaya/nodeexporters/dagnodeexporter.h"
+#ifndef APPLESEED_MAYA_EXPORTERS_NODEEXPORTER_FACTORY_H
+#define APPLESEED_MAYA_EXPORTERS_NODEEXPORTER_FACTORY_H
 
 // Standard headers.
+#include<string>
 
 // Maya headers.
+#include <maya/MDagPath.h>
+#include <maya/MStatus.h>
+#include <maya/MString.h>
 
-// appleseed maya headers.
+// Forward declarations.
+class DagNodeExporter;
 
-DagNodeExporter::DagNodeExporter(const MDagPath& path)
+namespace renderer { class Scene; }
+
+
+class NodeExporterFactory
 {
-}
+  public:
+
+    typedef DagNodeExporter* (*CreateDagNodeExporterFn)(const MDagPath&, renderer::Scene&);
+
+    static MStatus initialize(const MString& pluginPath);
+    static MStatus uninitialize();
+
+    static void registerDagNodeExporter(
+      const std::string&      mayaTypeName,
+      CreateDagNodeExporterFn createFn);
+
+    static DagNodeExporter* createDagNodeExporter(
+      const MDagPath&   path,
+      renderer::Scene&  scene);
+};
+
+#endif  // !APPLESEED_MAYA_EXPORTERS_NODEEXPORTER_FACTORY_H

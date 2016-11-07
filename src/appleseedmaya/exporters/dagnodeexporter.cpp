@@ -26,71 +26,42 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SESSION_H
-#define APPLESEED_MAYA_SESSION_H
+// Interface header.
+#include "appleseedmaya/exporters/dagnodeexporter.h"
 
-// Maya headers.
-#include <maya/MStatus.h>
-#include <maya/MString.h>
+// appleseed.renderer headers.
+#include "renderer/api/scene.h"
 
 
-class AppleseedSession
+namespace asf = foundation;
+namespace asr = renderer;
+
+DagNodeExporter::DagNodeExporter(const MDagPath& path, asr::Scene& scene)
+  : MPxNodeExporter()
+  , m_scene(scene)
+  , m_mainAssembly(*scene.assemblies().get_by_name("assembly"))
 {
-  public:
+}
 
-    static MStatus initialize(const MString& pluginPath);
-    static MStatus uninitialize();
+asr::Scene& DagNodeExporter::scene()
+{
+    return m_scene;
+}
 
-    enum SessionMode
+asr::Assembly& DagNodeExporter::mainAssembly()
+{
+    return m_mainAssembly;
+}
+
+asf::Matrix4d DagNodeExporter::convert(const MMatrix& m) const
+{
+    asf::Matrix4d result;
+
+    for(int i = 0; i < 4; ++i)
     {
-        NoSession,
-        ExportSession,
-        FinalRenderSession,
-        ProgressiveRenderSession
-    };
+        for(int j = 0; j < 4; ++j)
+            result(i, j) = m[j][i];
+    }
 
-    struct Options
-    {
-        Options()
-          : m_width(-1)
-          , m_height(-1)
-          , m_ipr(false)
-          , m_selectionOnly(false)
-        {
-        }
-
-        // Common options.
-        int m_width;
-        int m_height;
-        MString m_camera;
-
-        // Final render options.
-
-        // IPR options.
-        bool m_ipr;
-
-        // Export options.
-        bool m_selectionOnly;
-    };
-
-    static void beginProjectExport(
-        const MString& fileName,
-        const Options& options);
-
-    static void endProjectExport();
-
-    static void beginFinalRender(
-        const Options& options);
-
-    static void endFinalRender();
-
-    static void beginProgressiveRender(
-        const Options& options);
-
-    static void endProgressiveRender();
-
-    static SessionMode mode();
-    static const Options& options();
-};
-
-#endif  // !APPLESEED_MAYA_SESSION_H
+    return result;
+}

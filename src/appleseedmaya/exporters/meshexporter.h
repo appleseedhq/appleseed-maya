@@ -26,35 +26,34 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_NODEEXPORTERS_NODEEXPORTER_H
-#define APPLESEED_MAYA_NODEEXPORTERS_NODEEXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H
 
-// Boost headers.
+// Standard headers.
+#include<string>
 
-// Maya headers.
-
-// appleseed.foundation headers.
-
-// appleseed.renderer headers.
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/shapeexporter.h"
 
 // Forward declarations.
+namespace renderer { class Scene; }
 
 
-class NodeExporter
+class MeshExporter
+  : public ShapeExporter
 {
   public:
 
-    virtual ~NodeExporter();
-
-  protected:
-
-    NodeExporter();
+    static void registerExporter();
+    static DagNodeExporter *create(const MDagPath&, renderer::Scene& scene);
 
   private:
 
+    MeshExporter(const MDagPath& path, renderer::Scene& scene);
+
     // Non-copyable
-    NodeExporter(const NodeExporter&);
-    NodeExporter& operator=(const NodeExporter&);
+    MeshExporter(const MeshExporter&);
+    MeshExporter& operator=(const MeshExporter&);
 };
 
-#endif  // !APPLESEED_MAYA_NODEEXPORTERS_NODEEXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H

@@ -26,41 +26,44 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_NODEEXPORTERS_NODEEXPORTER_FACTORY_H
-#define APPLESEED_MAYA_NODEEXPORTERS_NODEEXPORTER_FACTORY_H
-
-// Standard headers.
-#include<string>
-
-// Boost headers.
+#ifndef APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_H
 
 // Maya headers.
 #include <maya/MDagPath.h>
-#include <maya/MStatus.h>
-#include <maya/MString.h>
+#include <maya/MMatrix.h>
 
 // appleseed.foundation headers.
+#include "foundation/math/matrix.h"
 
-// appleseed.renderer headers.
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/mpxnodeexporter.h"
 
 // Forward declarations.
-class DagNodeExporter;
+namespace renderer { class Assembly; }
+namespace renderer { class Scene; }
 
 
-class NodeExporterFactory
+class DagNodeExporter
+  : public MPxNodeExporter
 {
-  public:
+  protected:
 
-    typedef DagNodeExporter* (*CreateDagNodeExporterFn)(const MDagPath&);
+    DagNodeExporter(const MDagPath& path, renderer::Scene& scene);
 
-    static MStatus initialize(const MString& pluginPath);
-    static MStatus uninitialize();
+    renderer::Scene& scene();
+    renderer::Assembly& mainAssembly();
 
-    static void registerDagNodeExporter(
-      const std::string&      mayaTypeName,
-      CreateDagNodeExporterFn createFn);
+    foundation::Matrix4d convert(const MMatrix& m) const;
 
-    static DagNodeExporter* createDagNodeExporter(const MDagPath& path);
+  private:
+
+    // Non-copyable
+    DagNodeExporter(const DagNodeExporter&);
+    DagNodeExporter& operator=(const DagNodeExporter&);
+
+    renderer::Scene&    m_scene;
+    renderer::Assembly& m_mainAssembly;
 };
 
-#endif  // !APPLESEED_MAYA_NODEEXPORTERS_NODEEXPORTER_FACTORY_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_H

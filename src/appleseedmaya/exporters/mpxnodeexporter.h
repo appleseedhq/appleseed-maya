@@ -26,28 +26,25 @@
 // THE SOFTWARE.
 //
 
-// Interface header.
-#include "appleseedmaya/nodeexporters/meshexporter.h"
-#include "appleseedmaya/nodeexporters/nodeexporterfactory.h"
-
-// Standard headers.
-
-// Maya headers.
-
-// appleseed maya headers.
+#ifndef APPLESEED_MAYA_EXPORTERS_MPXNODEEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_MPXNODEEXPORTER_H
 
 
-void MeshExporter::registerExporter()
+class MPxNodeExporter
 {
-    NodeExporterFactory::registerDagNodeExporter("mesh", &MeshExporter::create);
-}
+  public:
 
-DagNodeExporter *MeshExporter::create(const MDagPath& path)
-{
-    return new MeshExporter(path);
-}
+    virtual ~MPxNodeExporter();
 
-MeshExporter::MeshExporter(const MDagPath& path)
-  : DagNodeExporter(path)
-{
-}
+  protected:
+
+    MPxNodeExporter();
+
+  private:
+
+    // Non-copyable
+    MPxNodeExporter(const MPxNodeExporter&);
+    MPxNodeExporter& operator=(const MPxNodeExporter&);
+};
+
+#endif  // !APPLESEED_MAYA_EXPORTERS_MPXNODEEXPORTER_H

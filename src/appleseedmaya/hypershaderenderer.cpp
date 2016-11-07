@@ -29,6 +29,7 @@
 // Interface header.
 #include "appleseedmaya/hypershaderenderer.h"
 
+
 const MString HypershadeRenderer::name("appleseed");
 
 void* HypershadeRenderer::creator()

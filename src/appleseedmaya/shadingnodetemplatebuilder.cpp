@@ -36,9 +36,7 @@
 // Maya headers.
 #include <maya/MGlobal.h>
 
-// appleseed.renderer headers.
-
-// appleseed maya headers.
+// appleseed.maya headers.
 #include <appleseedmaya/shadingnoderegistry.h>
 
 
@@ -71,11 +69,3 @@ void ShadingNodeTemplateBuilder::logAETemplate() const
 {
     std::cout << m_melTemplate << std::endl;
 }
-
-/*
-global proc AEphongNodeTemplate( string $nodeName )
-{
-	AEswatchDisplay $nodeName;
-	editorTemplate -beginScrollLayout;
-}
-*/

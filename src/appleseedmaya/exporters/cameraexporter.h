@@ -26,71 +26,36 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SESSION_H
-#define APPLESEED_MAYA_SESSION_H
+#ifndef APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
 
-// Maya headers.
-#include <maya/MStatus.h>
-#include <maya/MString.h>
+// Standard headers.
+#include<string>
+
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/dagnodeexporter.h"
+
+// Forward declarations.
+namespace renderer { class Scene; }
 
 
-class AppleseedSession
+class CameraExporter
+  : public DagNodeExporter
 {
   public:
 
-    static MStatus initialize(const MString& pluginPath);
-    static MStatus uninitialize();
+    static void registerExporter();
+    static DagNodeExporter *create(const MDagPath&, renderer::Scene& scene);
 
-    enum SessionMode
-    {
-        NoSession,
-        ExportSession,
-        FinalRenderSession,
-        ProgressiveRenderSession
-    };
+  private:
 
-    struct Options
-    {
-        Options()
-          : m_width(-1)
-          , m_height(-1)
-          , m_ipr(false)
-          , m_selectionOnly(false)
-        {
-        }
+    CameraExporter(const MDagPath& path, renderer::Scene& scene);
 
-        // Common options.
-        int m_width;
-        int m_height;
-        MString m_camera;
+    // Non-copyable
+    CameraExporter(const CameraExporter&);
+    CameraExporter& operator=(const CameraExporter&);
 
-        // Final render options.
-
-        // IPR options.
-        bool m_ipr;
-
-        // Export options.
-        bool m_selectionOnly;
-    };
-
-    static void beginProjectExport(
-        const MString& fileName,
-        const Options& options);
-
-    static void endProjectExport();
-
-    static void beginFinalRender(
-        const Options& options);
-
-    static void endFinalRender();
-
-    static void beginProgressiveRender(
-        const Options& options);
-
-    static void endProgressiveRender();
-
-    static SessionMode mode();
-    static const Options& options();
+    static bool isRenderable(const MDagPath& path);
 };
 
-#endif  // !APPLESEED_MAYA_SESSION_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H

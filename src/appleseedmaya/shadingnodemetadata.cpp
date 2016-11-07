@@ -41,6 +41,7 @@
 // appleseed.renderer headers.
 #include "renderer/api/shadergroup.h"
 
+
 namespace asr = renderer;
 namespace asf = foundation;
 

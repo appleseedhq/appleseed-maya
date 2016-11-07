@@ -49,14 +49,14 @@
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
 
-// appleseed maya headers.
+// appleseed.maya headers.
 #include "appleseedmaya/shadingnode.h"
 #include "appleseedmaya/shadingnodetemplatebuilder.h"
+
 
 namespace bfs = boost::filesystem;
 namespace asr = renderer;
 namespace asf = foundation;
-
 
 namespace
 {

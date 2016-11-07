@@ -26,38 +26,14 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_NODEEXPORTERS_DAGNODEEXPORTER_H
-#define APPLESEED_MAYA_NODEEXPORTERS_DAGNODEEXPORTER_H
-
-// Boost headers.
-
-// Maya headers.
-#include <maya/MDagPath.h>
-
-// appleseed.foundation headers.
-
-// appleseed.renderer headers.
-
-// appleseed maya headers.
-#include "appleseedmaya/nodeexporters/nodeexporter.h"
-
-// Forward declarations.
+// Interface header.
+#include "appleseedmaya/exporters/mpxnodeexporter.h"
 
 
-class DagNodeExporter
-  : public NodeExporter
+MPxNodeExporter::MPxNodeExporter()
 {
-  public:
+}
 
-  protected:
-
-    explicit DagNodeExporter(const MDagPath& path);
-
-  private:
-
-    // Non-copyable
-    DagNodeExporter(const DagNodeExporter&);
-    DagNodeExporter& operator=(const DagNodeExporter&);
-};
-
-#endif  // !APPLESEED_MAYA_NODEEXPORTERS_DAGNODEEXPORTER_H
+MPxNodeExporter::~MPxNodeExporter()
+{
+}

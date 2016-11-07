@@ -38,7 +38,7 @@
 #include <maya/MSelectionList.h>
 #include <maya/MSyntax.h>
 
-// appleseed maya headers.
+// appleseed.maya headers.
 #include "appleseedmaya/config.h"
 
 
