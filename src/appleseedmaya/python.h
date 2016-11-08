@@ -33,6 +33,8 @@
 #include <maya/MStatus.h>
 #include <maya/MString.h>
 
+// Forward declarations.
+namespace renderer { class Project; }
 
 class PythonBridge
 {
@@ -40,6 +42,9 @@ class PythonBridge
 
     static MStatus initialize(const MString& pluginPath);
     static MStatus uninitialize();
+
+    static void setCurrentProject(renderer::Project *project);
+    static void clearCurrentProject();
 };
 
 #endif  // !APPLESEED_MAYA_PYTHON_H

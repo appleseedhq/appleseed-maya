@@ -33,33 +33,75 @@
 #include "appleseedmaya/python.h"
 
 // Boost headers.
-//#include "boost/python.hpp"
+#include "boost/python.hpp"
 
+// appleseed.renderer headers.
+#include "renderer/api/project.h"
 
-//namespace bpy = boost::python;
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/exporters/mpxnodeexporter.h"
+#include "appleseedmaya/exporters/dagnodeexporter.h"
+#include "appleseedmaya/exporters/shapeexporter.h"
+
+namespace bpy = boost::python;
+namespace asf = foundation;
+namespace asr = renderer;
 
 namespace
 {
+
+struct ScopedGilState
+{
+    ScopedGilState()
+    {
+        state = PyGILState_Ensure();
+    }
+
+    ~ScopedGilState()
+    {
+        PyGILState_Release(state);
+    }
+
+    PyGILState_STATE state;
+};
+
+bpy::object gAppleseedMayaNamespace;
 
 } // unnamed
 
 MStatus PythonBridge::initialize(const MString& pluginPath)
 {
-    MStatus status;
+    ScopedGilState gilState;
 
-    //bpy::object main = bpy::import("__main__");
-    //bpy::object globals = main.attr("__dict__");
+    MStatus status;
 
     try
     {
-        bpy::object main = bpy::import("__main__");
-        //bpy::object appleseedMaya = bpy::import("appleseedMaya");
-        //PyObject *po_main = PyImport_AddModule("appleseedMaya");
+        // Fetch appleseedMaya module namespace.
+        bpy::object appleseedMayaModule = bpy::import("appleseedMaya");
+        gAppleseedMayaNamespace = appleseedMayaModule.attr("__dict__");
+
+        // Expose some C++ classes to appleseedMaya...
+        // todo: add the needed wrappers to allow python subclassing.
+        gAppleseedMayaNamespace["MPxNodeExporter"] =
+            bpy::class_<MPxNodeExporter, boost::noncopyable>("MPxNodeExporter", bpy::no_init)
+                ;
+
+        gAppleseedMayaNamespace["DagNodeExporter"] =
+            bpy::class_<DagNodeExporter, bpy::bases<MPxNodeExporter>, boost::noncopyable>("DagNodeExporter", bpy::no_init)
+                ;
+
+        gAppleseedMayaNamespace["ShapeExporter"] =
+            bpy::class_<ShapeExporter, bpy::bases<DagNodeExporter>, boost::noncopyable>("ShapeExporter", bpy::no_init)
+                ;
+
+        // Init the current project global (to None).
+        gAppleseedMayaNamespace["currentProject"] = bpy::object();
     }
-    catch(...)
+    catch(const bpy::error_already_set&)
     {
         PyErr_Print();
-        PyErr_Clear();
     }
 
     return status;
@@ -69,4 +111,16 @@ MStatus PythonBridge::uninitialize()
 {
     MStatus status;
     return status;
+}
+
+void PythonBridge::setCurrentProject(renderer::Project *project)
+{
+    ScopedGilState gilState;
+    gAppleseedMayaNamespace["currentProject"] = bpy::ptr(project);
+}
+
+void PythonBridge::clearCurrentProject()
+{
+    ScopedGilState gilState;
+    gAppleseedMayaNamespace["currentProject"] = bpy::object();
 }

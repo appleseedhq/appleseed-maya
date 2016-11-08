@@ -66,6 +66,7 @@
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/python.h"
 #include "appleseedmaya/renderercontroller.h"
 
 
@@ -310,12 +311,15 @@ void AppleseedSession::beginProjectExport(
     gGlobalSession.reset(new SessionImpl(fileName, options));
     gGlobalSession->exportScene();
     gGlobalSession->writeProject();
+
+    PythonBridge::setCurrentProject(gGlobalSession->m_project.get());
 }
 
 void AppleseedSession::endProjectExport()
 {
     assert(gGlobalSession.get());
 
+    PythonBridge::clearCurrentProject();
     gGlobalSession.reset();
     MAnimControl::setCurrentTime(gSavedTime);
 }
@@ -327,12 +331,15 @@ void AppleseedSession::beginFinalRender(
 
     gSavedTime = MAnimControl::currentTime();
     gGlobalSession.reset(new SessionImpl(FinalRenderSession, options));
+
+    PythonBridge::setCurrentProject(gGlobalSession->m_project.get());
 }
 
 void AppleseedSession::endFinalRender()
 {
     assert(gGlobalSession.get());
 
+    PythonBridge::clearCurrentProject();
     gGlobalSession.reset();
     MAnimControl::setCurrentTime(gSavedTime);
 }
@@ -344,12 +351,15 @@ void AppleseedSession::beginProgressiveRender(
 
     gSavedTime = MAnimControl::currentTime();
     gGlobalSession.reset(new SessionImpl(ProgressiveRenderSession, options));
+
+    PythonBridge::setCurrentProject(gGlobalSession->m_project.get());
 }
 
 void AppleseedSession::endProgressiveRender()
 {
     assert(gGlobalSession.get());
 
+    PythonBridge::clearCurrentProject();
     gGlobalSession.reset();
     MAnimControl::setCurrentTime(gSavedTime);
 }
