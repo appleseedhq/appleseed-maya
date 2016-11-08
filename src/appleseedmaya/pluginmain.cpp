@@ -32,12 +32,13 @@
 #include <maya/MSwatchRenderRegister.h>
 
 // appleseed.maya headers.
+#include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/appleseedtranslator.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/python.h"
 #include "appleseedmaya/rendercommands.h"
 #include "appleseedmaya/renderglobalsnode.h"
-#include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/shadingnoderegistry.h"
 #include "appleseedmaya/swatchrenderer.h"
 #if MAYA_API_VERSION >= 201600
@@ -177,6 +178,11 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to initialize session");
 
+    status = PythonBridge::initialize(pluginPath);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to initialize python bridge");
+
     MGlobal::displayInfo("appleseedMaya: Registration done!");
 
     return status;
@@ -191,6 +197,11 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: failed to uninitialize session");
+
+    status = PythonBridge::uninitialize();
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to unititialize python bridge");
 
     status = NodeExporterFactory::uninitialize();
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(

@@ -67,24 +67,22 @@ if (USE_STATIC_BOOST)
     set (Boost_USE_STATIC_LIBS TRUE)
 endif ()
 
-set (BOOST_NEEDED_LIBS system thread filesystem)
+set (BOOST_NEEDED_LIBS system thread filesystem python)
 
 find_package (Boost 1.55 REQUIRED ${BOOST_NEEDED_LIBS})
 
 add_definitions (-DBOOST_FILESYSTEM_VERSION=3 -DBOOST_FILESYSTEM_NO_DEPRECATED)
-
-include_directories (SYSTEM ${Boost_INCLUDE_DIRS})
-link_directories (${Boost_LIBRARY_DIRS})
 
 
 #--------------------------------------------------------------------------------------------------
 # Find external packages.
 #--------------------------------------------------------------------------------------------------
 
-find_package (Appleseed)
-find_package (OpenGL)
+find_package (Appleseed REQUIRED)
+find_package (PythonLibs REQUIRED)
+find_package (OpenGL REQUIRED)
 
-find_package (Maya)
+find_package (Maya REQUIRED)
 message ("Maya API version = ${MAYA_API_VERSION}")
 
 
@@ -92,8 +90,12 @@ message ("Maya API version = ${MAYA_API_VERSION}")
 # Include paths.
 #--------------------------------------------------------------------------------------------------
 
-include_directories (${APPLESEED_INCLUDE_DIRS})
-include_directories (${MAYA_INCLUDE_DIRS})
+include_directories (
+    ${MAYA_INCLUDE_DIRS}
+    ${APPLESEED_INCLUDE_DIRS}
+    ${PYTHON_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
+)
 
 
 #--------------------------------------------------------------------------------------------------

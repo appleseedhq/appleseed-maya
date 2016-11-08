@@ -55,6 +55,8 @@ set (appleseed_maya_sources
     appleseedmaya/exporters/shapeexporter.cpp
     appleseedmaya/exporters/shapeexporter.h
     appleseedmaya/pluginmain.cpp
+    appleseedmaya/python.cpp
+    appleseedmaya/python.h
     appleseedmaya/rendercommands.cpp
     appleseedmaya/rendercommands.h
     appleseedmaya/renderercontroller.h
@@ -95,6 +97,7 @@ target_link_libraries (appleseedMaya
     ${APPLESEED_LIBRARIES}
     ${Boost_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
+    ${PYTHON_LIBRARIES}
 )
 
 set_target_properties (appleseedMaya PROPERTIES PREFIX "")
