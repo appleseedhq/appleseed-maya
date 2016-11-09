@@ -38,6 +38,7 @@
 #include <maya/MFnDagNode.h>
 
 // appleseed.maya headers.
+#include "appleseedmaya/exceptions.h"
 #include "appleseedmaya/exporters/cameraexporter.h"
 #include "appleseedmaya/exporters/lightexporter.h"
 #include "appleseedmaya/exporters/meshexporter.h"
@@ -87,7 +88,7 @@ DagNodeExporter* NodeExporterFactory::createDagNodeExporter(
     CreateDagExporterMapType::const_iterator it = gDagNodeExporters.find(dagNodeFn.typeName().asChar());
 
     if(it == gDagNodeExporters.end())
-        return 0;
+        throw NoExporterForNode();
 
     return it->second(path, scene);
 }

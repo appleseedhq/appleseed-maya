@@ -36,13 +36,16 @@
 #include "appleseedmaya/appleseedtranslator.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/python.h"
 #include "appleseedmaya/rendercommands.h"
 #include "appleseedmaya/renderglobalsnode.h"
 #include "appleseedmaya/shadingnoderegistry.h"
 #include "appleseedmaya/swatchrenderer.h"
 #if MAYA_API_VERSION >= 201600
     #include "appleseedmaya/hypershaderenderer.h"
+#endif
+
+#ifdef APPLESEED_MAYA_WITH_PYTHON_BRIDGE
+    #include "appleseedmaya/python.h"
 #endif
 
 // Must be last to avoid conflicts with symbols defined in X headers.
@@ -178,10 +181,12 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to initialize session");
 
+#ifdef APPLESEED_MAYA_WITH_PYTHON_BRIDGE
     status = PythonBridge::initialize(pluginPath);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: failed to initialize python bridge");
+#endif
 
     MGlobal::displayInfo("appleseedMaya: Registration done!");
 
@@ -198,10 +203,12 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to uninitialize session");
 
+#ifdef APPLESEED_MAYA_WITH_PYTHON_BRIDGE
     status = PythonBridge::uninitialize();
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: failed to unititialize python bridge");
+#endif
 
     status = NodeExporterFactory::uninitialize();
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(

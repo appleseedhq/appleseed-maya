@@ -47,6 +47,8 @@ class MeshExporter
     static void registerExporter();
     static DagNodeExporter *create(const MDagPath&, renderer::Scene& scene);
 
+    virtual void exportStatic();
+
   private:
 
     MeshExporter(const MDagPath& path, renderer::Scene& scene);

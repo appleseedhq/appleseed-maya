@@ -26,35 +26,22 @@
 // THE SOFTWARE.
 //
 
-// Interface header.
-#include "appleseedmaya/exporters/meshexporter.h"
+#ifndef APPLESEED_MAYA_UTILS_H
+#define APPLESEED_MAYA_UTILS_H
 
-// appleseed.renderer headers.
-#include "renderer/api/object.h"
-#include "renderer/api/scene.h"
+// Standard headers.
+#include <cstring>
 
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/exporterfactory.h"
+// Maya headers.
+#include <maya/MString.h>
 
 
-namespace asf = foundation;
-namespace asr = renderer;
-
-void MeshExporter::registerExporter()
+struct MStringCompareLess
 {
-    NodeExporterFactory::registerDagNodeExporter("mesh", &MeshExporter::create);
-}
+    bool operator()(const MString& a, const MString& b) const
+    {
+        return strcmp(a.asChar(), b.asChar()) < 0;
+    }
+};
 
-DagNodeExporter *MeshExporter::create(const MDagPath& path, asr::Scene& scene)
-{
-    return new MeshExporter(path, scene);
-}
-
-MeshExporter::MeshExporter(const MDagPath& path, asr::Scene& scene)
-  : ShapeExporter(path, scene)
-{
-}
-
-void MeshExporter::exportStatic()
-{
-}
+#endif  // !APPLESEED_MAYA_UTILS_H

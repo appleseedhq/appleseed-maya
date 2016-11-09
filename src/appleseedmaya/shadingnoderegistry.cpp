@@ -52,6 +52,7 @@
 // appleseed.maya headers.
 #include "appleseedmaya/shadingnode.h"
 #include "appleseedmaya/shadingnodetemplatebuilder.h"
+#include "appleseedmaya/utils.h"
 
 
 namespace bfs = boost::filesystem;
@@ -98,8 +99,8 @@ void logShader(const OSLShaderInfo& s)
     std::cout << std::endl;
 }
 
-typedef std::map<std::string, OSLShaderInfo> OSLShaderInfoMap;
-std::map<std::string, OSLShaderInfo> gShadersInfo;
+typedef std::map<MString, OSLShaderInfo, MStringCompareLess> OSLShaderInfoMap;
+OSLShaderInfoMap gShadersInfo;
 
 bool doRegisterShader(
     const bfs::path& shaderPath,
@@ -110,7 +111,7 @@ bool doRegisterShader(
     {
         OSLShaderInfo shaderInfo(query);
 
-        if(shaderInfo.mayaName.empty())
+        if(shaderInfo.mayaName.length() == 0)
         {
             std::cout << "  Skipping shader " << shaderInfo.shaderName
                       << ". No mayaName found." << std::endl;
@@ -124,7 +125,7 @@ bool doRegisterShader(
             return false;
         }
 
-        if(shaderInfo.mayaClassification.empty())
+        if(shaderInfo.mayaClassification.length() == 0)
         {
             std::cout << "  Skipping shader " << shaderInfo.shaderName
                       << ". No mayaClassification found." << std::endl;
@@ -140,14 +141,13 @@ bool doRegisterShader(
         {
             // This shader is not a builtin node or a node from other plugin.
             // Create a MPxNode for this shader.
-            MString classification(shaderInfo.mayaClassification.c_str());
             MStatus status = pluginFn.registerNode(
-                MString(shaderInfo.mayaName.c_str()),
+                shaderInfo.mayaName,
                 MTypeId(shaderInfo.typeId),
                 &ShadingNode::creator,
                 &ShadingNode::initialize,
                 MPxNode::kDependNode,
-                &classification);
+                &shaderInfo.mayaClassification);
 
             if(!status)
             {
@@ -282,7 +282,7 @@ MStatus ShadingNodeRegistry::unregisterShadingNodes(MObject plugin)
 
 const OSLShaderInfo *ShadingNodeRegistry::getShaderInfo(const MString& nodeName)
 {
-    OSLShaderInfoMap::const_iterator it = gShadersInfo.find(nodeName.asChar());
+    OSLShaderInfoMap::const_iterator it = gShadersInfo.find(nodeName);
 
     if(it == gShadersInfo.end())
         return 0;

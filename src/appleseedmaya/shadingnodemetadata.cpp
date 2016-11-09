@@ -32,7 +32,6 @@
 // Standard library headers.
 #include <cstdlib>
 #include <map>
-#include <string>
 #include <vector>
 
 // appleseed.foundation headers.
@@ -62,7 +61,7 @@ bool OSLMetadataExtractor::exists(const char *key) const
     return m_metadata.dictionaries().exist(key);
 }
 
-bool OSLMetadataExtractor::getValue(const char *key, std::string& value)
+bool OSLMetadataExtractor::getValue(const char *key, MString& value)
 {
     if(exists(key))
     {

@@ -47,6 +47,8 @@ class CameraExporter
     static void registerExporter();
     static DagNodeExporter *create(const MDagPath&, renderer::Scene& scene);
 
+    virtual void exportStatic();
+
   private:
 
     CameraExporter(const MDagPath& path, renderer::Scene& scene);

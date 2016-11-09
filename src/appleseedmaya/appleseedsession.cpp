@@ -29,11 +29,14 @@
 // Interface header.
 #include "appleseedmaya/appleseedsession.h"
 
+// Standard headers.
+#include <vector>
+
 // Boost headers.
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/convenience.hpp"
 #include "boost/filesystem/operations.hpp"
-#include "boost/ptr_container/ptr_vector.hpp"
+#include "boost/shared_ptr.hpp"
 #include "boost/scoped_ptr.hpp"
 
 // Maya headers.
@@ -64,10 +67,11 @@
 #include "renderer/api/utility.h"
 
 // appleseed.maya headers.
+#include "appleseedmaya/exceptions.h"
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/python.h"
 #include "appleseedmaya/renderercontroller.h"
+#include "appleseedmaya/utils.h"
 
 
 namespace bfs = boost::filesystem;
@@ -184,6 +188,16 @@ struct SessionImpl
         exportDefaultRenderGlobals();
         exportAppleseedRenderGlobals();
         createExporters();
+
+        // todo: collect motion blur steps here...
+
+        for (DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+        {
+            it->second->exportStatic();
+        }
+
+        // todo: for each motion step...
+        // ...
     }
 
     void exportDefaultRenderGlobals()
@@ -232,26 +246,37 @@ struct SessionImpl
 
     void createDagNodeExporter(const MDagPath& path)
     {
-        MFnDagNode dagNodeFn(path);
-
-        // todo: test here visibility flags, intermediate objects, .., ...
-
-        DagNodeExporter *exporter = NodeExporterFactory::createDagNodeExporter(
-            path,
-            *m_project->get_scene());
-
-        if(exporter)
+        if(m_dagExporters.count(path.fullPathName()) != 0)
         {
-            m_exporters.push_back(exporter);
-
-            std::cout << "Created exporter for node: " << path.partialPathName() << "\n";
+            return;
         }
-        else
-            std::cout << "Skipping unknown node: " << path.partialPathName() << "\n";
 
-        std::cout << "  type       = " << dagNodeFn.typeName() << "\n";
-        std::cout << "  apiTypeStr = " << path.node().apiTypeStr() << "\n";
-        std::cout << std::endl;
+        MFnDagNode dagNodeFn(path);
+        // todo: test here visibility flags, intermediate objects, .., ...?
+
+        try
+        {
+            DagNodeExporterPtr exporter(NodeExporterFactory::createDagNodeExporter(
+                path,
+                *m_project->get_scene())
+            );
+
+            if(exporter)
+            {
+                m_dagExporters[path.fullPathName()] = exporter;
+                std::cout << "Created exporter for node: " << path.partialPathName() << "\n";
+                std::cout << "  type       = " << dagNodeFn.typeName() << "\n";
+                std::cout << "  apiTypeStr = " << path.node().apiTypeStr() << "\n";
+                std::cout << std::endl;
+            }
+        }
+        catch(Exception& e)
+        {
+            std::cout << "Skipping unknown node: " << path.partialPathName() << "\n";
+            std::cout << "  type       = " << dagNodeFn.typeName() << "\n";
+            std::cout << "  apiTypeStr = " << path.node().apiTypeStr() << "\n";
+            std::cout << std::endl;
+        }
     }
 
     bool writeProject() const
@@ -263,6 +288,9 @@ struct SessionImpl
             asr::ProjectFileWriter::OmitWritingGeometryFiles);
     }
 
+    typedef std::map<MString, DagNodeExporterPtr, MStringCompareLess> DagExporterMap;
+
+
     AppleseedSession::SessionMode               m_mode;
     AppleseedSession::Options                   m_options;
     MTime                                       m_savedTime;
@@ -272,9 +300,10 @@ struct SessionImpl
     MString                                     m_fileName;
     bfs::path                                   m_projectPath;
 
+    DagExporterMap                              m_dagExporters;
+
     boost::scoped_ptr<asr::MasterRenderer>      m_renderer;
     RendererController                          m_rendererController;
-    boost::ptr_vector<DagNodeExporter>          m_exporters;
 };
 
 // Global session.
@@ -308,18 +337,16 @@ void AppleseedSession::beginProjectExport(
 
     gSavedTime = MAnimControl::currentTime();
 
+    // for each option...
     gGlobalSession.reset(new SessionImpl(fileName, options));
     gGlobalSession->exportScene();
     gGlobalSession->writeProject();
-
-    PythonBridge::setCurrentProject(gGlobalSession->m_project.get());
 }
 
 void AppleseedSession::endProjectExport()
 {
     assert(gGlobalSession.get());
 
-    PythonBridge::clearCurrentProject();
     gGlobalSession.reset();
     MAnimControl::setCurrentTime(gSavedTime);
 }
@@ -331,15 +358,12 @@ void AppleseedSession::beginFinalRender(
 
     gSavedTime = MAnimControl::currentTime();
     gGlobalSession.reset(new SessionImpl(FinalRenderSession, options));
-
-    PythonBridge::setCurrentProject(gGlobalSession->m_project.get());
 }
 
 void AppleseedSession::endFinalRender()
 {
     assert(gGlobalSession.get());
 
-    PythonBridge::clearCurrentProject();
     gGlobalSession.reset();
     MAnimControl::setCurrentTime(gSavedTime);
 }
@@ -351,15 +375,12 @@ void AppleseedSession::beginProgressiveRender(
 
     gSavedTime = MAnimControl::currentTime();
     gGlobalSession.reset(new SessionImpl(ProgressiveRenderSession, options));
-
-    PythonBridge::setCurrentProject(gGlobalSession->m_project.get());
 }
 
 void AppleseedSession::endProgressiveRender()
 {
     assert(gGlobalSession.get());
 
-    PythonBridge::clearCurrentProject();
     gGlobalSession.reset();
     MAnimControl::setCurrentTime(gSavedTime);
 }

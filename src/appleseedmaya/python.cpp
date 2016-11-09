@@ -85,15 +85,15 @@ MStatus PythonBridge::initialize(const MString& pluginPath)
         // Expose some C++ classes to appleseedMaya...
         // todo: add the needed wrappers to allow python subclassing.
         gAppleseedMayaNamespace["MPxNodeExporter"] =
-            bpy::class_<MPxNodeExporter, boost::noncopyable>("MPxNodeExporter", bpy::no_init)
+            bpy::class_<MPxNodeExporter, MPxNodeExporterPtr, boost::noncopyable>("MPxNodeExporter", bpy::no_init)
                 ;
 
         gAppleseedMayaNamespace["DagNodeExporter"] =
-            bpy::class_<DagNodeExporter, bpy::bases<MPxNodeExporter>, boost::noncopyable>("DagNodeExporter", bpy::no_init)
+            bpy::class_<DagNodeExporter, DagNodeExporterPtr, bpy::bases<MPxNodeExporter>, boost::noncopyable>("DagNodeExporter", bpy::no_init)
                 ;
 
         gAppleseedMayaNamespace["ShapeExporter"] =
-            bpy::class_<ShapeExporter, bpy::bases<DagNodeExporter>, boost::noncopyable>("ShapeExporter", bpy::no_init)
+            bpy::class_<ShapeExporter, ShapeExporterPtr, bpy::bases<DagNodeExporter>, boost::noncopyable>("ShapeExporter", bpy::no_init)
                 ;
 
         // Init the current project global (to None).

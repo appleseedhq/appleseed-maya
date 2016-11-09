@@ -82,6 +82,10 @@ CameraExporter::CameraExporter(const MDagPath& path, asr::Scene& scene)
     scene.cameras().insert(cam);
 }
 
+void CameraExporter::exportStatic()
+{
+}
+
 bool CameraExporter::isRenderable(const MDagPath& path)
 {
     MFnDagNode node(path);

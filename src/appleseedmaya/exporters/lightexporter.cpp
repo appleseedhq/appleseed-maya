@@ -82,3 +82,7 @@ LightExporter::LightExporter(const MDagPath& path, asr::Scene& scene)
 
     mainAssembly().lights().insert(light);
 }
+
+void LightExporter::exportStatic()
+{
+}

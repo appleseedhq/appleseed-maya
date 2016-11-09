@@ -47,6 +47,8 @@ class LightExporter
     static void registerExporter();
     static DagNodeExporter *create(const MDagPath&, renderer::Scene& scene);
 
+    virtual void exportStatic();
+
   private:
 
     LightExporter(const MDagPath& path, renderer::Scene& scene);

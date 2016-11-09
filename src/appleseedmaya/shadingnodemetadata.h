@@ -30,8 +30,10 @@
 #define APPLESEED_MAYA_SHADING_NODE_METADATA_H
 
 // Standard headers.
-#include <string>
 #include <vector>
+
+// Maya headers.
+#include <maya/MString.h>
 
 // appleseed.foundation headers.
 #include "foundation/utility/containers/dictionary.h"
@@ -47,7 +49,7 @@ class OSLMetadataExtractor
 
     bool exists(const char *key) const;
 
-    bool getValue(const char *key, std::string& value);
+    bool getValue(const char *key, MString& value);
 
     template <typename T>
     bool getValue(const char *key, T& value) const
@@ -77,14 +79,14 @@ class OSLParamInfo
     explicit OSLParamInfo(const foundation::Dictionary& paramInfo);
 
     // Query info.
-    std::string paramName;
-    std::string paramType;
+    MString paramName;
+    MString paramType;
     bool validDefault;
     //T default_value
     bool isOutput;
     bool isClosure;
     bool isStruct;
-    std::string structName;
+    MString structName;
     bool isArray;
     int arrayLen;
 
@@ -93,7 +95,7 @@ class OSLParamInfo
     // More standard metadata options...
 
     // appleseedMaya custom metadata.
-    std::string mayaAttributeName;
+    MString mayaAttributeName;
 };
 
 class OSLShaderInfo
@@ -103,11 +105,11 @@ class OSLShaderInfo
 
     explicit OSLShaderInfo(const renderer::ShaderQuery& q);
 
-    std::string shaderName;
-    std::string shaderType;
+    MString shaderName;
+    MString shaderType;
 
-    std::string mayaName;
-    std::string mayaClassification;
+    MString mayaName;
+    MString mayaClassification;
     unsigned int typeId;
 
     std::vector<OSLParamInfo> paramInfo;

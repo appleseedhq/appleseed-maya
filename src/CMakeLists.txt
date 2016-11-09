@@ -40,6 +40,8 @@ set (appleseed_maya_sources
     appleseedmaya/config.h
     appleseedmaya/envlightnode.cpp
     appleseedmaya/envlightnode.h
+    appleseedmaya/exceptions.cpp
+    appleseedmaya/exceptions.h
     appleseedmaya/exporters/cameraexporter.cpp
     appleseedmaya/exporters/cameraexporter.h
     appleseedmaya/exporters/dagnodeexporter.cpp
@@ -55,8 +57,6 @@ set (appleseed_maya_sources
     appleseedmaya/exporters/shapeexporter.cpp
     appleseedmaya/exporters/shapeexporter.h
     appleseedmaya/pluginmain.cpp
-    appleseedmaya/python.cpp
-    appleseedmaya/python.h
     appleseedmaya/rendercommands.cpp
     appleseedmaya/rendercommands.h
     appleseedmaya/renderercontroller.h
@@ -72,8 +72,18 @@ set (appleseed_maya_sources
     appleseedmaya/shadingnodetemplatebuilder.h
     appleseedmaya/swatchrenderer.cpp
     appleseedmaya/swatchrenderer.h
+    appleseedmaya/utils.cpp
+    appleseedmaya/utils.h
     appleseedmaya/version.h.in
 )
+
+if (WITH_PYTHON_BRIDGE)
+    set (appleseed_maya_sources
+        ${appleseed_maya_sources}
+        appleseedmaya/python.cpp
+        appleseedmaya/python.h
+    )
+endif ()
 
 if (${MAYA_API_VERSION} EQUAL 201600 OR ${MAYA_API_VERSION} GREATER 201600)
     set (appleseed_maya_sources

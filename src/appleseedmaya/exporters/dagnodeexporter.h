@@ -43,6 +43,9 @@
 namespace renderer { class Assembly; }
 namespace renderer { class Scene; }
 
+// Boost headers.
+#include "boost/shared_ptr.hpp"
+
 
 class DagNodeExporter
   : public MPxNodeExporter
@@ -65,5 +68,7 @@ class DagNodeExporter
     renderer::Scene&    m_scene;
     renderer::Assembly& m_mainAssembly;
 };
+
+typedef boost::shared_ptr<DagNodeExporter> DagNodeExporterPtr;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_H

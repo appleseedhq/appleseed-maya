@@ -54,7 +54,8 @@ set (appleseed_maya_version_patch    0)
 # Build options.
 #--------------------------------------------------------------------------------------------------
 
-option (USE_STATIC_BOOST "Use static Boost libraries" OFF)
+option (USE_STATIC_BOOST    "Use static Boost libraries" OFF)
+option (WITH_PYTHON_BRIDGE  "Build Python bridge"        OFF)
 
 
 #--------------------------------------------------------------------------------------------------
@@ -67,7 +68,11 @@ if (USE_STATIC_BOOST)
     set (Boost_USE_STATIC_LIBS TRUE)
 endif ()
 
-set (BOOST_NEEDED_LIBS system thread filesystem python)
+set (BOOST_NEEDED_LIBS system thread filesystem)
+
+if (WITH_PYTHON_BRIDGE)
+    set (BOOST_NEEDED_LIBS ${BOOST_NEEDED_LIBS} python)
+endif ()
 
 find_package (Boost 1.55 REQUIRED ${BOOST_NEEDED_LIBS})
 
@@ -79,12 +84,14 @@ add_definitions (-DBOOST_FILESYSTEM_VERSION=3 -DBOOST_FILESYSTEM_NO_DEPRECATED)
 #--------------------------------------------------------------------------------------------------
 
 find_package (Appleseed REQUIRED)
-find_package (PythonLibs REQUIRED)
 find_package (OpenGL REQUIRED)
 
 find_package (Maya REQUIRED)
 message ("Maya API version = ${MAYA_API_VERSION}")
 
+if (WITH_PYTHON_BRIDGE)
+    find_package (PythonLibs REQUIRED)
+endif ()
 
 #--------------------------------------------------------------------------------------------------
 # Include paths.
@@ -106,6 +113,11 @@ add_definitions (-D_BOOL)
 add_definitions (-DREQUIRE_IOSTREAM)
 add_definitions (-DAPPLESEED_WITH_OIIO)
 add_definitions (-DAPPLESEED_WITH_OSL)
+
+if (WITH_PYTHON_BRIDGE)
+    add_definitions (-DAPPLESEED_MAYA_WITH_PYTHON_BRIDGE)
+endif ()
+
 
 if (MSVC)
     add_definitions (-D_CRT_SECURE_NO_WARNINGS)

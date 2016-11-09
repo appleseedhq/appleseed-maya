@@ -32,6 +32,9 @@
 // Standard headers.
 #include<string>
 
+// Boost headers.
+#include "boost/shared_ptr.hpp"
+
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
@@ -52,5 +55,7 @@ class ShapeExporter
     ShapeExporter(const ShapeExporter&);
     ShapeExporter& operator=(const ShapeExporter&);
 };
+
+typedef boost::shared_ptr<ShapeExporter> ShapeExporterPtr;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H

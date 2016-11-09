@@ -29,12 +29,17 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_MPXNODEEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_MPXNODEEXPORTER_H
 
+// Boost headers.
+#include "boost/shared_ptr.hpp"
+
 
 class MPxNodeExporter
 {
   public:
 
     virtual ~MPxNodeExporter();
+
+    virtual void exportStatic() = 0;
 
   protected:
 
@@ -46,5 +51,7 @@ class MPxNodeExporter
     MPxNodeExporter(const MPxNodeExporter&);
     MPxNodeExporter& operator=(const MPxNodeExporter&);
 };
+
+typedef boost::shared_ptr<MPxNodeExporter> MPxNodeExporterPtr;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_MPXNODEEXPORTER_H

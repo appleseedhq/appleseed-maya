@@ -27,34 +27,12 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/meshexporter.h"
+#include "appleseedmaya/exceptions.h"
 
-// appleseed.renderer headers.
-#include "renderer/api/object.h"
-#include "renderer/api/scene.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/exporterfactory.h"
-
-
-namespace asf = foundation;
-namespace asr = renderer;
-
-void MeshExporter::registerExporter()
-{
-    NodeExporterFactory::registerDagNodeExporter("mesh", &MeshExporter::create);
-}
-
-DagNodeExporter *MeshExporter::create(const MDagPath& path, asr::Scene& scene)
-{
-    return new MeshExporter(path, scene);
-}
-
-MeshExporter::MeshExporter(const MDagPath& path, asr::Scene& scene)
-  : ShapeExporter(path, scene)
+Exception::Exception()
 {
 }
 
-void MeshExporter::exportStatic()
+NoExporterForNode::NoExporterForNode()
 {
 }
