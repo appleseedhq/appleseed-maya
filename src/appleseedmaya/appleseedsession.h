@@ -54,8 +54,8 @@ class AppleseedSession
         Options()
           : m_width(-1)
           , m_height(-1)
-          , m_ipr(false)
           , m_selectionOnly(false)
+          , m_sequence(false)
         {
         }
 
@@ -63,14 +63,18 @@ class AppleseedSession
         int m_width;
         int m_height;
         MString m_camera;
+        bool m_selectionOnly;
 
         // Final render options.
+        // ...
 
         // IPR options.
-        bool m_ipr;
+        // ...
 
-        // Export options.
-        bool m_selectionOnly;
+        // Project export options.
+        bool m_sequence;
+        int m_firstFrame;
+        int m_lastFrame;
     };
 
     static void beginProjectExport(

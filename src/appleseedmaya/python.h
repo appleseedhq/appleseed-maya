@@ -36,6 +36,7 @@
 // Forward declarations.
 namespace renderer { class Project; }
 
+
 class PythonBridge
 {
   public:

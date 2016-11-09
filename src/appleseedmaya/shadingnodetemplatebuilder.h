@@ -29,21 +29,26 @@
 #ifndef APPLESEED_MAYA_SHADING_NODE_TEMPLATE_BUILDER_H
 #define APPLESEED_MAYA_SHADING_NODE_TEMPLATE_BUILDER_H
 
-// Standard includes.
-#include <string>
-
 // Maya headers.
 #include <maya/MStatus.h>
+#include <maya/MString.h>
 
 // Forward declarations.
 class OSLShaderInfo;
 
 
+//
+// ShadingNodeTemplateBuilder.
+// Builds a Mel template for a shading node from shaders metadata.
+//
+
 class ShadingNodeTemplateBuilder
 {
   public:
+    // Constructor.
     explicit ShadingNodeTemplateBuilder(const OSLShaderInfo& shaderInfo);
 
+    // Register a Mel template with Maya.
     MStatus registerAETemplate() const;
 
     // For debugging.
@@ -55,7 +60,7 @@ class ShadingNodeTemplateBuilder
     ShadingNodeTemplateBuilder(const ShadingNodeTemplateBuilder&);
     ShadingNodeTemplateBuilder& operator=(const ShadingNodeTemplateBuilder&);
 
-    std::string m_melTemplate;
+    MString m_melTemplate;
 };
 
 #endif  // !APPLESEED_MAYA_SHADAPPLESEED_MAYA_SHADING_NODE_TEMPLATE_BUILDER_HING_NODE_H

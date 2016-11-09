@@ -32,6 +32,9 @@
 // Boost headers.
 #include "boost/shared_ptr.hpp"
 
+//
+// MPxNodeExporter.
+//
 
 class MPxNodeExporter
 {

@@ -30,6 +30,11 @@
 #define APPLESEED_MAYA_TYPEIDS_H
 
 
+//
+// Maya typeids assigned to appleseedhq.
+// Everytime a new appleseed Maya node is added, the enum should be updated.
+//
+
 enum AppleseedMayaTypeIds
 {
     FirstTypeId = 0x001279c0,

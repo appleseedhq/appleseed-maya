@@ -35,6 +35,7 @@
 // Maya headers.
 #include <maya/MStatus.h>
 
+
 class Exception
   : public std::exception
 {

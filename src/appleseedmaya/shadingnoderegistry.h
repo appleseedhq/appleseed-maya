@@ -29,10 +29,6 @@
 #ifndef APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
 #define APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
 
-// Standard headers.
-#include <string>
-#include <vector>
-
 // Maya headers.
 #include <maya/MObject.h>
 #include <maya/MStatus.h>
@@ -47,6 +43,10 @@
 #include "appleseedmaya/shadingnodemetadata.h"
 
 
+//
+// ShadingNodeRegistry.
+//
+
 class ShadingNodeRegistry
 {
   public:
@@ -57,7 +57,6 @@ class ShadingNodeRegistry
     static const OSLShaderInfo *getShaderInfo(const MString& nodeName);
 
   private:
-
     // Non-copyable.
     ShadingNodeRegistry(const ShadingNodeRegistry&);
     ShadingNodeRegistry& operator=(const ShadingNodeRegistry&);

@@ -36,6 +36,11 @@
 #include <maya/MString.h>
 
 
+//
+// Function object class for MString less-than comparison.
+// Used in maps as a compare predicate, to avoid MString <-> std::string copies.
+//
+
 struct MStringCompareLess
 {
     bool operator()(const MString& a, const MString& b) const

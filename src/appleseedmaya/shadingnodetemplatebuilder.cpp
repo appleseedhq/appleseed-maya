@@ -57,12 +57,12 @@ ShadingNodeTemplateBuilder::ShadingNodeTemplateBuilder(const OSLShaderInfo& shad
 	ss << "    editorTemplate -endScrollLayout;\n";
     ss << "}\n";
 
-    m_melTemplate = ss.str();
+    m_melTemplate = ss.str().c_str();
 }
 
 MStatus ShadingNodeTemplateBuilder::registerAETemplate() const
 {
-    return MGlobal::executeCommand(m_melTemplate.c_str());
+    return MGlobal::executeCommand(m_melTemplate);
 }
 
 void ShadingNodeTemplateBuilder::logAETemplate() const
