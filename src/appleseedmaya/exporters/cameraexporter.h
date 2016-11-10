@@ -35,6 +35,9 @@
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
+// appleseed.renderer headers.
+#include "renderer/api/camera.h"
+
 // Forward declarations.
 namespace renderer { class Scene; }
 
@@ -47,17 +50,19 @@ class CameraExporter
     static void registerExporter();
     static DagNodeExporter *create(const MDagPath&, renderer::Scene& scene);
 
-    virtual void exportStatic();
+    virtual void createEntity();
+
+    virtual void exportCameraMotionStep(float time);
+
+    virtual void flushEntity();
 
   private:
 
     CameraExporter(const MDagPath& path, renderer::Scene& scene);
 
-    // Non-copyable
-    CameraExporter(const CameraExporter&);
-    CameraExporter& operator=(const CameraExporter&);
-
     static bool isRenderable(const MDagPath& path);
+
+    foundation::auto_release_ptr<renderer::Camera> m_camera;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H

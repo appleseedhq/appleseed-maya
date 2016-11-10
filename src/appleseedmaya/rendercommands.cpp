@@ -54,7 +54,7 @@ MObject getAppleseedGlobalsNode()
 
     // Attempt to add the given name to the selection list,
     // then get the corresponding dependency node handle.
-    if (!list.add(name) || !list.getDependNode(0, obj))
+    if(!list.add(name) || !list.getDependNode(0, obj))
         return MObject();
 
     // Successful.
@@ -93,15 +93,15 @@ MStatus FinalRenderCommand::doIt(const MArgList& args)
     MArgDatabase argData(syntax(), args, &status);
 
     int width = -1;
-    if (argData.isFlagSet("-width", &status))
+    if(argData.isFlagSet("-width", &status))
         status = argData.getFlagArgument("-width", 0, width);
 
     int height = -1;
-    if (argData.isFlagSet("-height", &status))
+    if(argData.isFlagSet("-height", &status))
         status = argData.getFlagArgument("-height", 0, height);
 
     MString cameraName;
-    if (argData.isFlagSet("-camera", &status))
+    if(argData.isFlagSet("-camera", &status))
         status = argData.getFlagArgument("-camera", 0, cameraName);
 
     std::cout << std::endl;
@@ -134,19 +134,19 @@ MStatus ProgressiveRenderCommand::doIt(const MArgList& args)
     MArgDatabase argData(syntax(), args, &status);
 
     int width = -1;
-    if (argData.isFlagSet("-width", &status))
+    if(argData.isFlagSet("-width", &status))
         status = argData.getFlagArgument("-width", 0, width);
 
     int height = -1;
-    if (argData.isFlagSet("-height", &status))
+    if(argData.isFlagSet("-height", &status))
         status = argData.getFlagArgument("-height", 0, height);
 
     MString cameraName;
-    if (argData.isFlagSet("-camera", &status))
+    if(argData.isFlagSet("-camera", &status))
         status = argData.getFlagArgument("-camera", 0, cameraName);
 
     MString action;
-    if (argData.isFlagSet("-action", &status))
+    if(argData.isFlagSet("-action", &status))
         status = argData.getFlagArgument("-action", 0, action);
 
     if(action == "start")

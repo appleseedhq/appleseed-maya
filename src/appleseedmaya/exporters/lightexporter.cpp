@@ -33,7 +33,6 @@
 #include <maya/MFnDagNode.h>
 
 // appleseed.renderer headers.
-#include "renderer/api/light.h"
 #include "renderer/api/scene.h"
 
 // appleseed.maya headers.
@@ -58,11 +57,15 @@ DagNodeExporter *LightExporter::create(const MDagPath& path, asr::Scene& scene)
 LightExporter::LightExporter(const MDagPath& path, asr::Scene& scene)
   : DagNodeExporter(path, scene)
 {
+}
+
+void LightExporter::createEntity()
+{
     asr::LightFactoryRegistrar lightFactories;
     const asr::ILightFactory *lightFactory = 0;
     asr::ParamArray lightParams;
 
-    MFnDagNode dagNodeFn(path);
+    MFnDagNode dagNodeFn(dagPath());
 
     if(dagNodeFn.typeName() == "directionalLight")
     {
@@ -77,12 +80,14 @@ LightExporter::LightExporter(const MDagPath& path, asr::Scene& scene)
         lightFactory = lightFactories.lookup("directional_light");
     }
 
-    asf::auto_release_ptr<asr::Light> light(
-        lightFactory->create(path.fullPathName().asChar(), lightParams));
-
-    mainAssembly().lights().insert(light);
+    m_light = lightFactory->create(appleseedName().asChar(), lightParams);
 }
 
-void LightExporter::exportStatic()
+void LightExporter::exportTransformMotionStep(float time)
 {
+}
+
+void LightExporter::flushEntity()
+{
+    mainAssembly().lights().insert(m_light);
 }

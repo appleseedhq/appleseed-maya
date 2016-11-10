@@ -38,11 +38,15 @@
 // appleseed.foundation headers.
 #include "foundation/utility/containers/dictionary.h"
 
+// appleseed.maya headers.
+#include "appleseedmaya/utils.h"
+
 // Forward declarations.
 namespace renderer { class ShaderQuery; }
 
 
 class OSLMetadataExtractor
+  : NonCopyable
 {
   public:
     explicit OSLMetadataExtractor(const foundation::Dictionary& metadata);
@@ -65,11 +69,6 @@ class OSLMetadataExtractor
     }
 
   private:
-
-    // Non-copyable.
-    OSLMetadataExtractor(const OSLMetadataExtractor&);
-    OSLMetadataExtractor& operator=(const OSLMetadataExtractor&);
-
     const foundation::Dictionary& m_metadata;
 };
 

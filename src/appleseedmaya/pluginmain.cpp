@@ -139,7 +139,7 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to register shading nodes");
 
-    if (MGlobal::mayaState() != MGlobal::kBatch)
+    if(MGlobal::mayaState() != MGlobal::kBatch)
     {
         status = MSwatchRenderRegister::registerSwatchRender(SwatchRenderer::name, SwatchRenderer::creator);
         APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
@@ -222,7 +222,7 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
         "appleseedMaya: failed to deregister hypershade renderer");
 #endif
 
-    if (MGlobal::mayaState() != MGlobal::kBatch)
+    if(MGlobal::mayaState() != MGlobal::kBatch)
     {
         status = MSwatchRenderRegister::unregisterSwatchRender(SwatchRenderer::name);
         APPLESEED_MAYA_CHECK_MSTATUS_MSG(

@@ -33,6 +33,9 @@
 #include <maya/MStatus.h>
 #include <maya/MString.h>
 
+// appleseed.maya headers.
+#include "appleseedmaya/utils.h"
+
 // Forward declarations.
 class OSLShaderInfo;
 
@@ -43,6 +46,7 @@ class OSLShaderInfo;
 //
 
 class ShadingNodeTemplateBuilder
+  : NonCopyable
 {
   public:
     // Constructor.
@@ -56,11 +60,7 @@ class ShadingNodeTemplateBuilder
 
   private:
 
-    // Non-copyable.
-    ShadingNodeTemplateBuilder(const ShadingNodeTemplateBuilder&);
-    ShadingNodeTemplateBuilder& operator=(const ShadingNodeTemplateBuilder&);
-
     MString m_melTemplate;
 };
 
-#endif  // !APPLESEED_MAYA_SHADAPPLESEED_MAYA_SHADING_NODE_TEMPLATE_BUILDER_HING_NODE_H
+#endif  // !APPLESEED_MAYA_SHADING_NODE_TEMPLATE_BUILDER_H

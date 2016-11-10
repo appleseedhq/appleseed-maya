@@ -32,27 +32,44 @@
 // Boost headers.
 #include "boost/shared_ptr.hpp"
 
+// Maya headers.
+#include <maya/MObject.h>
+#include <maya/MString.h>
+
+// appleseed.maya headers.
+#include "appleseedmaya/utils.h"
+
+// Fordward declarations.
+class MotionBlurTimes;
+
 //
 // MPxNodeExporter.
 //
 
 class MPxNodeExporter
+  : NonCopyable
 {
   public:
 
     virtual ~MPxNodeExporter();
 
-    virtual void exportStatic() = 0;
+    virtual MString appleseedName() const;
+
+    virtual void collectMotionBlurSteps(MotionBlurTimes& motionTimes) const;
+
+    virtual void createEntity() = 0;
+
+    virtual void exportCameraMotionStep(float time);
+    virtual void exportTransformMotionStep(float time);
+    virtual void exportShapeMotionStep(float time);
+
+    virtual void flushEntity() = 0;
 
   protected:
 
-    MPxNodeExporter();
+    explicit MPxNodeExporter(const MObject& object);
 
-  private:
-
-    // Non-copyable
-    MPxNodeExporter(const MPxNodeExporter&);
-    MPxNodeExporter& operator=(const MPxNodeExporter&);
+    MObject m_object;
 };
 
 typedef boost::shared_ptr<MPxNodeExporter> MPxNodeExporterPtr;

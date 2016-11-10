@@ -5,7 +5,7 @@
 #
 # This software is released under the MIT license.
 #
-# Copyright (c) 2016 Haggi Krey, The appleseedhq Organization
+# Copyright (c) 2016 Esteban Tovagliari, The appleseedhq Organization
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -77,6 +77,7 @@ endif ()
 find_package (Boost 1.55 REQUIRED ${BOOST_NEEDED_LIBS})
 
 add_definitions (-DBOOST_FILESYSTEM_VERSION=3 -DBOOST_FILESYSTEM_NO_DEPRECATED)
+add_definitions (-DBOOST_ALL_NO_LIB)
 
 
 #--------------------------------------------------------------------------------------------------
@@ -117,7 +118,6 @@ add_definitions (-DAPPLESEED_WITH_OSL)
 if (WITH_PYTHON_BRIDGE)
     add_definitions (-DAPPLESEED_MAYA_WITH_PYTHON_BRIDGE)
 endif ()
-
 
 if (MSVC)
     add_definitions (-D_CRT_SECURE_NO_WARNINGS)

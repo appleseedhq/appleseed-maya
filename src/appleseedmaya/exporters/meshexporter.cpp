@@ -29,9 +29,8 @@
 // Interface header.
 #include "appleseedmaya/exporters/meshexporter.h"
 
-// appleseed.renderer headers.
-#include "renderer/api/object.h"
-#include "renderer/api/scene.h"
+// Standard headers.
+#include <iostream>
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/exporterfactory.h"
@@ -55,6 +54,38 @@ MeshExporter::MeshExporter(const MDagPath& path, asr::Scene& scene)
 {
 }
 
-void MeshExporter::exportStatic()
+void MeshExporter::createEntity()
 {
+    m_mesh = asr::MeshObjectFactory::create(appleseedName().asChar(), asr::ParamArray());
+    m_mesh->push_material_slot("default");
+}
+
+void MeshExporter::exportShapeMotionStep(float time)
+{
+}
+
+void MeshExporter::flushEntity()
+{
+    ShapeExporter::flushEntity();
+
+    const MString objectInstanceName = appleseedName() + MString("_instance");
+
+    asf::StringDictionary materials;
+    //materials.insert("default", g_defaultMaterialName);
+
+    asf::auto_release_ptr<asr::ObjectInstance> meshInstance;
+    meshInstance = asr::ObjectInstanceFactory::create(
+        objectInstanceName.asChar(),
+        asr::ParamArray(),
+        m_mesh->get_name(),
+        m_transformSequence.get_earliest_transform(),
+        materials,
+        materials);
+
+    std::cout << "Flushing mesh: " << m_mesh->get_name() << std::endl;
+    mainAssembly().objects().insert(
+        asf::auto_release_ptr<asr::Object>(m_mesh.release()));
+
+    std::cout << "Flushing instance: " << objectInstanceName << std::endl;
+    mainAssembly().object_instances().insert(meshInstance);
 }

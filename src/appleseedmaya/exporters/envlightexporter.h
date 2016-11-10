@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_ENV_LIGHTEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_ENV_LIGHTEXPORTER_H
 
 // Standard headers.
 #include<string>
@@ -36,13 +36,13 @@
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
 // appleseed.renderer headers.
-#include "renderer/api/light.h"
+#include "renderer/api/environmentedf.h"
 
 // Forward declarations.
 namespace renderer { class Scene; }
 
 
-class LightExporter
+class EnvLightExporter
   : public DagNodeExporter
 {
   public:
@@ -58,9 +58,9 @@ class LightExporter
 
   private:
 
-    LightExporter(const MDagPath& path, renderer::Scene& scene);
+    EnvLightExporter(const MDagPath& path, renderer::Scene& scene);
 
-    foundation::auto_release_ptr<renderer::Light> m_light;
+    foundation::auto_release_ptr<renderer::EnvironmentEDF> m_envLight;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_ENV_LIGHTEXPORTER_H

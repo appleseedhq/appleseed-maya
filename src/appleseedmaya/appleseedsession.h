@@ -29,12 +29,29 @@
 #ifndef APPLESEED_MAYA_SESSION_H
 #define APPLESEED_MAYA_SESSION_H
 
+// Standard headers.
+#include<set>
+
 // Maya headers.
 #include <maya/MStatus.h>
 #include <maya/MString.h>
 
+// appleseed.maya headers.
+#include "appleseedmaya/utils.h"
+
+
+struct MotionBlurTimes
+{
+    std::set<float> m_cameraTimes;
+    std::set<float> m_transformTimes;
+    std::set<float> m_deformTimes;
+
+    std::set<float> m_allTimes;
+};
+
 
 class AppleseedSession
+  : NonCopyable
 {
   public:
 

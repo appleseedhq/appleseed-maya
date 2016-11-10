@@ -39,9 +39,12 @@
 #include "boost/filesystem.hpp"
 
 // Maya headers.
+
+#define MNoPluginEntry
 #define MNoVersionString
-#include <maya/MFnDependencyNode.h>
 #include <maya/MFnPlugin.h>
+
+#include <maya/MFnDependencyNode.h>
 #include <maya/MGlobal.h>
 #include <maya/MPxNode.h>
 #include <maya/MTypeId.h>
@@ -180,7 +183,7 @@ bool registerShader(
 {
     try
     {
-        doRegisterShader(shaderPath, pluginFn, query);
+        return doRegisterShader(shaderPath, pluginFn, query);
     }
     catch(const asf::StringException& e)
     {
@@ -196,6 +199,8 @@ bool registerShader(
     {
         std::cout << "Unknown exception while querying " << shaderPath << std::endl;
     }
+
+    return false;
 }
 
 void registerShadersInDirectory(
@@ -269,7 +274,7 @@ MStatus ShadingNodeRegistry::unregisterShadingNodes(MObject plugin)
 
     MGlobal::displayInfo("appleseed: Unregistering shading nodes...");
 
-    for (OSLShaderInfoMap::const_iterator it = gShadersInfo.begin(), e = gShadersInfo.end(); it != e; ++it)
+    for(OSLShaderInfoMap::const_iterator it = gShadersInfo.begin(), e = gShadersInfo.end(); it != e; ++it)
     {
         const OSLShaderInfo& shaderInfo(it->second);
 

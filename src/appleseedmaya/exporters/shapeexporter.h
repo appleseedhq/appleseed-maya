@@ -35,6 +35,9 @@
 // Boost headers.
 #include "boost/shared_ptr.hpp"
 
+// appleseed.renderer headers.
+#include "renderer/api/utility.h"
+
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
@@ -45,15 +48,17 @@ namespace renderer { class Scene; }
 class ShapeExporter
   : public DagNodeExporter
 {
+  public:
+
+    virtual void exportTransformMotionStep(float time);
+
+    virtual void flushEntity() = 0;
+
   protected:
 
     ShapeExporter(const MDagPath& path, renderer::Scene& scene);
 
-  private:
-
-    // Non-copyable
-    ShapeExporter(const ShapeExporter&);
-    ShapeExporter& operator=(const ShapeExporter&);
+    renderer::TransformSequence m_transformSequence;
 };
 
 typedef boost::shared_ptr<ShapeExporter> ShapeExporterPtr;

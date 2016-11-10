@@ -41,6 +41,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/shadingnodemetadata.h"
+#include "appleseedmaya/utils.h"
 
 
 //
@@ -48,6 +49,7 @@
 //
 
 class ShadingNodeRegistry
+  : NonCopyable
 {
   public:
 
@@ -55,11 +57,6 @@ class ShadingNodeRegistry
     static MStatus unregisterShadingNodes(MObject plugin);
 
     static const OSLShaderInfo *getShaderInfo(const MString& nodeName);
-
-  private:
-    // Non-copyable.
-    ShadingNodeRegistry(const ShadingNodeRegistry&);
-    ShadingNodeRegistry& operator=(const ShadingNodeRegistry&);
 };
 
 #endif  // !APPLESEED_MAYA_SHADING_NODE_REGISTRY_H

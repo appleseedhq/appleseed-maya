@@ -26,41 +26,46 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H
+// Interface header.
+#include "appleseedmaya/exporters/envlightexporter.h"
 
-// Standard headers.
-#include<string>
-
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/dagnodeexporter.h"
+// Maya headers.
+#include <maya/MFnDagNode.h>
 
 // appleseed.renderer headers.
-#include "renderer/api/light.h"
+#include "renderer/api/scene.h"
 
-// Forward declarations.
-namespace renderer { class Scene; }
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/envlightnode.h"
 
 
-class LightExporter
-  : public DagNodeExporter
+namespace asf = foundation;
+namespace asr = renderer;
+
+void EnvLightExporter::registerExporter()
 {
-  public:
+    NodeExporterFactory::registerDagNodeExporter(EnvLightNode::nodeName, &EnvLightExporter::create);
+}
 
-    static void registerExporter();
-    static DagNodeExporter *create(const MDagPath&, renderer::Scene& scene);
+DagNodeExporter *EnvLightExporter::create(const MDagPath& path, asr::Scene& scene)
+{
+    return new EnvLightExporter(path, scene);
+}
 
-    virtual void createEntity();
+EnvLightExporter::EnvLightExporter(const MDagPath& path, asr::Scene& scene)
+  : DagNodeExporter(path, scene)
+{
+}
 
-    virtual void exportTransformMotionStep(float time);
+void EnvLightExporter::createEntity()
+{
+}
 
-    virtual void flushEntity();
+void EnvLightExporter::exportTransformMotionStep(float time)
+{
+}
 
-  private:
-
-    LightExporter(const MDagPath& path, renderer::Scene& scene);
-
-    foundation::auto_release_ptr<renderer::Light> m_light;
-};
-
-#endif  // !APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H
+void EnvLightExporter::flushEntity()
+{
+}

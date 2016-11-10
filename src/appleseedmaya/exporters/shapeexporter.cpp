@@ -29,19 +29,24 @@
 // Interface header.
 #include "appleseedmaya/exporters/shapeexporter.h"
 
-// appleseed.renderer headers.
-#include "renderer/api/object.h"
-#include "renderer/api/scene.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/exporterfactory.h"
-
 
 namespace asf = foundation;
 namespace asr = renderer;
 
-
 ShapeExporter::ShapeExporter(const MDagPath& path, asr::Scene& scene)
   : DagNodeExporter(path, scene)
 {
+}
+
+void ShapeExporter::exportTransformMotionStep(float time)
+{
+    asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
+    asf::Matrix4d invM = convert(dagPath().inclusiveMatrixInverse());
+    asf::Transformd xform(m, invM);
+    m_transformSequence.set_transform(0.0, xform);
+}
+
+void ShapeExporter::flushEntity()
+{
+    m_transformSequence.optimize();
 }

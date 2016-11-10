@@ -54,6 +54,10 @@ class DagNodeExporter
 
     DagNodeExporter(const MDagPath& path, renderer::Scene& scene);
 
+    const MDagPath& dagPath() const;
+
+    virtual MString appleseedName() const;
+
     renderer::Scene& scene();
     renderer::Assembly& mainAssembly();
 
@@ -61,12 +65,10 @@ class DagNodeExporter
 
   private:
 
-    // Non-copyable
-    DagNodeExporter(const DagNodeExporter&);
-    DagNodeExporter& operator=(const DagNodeExporter&);
+    MDagPath                    m_path;
+    renderer::Scene&            m_scene;
+    renderer::Assembly&         m_mainAssembly;
 
-    renderer::Scene&    m_scene;
-    renderer::Assembly& m_mainAssembly;
 };
 
 typedef boost::shared_ptr<DagNodeExporter> DagNodeExporterPtr;

@@ -70,7 +70,7 @@ void ShadingNode::postConstructor()
     numAttrFn.setWritable(false);
     depNodeFn.addAttribute(outColor, MFnDependencyNode::kLocalDynamicAttr);
 
-    for (size_t i = 0, e = m_shaderInfo->paramInfo.size(); i < e; ++i)
+    for(size_t i = 0, e = m_shaderInfo->paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& p = m_shaderInfo->paramInfo[i];
 
@@ -122,7 +122,7 @@ void ShadingNode::postConstructor()
     MFnNumericAttribute nAttr;
     // more FnAttribute types here...
 
-    for (size_t i = 0, e = it->second.paramInfo.size(); i < e; ++i)
+    for(size_t i = 0, e = it->second.paramInfo.size(); i < e; ++i)
     {
         const asf::Dictionary& pinfo = it->second.paramInfo[i];
 
@@ -131,7 +131,7 @@ void ShadingNode::postConstructor()
 
         MObject attr;
 
-        if (isClosure)
+        if(isClosure)
         {
             // ...
             continue;
@@ -141,17 +141,17 @@ void ShadingNode::postConstructor()
         const bool validDefault = pinfo.get<bool>("validdefault");
         const bool isOutput = pinfo.get<bool>("isoutput");
 
-        if (type == "float")
+        if(type == "float")
         {
             attr = nAttr.create(name.c_str(), name.c_str(), MFnNumericData::kFloat, 0.0);
 
-            if (validDefault)
+            if(validDefault)
             {
                 const double defaultValue = pinfo.get<double>("default");
                 nAttr.setDefault(defaultValue);
             }
 
-            if (isOutput)
+            if(isOutput)
             {
 
             }
@@ -167,7 +167,7 @@ void ShadingNode::postConstructor()
             // warning: unhandled type...
         }
 
-        if (!attr.isNull())
+        if(!attr.isNull())
             depNode.addAttribute(attr);
     }
     */

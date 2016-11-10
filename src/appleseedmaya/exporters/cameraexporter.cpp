@@ -62,7 +62,11 @@ DagNodeExporter *CameraExporter::create(const MDagPath& path, asr::Scene& scene)
 CameraExporter::CameraExporter(const MDagPath& path, asr::Scene& scene)
   : DagNodeExporter(path, scene)
 {
-    MFnCamera camera(path);
+}
+
+void CameraExporter::createEntity()
+{
+    MFnCamera camera(dagPath());
 
     asr::CameraFactoryRegistrar cameraFactories;
     const asr::ICameraFactory *cameraFactory = 0;
@@ -77,13 +81,20 @@ CameraExporter::CameraExporter(const MDagPath& path, asr::Scene& scene)
         cameraFactory = cameraFactories.lookup("pinhole_camera");
     }
 
-    asf::auto_release_ptr<asr::Camera> cam(
-        cameraFactory->create(path.fullPathName().asChar(), cameraParams));
-    scene.cameras().insert(cam);
+    m_camera = cameraFactory->create(appleseedName().asChar(), cameraParams);
 }
 
-void CameraExporter::exportStatic()
+void CameraExporter::exportCameraMotionStep(float time)
 {
+    asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
+    asf::Matrix4d invM = convert(dagPath().inclusiveMatrixInverse());
+    asf::Transformd xform(m, invM);
+    m_camera->transform_sequence().set_transform(0.0, xform);
+}
+
+void CameraExporter::flushEntity()
+{
+    scene().cameras().insert(m_camera);
 }
 
 bool CameraExporter::isRenderable(const MDagPath& path)

@@ -73,7 +73,6 @@ bool OSLMetadataExtractor::getValue(const char *key, MString& value)
     return false;
 }
 
-
 OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
   : arrayLen(-1)
 {
@@ -128,6 +127,6 @@ OSLShaderInfo::OSLShaderInfo(const asr::ShaderQuery& q)
     metadata.getValue<unsigned int>(MayaTypeIdKey, typeId);
 
     paramInfo.reserve(q.get_num_params());
-    for (size_t i = 0, e = q.get_num_params(); i < e; ++i)
+    for(size_t i = 0, e = q.get_num_params(); i < e; ++i)
         paramInfo.push_back(OSLParamInfo(q.get_param_info(i)));
 }

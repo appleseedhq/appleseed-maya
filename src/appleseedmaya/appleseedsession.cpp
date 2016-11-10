@@ -189,15 +189,36 @@ struct SessionImpl
         exportAppleseedRenderGlobals();
         createExporters();
 
-        // todo: collect motion blur steps here...
+        // Collect motion blur times.
+        MotionBlurTimes motionBlurTimes;
+        for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+            it->second->collectMotionBlurSteps(motionBlurTimes);
 
-        for (DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+        // Create appleseed entities.
+        for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+            it->second->createEntity();
+
+        //for(each camera motion step)
         {
-            it->second->exportStatic();
+            for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+                it->second->exportCameraMotionStep(0.0f);
         }
 
-        // todo: for each motion step...
-        // ...
+        //for(each transform motion step)
+        {
+            for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+                it->second->exportTransformMotionStep(0.0f);
+        }
+
+        //for(each deformation motion step)
+        {
+            for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+                it->second->exportShapeMotionStep(0.0f);
+        }
+
+        // Flush entities to the renderer.
+        for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+            it->second->flushEntity();
     }
 
     void exportDefaultRenderGlobals()
@@ -387,7 +408,7 @@ void AppleseedSession::endProgressiveRender()
 
 AppleseedSession::SessionMode AppleseedSession::mode()
 {
-    if (gGlobalSession.get() == 0)
+    if(gGlobalSession.get() == 0)
         return NoSession;
 
     return gGlobalSession->m_mode;

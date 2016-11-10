@@ -40,8 +40,10 @@
 // appleseed.maya headers.
 #include "appleseedmaya/exceptions.h"
 #include "appleseedmaya/exporters/cameraexporter.h"
+#include "appleseedmaya/exporters/envlightexporter.h"
 #include "appleseedmaya/exporters/lightexporter.h"
 #include "appleseedmaya/exporters/meshexporter.h"
+#include "appleseedmaya/utils.h"
 
 
 namespace asf = foundation;
@@ -50,7 +52,12 @@ namespace asr = renderer;
 namespace
 {
 
-typedef std::map<std::string, NodeExporterFactory::CreateDagNodeExporterFn> CreateDagExporterMapType;
+typedef std::map<
+    MString,
+    NodeExporterFactory::CreateDagNodeExporterFn,
+    MStringCompareLess
+    > CreateDagExporterMapType;
+
 CreateDagExporterMapType gDagNodeExporters;
 
 } // unnamed
@@ -58,6 +65,7 @@ CreateDagExporterMapType gDagNodeExporters;
 MStatus NodeExporterFactory::initialize(const MString& pluginPath)
 {
     CameraExporter::registerExporter();
+    EnvLightExporter::registerExporter();
     LightExporter::registerExporter();
     MeshExporter::registerExporter();
     return MS::kSuccess;
@@ -69,7 +77,7 @@ MStatus NodeExporterFactory::uninitialize()
 }
 
 void NodeExporterFactory::registerDagNodeExporter(
-    const std::string&      mayaTypeName,
+    const MString&          mayaTypeName,
     CreateDagNodeExporterFn createFn)
 {
     assert(createFn != 0);
@@ -85,7 +93,7 @@ DagNodeExporter* NodeExporterFactory::createDagNodeExporter(
     asr::Scene&     scene)
 {
     MFnDagNode dagNodeFn(path);
-    CreateDagExporterMapType::const_iterator it = gDagNodeExporters.find(dagNodeFn.typeName().asChar());
+    CreateDagExporterMapType::const_iterator it = gDagNodeExporters.find(dagNodeFn.typeName());
 
     if(it == gDagNodeExporters.end())
         throw NoExporterForNode();

@@ -37,6 +37,22 @@
 
 
 //
+// NonCopyable.
+//
+
+class NonCopyable
+{
+  protected:
+    NonCopyable() {}
+    ~NonCopyable() {}
+
+  private:
+    NonCopyable(const NonCopyable&);
+    NonCopyable& operator=(const NonCopyable&);
+};
+
+
+//
 // Function object class for MString less-than comparison.
 // Used in maps as a compare predicate, to avoid MString <-> std::string copies.
 //

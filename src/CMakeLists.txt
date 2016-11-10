@@ -44,6 +44,8 @@ set (appleseed_maya_sources
     appleseedmaya/exceptions.h
     appleseedmaya/exporters/cameraexporter.cpp
     appleseedmaya/exporters/cameraexporter.h
+    appleseedmaya/exporters/envlightexporter.cpp
+    appleseedmaya/exporters/envlightexporter.h
     appleseedmaya/exporters/dagnodeexporter.cpp
     appleseedmaya/exporters/dagnodeexporter.h
     appleseedmaya/exporters/exporterfactory.cpp

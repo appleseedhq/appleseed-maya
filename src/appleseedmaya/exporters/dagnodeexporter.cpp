@@ -37,10 +37,21 @@ namespace asf = foundation;
 namespace asr = renderer;
 
 DagNodeExporter::DagNodeExporter(const MDagPath& path, asr::Scene& scene)
-  : MPxNodeExporter()
+  : MPxNodeExporter(path.node())
+  , m_path(path)
   , m_scene(scene)
   , m_mainAssembly(*scene.assemblies().get_by_name("assembly"))
 {
+}
+
+const MDagPath& DagNodeExporter::dagPath() const
+{
+    return m_path;
+}
+
+MString DagNodeExporter::appleseedName() const
+{
+    return dagPath().fullPathName();
 }
 
 asr::Scene& DagNodeExporter::scene()

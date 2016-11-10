@@ -29,11 +29,37 @@
 // Interface header.
 #include "appleseedmaya/exporters/mpxnodeexporter.h"
 
+// Maya headers.
+#include <maya/MFnDependencyNode.h>
 
-MPxNodeExporter::MPxNodeExporter()
+
+MPxNodeExporter::MPxNodeExporter(const MObject& object)
+  : m_object(object)
 {
 }
 
 MPxNodeExporter::~MPxNodeExporter()
+{
+}
+
+MString MPxNodeExporter::appleseedName() const
+{
+    MFnDependencyNode depNodeFn(m_object);
+    return depNodeFn.name();
+}
+
+void MPxNodeExporter::collectMotionBlurSteps(MotionBlurTimes& motionTimes) const
+{
+}
+
+void MPxNodeExporter::exportCameraMotionStep(float time)
+{
+}
+
+void MPxNodeExporter::exportTransformMotionStep(float time)
+{
+}
+
+void MPxNodeExporter::exportShapeMotionStep(float time)
 {
 }
