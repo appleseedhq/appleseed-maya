@@ -35,6 +35,9 @@
 // Maya headers.
 #include <maya/MString.h>
 
+// appleseed.foundation headers.
+#include "foundation/utility/autoreleaseptr.h"
+
 
 //
 // NonCopyable.
@@ -63,6 +66,79 @@ struct MStringCompareLess
     {
         return strcmp(a.asChar(), b.asChar()) < 0;
     }
+};
+
+
+//
+// AppleseedEntityPtr.
+//
+
+template<class T>
+class AppleseedEntityPtr
+  : NonCopyable
+{
+  public:
+    AppleseedEntityPtr()
+      : m_ptr(0)
+      , m_releaseObj(false)
+    {
+    }
+
+    explicit AppleseedEntityPtr(foundation::auto_release_ptr<T> ptr)
+      : m_ptr(ptr.release())
+      , m_releaseObj(true)
+    {
+    }
+
+    ~AppleseedEntityPtr()
+    {
+        if(m_releaseObj)
+            m_ptr->release();
+    }
+
+    void reset()
+    {
+        if(m_releaseObj)
+            m_ptr->release();
+
+        m_releaseObj = false;
+        m_ptr = 0;
+    }
+
+    void reset(foundation::auto_release_ptr<T> ptr)
+    {
+        reset();
+        m_releaseObj = true;
+        m_ptr = ptr.release();
+    }
+
+    foundation::auto_release_ptr<T> release()
+    {
+        assert(m_releaseObj);
+
+        m_releaseObj = false;
+        return foundation::auto_release_ptr<T>(m_ptr);
+    }
+
+    T& operator*() const throw()
+    {
+        assert(m_ptr);
+        return *m_ptr;
+    }
+    T* operator->() const throw()
+    {
+        assert(m_ptr);
+        return m_ptr;
+    }
+
+    T* get() const throw()
+    {
+        return m_ptr;
+    }
+
+  private:
+    T*      m_ptr;
+    bool    m_releaseObj;
 };
 
 #endif  // !APPLESEED_MAYA_UTILS_H
