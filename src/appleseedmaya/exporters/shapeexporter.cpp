@@ -43,7 +43,7 @@ bool ShapeExporter::supportsInstancing() const
     return true;
 }
 
-void collectDependencyNodesToExport(MObjectArray& nodes)
+void ShapeExporter::collectDependencyNodesToExport(MObjectArray& nodes)
 {
     // todo: collect materials here, ...
 }
