@@ -39,7 +39,7 @@
 #include "renderer/api/environmentedf.h"
 
 // Forward declarations.
-namespace renderer { class Scene; }
+namespace renderer { class Project; }
 
 
 class EnvLightExporter
@@ -48,7 +48,7 @@ class EnvLightExporter
   public:
 
     static void registerExporter();
-    static DagNodeExporter *create(const MDagPath&, renderer::Scene& scene);
+    static DagNodeExporter *create(const MDagPath&, renderer::Project& project);
 
     virtual void createEntity();
 
@@ -58,7 +58,7 @@ class EnvLightExporter
 
   private:
 
-    EnvLightExporter(const MDagPath& path, renderer::Scene& scene);
+    EnvLightExporter(const MDagPath& path, renderer::Project& project);
 
     foundation::auto_release_ptr<renderer::EnvironmentEDF> m_envLight;
 };

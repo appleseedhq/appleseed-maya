@@ -36,6 +36,7 @@
 
 // Maya headers.
 #include <maya/MFnDagNode.h>
+#include <maya/MFnDependencyNode.h>
 
 // appleseed.maya headers.
 #include "appleseedmaya/exceptions.h"
@@ -43,6 +44,8 @@
 #include "appleseedmaya/exporters/envlightexporter.h"
 #include "appleseedmaya/exporters/lightexporter.h"
 #include "appleseedmaya/exporters/meshexporter.h"
+#include "appleseedmaya/exporters/shadingengineexporter.h"
+#include "appleseedmaya/exporters/shadingnetworkexporter.h"
 #include "appleseedmaya/utils.h"
 
 
@@ -51,6 +54,15 @@ namespace asr = renderer;
 
 namespace
 {
+
+typedef std::map<
+    MString,
+    NodeExporterFactory::CreateMPxNodeExporterFn,
+    MStringCompareLess
+    > CreateMPxExporterMapType;
+
+CreateMPxExporterMapType gMPxNodeExporters;
+
 
 typedef std::map<
     MString,
@@ -68,12 +80,41 @@ MStatus NodeExporterFactory::initialize(const MString& pluginPath)
     EnvLightExporter::registerExporter();
     LightExporter::registerExporter();
     MeshExporter::registerExporter();
+    ShadingEngineExporter::registerExporter();
+    ShadingNetworkExporter::registerExporter();
     return MS::kSuccess;
 }
 
 MStatus NodeExporterFactory::uninitialize()
 {
     return MS::kSuccess;
+}
+
+void NodeExporterFactory::registerMPxNodeExporter(
+    const MString&          mayaTypeName,
+    CreateMPxNodeExporterFn createFn)
+{
+    assert(createFn != 0);
+
+    gMPxNodeExporters[mayaTypeName] = createFn;
+
+    std::cout << "NodeExporterFactory: registered mpx node exporter for node: "
+              << mayaTypeName << std::endl;
+}
+
+MPxNodeExporter* NodeExporterFactory::createMPxNodeExporter(
+    const MObject&  object,
+    asr::Project&   project)
+{
+    MFnDependencyNode depNodeFn(object);
+    CreateMPxExporterMapType::const_iterator it = gMPxNodeExporters.find(depNodeFn.typeName());
+
+    if(it == gMPxNodeExporters.end())
+    {
+        throw NoExporterForNode();
+    }
+
+    return it->second(object, project);
 }
 
 void NodeExporterFactory::registerDagNodeExporter(
@@ -90,7 +131,7 @@ void NodeExporterFactory::registerDagNodeExporter(
 
 DagNodeExporter* NodeExporterFactory::createDagNodeExporter(
     const MDagPath& path,
-    asr::Scene&     scene)
+    asr::Project&   project)
 {
     MFnDagNode dagNodeFn(path);
     CreateDagExporterMapType::const_iterator it = gDagNodeExporters.find(dagNodeFn.typeName());
@@ -98,5 +139,5 @@ DagNodeExporter* NodeExporterFactory::createDagNodeExporter(
     if(it == gDagNodeExporters.end())
         throw NoExporterForNode();
 
-    return it->second(path, scene);
+    return it->second(path, project);
 }

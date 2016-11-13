@@ -32,6 +32,7 @@
 // Maya headers.
 #include <maya/MObject.h>
 #include <maya/MStatus.h>
+#include <maya/MStringArray.h>
 
 // appleseed.foundation headers.
 #include "foundation/utility/containers/dictionary.h"
@@ -55,6 +56,8 @@ class ShadingNodeRegistry
 
     static MStatus registerShadingNodes(MObject plugin);
     static MStatus unregisterShadingNodes(MObject plugin);
+
+    static void getShaderNodeNames(MStringArray& nodeNames);
 
     static const OSLShaderInfo *getShaderInfo(const MString& nodeName);
 };

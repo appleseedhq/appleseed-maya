@@ -32,6 +32,10 @@
 // Maya headers.
 #include <maya/MDagPath.h>
 #include <maya/MMatrix.h>
+#include <maya/MObjectArray.h>
+
+// Boost headers.
+#include "boost/shared_ptr.hpp"
 
 // appleseed.foundation headers.
 #include "foundation/math/matrix.h"
@@ -41,34 +45,44 @@
 
 // Forward declarations.
 namespace renderer { class Assembly; }
+namespace renderer { class Project; }
 namespace renderer { class Scene; }
-
-// Boost headers.
-#include "boost/shared_ptr.hpp"
+class MotionBlurTimes;
 
 
 class DagNodeExporter
   : public MPxNodeExporter
 {
+  public:
+
+    // Returns true if the entity created by this exporter can be motion blurred.
+    virtual bool supportsMotionBlur() const;
+
+    // Returns true if the entity created by this exporter can be instanced.
+    virtual bool supportsInstancing() const;
+
+    // Collect dependency nodes to export (materials, ...).
+    virtual void collectDependencyNodesToExport(MObjectArray& nodes);
+
+    // Motion blur.
+    virtual void collectMotionBlurSteps(MotionBlurTimes& motionTimes) const;
+
+    virtual void exportCameraMotionStep(float time);
+    virtual void exportTransformMotionStep(float time);
+    virtual void exportShapeMotionStep(float time);
+
   protected:
 
-    DagNodeExporter(const MDagPath& path, renderer::Scene& scene);
+    DagNodeExporter(const MDagPath& path, renderer::Project& project);
 
     const MDagPath& dagPath() const;
 
     virtual MString appleseedName() const;
 
-    renderer::Scene& scene();
-    renderer::Assembly& mainAssembly();
-
     foundation::Matrix4d convert(const MMatrix& m) const;
 
   private:
-
-    MDagPath                    m_path;
-    renderer::Scene&            m_scene;
-    renderer::Assembly&         m_mainAssembly;
-
+    MDagPath m_path;
 };
 
 typedef boost::shared_ptr<DagNodeExporter> DagNodeExporterPtr;

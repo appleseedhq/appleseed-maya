@@ -26,43 +26,50 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
-
-// Standard headers.
-#include<string>
-
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/dagnodeexporter.h"
+// Interface header.
+#include "appleseedmaya/exporters/shadingnetworkexporter.h"
 
 // appleseed.renderer headers.
-#include "renderer/api/camera.h"
+#include "renderer/api/material.h"
+#include "renderer/api/scene.h"
 
-// Forward declarations.
-namespace renderer { class Project; }
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/shadingnoderegistry.h"
 
 
-class CameraExporter
-  : public DagNodeExporter
+namespace asf = foundation;
+namespace asr = renderer;
+
+void ShadingNetworkExporter::registerExporter()
 {
-  public:
+    MStringArray nodeNames;
+    ShadingNodeRegistry::getShaderNodeNames(nodeNames);
 
-    static void registerExporter();
-    static DagNodeExporter *create(const MDagPath& path, renderer::Project& project);
+    for(int i = 0, e = nodeNames.length(); i < e; ++i)
+    {
+        NodeExporterFactory::registerMPxNodeExporter(
+            nodeNames[i],
+            &ShadingNetworkExporter::create);
+    }
+}
 
-    virtual void createEntity();
+MPxNodeExporter *ShadingNetworkExporter::create(const MObject& object, asr::Project& project)
+{
+    return new ShadingNetworkExporter(object, project);
+}
 
-    virtual void exportCameraMotionStep(float time);
+ShadingNetworkExporter::ShadingNetworkExporter(const MObject& object, asr::Project& project)
+  : MPxNodeExporter(object, project)
+{
+}
 
-    virtual void flushEntity();
+void ShadingNetworkExporter::createEntity()
+{
+    m_shaderGroup = asr::ShaderGroupFactory::create(appleseedName().asChar());
+}
 
-  private:
-
-    CameraExporter(const MDagPath& path, renderer::Project& project);
-
-    static bool isRenderable(const MDagPath& path);
-
-    foundation::auto_release_ptr<renderer::Camera> m_camera;
-};
-
-#endif  // !APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
+void ShadingNetworkExporter::flushEntity()
+{
+    mainAssembly().shader_groups().insert(m_shaderGroup);
+}

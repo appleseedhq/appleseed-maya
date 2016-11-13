@@ -36,26 +36,37 @@
 
 // Forward declarations.
 class DagNodeExporter;
+class MPxNodeExporter;
 
-namespace renderer { class Scene; }
+namespace renderer { class Project; }
 
 
 class NodeExporterFactory
 {
   public:
 
-    typedef DagNodeExporter* (*CreateDagNodeExporterFn)(const MDagPath&, renderer::Scene&);
-
     static MStatus initialize(const MString& pluginPath);
     static MStatus uninitialize();
+
+    typedef MPxNodeExporter* (*CreateMPxNodeExporterFn)(const MObject&, renderer::Project&);
+
+    static void registerMPxNodeExporter(
+      const MString&          mayaTypeName,
+      CreateMPxNodeExporterFn createFn);
+
+    static MPxNodeExporter* createMPxNodeExporter(
+      const MObject&      object,
+      renderer::Project&  project);
+
+    typedef DagNodeExporter* (*CreateDagNodeExporterFn)(const MDagPath&, renderer::Project&);
 
     static void registerDagNodeExporter(
       const MString&          mayaTypeName,
       CreateDagNodeExporterFn createFn);
 
     static DagNodeExporter* createDagNodeExporter(
-      const MDagPath&   path,
-      renderer::Scene&  scene);
+      const MDagPath&     path,
+      renderer::Project&  project);
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_NODEEXPORTER_FACTORY_H

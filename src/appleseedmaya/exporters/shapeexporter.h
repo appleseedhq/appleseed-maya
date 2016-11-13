@@ -40,9 +40,10 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
+#include "appleseedmaya/murmurhash.h"
 
 // Forward declarations.
-namespace renderer { class Scene; }
+namespace renderer { class Project; }
 
 
 class ShapeExporter
@@ -50,15 +51,20 @@ class ShapeExporter
 {
   public:
 
+    virtual bool supportsInstancing() const;
+
+    virtual void collectDependencyNodesToExport(MObjectArray& nodes);
+
     virtual void exportTransformMotionStep(float time);
 
     virtual void flushEntity() = 0;
 
   protected:
 
-    ShapeExporter(const MDagPath& path, renderer::Scene& scene);
+    ShapeExporter(const MDagPath& path, renderer::Project& project);
 
     renderer::TransformSequence m_transformSequence;
+    MurmurHash                  m_shapeHash;
 };
 
 typedef boost::shared_ptr<ShapeExporter> ShapeExporterPtr;

@@ -29,24 +29,44 @@
 // Interface header.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
-// appleseed.renderer headers.
-#include "renderer/api/scene.h"
-
 
 namespace asf = foundation;
 namespace asr = renderer;
 
-DagNodeExporter::DagNodeExporter(const MDagPath& path, asr::Scene& scene)
-  : MPxNodeExporter(path.node())
+DagNodeExporter::DagNodeExporter(const MDagPath& path, asr::Project& project)
+  : MPxNodeExporter(path.node(), project)
   , m_path(path)
-  , m_scene(scene)
-  , m_mainAssembly(*scene.assemblies().get_by_name("assembly"))
 {
 }
 
-const MDagPath& DagNodeExporter::dagPath() const
+bool DagNodeExporter::supportsMotionBlur() const
 {
-    return m_path;
+    return true;
+}
+
+bool DagNodeExporter::supportsInstancing() const
+{
+    return false;
+}
+
+void DagNodeExporter::collectDependencyNodesToExport(MObjectArray& nodes)
+{
+}
+
+void DagNodeExporter::collectMotionBlurSteps(MotionBlurTimes& motionTimes) const
+{
+}
+
+void DagNodeExporter::exportCameraMotionStep(float time)
+{
+}
+
+void DagNodeExporter::exportTransformMotionStep(float time)
+{
+}
+
+void DagNodeExporter::exportShapeMotionStep(float time)
+{
 }
 
 MString DagNodeExporter::appleseedName() const
@@ -54,14 +74,9 @@ MString DagNodeExporter::appleseedName() const
     return dagPath().fullPathName();
 }
 
-asr::Scene& DagNodeExporter::scene()
+const MDagPath& DagNodeExporter::dagPath() const
 {
-    return m_scene;
-}
-
-asr::Assembly& DagNodeExporter::mainAssembly()
-{
-    return m_mainAssembly;
+    return m_path;
 }
 
 asf::Matrix4d DagNodeExporter::convert(const MMatrix& m) const

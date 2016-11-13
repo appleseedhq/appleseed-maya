@@ -50,14 +50,22 @@ set (appleseed_maya_sources
     appleseedmaya/exporters/dagnodeexporter.h
     appleseedmaya/exporters/exporterfactory.cpp
     appleseedmaya/exporters/exporterfactory.h
+    appleseedmaya/exporters/instanceexporter.cpp
+    appleseedmaya/exporters/instanceexporter.h
     appleseedmaya/exporters/lightexporter.cpp
     appleseedmaya/exporters/lightexporter.h
     appleseedmaya/exporters/meshexporter.cpp
     appleseedmaya/exporters/meshexporter.h
     appleseedmaya/exporters/mpxnodeexporter.cpp
     appleseedmaya/exporters/mpxnodeexporter.h
+    appleseedmaya/exporters/shadingengineexporter.cpp
+    appleseedmaya/exporters/shadingengineexporter.h
+    appleseedmaya/exporters/shadingnetworkexporter.cpp
+    appleseedmaya/exporters/shadingnetworkexporter.h
     appleseedmaya/exporters/shapeexporter.cpp
     appleseedmaya/exporters/shapeexporter.h
+    appleseedmaya/murmurhash.cpp
+    appleseedmaya/murmurhash.h
     appleseedmaya/pluginmain.cpp
     appleseedmaya/rendercommands.cpp
     appleseedmaya/rendercommands.h

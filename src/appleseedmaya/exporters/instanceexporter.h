@@ -26,43 +26,36 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H
 
 // Standard headers.
 #include<string>
 
 // appleseed.maya headers.
-#include "appleseedmaya/exporters/dagnodeexporter.h"
+#include "appleseedmaya/exporters/shapeexporter.h"
 
 // appleseed.renderer headers.
-#include "renderer/api/camera.h"
+#include "renderer/api/scene.h"
 
 // Forward declarations.
 namespace renderer { class Project; }
 
 
-class CameraExporter
-  : public DagNodeExporter
+class InstanceExporter
+  : public ShapeExporter
 {
   public:
 
-    static void registerExporter();
-    static DagNodeExporter *create(const MDagPath& path, renderer::Project& project);
+    InstanceExporter(
+      const MDagPath&                     path,
+      const ShapeExporter&                master,
+      renderer::Project&                  project,
+      const renderer::TransformSequence&  transformSequence);
 
-    virtual void createEntity();
-
-    virtual void exportCameraMotionStep(float time);
+    virtual bool supportsInstancing() const;
 
     virtual void flushEntity();
-
-  private:
-
-    CameraExporter(const MDagPath& path, renderer::Project& project);
-
-    static bool isRenderable(const MDagPath& path);
-
-    foundation::auto_release_ptr<renderer::Camera> m_camera;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H

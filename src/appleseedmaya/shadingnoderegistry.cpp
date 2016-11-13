@@ -285,6 +285,12 @@ MStatus ShadingNodeRegistry::unregisterShadingNodes(MObject plugin)
     return MS::kSuccess;
 }
 
+void ShadingNodeRegistry::getShaderNodeNames(MStringArray& nodeNames)
+{
+    for(OSLShaderInfoMap::const_iterator it = gShadersInfo.begin(), e = gShadersInfo.end(); it != e; ++it)
+        nodeNames.append(it->first);
+}
+
 const OSLShaderInfo *ShadingNodeRegistry::getShaderInfo(const MString& nodeName)
 {
     OSLShaderInfoMap::const_iterator it = gShadersInfo.find(nodeName);

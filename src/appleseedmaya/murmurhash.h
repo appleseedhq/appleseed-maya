@@ -26,62 +26,76 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_MPXNODEEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_MPXNODEEXPORTER_H
+#ifndef APPLESEED_MAYA_MURMUR_HASH_H
+#define APPLESEED_MAYA_MURMUR_HASH_H
 
-// Boost headers.
-#include "boost/shared_ptr.hpp"
+// Standard headers.
+#include <cstring>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <stdint.h>
 
 // Maya headers.
-#include <maya/MObject.h>
 #include <maya/MString.h>
 
-// appleseed.maya headers.
-#include "appleseedmaya/utils.h"
-
-// Fordward declarations.
-namespace renderer { class Assembly; }
-namespace renderer { class Project; }
-namespace renderer { class Scene; }
-
 
 //
-// Base class for Maya to appleseed exporters.
+// MurmurHash.
 //
 
-class MPxNodeExporter
-  : NonCopyable
+// A nice class for hashing arbitrary chunks of data, based on
+// code available at http://code.google.com/p/smhasher.
+//
+// From that page :
+//
+// "All MurmurHash versions are public domain software, and the
+// author disclaims all copyright to their code."
+//
+
+class MurmurHash
 {
   public:
 
-    // Destructor.
-    virtual ~MPxNodeExporter();
+    MurmurHash();
+    MurmurHash(const MurmurHash& other);
 
-    renderer::Project& project();
-    renderer::Scene& scene();
-    renderer::Assembly& mainAssembly();
+    const MurmurHash &operator=(const MurmurHash& other);
 
-    // Return the name of the appleseed entity created by this exporter.
-    virtual MString appleseedName() const;
+    bool operator==(const MurmurHash& other) const;
+    bool operator!=(const MurmurHash& other) const;
+    bool operator<(const MurmurHash& other) const;
 
-    // Create appleseed entities.
-    virtual void createEntity() = 0;
+    std::string toString() const;
 
-    // Flush entities to the renderer.
-    virtual void flushEntity() = 0;
+    template<class T>
+    void append(const T& x)
+    {
+        append(&x, sizeof(T));
+    }
 
-  protected:
+    void append(const char *str)
+    {
+        append(str, strlen(str));
+    }
 
-    // Constructor.
-    MPxNodeExporter(const MObject& object, renderer::Project& project);
+    void append(const std::string& str)
+    {
+        append(str.c_str(), str.size());
+    }
+
+    void append(const MString& str)
+    {
+        append(str.asChar(), str.length());
+    }
 
   private:
-    MObject                     m_object;
-    renderer::Project&          m_project;
-    renderer::Scene&            m_scene;
-    renderer::Assembly&         m_mainAssembly;
+    void append(const void *data, size_t bytes);
+
+    uint64_t m_h1;
+    uint64_t m_h2;
 };
 
-typedef boost::shared_ptr<MPxNodeExporter> MPxNodeExporterPtr;
+std::ostream& operator<<(std::ostream& o, const MurmurHash& hash);
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_MPXNODEEXPORTER_H
+#endif  // !APPLESEED_MAYA_MURMUR_HASH_H

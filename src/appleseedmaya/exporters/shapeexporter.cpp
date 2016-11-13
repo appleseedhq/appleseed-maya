@@ -33,9 +33,19 @@
 namespace asf = foundation;
 namespace asr = renderer;
 
-ShapeExporter::ShapeExporter(const MDagPath& path, asr::Scene& scene)
-  : DagNodeExporter(path, scene)
+ShapeExporter::ShapeExporter(const MDagPath& path, asr::Project& project)
+  : DagNodeExporter(path, project)
 {
+}
+
+bool ShapeExporter::supportsInstancing() const
+{
+    return true;
+}
+
+void collectDependencyNodesToExport(MObjectArray& nodes)
+{
+    // todo: collect materials here, ...
 }
 
 void ShapeExporter::exportTransformMotionStep(float time)

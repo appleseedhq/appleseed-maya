@@ -51,21 +51,22 @@ void CameraExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("camera", &CameraExporter::create);
 }
 
-DagNodeExporter *CameraExporter::create(const MDagPath& path, asr::Scene& scene)
+DagNodeExporter *CameraExporter::create(const MDagPath& path, asr::Project& project)
 {
     if(isRenderable(path))
-        return new CameraExporter(path, scene);
+        return new CameraExporter(path, project);
 
     return 0;
 }
 
-CameraExporter::CameraExporter(const MDagPath& path, asr::Scene& scene)
-  : DagNodeExporter(path, scene)
+CameraExporter::CameraExporter(const MDagPath& path, asr::Project& project)
+  : DagNodeExporter(path, project)
 {
 }
 
 void CameraExporter::createEntity()
 {
+    MStatus status;
     MFnCamera camera(dagPath());
 
     asr::CameraFactoryRegistrar cameraFactories;
@@ -79,6 +80,25 @@ void CameraExporter::createEntity()
     else
     {
         cameraFactory = cameraFactories.lookup("pinhole_camera");
+
+        MPlug plug = camera.findPlug("horizontalFilmAperture", &status);
+        float horizontalFilmAperture = plug.asFloat();
+
+        plug = camera.findPlug("verticalFilmAperture", &status);
+        float verticalFilmAperture = plug.asFloat();
+
+        plug = camera.findPlug("focalLength", &status);
+        float focalLength = plug.asFloat();
+
+        // Maya's aperture is given in inches so convert to cm and then to meters.
+        horizontalFilmAperture = horizontalFilmAperture * 2.54f * 0.01f;
+        verticalFilmAperture = verticalFilmAperture * 2.54f * 0.01f;
+
+        std::stringstream ss;
+        ss << horizontalFilmAperture << " " << verticalFilmAperture;
+        cameraParams.insert("film_dimensions", ss.str().c_str());
+
+        cameraParams.insert("focal_length", focalLength * 0.001f);
     }
 
     m_camera = cameraFactory->create(appleseedName().asChar(), cameraParams);

@@ -26,43 +26,51 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
-
-// Standard headers.
-#include<string>
-
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/dagnodeexporter.h"
+// Interface header.
+#include "appleseedmaya/exporters/shadingengineexporter.h"
 
 // appleseed.renderer headers.
-#include "renderer/api/camera.h"
+#include "renderer/api/material.h"
+#include "renderer/api/scene.h"
 
-// Forward declarations.
-namespace renderer { class Project; }
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/exporterfactory.h"
 
 
-class CameraExporter
-  : public DagNodeExporter
+namespace asf = foundation;
+namespace asr = renderer;
+
+void ShadingEngineExporter::registerExporter()
 {
-  public:
+    NodeExporterFactory::registerMPxNodeExporter("shadingEngine", &ShadingEngineExporter::create);
+}
 
-    static void registerExporter();
-    static DagNodeExporter *create(const MDagPath& path, renderer::Project& project);
+MPxNodeExporter *ShadingEngineExporter::create(const MObject& object, asr::Project& project)
+{
+    return new ShadingEngineExporter(object, project);
+}
 
-    virtual void createEntity();
+ShadingEngineExporter::ShadingEngineExporter(const MObject& object, asr::Project& project)
+  : MPxNodeExporter(object, project)
+{
+}
 
-    virtual void exportCameraMotionStep(float time);
+void ShadingEngineExporter::createEntity()
+{
+    MString name = appleseedName();
 
-    virtual void flushEntity();
+    asr::ParamArray surfaceShaderParams;
+    m_surfaceShader = asr::PhysicalSurfaceShaderFactory().create(
+        name.asChar(),
+        surfaceShaderParams);
 
-  private:
+    asr::ParamArray materialParams;
+    materialParams.insert("surface_shader", name.asChar());
+    m_material = asr::OSLMaterialFactory().create(name.asChar(), materialParams);
+}
 
-    CameraExporter(const MDagPath& path, renderer::Project& project);
-
-    static bool isRenderable(const MDagPath& path);
-
-    foundation::auto_release_ptr<renderer::Camera> m_camera;
-};
-
-#endif  // !APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
+void ShadingEngineExporter::flushEntity()
+{
+    mainAssembly().surface_shaders().insert(m_surfaceShader);
+    mainAssembly().materials().insert(m_material);
+}

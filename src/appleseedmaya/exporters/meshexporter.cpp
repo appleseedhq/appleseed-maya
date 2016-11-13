@@ -32,10 +32,14 @@
 // Standard headers.
 #include <iostream>
 
+// Boost headers.
+#include "boost/filesystem/path.hpp"
+
 // appleseed.maya headers.
+#include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 
-
+namespace bfs = boost::filesystem;
 namespace asf = foundation;
 namespace asr = renderer;
 
@@ -44,13 +48,13 @@ void MeshExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("mesh", &MeshExporter::create);
 }
 
-DagNodeExporter *MeshExporter::create(const MDagPath& path, asr::Scene& scene)
+DagNodeExporter *MeshExporter::create(const MDagPath& path, asr::Project& project)
 {
-    return new MeshExporter(path, scene);
+    return new MeshExporter(path, project);
 }
 
-MeshExporter::MeshExporter(const MDagPath& path, asr::Scene& scene)
-  : ShapeExporter(path, scene)
+MeshExporter::MeshExporter(const MDagPath& path, asr::Project& project)
+  : ShapeExporter(path, project)
 {
 }
 
@@ -58,10 +62,32 @@ void MeshExporter::createEntity()
 {
     m_mesh = asr::MeshObjectFactory::create(appleseedName().asChar(), asr::ParamArray());
     m_mesh->push_material_slot("default");
+
+    // Todo: create topology here...
 }
 
 void MeshExporter::exportShapeMotionStep(float time)
 {
+    // todo: fill geom info here...
+
+    if(AppleseedSession::mode() == AppleseedSession::ExportSession)
+    {
+        // export mesh here...
+        bfs::path projPath = project().search_paths().get_root_path();
+        bfs::path geomPath = projPath / "_geometry";
+
+        MurmurHash meshHash;
+        // todo: compute mesh hash here.
+
+        /*
+        if(mesh file does not exist)
+        {
+            save mesh file here...
+        }
+        */
+
+        // update the params dict.
+    }
 }
 
 void MeshExporter::flushEntity()

@@ -48,6 +48,7 @@
 #include <maya/MItDag.h>
 #include <maya/MSelectionList.h>
 #include <maya/MObject.h>
+#include <maya/MObjectArray.h>
 
 // appleseed.foundation headers.
 #include "foundation/platform/timers.h"
@@ -70,6 +71,7 @@
 #include "appleseedmaya/exceptions.h"
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/exporters/mpxnodeexporter.h"
 #include "appleseedmaya/renderercontroller.h"
 #include "appleseedmaya/utils.h"
 
@@ -195,28 +197,38 @@ struct SessionImpl
             it->second->collectMotionBlurSteps(motionBlurTimes);
 
         // Create appleseed entities.
+        for(MPxExporterMap::const_iterator it = m_mpxExporters.begin(), e = m_mpxExporters.end(); it != e; ++it)
+            it->second->createEntity();
+
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->createEntity();
 
-        //for(each camera motion step)
+        // for each time step...
         {
             for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
-                it->second->exportCameraMotionStep(0.0f);
+            {
+                if(it->second->supportsMotionBlur())
+                {
+                    it->second->exportCameraMotionStep(0.0f);
+                    it->second->exportTransformMotionStep(0.0f);
+                    it->second->exportShapeMotionStep(0.0f);
+                }
+            }
         }
 
-        //for(each transform motion step)
+        // Handle auto-instancing here if enabled.
+        for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
         {
-            for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
-                it->second->exportTransformMotionStep(0.0f);
-        }
-
-        //for(each deformation motion step)
-        {
-            for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
-                it->second->exportShapeMotionStep(0.0f);
+            if(it->second->supportsInstancing())
+            {
+                // ...
+            }
         }
 
         // Flush entities to the renderer.
+        for(MPxExporterMap::const_iterator it = m_mpxExporters.begin(), e = m_mpxExporters.end(); it != e; ++it)
+            it->second->flushEntity();
+
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->flushEntity();
     }
@@ -257,20 +269,72 @@ struct SessionImpl
 
     void createExporters()
     {
+        exportDefaultMaterial();
+
+        // Create exporters for all dag nodes in the scene.
         MDagPath path;
         for(MItDag it(MItDag::kDepthFirst); !it.isDone(); it.next())
         {
             it.getPath(path);
             createDagNodeExporter(path);
         }
+
+        // Collect extra dependency nodes to export.
+        MObjectArray extraObjects;
+        for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+            it->second->collectDependencyNodesToExport(extraObjects);
+
+        for(int i = 0, e = extraObjects.length(); i < e; ++i)
+            createMPxNodeExporter(extraObjects[i]);
+    }
+
+    void exportDefaultMaterial()
+    {
+        // Create exporter for default material.
+        MSelectionList selList;
+        selList.add("initialShadingGroup");
+        MObject initialShadingGroup;
+        if(!selList.isEmpty())
+        {
+            selList.getDependNode(0, initialShadingGroup);
+            createMPxNodeExporter(initialShadingGroup);
+        }
+    }
+
+    void createMPxNodeExporter(const MObject& object)
+    {
+        MFnDependencyNode depNodeFn(object);
+        if(m_mpxExporters.count(depNodeFn.name()) != 0)
+            return;
+
+        try
+        {
+            MPxNodeExporterPtr exporter(NodeExporterFactory::createMPxNodeExporter(
+                object,
+                *m_project));
+
+            if(exporter)
+            {
+                m_mpxExporters[depNodeFn.name()] = exporter;
+                std::cout << "Created exporter for node: " << depNodeFn.name() << "\n";
+                std::cout << "  type       = " << depNodeFn.typeName() << "\n";
+                std::cout << "  apiTypeStr = " << object.apiTypeStr() << "\n";
+                std::cout << std::endl;
+            }
+        }
+        catch(Exception& e)
+        {
+            std::cout << "Skipping unknown node: " << depNodeFn.name() << "\n";
+            std::cout << "  type       = " << depNodeFn.typeName() << "\n";
+            std::cout << "  apiTypeStr = " << object.apiTypeStr() << "\n";
+            std::cout << std::endl;
+        }
     }
 
     void createDagNodeExporter(const MDagPath& path)
     {
         if(m_dagExporters.count(path.fullPathName()) != 0)
-        {
             return;
-        }
 
         MFnDagNode dagNodeFn(path);
         // todo: test here visibility flags, intermediate objects, .., ...?
@@ -279,8 +343,7 @@ struct SessionImpl
         {
             DagNodeExporterPtr exporter(NodeExporterFactory::createDagNodeExporter(
                 path,
-                *m_project->get_scene())
-            );
+                *m_project));
 
             if(exporter)
             {
@@ -309,8 +372,8 @@ struct SessionImpl
             asr::ProjectFileWriter::OmitWritingGeometryFiles);
     }
 
+    typedef std::map<MString, MPxNodeExporterPtr, MStringCompareLess> MPxExporterMap;
     typedef std::map<MString, DagNodeExporterPtr, MStringCompareLess> DagExporterMap;
-
 
     AppleseedSession::SessionMode               m_mode;
     AppleseedSession::Options                   m_options;
@@ -321,6 +384,7 @@ struct SessionImpl
     MString                                     m_fileName;
     bfs::path                                   m_projectPath;
 
+    MPxExporterMap                              m_mpxExporters;
     DagExporterMap                              m_dagExporters;
 
     boost::scoped_ptr<asr::MasterRenderer>      m_renderer;

@@ -48,13 +48,13 @@ void EnvLightExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter(EnvLightNode::nodeName, &EnvLightExporter::create);
 }
 
-DagNodeExporter *EnvLightExporter::create(const MDagPath& path, asr::Scene& scene)
+DagNodeExporter *EnvLightExporter::create(const MDagPath& path, asr::Project& project)
 {
-    return new EnvLightExporter(path, scene);
+    return new EnvLightExporter(path, project);
 }
 
-EnvLightExporter::EnvLightExporter(const MDagPath& path, asr::Scene& scene)
-  : DagNodeExporter(path, scene)
+EnvLightExporter::EnvLightExporter(const MDagPath& path, asr::Project& project)
+  : DagNodeExporter(path, project)
 {
 }
 

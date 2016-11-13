@@ -35,12 +35,15 @@
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/shapeexporter.h"
 
+// appleseed.foundation headers.
+#include "foundation/utility/searchpaths.h"
+
 // appleseed.renderer headers.
 #include "renderer/api/object.h"
 #include "renderer/api/scene.h"
 
 // Forward declarations.
-namespace renderer { class Scene; }
+namespace renderer { class Project; }
 
 
 class MeshExporter
@@ -49,7 +52,7 @@ class MeshExporter
   public:
 
     static void registerExporter();
-    static DagNodeExporter *create(const MDagPath&, renderer::Scene& scene);
+    static DagNodeExporter *create(const MDagPath&, renderer::Project& project);
 
     virtual void createEntity();
 
@@ -59,9 +62,9 @@ class MeshExporter
 
   private:
 
-    MeshExporter(const MDagPath& path, renderer::Scene& scene);
+    MeshExporter(const MDagPath& path, renderer::Project& project);
 
-    foundation::auto_release_ptr<renderer::MeshObject> m_mesh;
+    foundation::auto_release_ptr<renderer::MeshObject>  m_mesh;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H

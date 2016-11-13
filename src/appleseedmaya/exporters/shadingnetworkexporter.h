@@ -26,43 +26,38 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
 
-// Standard headers.
-#include<string>
+// Maya headers.
 
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/dagnodeexporter.h"
+// appleseed.foundation headers.
 
 // appleseed.renderer headers.
-#include "renderer/api/camera.h"
+#include "renderer/api/shadergroup.h"
+
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/mpxnodeexporter.h"
 
 // Forward declarations.
 namespace renderer { class Project; }
 
 
-class CameraExporter
-  : public DagNodeExporter
+class ShadingNetworkExporter
+  : public MPxNodeExporter
 {
   public:
-
     static void registerExporter();
-    static DagNodeExporter *create(const MDagPath& path, renderer::Project& project);
+    static MPxNodeExporter *create(const MObject&, renderer::Project& project);
 
     virtual void createEntity();
-
-    virtual void exportCameraMotionStep(float time);
 
     virtual void flushEntity();
 
   private:
+    ShadingNetworkExporter(const MObject& object, renderer::Project& project);
 
-    CameraExporter(const MDagPath& path, renderer::Project& project);
-
-    static bool isRenderable(const MDagPath& path);
-
-    foundation::auto_release_ptr<renderer::Camera> m_camera;
+    foundation::auto_release_ptr<renderer::ShaderGroup> m_shaderGroup;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H

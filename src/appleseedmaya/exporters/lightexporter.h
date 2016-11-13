@@ -39,7 +39,7 @@
 #include "renderer/api/light.h"
 
 // Forward declarations.
-namespace renderer { class Scene; }
+namespace renderer { class Project; }
 
 
 class LightExporter
@@ -48,17 +48,17 @@ class LightExporter
   public:
 
     static void registerExporter();
-    static DagNodeExporter *create(const MDagPath&, renderer::Scene& scene);
+    static DagNodeExporter *create(const MDagPath&, renderer::Project& project);
+
+    bool supportsMotionBlur() const;
 
     virtual void createEntity();
-
-    virtual void exportTransformMotionStep(float time);
 
     virtual void flushEntity();
 
   private:
 
-    LightExporter(const MDagPath& path, renderer::Scene& scene);
+    LightExporter(const MDagPath& path, renderer::Project& project);
 
     foundation::auto_release_ptr<renderer::Light> m_light;
 };

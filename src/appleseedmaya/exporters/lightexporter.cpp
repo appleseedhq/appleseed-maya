@@ -49,14 +49,19 @@ void LightExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("spotLight", &LightExporter::create);
 }
 
-DagNodeExporter *LightExporter::create(const MDagPath& path, asr::Scene& scene)
+DagNodeExporter *LightExporter::create(const MDagPath& path, asr::Project& project)
 {
-    return new LightExporter(path, scene);
+    return new LightExporter(path, project);
 }
 
-LightExporter::LightExporter(const MDagPath& path, asr::Scene& scene)
-  : DagNodeExporter(path, scene)
+LightExporter::LightExporter(const MDagPath& path, asr::Project& project)
+  : DagNodeExporter(path, project)
 {
+}
+
+bool LightExporter::supportsMotionBlur() const
+{
+    return false;
 }
 
 void LightExporter::createEntity()
@@ -81,10 +86,11 @@ void LightExporter::createEntity()
     }
 
     m_light = lightFactory->create(appleseedName().asChar(), lightParams);
-}
 
-void LightExporter::exportTransformMotionStep(float time)
-{
+    asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
+    asf::Matrix4d invM = convert(dagPath().inclusiveMatrixInverse());
+    asf::Transformd xform(m, invM);
+    m_light->set_transform(xform);
 }
 
 void LightExporter::flushEntity()
