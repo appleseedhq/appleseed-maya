@@ -35,6 +35,10 @@
 // Boost headers.
 #include "boost/filesystem/path.hpp"
 
+// Maya headers.
+#include <maya/MFnMesh.h>
+#include <maya/MIntArray.h>
+
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
@@ -58,12 +62,40 @@ MeshExporter::MeshExporter(const MDagPath& path, asr::Project& project)
 {
 }
 
+void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
+{
+    MFnMesh meshFn(dagPath());
+
+    MObjectArray shaders;
+    MIntArray indices;
+    meshFn.getConnectedShaders(dagPath().instanceNumber(), shaders, indices);
+
+    // No materials assigned.
+    if(shaders.length() == 0)
+        return;
+
+    // For now we only save the first material.
+    MFnDependencyNode nodeFn(shaders[0]);
+    m_materialMappings.insert("default", nodeFn.name().asChar());
+    collectMaterial(shaders[0], nodes);
+}
+
 void MeshExporter::createEntity()
 {
     m_mesh = asr::MeshObjectFactory::create(appleseedName().asChar(), asr::ParamArray());
-    m_mesh->push_material_slot("default");
 
     // Todo: create topology here...
+    /*
+    MFnMesh meshFn(dagPath());
+    m_mesh->reserve_vertices(meshFn.numVertices());
+    m_mesh->reserve_vertex_normals(meshFn.numNormals());
+    m_mesh->reserve_tex_coords(meshFn.numUVs());
+
+    MIntArray triangleCounts;
+    MIntArray triangleVertices;
+    meshFn.getTriangles(triangleCounts, triangleVertices);
+    m_mesh->reserve_triangles(triangleVertices.length() / 3);
+    */
 }
 
 void MeshExporter::exportShapeMotionStep(float time)

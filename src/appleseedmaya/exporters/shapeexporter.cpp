@@ -29,6 +29,10 @@
 // Interface header.
 #include "appleseedmaya/exporters/shapeexporter.h"
 
+// Maya headers.
+#include <maya/MFnDependencyNode.h>
+#include <maya/MPlug.h>
+
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -43,11 +47,6 @@ bool ShapeExporter::supportsInstancing() const
     return true;
 }
 
-void ShapeExporter::collectDependencyNodesToExport(MObjectArray& nodes)
-{
-    // todo: collect materials here, ...
-}
-
 void ShapeExporter::exportTransformMotionStep(float time)
 {
     asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
@@ -59,4 +58,11 @@ void ShapeExporter::exportTransformMotionStep(float time)
 void ShapeExporter::flushEntity()
 {
     m_transformSequence.optimize();
+}
+
+void ShapeExporter::collectMaterialNodes(MObject material, MObjectArray& nodes) const
+{
+    nodes.append(material);
+    //MFnDependencyNode depNodeFn(material);
+    //MPlug plug = depNodeFn.findPlug("surfaceShader");
 }

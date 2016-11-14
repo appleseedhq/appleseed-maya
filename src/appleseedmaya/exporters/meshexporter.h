@@ -54,6 +54,8 @@ class MeshExporter
     static void registerExporter();
     static DagNodeExporter *create(const MDagPath&, renderer::Project& project);
 
+    virtual void collectDependencyNodesToExport(MObjectArray& nodes);
+
     virtual void createEntity();
 
     virtual void exportShapeMotionStep(float time);
@@ -65,6 +67,7 @@ class MeshExporter
     MeshExporter(const MDagPath& path, renderer::Project& project);
 
     foundation::auto_release_ptr<renderer::MeshObject>  m_mesh;
+    foundation::StringDictionary                        m_materialMappings;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H

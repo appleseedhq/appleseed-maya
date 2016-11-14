@@ -35,6 +35,10 @@
 // Boost headers.
 #include "boost/shared_ptr.hpp"
 
+// Maya headers.
+#include <maya/MObject.h>
+#include <maya/MObjectArray.h>
+
 // appleseed.renderer headers.
 #include "renderer/api/utility.h"
 
@@ -53,8 +57,6 @@ class ShapeExporter
 
     virtual bool supportsInstancing() const;
 
-    virtual void collectDependencyNodesToExport(MObjectArray& nodes);
-
     virtual void exportTransformMotionStep(float time);
 
     virtual void flushEntity() = 0;
@@ -62,6 +64,8 @@ class ShapeExporter
   protected:
 
     ShapeExporter(const MDagPath& path, renderer::Project& project);
+
+    void collectMaterialNodes(MObject material, MObjectArray& nodes) const;
 
     renderer::TransformSequence m_transformSequence;
     MurmurHash                  m_shapeHash;

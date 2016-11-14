@@ -111,7 +111,8 @@ MPxNodeExporter* NodeExporterFactory::createMPxNodeExporter(
 
     if(it == gMPxNodeExporters.end())
     {
-        throw NoExporterForNode();
+        //throw NoExporterForNode();
+        return 0;
     }
 
     return it->second(object, project);
@@ -137,7 +138,10 @@ DagNodeExporter* NodeExporterFactory::createDagNodeExporter(
     CreateDagExporterMapType::const_iterator it = gDagNodeExporters.find(dagNodeFn.typeName());
 
     if(it == gDagNodeExporters.end())
-        throw NoExporterForNode();
+    {
+        //throw NoExporterForNode();
+        return 0;
+    }
 
     return it->second(path, project);
 }

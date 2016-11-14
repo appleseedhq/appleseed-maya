@@ -307,22 +307,19 @@ struct SessionImpl
         if(m_mpxExporters.count(depNodeFn.name()) != 0)
             return;
 
-        try
-        {
-            MPxNodeExporterPtr exporter(NodeExporterFactory::createMPxNodeExporter(
-                object,
-                *m_project));
+        MPxNodeExporterPtr exporter(NodeExporterFactory::createMPxNodeExporter(
+            object,
+            *m_project));
 
-            if(exporter)
-            {
-                m_mpxExporters[depNodeFn.name()] = exporter;
-                std::cout << "Created exporter for node: " << depNodeFn.name() << "\n";
-                std::cout << "  type       = " << depNodeFn.typeName() << "\n";
-                std::cout << "  apiTypeStr = " << object.apiTypeStr() << "\n";
-                std::cout << std::endl;
-            }
+        if(exporter)
+        {
+            m_mpxExporters[depNodeFn.name()] = exporter;
+            std::cout << "Created exporter for node: " << depNodeFn.name() << "\n";
+            std::cout << "  type       = " << depNodeFn.typeName() << "\n";
+            std::cout << "  apiTypeStr = " << object.apiTypeStr() << "\n";
+            std::cout << std::endl;
         }
-        catch(Exception& e)
+        else
         {
             std::cout << "Skipping unknown node: " << depNodeFn.name() << "\n";
             std::cout << "  type       = " << depNodeFn.typeName() << "\n";
@@ -339,22 +336,19 @@ struct SessionImpl
         MFnDagNode dagNodeFn(path);
         // todo: test here visibility flags, intermediate objects, .., ...?
 
-        try
-        {
-            DagNodeExporterPtr exporter(NodeExporterFactory::createDagNodeExporter(
-                path,
-                *m_project));
+        DagNodeExporterPtr exporter(NodeExporterFactory::createDagNodeExporter(
+            path,
+            *m_project));
 
-            if(exporter)
-            {
-                m_dagExporters[path.fullPathName()] = exporter;
-                std::cout << "Created exporter for node: " << path.partialPathName() << "\n";
-                std::cout << "  type       = " << dagNodeFn.typeName() << "\n";
-                std::cout << "  apiTypeStr = " << path.node().apiTypeStr() << "\n";
-                std::cout << std::endl;
-            }
+        if(exporter)
+        {
+            m_dagExporters[path.fullPathName()] = exporter;
+            std::cout << "Created exporter for node: " << path.partialPathName() << "\n";
+            std::cout << "  type       = " << dagNodeFn.typeName() << "\n";
+            std::cout << "  apiTypeStr = " << path.node().apiTypeStr() << "\n";
+            std::cout << std::endl;
         }
-        catch(Exception& e)
+        else
         {
             std::cout << "Skipping unknown node: " << path.partialPathName() << "\n";
             std::cout << "  type       = " << dagNodeFn.typeName() << "\n";
