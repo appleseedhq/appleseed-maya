@@ -103,12 +103,22 @@ class AppleseedRenderGlobalsMainTab(object):
                         self.__addControl(
                             ui=pm.intFieldGrp(label="GI Bounces", numberOfFields = 1),
                             attrName="bounces")
+
+                with pm.frameLayout(label="Environment", collapsable=True, collapse=False):
+                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
+                        with pm.rowLayout("appleseedRowLayout", nc=3):
+                            pm.text("Environment Light")
+                            ui = pm.optionMenu()
+                            pm.menuItem(label='<none>')
+
+                            self.__uis["envLight"] = ui
+                            # todo: add change callback here...
+                            #self.__scriptJobs["envLight"] = mc.scriptJob(
+                            #    attributeChange=["appleseedRenderGlobals.envLight", changeCallback])
+
                         self.__addControl(
                             ui=pm.checkBoxGrp(label="Background Emits Light"),
                             attrName="bgLight")
-
-                with pm.frameLayout(label="Environment Light", collapsable=True, collapse=False):
-                    pm.text(label="Environment light options here...")
 
                 with pm.frameLayout(label="System", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
@@ -134,7 +144,6 @@ class AppleseedRenderGlobalsMainTab(object):
 
     def update(self):
         assert(mc.objExists("appleseedRenderGlobals"))
-        pass
 
 
 g_appleseedMainTab = AppleseedRenderGlobalsMainTab()
@@ -156,3 +165,42 @@ def createRenderTabsMelProcedures():
         }
         '''
     )
+
+
+'''
+def environment_select_create(self, attr=None):
+    self.environment_select_layout = mc.rowLayout(nc=3)
+    mc.text('Environment')
+    self.environment_select_option_menu = mc.optionMenu(cc=partial(self.environment_select_set, attr))
+    if attr is not None:
+        self.environment_select_update(attr)
+
+
+        def environment_select_update(self, attr):
+            if self.environment_select_option_menu is not None:
+                items = mc.optionMenu(self.environment_select_option_menu, q=True, ill=True)
+                if items is not None:
+                    for item in items:
+                        mc.deleteUI(item)
+                mc.menuItem(label='<none>', p=self.environment_select_option_menu)
+                for environment in mc.ls(type='ms_environment') + mc.ls(type='ms_physical_environment'):
+                    mc.menuItem(label=environment, p=self.environment_select_option_menu)
+                connection = mc.listConnections(attr, sh=True)
+                if connection is None:
+                    mc.optionMenu(self.environment_select_option_menu, e=True, v='<none>')
+                else:
+                    mc.optionMenu(self.environment_select_option_menu, e=True, v=connection[0])
+
+
+        def environment_select_set(self, attr, environment):
+            value = mc.optionMenu(self.environment_select_option_menu, q=True, v=True)
+            connection = mc.listConnections(attr, sh=True)
+            if value == '<none>':
+                if connection is not None:
+                    mc.disconnectAttr(connection[0] + '.message', attr)
+            else:
+                if connection is not None:
+                    if connection[0] == environment:
+                        return
+                mc.connectAttr(environment + '.message', attr, f=True)
+'''
