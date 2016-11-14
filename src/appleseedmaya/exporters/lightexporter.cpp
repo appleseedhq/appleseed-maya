@@ -95,5 +95,5 @@ void LightExporter::createEntity()
 
 void LightExporter::flushEntity()
 {
-    mainAssembly().lights().insert(m_light);
+    mainAssembly().lights().insert(m_light.release());
 }

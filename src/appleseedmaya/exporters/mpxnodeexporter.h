@@ -61,6 +61,9 @@ class MPxNodeExporter
     renderer::Scene& scene();
     renderer::Assembly& mainAssembly();
 
+    // Return the Maya dependency node.
+    const MObject& node() const;
+
     // Return the name of the appleseed entity created by this exporter.
     virtual MString appleseedName() const;
 

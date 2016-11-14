@@ -36,6 +36,8 @@
 #include "appleseedmaya/exporters/shapeexporter.h"
 
 // appleseed.foundation headers.
+#include "renderer/api/material.h"
+#include "renderer/api/surfaceshader.h"
 #include "foundation/utility/searchpaths.h"
 
 // appleseed.renderer headers.
@@ -66,8 +68,10 @@ class MeshExporter
 
     MeshExporter(const MDagPath& path, renderer::Project& project);
 
-    foundation::auto_release_ptr<renderer::MeshObject>  m_mesh;
-    foundation::StringDictionary                        m_materialMappings;
+    AppleseedEntityPtr<renderer::MeshObject>      m_mesh;
+    foundation::StringDictionary                  m_materialMappings;
+    AppleseedEntityPtr<renderer::SurfaceShader>   m_surfaceShader;
+    AppleseedEntityPtr<renderer::Material>        m_material;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H

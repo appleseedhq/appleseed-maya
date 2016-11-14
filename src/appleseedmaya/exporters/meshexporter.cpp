@@ -64,8 +64,12 @@ MeshExporter::MeshExporter(const MDagPath& path, asr::Project& project)
 
 void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
 {
-    MFnMesh meshFn(dagPath());
+    //MFnMesh meshFn(dagPath());
 
+    // while testing...
+    //m_materialMappings.insert("default", "lambert1");
+
+    /*
     MObjectArray shaders;
     MIntArray indices;
     meshFn.getConnectedShaders(dagPath().instanceNumber(), shaders, indices);
@@ -78,11 +82,14 @@ void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
     MFnDependencyNode nodeFn(shaders[0]);
     m_materialMappings.insert("default", nodeFn.name().asChar());
     collectMaterial(shaders[0], nodes);
+    */
 }
 
 void MeshExporter::createEntity()
 {
-    m_mesh = asr::MeshObjectFactory::create(appleseedName().asChar(), asr::ParamArray());
+    MString objectName = appleseedName();
+
+    m_mesh = asr::MeshObjectFactory::create(objectName.asChar(), asr::ParamArray());
 
     // Todo: create topology here...
     /*
@@ -95,6 +102,17 @@ void MeshExporter::createEntity()
     MIntArray triangleVertices;
     meshFn.getTriangles(triangleCounts, triangleVertices);
     m_mesh->reserve_triangles(triangleVertices.length() / 3);
+    */
+
+    /*
+    asr::ParamArray surfaceShaderParams;
+    m_surfaceShader = asr::PhysicalSurfaceShaderFactory().create(
+        name.asChar(),
+        surfaceShaderParams);
+
+    asr::ParamArray materialParams;
+    materialParams.insert("surface_shader", name.asChar());
+    m_material = asr::OSLMaterialFactory().create(name.asChar(), materialParams);
     */
 }
 
@@ -126,12 +144,15 @@ void MeshExporter::flushEntity()
 {
     ShapeExporter::flushEntity();
 
+    //mainAssembly().surface_shaders().insert(m_surfaceShader.release());
+    //mainAssembly().materials().insert(m_material.release());
+
     const MString objectInstanceName = appleseedName() + MString("_instance");
 
     asf::StringDictionary materials;
     //materials.insert("default", g_defaultMaterialName);
 
-    asf::auto_release_ptr<asr::ObjectInstance> meshInstance;
+    AppleseedEntityPtr<asr::ObjectInstance> meshInstance;
     meshInstance = asr::ObjectInstanceFactory::create(
         objectInstanceName.asChar(),
         asr::ParamArray(),
@@ -141,9 +162,8 @@ void MeshExporter::flushEntity()
         materials);
 
     std::cout << "Flushing mesh: " << m_mesh->get_name() << std::endl;
-    mainAssembly().objects().insert(
-        asf::auto_release_ptr<asr::Object>(m_mesh.release()));
+    mainAssembly().objects().insert(m_mesh.releaseAs<asr::Object>());
 
     std::cout << "Flushing instance: " << objectInstanceName << std::endl;
-    mainAssembly().object_instances().insert(meshInstance);
+    mainAssembly().object_instances().insert(meshInstance.release());
 }

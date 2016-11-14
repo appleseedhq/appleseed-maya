@@ -60,7 +60,7 @@ class LightExporter
 
     LightExporter(const MDagPath& path, renderer::Project& project);
 
-    foundation::auto_release_ptr<renderer::Light> m_light;
+    AppleseedEntityPtr<renderer::Light> m_light;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H

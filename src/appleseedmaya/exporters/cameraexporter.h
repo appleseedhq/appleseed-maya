@@ -62,7 +62,7 @@ class CameraExporter
 
     static bool isRenderable(const MDagPath& path);
 
-    foundation::auto_release_ptr<renderer::Camera> m_camera;
+    AppleseedEntityPtr<renderer::Camera> m_camera;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H

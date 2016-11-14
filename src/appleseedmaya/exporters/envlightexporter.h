@@ -60,7 +60,7 @@ class EnvLightExporter
 
     EnvLightExporter(const MDagPath& path, renderer::Project& project);
 
-    foundation::auto_release_ptr<renderer::EnvironmentEDF> m_envLight;
+    AppleseedEntityPtr<renderer::EnvironmentEDF> m_envLight;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_ENV_LIGHTEXPORTER_H

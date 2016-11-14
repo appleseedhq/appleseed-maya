@@ -262,7 +262,7 @@ MStatus ShadingNodeRegistry::registerShadingNodes(MObject plugin)
     for(int i = shaderPaths.size() - 1; i >= 0; --i)
     {
         std::cout << "Looking for shaders in " << shaderPaths[i] << std::endl;
-        //registerShadersInDirectory(shaderPaths[i], pluginFn, *query);
+        registerShadersInDirectory(shaderPaths[i], pluginFn, *query);
     }
 
     return MS::kSuccess;

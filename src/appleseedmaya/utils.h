@@ -84,7 +84,7 @@ class AppleseedEntityPtr
     {
     }
 
-    explicit AppleseedEntityPtr(foundation::auto_release_ptr<T> ptr)
+    AppleseedEntityPtr(foundation::auto_release_ptr<T> ptr)
       : m_ptr(ptr.release())
       , m_releaseObj(true)
     {
@@ -112,12 +112,27 @@ class AppleseedEntityPtr
         m_ptr = ptr.release();
     }
 
+    AppleseedEntityPtr& operator=(foundation::auto_release_ptr<T> ptr)
+    {
+        reset(ptr);
+        return *this;
+    }
+
     foundation::auto_release_ptr<T> release()
     {
         assert(m_releaseObj);
 
         m_releaseObj = false;
         return foundation::auto_release_ptr<T>(m_ptr);
+    }
+
+    template<class U>
+    foundation::auto_release_ptr<U> releaseAs()
+    {
+        assert(m_releaseObj);
+
+        m_releaseObj = false;
+        return foundation::auto_release_ptr<U>(m_ptr);
     }
 
     T& operator*() const throw()

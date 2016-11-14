@@ -114,7 +114,7 @@ void CameraExporter::exportCameraMotionStep(float time)
 
 void CameraExporter::flushEntity()
 {
-    scene().cameras().insert(m_camera);
+    scene().cameras().insert(m_camera.release());
 }
 
 bool CameraExporter::isRenderable(const MDagPath& path)

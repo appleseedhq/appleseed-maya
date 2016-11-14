@@ -29,6 +29,10 @@
 // Interface header.
 #include "appleseedmaya/exporters/shadingnetworkexporter.h"
 
+// Maya headers.
+#include <maya/MFnDependencyNode.h>
+#include <maya/MPlug.h>
+
 // appleseed.renderer headers.
 #include "renderer/api/material.h"
 #include "renderer/api/scene.h"
@@ -37,6 +41,7 @@
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/shadingnoderegistry.h"
 
+#include <iostream>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -66,10 +71,49 @@ ShadingNetworkExporter::ShadingNetworkExporter(const MObject& object, asr::Proje
 
 void ShadingNetworkExporter::createEntity()
 {
-    m_shaderGroup = asr::ShaderGroupFactory::create(appleseedName().asChar());
+    MString name = appleseedName() + MString("_shader_group");
+    m_shaderGroup = asr::ShaderGroupFactory::create(name.asChar());
+    createShader(node());
 }
 
 void ShadingNetworkExporter::flushEntity()
 {
-    mainAssembly().shader_groups().insert(m_shaderGroup);
+    mainAssembly().shader_groups().insert(m_shaderGroup.release());
+}
+
+void ShadingNetworkExporter::createShader(const MObject& object)
+{
+    MFnDependencyNode depNodeFn(object);
+
+    const OSLShaderInfo *shaderInfo =
+        ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+
+    if(shaderInfo)
+    {
+        asr::ParamArray shaderParams;
+
+        for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
+        {
+            const OSLParamInfo& paramInfo = shaderInfo->paramInfo[i];
+            processAttribute(object, paramInfo.mayaAttributeName);
+        }
+
+        m_shaderGroup->add_shader(
+            shaderInfo->shaderType.asChar(),
+            shaderInfo->shaderName.asChar(),
+            depNodeFn.name().asChar(),
+            shaderParams);
+    }
+    else
+    {
+        // warning here...!
+    }
+}
+
+void ShadingNetworkExporter::processAttribute(const MObject& object, const MString& attrName)
+{
+    std::cout << "Processing shading node attr: " << attrName << std::endl;
+    //MStatus status;
+    //MFnDependencyNode depNodeFn(object);
+    //MPlug plug = depNodeFn.findPlug(attrName, &status);
 }

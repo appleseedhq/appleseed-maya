@@ -65,8 +65,6 @@ class ShapeExporter
 
     ShapeExporter(const MDagPath& path, renderer::Project& project);
 
-    void collectMaterialNodes(MObject material, MObjectArray& nodes) const;
-
     renderer::TransformSequence m_transformSequence;
     MurmurHash                  m_shapeHash;
 };

@@ -68,7 +68,6 @@
 #include "renderer/api/utility.h"
 
 // appleseed.maya headers.
-#include "appleseedmaya/exceptions.h"
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/exporters/mpxnodeexporter.h"
@@ -292,7 +291,7 @@ struct SessionImpl
     {
         // Create exporter for default material.
         MSelectionList selList;
-        selList.add("initialShadingGroup");
+        selList.add("lambert1");
         MObject initialShadingGroup;
         if(!selList.isEmpty())
         {

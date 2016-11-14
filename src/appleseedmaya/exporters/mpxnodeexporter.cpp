@@ -72,3 +72,8 @@ MString MPxNodeExporter::appleseedName() const
     MFnDependencyNode depNodeFn(m_object);
     return depNodeFn.name();
 }
+
+const MObject& MPxNodeExporter::node() const
+{
+    return m_object;
+}

@@ -29,10 +29,6 @@
 // Interface header.
 #include "appleseedmaya/exporters/shapeexporter.h"
 
-// Maya headers.
-#include <maya/MFnDependencyNode.h>
-#include <maya/MPlug.h>
-
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -58,11 +54,4 @@ void ShapeExporter::exportTransformMotionStep(float time)
 void ShapeExporter::flushEntity()
 {
     m_transformSequence.optimize();
-}
-
-void ShapeExporter::collectMaterialNodes(MObject material, MObjectArray& nodes) const
-{
-    nodes.append(material);
-    //MFnDependencyNode depNodeFn(material);
-    //MPlug plug = depNodeFn.findPlug("surfaceShader");
 }

@@ -40,8 +40,6 @@ set (appleseed_maya_sources
     appleseedmaya/config.h
     appleseedmaya/envlightnode.cpp
     appleseedmaya/envlightnode.h
-    appleseedmaya/exceptions.cpp
-    appleseedmaya/exceptions.h
     appleseedmaya/exporters/cameraexporter.cpp
     appleseedmaya/exporters/cameraexporter.h
     appleseedmaya/exporters/envlightexporter.cpp
@@ -58,8 +56,6 @@ set (appleseed_maya_sources
     appleseedmaya/exporters/meshexporter.h
     appleseedmaya/exporters/mpxnodeexporter.cpp
     appleseedmaya/exporters/mpxnodeexporter.h
-    appleseedmaya/exporters/shadingengineexporter.cpp
-    appleseedmaya/exporters/shadingengineexporter.h
     appleseedmaya/exporters/shadingnetworkexporter.cpp
     appleseedmaya/exporters/shadingnetworkexporter.h
     appleseedmaya/exporters/shapeexporter.cpp

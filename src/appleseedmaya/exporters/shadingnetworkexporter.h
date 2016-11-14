@@ -57,7 +57,11 @@ class ShadingNetworkExporter
   private:
     ShadingNetworkExporter(const MObject& object, renderer::Project& project);
 
-    foundation::auto_release_ptr<renderer::ShaderGroup> m_shaderGroup;
+    void createShader(const MObject& object);
+
+    void processAttribute(const MObject& object, const MString& attrName);
+
+    AppleseedEntityPtr<renderer::ShaderGroup> m_shaderGroup;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
