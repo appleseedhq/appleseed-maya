@@ -26,39 +26,10 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
-
-// appleseed.renderer headers.
-#include "renderer/api/utility.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/dagnodeexporter.h"
-#include "appleseedmaya/murmurhash.h"
+// Interface header.
+#include "appleseedmaya/attributeutils.h"
 
 
-class ShapeExporter
-  : public DagNodeExporter
+namespace AttributeUtils
 {
-  public:
-
-    virtual bool supportsInstancing() const;
-
-    virtual void exportTransformMotionStep(float time);
-
-    virtual void flushEntity() = 0;
-
-  protected:
-
-    ShapeExporter(
-      const MDagPath&               path,
-      renderer::Project&            project,
-      AppleseedSession::SessionMode sessionMode);
-
-    renderer::TransformSequence m_transformSequence;
-    MurmurHash                  m_shapeHash;
-};
-
-typedef boost::shared_ptr<ShapeExporter> ShapeExporterPtr;
-
-#endif  // !APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
+}

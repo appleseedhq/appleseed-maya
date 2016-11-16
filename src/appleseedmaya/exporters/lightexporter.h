@@ -48,7 +48,11 @@ class LightExporter
   public:
 
     static void registerExporter();
-    static DagNodeExporter *create(const MDagPath&, renderer::Project& project);
+
+    static DagNodeExporter *create(
+      const MDagPath&               path,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
 
     bool supportsMotionBlur() const;
 
@@ -58,7 +62,10 @@ class LightExporter
 
   private:
 
-    LightExporter(const MDagPath& path, renderer::Project& project);
+    LightExporter(
+      const MDagPath&               path,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
 
     AppleseedEntityPtr<renderer::Light> m_light;
 };

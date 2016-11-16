@@ -88,7 +88,7 @@ struct SessionImpl
     SessionImpl(
         AppleseedSession::SessionMode       mode,
         const AppleseedSession::Options&    options)
-      : m_mode(mode)
+      : m_sessionMode(mode)
       , m_options(options)
     {
         createProject();
@@ -99,7 +99,7 @@ struct SessionImpl
         const MString&                      fileName,
         const AppleseedSession::Options&    options)
       : m_fileName(fileName)
-      , m_mode(AppleseedSession::ExportSession)
+      , m_sessionMode(AppleseedSession::ExportSession)
       , m_options(options)
     {
         m_projectPath = bfs::path(fileName.asChar()).parent_path();
@@ -308,7 +308,8 @@ struct SessionImpl
 
         MPxNodeExporterPtr exporter(NodeExporterFactory::createMPxNodeExporter(
             object,
-            *m_project));
+            *m_project,
+            m_sessionMode));
 
         if(exporter)
         {
@@ -337,7 +338,8 @@ struct SessionImpl
 
         DagNodeExporterPtr exporter(NodeExporterFactory::createDagNodeExporter(
             path,
-            *m_project));
+            *m_project,
+            m_sessionMode));
 
         if(exporter)
         {
@@ -368,7 +370,7 @@ struct SessionImpl
     typedef std::map<MString, MPxNodeExporterPtr, MStringCompareLess> MPxExporterMap;
     typedef std::map<MString, DagNodeExporterPtr, MStringCompareLess> DagExporterMap;
 
-    AppleseedSession::SessionMode               m_mode;
+    AppleseedSession::SessionMode               m_sessionMode;
     AppleseedSession::Options                   m_options;
     MTime                                       m_savedTime;
 
@@ -463,12 +465,12 @@ void AppleseedSession::endProgressiveRender()
     MAnimControl::setCurrentTime(gSavedTime);
 }
 
-AppleseedSession::SessionMode AppleseedSession::mode()
+AppleseedSession::SessionMode AppleseedSession::sessionMode()
 {
     if(gGlobalSession.get() == 0)
         return NoSession;
 
-    return gGlobalSession->m_mode;
+    return gGlobalSession->m_sessionMode;
 }
 
 const AppleseedSession::Options& AppleseedSession::options()

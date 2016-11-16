@@ -49,13 +49,19 @@ void LightExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("spotLight", &LightExporter::create);
 }
 
-DagNodeExporter *LightExporter::create(const MDagPath& path, asr::Project& project)
+DagNodeExporter *LightExporter::create(
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
 {
-    return new LightExporter(path, project);
+    return new LightExporter(path, project, sessionMode);
 }
 
-LightExporter::LightExporter(const MDagPath& path, asr::Project& project)
-  : DagNodeExporter(path, project)
+LightExporter::LightExporter(
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+  : DagNodeExporter(path, project, sessionMode)
 {
 }
 

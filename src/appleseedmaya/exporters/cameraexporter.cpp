@@ -36,7 +36,6 @@
 #include <maya/MStatus.h>
 
 // appleseed.renderer headers.
-#include "renderer/api/camera.h"
 #include "renderer/api/scene.h"
 
 // appleseed.maya headers.
@@ -51,16 +50,22 @@ void CameraExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("camera", &CameraExporter::create);
 }
 
-DagNodeExporter *CameraExporter::create(const MDagPath& path, asr::Project& project)
+DagNodeExporter *CameraExporter::create(
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
 {
     if(isRenderable(path))
-        return new CameraExporter(path, project);
+        return new CameraExporter(path, project, sessionMode);
 
     return 0;
 }
 
-CameraExporter::CameraExporter(const MDagPath& path, asr::Project& project)
-  : DagNodeExporter(path, project)
+CameraExporter::CameraExporter(
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+  : DagNodeExporter(path, project, sessionMode)
 {
 }
 

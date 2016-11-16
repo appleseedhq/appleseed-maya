@@ -110,7 +110,7 @@ class AppleseedSession
 
     static void endProgressiveRender();
 
-    static SessionMode mode();
+    static SessionMode sessionMode();
     static const Options& options();
 };
 

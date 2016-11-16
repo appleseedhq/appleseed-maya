@@ -40,10 +40,11 @@ namespace asr = renderer;
 
 InstanceExporter::InstanceExporter(
     const MDagPath&                 path,
+    AppleseedSession::SessionMode   sessionMode,
     const ShapeExporter&            master,
     asr::Project&                   project,
     const asr::TransformSequence&   transformSequence)
-  : ShapeExporter(path, project)
+  : ShapeExporter(path, project, sessionMode)
 {
     m_transformSequence = transformSequence;
 }

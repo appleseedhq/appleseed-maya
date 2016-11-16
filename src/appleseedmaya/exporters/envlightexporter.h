@@ -29,17 +29,11 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_ENV_LIGHTEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_ENV_LIGHTEXPORTER_H
 
-// Standard headers.
-#include<string>
-
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/environmentedf.h"
-
-// Forward declarations.
-namespace renderer { class Project; }
 
 
 class EnvLightExporter
@@ -48,7 +42,10 @@ class EnvLightExporter
   public:
 
     static void registerExporter();
-    static DagNodeExporter *create(const MDagPath&, renderer::Project& project);
+    static DagNodeExporter *create(
+      const MDagPath&               path,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
 
     virtual void createEntity();
 
@@ -58,7 +55,10 @@ class EnvLightExporter
 
   private:
 
-    EnvLightExporter(const MDagPath& path, renderer::Project& project);
+    EnvLightExporter(
+      const MDagPath&               path,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
 
     AppleseedEntityPtr<renderer::EnvironmentEDF> m_envLight;
 };

@@ -37,6 +37,8 @@ set (appleseed_maya_sources
     appleseedmaya/appleseedsession.h
     appleseedmaya/appleseedtranslator.cpp
     appleseedmaya/appleseedtranslator.h
+    appleseedmaya/attributeutils.cpp
+    appleseedmaya/attributeutils.h
     appleseedmaya/config.h
     appleseedmaya/envlightnode.cpp
     appleseedmaya/envlightnode.h

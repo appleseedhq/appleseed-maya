@@ -34,6 +34,9 @@
 #include <maya/MStatus.h>
 #include <maya/MString.h>
 
+// appleseed.maya headers.
+#include "appleseedmaya/appleseedsession.h"
+
 // Forward declarations.
 class DagNodeExporter;
 class MPxNodeExporter;
@@ -48,25 +51,33 @@ class NodeExporterFactory
     static MStatus initialize(const MString& pluginPath);
     static MStatus uninitialize();
 
-    typedef MPxNodeExporter* (*CreateMPxNodeExporterFn)(const MObject&, renderer::Project&);
+    typedef MPxNodeExporter* (*CreateMPxNodeExporterFn)(
+      const MObject&,
+      renderer::Project&,
+      AppleseedSession::SessionMode);
 
     static void registerMPxNodeExporter(
       const MString&          mayaTypeName,
       CreateMPxNodeExporterFn createFn);
 
     static MPxNodeExporter* createMPxNodeExporter(
-      const MObject&      object,
-      renderer::Project&  project);
+      const MObject&                object,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
 
-    typedef DagNodeExporter* (*CreateDagNodeExporterFn)(const MDagPath&, renderer::Project&);
+    typedef DagNodeExporter* (*CreateDagNodeExporterFn)(
+      const MDagPath&,
+      renderer::Project&,
+      AppleseedSession::SessionMode);
 
     static void registerDagNodeExporter(
       const MString&          mayaTypeName,
       CreateDagNodeExporterFn createFn);
 
     static DagNodeExporter* createDagNodeExporter(
-      const MDagPath&     path,
-      renderer::Project&  project);
+      const MDagPath&               path,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_NODEEXPORTER_FACTORY_H

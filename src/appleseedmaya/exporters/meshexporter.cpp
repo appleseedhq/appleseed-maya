@@ -40,7 +40,6 @@
 #include <maya/MIntArray.h>
 
 // appleseed.maya headers.
-#include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 
 namespace bfs = boost::filesystem;
@@ -52,13 +51,19 @@ void MeshExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("mesh", &MeshExporter::create);
 }
 
-DagNodeExporter *MeshExporter::create(const MDagPath& path, asr::Project& project)
+DagNodeExporter *MeshExporter::create(
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
 {
-    return new MeshExporter(path, project);
+    return new MeshExporter(path, project, sessionMode);
 }
 
-MeshExporter::MeshExporter(const MDagPath& path, asr::Project& project)
-  : ShapeExporter(path, project)
+MeshExporter::MeshExporter(
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+  : ShapeExporter(path, project, sessionMode)
 {
 }
 
@@ -120,7 +125,7 @@ void MeshExporter::exportShapeMotionStep(float time)
 {
     // todo: fill geom info here...
 
-    if(AppleseedSession::mode() == AppleseedSession::ExportSession)
+    if(sessionMode() == AppleseedSession::ExportSession)
     {
         // export mesh here...
         bfs::path projPath = project().search_paths().get_root_path();

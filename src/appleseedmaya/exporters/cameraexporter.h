@@ -29,17 +29,11 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
 
-// Standard headers.
-#include<string>
-
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/camera.h"
-
-// Forward declarations.
-namespace renderer { class Project; }
 
 
 class CameraExporter
@@ -48,7 +42,11 @@ class CameraExporter
   public:
 
     static void registerExporter();
-    static DagNodeExporter *create(const MDagPath& path, renderer::Project& project);
+
+    static DagNodeExporter *create(
+      const MDagPath&               path,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
 
     virtual void createEntity();
 
@@ -58,7 +56,10 @@ class CameraExporter
 
   private:
 
-    CameraExporter(const MDagPath& path, renderer::Project& project);
+    CameraExporter(
+      const MDagPath&               path,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
 
     static bool isRenderable(const MDagPath& path);
 

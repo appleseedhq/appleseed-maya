@@ -49,6 +49,7 @@ class InstanceExporter
 
     InstanceExporter(
       const MDagPath&                     path,
+      AppleseedSession::SessionMode       sessionMode,
       const ShapeExporter&                master,
       renderer::Project&                  project,
       const renderer::TransformSequence&  transformSequence);

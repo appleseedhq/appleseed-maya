@@ -29,33 +29,35 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
 
-// Maya headers.
-
-// appleseed.foundation headers.
-
 // appleseed.renderer headers.
 #include "renderer/api/shadergroup.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/mpxnodeexporter.h"
 
-// Forward declarations.
-namespace renderer { class Project; }
-
 
 class ShadingNetworkExporter
   : public MPxNodeExporter
 {
   public:
+
     static void registerExporter();
-    static MPxNodeExporter *create(const MObject&, renderer::Project& project);
+
+    static MPxNodeExporter *create(
+      const MObject&                object,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
 
     virtual void createEntity();
 
     virtual void flushEntity();
 
   private:
-    ShadingNetworkExporter(const MObject& object, renderer::Project& project);
+
+    ShadingNetworkExporter(
+      const MObject&                object,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
 
     void createShader(const MObject& object);
 

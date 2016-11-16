@@ -33,8 +33,11 @@
 namespace asf = foundation;
 namespace asr = renderer;
 
-ShapeExporter::ShapeExporter(const MDagPath& path, asr::Project& project)
-  : DagNodeExporter(path, project)
+ShapeExporter::ShapeExporter(
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+  : DagNodeExporter(path, project, sessionMode)
 {
 }
 

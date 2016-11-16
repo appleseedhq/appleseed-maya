@@ -40,8 +40,12 @@
 namespace asf = foundation;
 namespace asr = renderer;
 
-MPxNodeExporter::MPxNodeExporter(const MObject& object, asr::Project& project)
+MPxNodeExporter::MPxNodeExporter(
+    const MObject&                  object,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
   : m_object(object)
+  , m_sessionMode(sessionMode)
   , m_project(project)
   , m_scene(*project.get_scene())
   , m_mainAssembly(*m_scene.assemblies().get_by_name("assembly"))
@@ -50,6 +54,22 @@ MPxNodeExporter::MPxNodeExporter(const MObject& object, asr::Project& project)
 
 MPxNodeExporter::~MPxNodeExporter()
 {
+}
+
+const MObject& MPxNodeExporter::node() const
+{
+    return m_object;
+}
+
+AppleseedSession::SessionMode MPxNodeExporter::sessionMode() const
+{
+    return m_sessionMode;
+}
+
+MString MPxNodeExporter::appleseedName() const
+{
+    MFnDependencyNode depNodeFn(m_object);
+    return depNodeFn.name();
 }
 
 asr::Project& MPxNodeExporter::project()
@@ -65,15 +85,4 @@ asr::Scene& MPxNodeExporter::scene()
 asr::Assembly& MPxNodeExporter::mainAssembly()
 {
     return m_mainAssembly;
-}
-
-MString MPxNodeExporter::appleseedName() const
-{
-    MFnDependencyNode depNodeFn(m_object);
-    return depNodeFn.name();
-}
-
-const MObject& MPxNodeExporter::node() const
-{
-    return m_object;
 }

@@ -37,6 +37,7 @@
 #include <maya/MString.h>
 
 // appleseed.maya headers.
+#include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/utils.h"
 
 // Fordward declarations.
@@ -57,16 +58,6 @@ class MPxNodeExporter
     // Destructor.
     virtual ~MPxNodeExporter();
 
-    renderer::Project& project();
-    renderer::Scene& scene();
-    renderer::Assembly& mainAssembly();
-
-    // Return the Maya dependency node.
-    const MObject& node() const;
-
-    // Return the name of the appleseed entity created by this exporter.
-    virtual MString appleseedName() const;
-
     // Create appleseed entities.
     virtual void createEntity() = 0;
 
@@ -76,13 +67,30 @@ class MPxNodeExporter
   protected:
 
     // Constructor.
-    MPxNodeExporter(const MObject& object, renderer::Project& project);
+    MPxNodeExporter(
+      const MObject&                object,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
+
+    // Return the Maya dependency node.
+    const MObject& node() const;
+
+    // Return the session mode.
+    AppleseedSession::SessionMode sessionMode() const;
+
+    // Return the name of the appleseed entity created by this exporter.
+    virtual MString appleseedName() const;
+
+    renderer::Project& project();
+    renderer::Scene& scene();
+    renderer::Assembly& mainAssembly();
 
   private:
-    MObject                     m_object;
-    renderer::Project&          m_project;
-    renderer::Scene&            m_scene;
-    renderer::Assembly&         m_mainAssembly;
+    MObject                       m_object;
+    AppleseedSession::SessionMode m_sessionMode;
+    renderer::Project&            m_project;
+    renderer::Scene&              m_scene;
+    renderer::Assembly&           m_mainAssembly;
 };
 
 typedef boost::shared_ptr<MPxNodeExporter> MPxNodeExporterPtr;

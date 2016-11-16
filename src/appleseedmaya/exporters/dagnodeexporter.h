@@ -34,9 +34,6 @@
 #include <maya/MMatrix.h>
 #include <maya/MObjectArray.h>
 
-// Boost headers.
-#include "boost/shared_ptr.hpp"
-
 // appleseed.foundation headers.
 #include "foundation/math/matrix.h"
 
@@ -44,9 +41,6 @@
 #include "appleseedmaya/exporters/mpxnodeexporter.h"
 
 // Forward declarations.
-namespace renderer { class Assembly; }
-namespace renderer { class Project; }
-namespace renderer { class Scene; }
 class MotionBlurTimes;
 
 
@@ -73,7 +67,10 @@ class DagNodeExporter
 
   protected:
 
-    DagNodeExporter(const MDagPath& path, renderer::Project& project);
+    DagNodeExporter(
+      const MDagPath&               path,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
 
     const MDagPath& dagPath() const;
 

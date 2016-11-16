@@ -101,8 +101,9 @@ void NodeExporterFactory::registerMPxNodeExporter(
 }
 
 MPxNodeExporter* NodeExporterFactory::createMPxNodeExporter(
-    const MObject&  object,
-    asr::Project&   project)
+    const MObject&                  object,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
 {
     MFnDependencyNode depNodeFn(object);
     CreateMPxExporterMapType::const_iterator it = gMPxNodeExporters.find(depNodeFn.typeName());
@@ -113,7 +114,7 @@ MPxNodeExporter* NodeExporterFactory::createMPxNodeExporter(
         return 0;
     }
 
-    return it->second(object, project);
+    return it->second(object, project, sessionMode);
 }
 
 void NodeExporterFactory::registerDagNodeExporter(
@@ -129,8 +130,9 @@ void NodeExporterFactory::registerDagNodeExporter(
 }
 
 DagNodeExporter* NodeExporterFactory::createDagNodeExporter(
-    const MDagPath& path,
-    asr::Project&   project)
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
 {
     MFnDagNode dagNodeFn(path);
     CreateDagExporterMapType::const_iterator it = gDagNodeExporters.find(dagNodeFn.typeName());
@@ -141,5 +143,5 @@ DagNodeExporter* NodeExporterFactory::createDagNodeExporter(
         return 0;
     }
 
-    return it->second(path, project);
+    return it->second(path, project, sessionMode);
 }

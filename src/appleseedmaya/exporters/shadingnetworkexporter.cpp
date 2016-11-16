@@ -59,13 +59,19 @@ void ShadingNetworkExporter::registerExporter()
     }
 }
 
-MPxNodeExporter *ShadingNetworkExporter::create(const MObject& object, asr::Project& project)
+MPxNodeExporter *ShadingNetworkExporter::create(
+    const MObject&                  object,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
 {
-    return new ShadingNetworkExporter(object, project);
+    return new ShadingNetworkExporter(object, project, sessionMode);
 }
 
-ShadingNetworkExporter::ShadingNetworkExporter(const MObject& object, asr::Project& project)
-  : MPxNodeExporter(object, project)
+ShadingNetworkExporter::ShadingNetworkExporter(
+    const MObject&                  object,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+  : MPxNodeExporter(object, project, sessionMode)
 {
 }
 
