@@ -39,7 +39,6 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/shadingnoderegistry.h"
 
 #include <iostream>
 
@@ -101,7 +100,15 @@ void ShadingNetworkExporter::createShader(const MObject& object)
         for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
         {
             const OSLParamInfo& paramInfo = shaderInfo->paramInfo[i];
-            processAttribute(object, paramInfo.mayaAttributeName);
+
+            // Skip output attributes.
+            if(paramInfo.isOutput)
+                continue;
+
+            if(paramInfo.isArray)
+                processArrayAttribute(object, paramInfo);
+            else
+                processAttribute(object, paramInfo);
         }
 
         m_shaderGroup->add_shader(
@@ -116,10 +123,16 @@ void ShadingNetworkExporter::createShader(const MObject& object)
     }
 }
 
-void ShadingNetworkExporter::processAttribute(const MObject& object, const MString& attrName)
+void ShadingNetworkExporter::processAttribute(const MObject& object, const OSLParamInfo& paramInfo)
 {
-    std::cout << "Processing shading node attr: " << attrName << std::endl;
-    //MStatus status;
-    //MFnDependencyNode depNodeFn(object);
-    //MPlug plug = depNodeFn.findPlug(attrName, &status);
+    const MString& attrName = paramInfo.mayaAttributeName;
+    std::cout << "Processing shading node attr: " << attrName << ", type = " << paramInfo.paramType << std::endl;
+    // ...
+}
+
+void ShadingNetworkExporter::processArrayAttribute(const MObject& object, const OSLParamInfo& paramInfo)
+{
+    const MString& attrName = paramInfo.mayaAttributeName;
+    std::cout << "Processing shading node array attr: " << attrName << ", type = " << paramInfo.paramType << std::endl;
+    // ...
 }

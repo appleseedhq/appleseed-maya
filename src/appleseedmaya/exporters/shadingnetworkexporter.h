@@ -34,6 +34,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/mpxnodeexporter.h"
+#include "appleseedmaya/shadingnoderegistry.h"
 
 
 class ShadingNetworkExporter
@@ -61,7 +62,8 @@ class ShadingNetworkExporter
 
     void createShader(const MObject& object);
 
-    void processAttribute(const MObject& object, const MString& attrName);
+    void processAttribute(const MObject& object, const OSLParamInfo& paramInfo);
+    void processArrayAttribute(const MObject& object, const OSLParamInfo& paramInfo);
 
     AppleseedEntityPtr<renderer::ShaderGroup> m_shaderGroup;
 };
