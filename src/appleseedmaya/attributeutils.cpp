@@ -29,7 +29,128 @@
 // Interface header.
 #include "appleseedmaya/attributeutils.h"
 
+// Maya headers.
+#include <maya/MFnMatrixData.h>
+
+namespace
+{
+
+template<class T>
+MStatus get3(const MPlug& plug, T& x, T& y, T& z)
+{
+    if(!plug.isCompound())
+        return MS::kFailure;
+
+    if(plug.numChildren() != 3)
+        return MS::kFailure;
+
+    MStatus status;
+    if(status) status = plug.child(0).getValue(x);
+    if(status) status = plug.child(1).getValue(y);
+    if(status) status = plug.child(2).getValue(z);
+    return status;
+}
+
+} // unnamed.
 
 namespace AttributeUtils
 {
+
+MStatus get(const MPlug& plug, MColor& value)
+{
+    value.a = 1.0f;
+    return get3(plug, value.r, value.g, value.b);
+}
+
+MStatus get(const MPlug& plug, MPoint& value)
+{
+    return get3(plug, value.x, value.y, value.z);
+}
+
+MStatus get(const MPlug& plug, MVector& value)
+{
+    return get3(plug, value.x, value.y, value.z);
+}
+
+MStatus get(const MPlug& plug, MMatrix& value)
+{
+    value.setToIdentity();
+
+    MObject matrixObject;
+    MStatus status = plug.getValue(matrixObject);
+
+    if(!status)
+        return status;
+
+    MFnMatrixData matrixDataFn(matrixObject);
+    value = matrixDataFn.matrix(&status);
+    return status;
+}
+
+MStatus get(const MPlug& plug, MObject& value)
+{
+    value = MObject::kNullObj;
+
+    if(!plug.isConnected())
+        return MS::kFailure;
+
+    MStatus status;
+    MPlugArray inputConnections;
+    plug.connectedTo(inputConnections, true, false, &status);
+
+    if(status)
+        value = inputConnections[0].node();
+
+    return status;
+}
+
+bool hasConnections(const MPlug& plug, bool input)
+{
+    MStatus status;
+
+    if(!plug.isConnected(&status))
+        return false;
+
+    MPlugArray connections;
+    plug.connectedTo(
+        connections,
+        input ? true : false,
+        input ? false : true,
+        &status);
+
+    if(status)
+        return connections.length() != 0;
+
+    return false;
+}
+
+bool anyChildPlugConnected(const MPlug& plug, bool input)
+{
+    MStatus status;
+
+    if(!plug.isCompound(&status))
+        return false;
+
+    if(!status)
+        return false;
+
+    int numChildren = plug.numChildren(&status);
+
+    if(!status)
+        return false;
+
+    for(int i = 0, e = plug.numChildren(); i < e; ++i)
+    {
+        MPlug c = plug.child(i, &status);
+
+        if(!status)
+            continue;
+
+        if(hasConnections(c, input))
+            return true;
+    }
+
+    return false;
+}
+
 }

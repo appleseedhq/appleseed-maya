@@ -29,16 +29,16 @@
 // Interface header.
 #include "appleseedmaya/renderglobalsnode.h"
 
-// appleseed.maya headers.
-#include "appleseedmaya/config.h"
-#include "appleseedmaya/typeids.h"
+// Maya headers.
+#include <maya/MFnMessageAttribute.h>
+#include <maya/MFnNumericAttribute.h>
 
 // appleseed.renderer headers.
 #include "renderer/api/utility.h"
 
-// Maya headers.
-#include <maya/MFnMessageAttribute.h>
-#include <maya/MFnNumericAttribute.h>
+// appleseed.maya headers.
+#include "appleseedmaya/config.h"
+#include "appleseedmaya/typeids.h"
 
 
 const MString RenderGlobalsNode::nodeName("appleseedRenderGlobals");

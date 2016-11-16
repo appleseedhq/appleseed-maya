@@ -30,12 +30,58 @@
 #define APPLESEED_MAYA_ATTRIBUTE_UTILS_H
 
 // Maya headers.
+#include <maya/MColor.h>
+#include <maya/MFnDependencyNode.h>
+#include <maya/MMatrix.h>
 #include <maya/MObject.h>
+#include <maya/MPlug.h>
+#include <maya/MPlugArray.h>
+#include <maya/MPoint.h>
+#include <maya/MStatus.h>
 #include <maya/MString.h>
+#include <maya/MVector.h>
 
+// appleseed.foundation headers.
+
+// appleseed.renderer headers.
 
 namespace AttributeUtils
 {
+
+template<class T>
+MStatus get(const MPlug& plug, T& value)
+{
+    return plug.getValue(value);
 }
+
+MStatus get(const MPlug& plug, MColor& value);
+MStatus get(const MPlug& plug, MPoint& value);
+MStatus get(const MPlug& plug, MVector& value);
+MStatus get(const MPlug& plug, MMatrix& value);
+MStatus get(const MPlug& plug, MObject& value);
+
+template<class T>
+MStatus get(const MFnDependencyNode& depNodeFn, const MString& attrName, T& value)
+{
+    MStatus status;
+    MPlug plug = depNodeFn.findPlug(attrName, &status);
+    if (!status)
+        return status;
+
+    return get(plug, value);
+}
+
+template<class T>
+MStatus get(const MObject& node, const MString& attrName, T& value)
+{
+    MFnDependencyNode depNodeFn(node);
+    return get(depNodeFn, attrName, value);
+}
+
+bool hasConnections(const MPlug& plug, bool input);
+
+bool anyChildPlugConnected(const MPlug& plug, bool input);
+
+} // AttributeUtils.
 
 #endif  // !APPLESEED_MAYA_ATTRIBUTE_UTILS_H
