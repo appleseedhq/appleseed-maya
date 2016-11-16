@@ -89,17 +89,26 @@ MStatus get(const MPlug& plug, MMatrix& value)
 
 MStatus get(const MPlug& plug, MObject& value)
 {
-    value = MObject::kNullObj;
+    MPlug srcPlug;
+    MStatus status = getPlugConnectedTo(plug, srcPlug);
 
-    if(!plug.isConnected())
+    if(status)
+        value = srcPlug.node();
+
+    return status;
+}
+
+MStatus getPlugConnectedTo(const MPlug& dstPlug, MPlug& srcPlug)
+{
+    if(!dstPlug.isConnected())
         return MS::kFailure;
 
     MStatus status;
     MPlugArray inputConnections;
-    plug.connectedTo(inputConnections, true, false, &status);
+    dstPlug.connectedTo(inputConnections, true, false, &status);
 
     if(status)
-        value = inputConnections[0].node();
+        srcPlug = inputConnections[0];
 
     return status;
 }

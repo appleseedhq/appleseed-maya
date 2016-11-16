@@ -74,6 +74,8 @@ class ShadingNetworkExporter
       const OSLParamInfo&   paramInfo,
       renderer::ParamArray& shaderParams);
 
+    void addConnections(const MObject& node);
+
     AppleseedEntityPtr<renderer::ShaderGroup> m_shaderGroup;
     std::set<MString, MStringCompareLess>     m_shadersExported;
 };

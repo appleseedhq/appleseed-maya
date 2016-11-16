@@ -82,7 +82,12 @@ void ShadingNetworkExporter::createEntity()
 {
     MString name = appleseedName() + MString("_shader_group");
     m_shaderGroup = asr::ShaderGroupFactory::create(name.asChar());
+
+    m_shadersExported.clear();
     createShader(node());
+
+    m_shadersExported.clear();
+    addConnections(node());
 }
 
 void ShadingNetworkExporter::flushEntity()
@@ -150,7 +155,6 @@ void ShadingNetworkExporter::createShader(const MObject& node)
 
         if(plug.isConnected())
         {
-            //std::cout << "Skipping connected attribute: " << plug.name() << "\n";
             MObject srcNode;
             if(AttributeUtils::get(plug, srcNode))
                 createShader(srcNode);
@@ -228,3 +232,78 @@ void ShadingNetworkExporter::processAttribute(
         shaderParams.insert(paramInfo.paramName.asChar(), ss.str().c_str());
 }
 
+void ShadingNetworkExporter::addConnections(const MObject& node)
+{
+    MStatus status;
+    MFnDependencyNode depNodeFn(node);
+
+    const OSLShaderInfo *shaderInfo =
+        ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+
+    if(!shaderInfo)
+    {
+        std::cout << "Skipping unsupported shader: " << depNodeFn.typeName() << "\n";
+        return;
+    }
+
+    if(m_shadersExported.count(depNodeFn.name()) != 0)
+    {
+        std::cout << "Skipping already exported shader: " << depNodeFn.name() << "\n";
+        return;
+    }
+
+    m_shadersExported.insert(depNodeFn.name());
+
+    for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
+    {
+        const OSLParamInfo& paramInfo = shaderInfo->paramInfo[i];
+
+        // Skip output attributes.
+        if(paramInfo.isOutput)
+            continue;
+
+        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
+        if(!status)
+        {
+            std::cout << "Skipping unknown attribute: "
+                        << paramInfo.mayaAttributeName << std::endl;
+            continue;
+        }
+
+        if(plug.isConnected())
+        {
+            MPlug srcPlug;
+            if(AttributeUtils::getPlugConnectedTo(plug, srcPlug))
+            {
+                MFnDependencyNode srcDepNodeFn(srcPlug.node());
+
+                const OSLShaderInfo *srcShaderInfo =
+                    ShadingNodeRegistry::getShaderInfo(srcDepNodeFn.typeName());
+
+                if(!srcShaderInfo)
+                    continue;
+
+                if(const OSLParamInfo *srcParamInfo = srcShaderInfo->findParam(srcPlug.name()))
+                {
+                    m_shaderGroup->add_connection(
+                        srcDepNodeFn.name().asChar(),
+                        srcParamInfo->paramName.asChar(),
+                        depNodeFn.name().asChar(),
+                        paramInfo.paramName.asChar());
+                }
+
+                addConnections(srcPlug.node());
+            }
+        }
+
+        if(plug.isCompound() && plug.numConnectedChildren() != 0)
+        {
+            // ???
+        }
+
+        if(plug.isArray() && plug.numConnectedElements() != 0)
+        {
+            // ???
+        }
+    }
+}

@@ -107,6 +107,8 @@ class OSLShaderInfo
 
     explicit OSLShaderInfo(const renderer::ShaderQuery& q);
 
+    const OSLParamInfo *findParam(const MString& mayaAttrName) const;
+
     MString shaderName;
     MString shaderType;
 

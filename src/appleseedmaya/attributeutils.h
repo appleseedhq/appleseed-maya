@@ -78,6 +78,8 @@ MStatus get(const MObject& node, const MString& attrName, T& value)
     return get(depNodeFn, attrName, value);
 }
 
+MStatus getPlugConnectedTo(const MPlug& dstPlug, MPlug& srcPlug);
+
 bool hasConnections(const MPlug& plug, bool input);
 
 bool anyChildPlugConnected(const MPlug& plug, bool input);

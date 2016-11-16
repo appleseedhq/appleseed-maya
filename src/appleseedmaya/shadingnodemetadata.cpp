@@ -149,3 +149,14 @@ OSLShaderInfo::OSLShaderInfo(const asr::ShaderQuery& q)
     for(size_t i = 0, e = q.get_num_params(); i < e; ++i)
         paramInfo.push_back(OSLParamInfo(q.get_param_info(i)));
 }
+
+const OSLParamInfo *OSLShaderInfo::findParam(const MString& mayaAttrName) const
+{
+    for(size_t i = 0, e = paramInfo.size(); i < e; ++i)
+    {
+        if(paramInfo[i].mayaAttributeName == mayaAttrName)
+            return &paramInfo[i];
+    }
+
+    return 0;
+}
