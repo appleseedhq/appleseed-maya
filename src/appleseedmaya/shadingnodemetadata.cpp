@@ -110,6 +110,25 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
     }
 }
 
+std::ostream& operator<<(std::ostream& os, const OSLParamInfo& paramInfo)
+{
+    os << "Param : " << paramInfo.paramName << "\n";
+    os << "  maya name      : " << paramInfo.mayaAttributeName << "\n";
+    os << "  type           : " << paramInfo.paramType << "\n";
+    os << "  output         : " << paramInfo.isOutput << "\n";
+    os << "  valid default  : " << paramInfo.validDefault << "\n";
+    os << "  closure        : " << paramInfo.isClosure << "\n";
+
+    if(paramInfo.isStruct)
+        os << "  struct name    : " << paramInfo.structName << "\n";
+
+    if(paramInfo.isArray)
+        os << "  array len      : " << paramInfo.arrayLen << "\n";
+
+    os << std::endl;
+    return os;
+}
+
 OSLShaderInfo::OSLShaderInfo()
     : typeId(0)
 {

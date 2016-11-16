@@ -30,6 +30,7 @@
 #define APPLESEED_MAYA_SHADING_NODE_METADATA_H
 
 // Standard headers.
+#include <iostream>
 #include <vector>
 
 // Maya headers.
@@ -96,6 +97,8 @@ class OSLParamInfo
     // appleseedMaya custom metadata.
     MString mayaAttributeName;
 };
+
+std::ostream& operator<<(std::ostream& os, const OSLParamInfo& paramInfo);
 
 class OSLShaderInfo
 {

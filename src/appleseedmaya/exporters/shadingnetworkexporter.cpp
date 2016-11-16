@@ -29,6 +29,10 @@
 // Interface header.
 #include "appleseedmaya/exporters/shadingnetworkexporter.h"
 
+// Standard headers.
+#include <iostream>
+#include <sstream>
+
 // Maya headers.
 #include <maya/MFnDependencyNode.h>
 #include <maya/MPlug.h>
@@ -39,8 +43,8 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/attributeutils.h"
 
-#include <iostream>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -86,53 +90,141 @@ void ShadingNetworkExporter::flushEntity()
     mainAssembly().shader_groups().insert(m_shaderGroup.release());
 }
 
-void ShadingNetworkExporter::createShader(const MObject& object)
+void ShadingNetworkExporter::createShader(const MObject& node)
 {
-    MFnDependencyNode depNodeFn(object);
+    MStatus status;
+    MFnDependencyNode depNodeFn(node);
 
     const OSLShaderInfo *shaderInfo =
         ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
 
-    if(shaderInfo)
+    if(!shaderInfo)
     {
-        asr::ParamArray shaderParams;
+        std::cout << "Skipping unsupported shader: " << depNodeFn.typeName() << "\n";
+        return;
+    }
 
-        for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
+    if(m_shadersExported.count(depNodeFn.name()) != 0)
+    {
+        std::cout << "Skipping already exported shader: " << depNodeFn.name() << "\n";
+        return;
+    }
+
+    m_shadersExported.insert(depNodeFn.name());
+
+    asr::ParamArray shaderParams;
+
+    for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
+    {
+        const OSLParamInfo& paramInfo = shaderInfo->paramInfo[i];
+
+        // Skip output attributes.
+        if(paramInfo.isOutput)
         {
-            const OSLParamInfo& paramInfo = shaderInfo->paramInfo[i];
-
-            // Skip output attributes.
-            if(paramInfo.isOutput)
-                continue;
-
-            if(paramInfo.isArray)
-                processArrayAttribute(object, paramInfo);
-            else
-                processAttribute(object, paramInfo);
+            std::cout << "Skipping output attribute: " << "\n";
+            std::cout << paramInfo << std::endl;
+            continue;
         }
 
-        m_shaderGroup->add_shader(
-            shaderInfo->shaderType.asChar(),
-            shaderInfo->shaderName.asChar(),
-            depNodeFn.name().asChar(),
-            shaderParams);
+        if(!paramInfo.validDefault)
+        {
+            std::cout << "Skipping attribute without valid default: " << "\n";
+            std::cout << paramInfo << std::endl;
+            continue;
+        }
+
+        if(paramInfo.isArray)
+        {
+            std::cout << "Skipping array attribute: " << "\n";
+            std::cout << paramInfo << std::endl;
+            continue;
+        }
+
+        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
+        if(!status)
+        {
+            std::cout << "Skipping unknown attribute: "
+                        << paramInfo.mayaAttributeName << std::endl;
+            continue;
+        }
+
+        if(plug.isConnected())
+        {
+            //std::cout << "Skipping connected attribute: " << plug.name() << "\n";
+            MObject srcNode;
+            if(AttributeUtils::get(plug, srcNode))
+                createShader(srcNode);
+
+            continue;
+        }
+
+        if(plug.isCompound() && plug.numConnectedChildren() != 0)
+        {
+            std::cout << "Skipping connected compound attribute: " << plug.name() << "\n";
+            continue;
+        }
+
+        if(plug.isArray() && plug.numConnectedElements() != 0)
+        {
+            std::cout << "Skipping connected array attribute: " << plug.name() << "\n";
+            continue;
+        }
+
+        processAttribute(plug, paramInfo, shaderParams);
+    }
+
+    m_shaderGroup->add_shader(
+        shaderInfo->shaderType.asChar(),
+        shaderInfo->shaderName.asChar(),
+        depNodeFn.name().asChar(),
+        shaderParams);
+}
+
+void ShadingNetworkExporter::processAttribute(
+    const MPlug&        plug,
+    const OSLParamInfo& paramInfo,
+    asr::ParamArray&    shaderParams)
+{
+    std::cout << "Processing shading node attr:" << std::endl;
+    std::cout << paramInfo << std::endl;
+
+    std::stringstream ss;
+
+    if(strcmp(paramInfo.paramType.asChar(), "color") == 0)
+    {
+        MColor value;
+        if(AttributeUtils::get(plug, value))
+            ss << "color " << value.r << " " << value.g << " " << value.b;
+    }
+    else if(strcmp(paramInfo.paramType.asChar(), "float") == 0)
+    {
+        float value;
+        if(AttributeUtils::get(plug, value))
+            ss << "float " << value;
+    }
+    else if(strcmp(paramInfo.paramType.asChar(), "int") == 0)
+    {
+        int value;
+        if(AttributeUtils::get(plug, value))
+            ss << "int " << value;
+    }
+    else if(strcmp(paramInfo.paramType.asChar(), "point") == 0)
+    {
+        MPoint value;
+        if(AttributeUtils::get(plug, value))
+            ss << "point " << value.z << " " << value.y << " " << value.z;
+    }
+    else if(strcmp(paramInfo.paramType.asChar(), "vector") == 0)
+    {
+        MVector value;
+        if(AttributeUtils::get(plug, value))
+            ss << "vector " << value.z << " " << value.y << " " << value.z;
     }
     else
-    {
-        // warning here...!
-    }
+        std::cout << "Skipping param of type: " << paramInfo.paramType << std::endl;
+
+    std::string valueAsString = ss.str();
+    if(!valueAsString.empty())
+        shaderParams.insert(paramInfo.paramName.asChar(), ss.str().c_str());
 }
 
-void ShadingNetworkExporter::processAttribute(const MObject& object, const OSLParamInfo& paramInfo)
-{
-    const MString& attrName = paramInfo.mayaAttributeName;
-    std::cout << "Processing shading node attr: " << attrName << ", type = " << paramInfo.paramType << std::endl;
-    // ...
-}
-
-void ShadingNetworkExporter::processArrayAttribute(const MObject& object, const OSLParamInfo& paramInfo)
-{
-    const MString& attrName = paramInfo.mayaAttributeName;
-    std::cout << "Processing shading node array attr: " << attrName << ", type = " << paramInfo.paramType << std::endl;
-    // ...
-}

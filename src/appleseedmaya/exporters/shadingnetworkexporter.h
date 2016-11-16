@@ -29,12 +29,19 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
 
+// Standard headers.
+#include <set>
+
+// Maya headers.
+#include <maya/MPlug.h>
+
 // appleseed.renderer headers.
 #include "renderer/api/shadergroup.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/mpxnodeexporter.h"
 #include "appleseedmaya/shadingnoderegistry.h"
+#include "appleseedmaya/utils.h"
 
 
 class ShadingNetworkExporter
@@ -60,12 +67,15 @@ class ShadingNetworkExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
-    void createShader(const MObject& object);
+    void createShader(const MObject& node);
 
-    void processAttribute(const MObject& object, const OSLParamInfo& paramInfo);
-    void processArrayAttribute(const MObject& object, const OSLParamInfo& paramInfo);
+    void processAttribute(
+      const MPlug&          plug,
+      const OSLParamInfo&   paramInfo,
+      renderer::ParamArray& shaderParams);
 
     AppleseedEntityPtr<renderer::ShaderGroup> m_shaderGroup;
+    std::set<MString, MStringCompareLess>     m_shadersExported;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
