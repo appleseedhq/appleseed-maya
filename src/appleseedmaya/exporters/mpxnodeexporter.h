@@ -34,6 +34,7 @@
 
 // Maya headers.
 #include <maya/MObject.h>
+#include <maya/MObjectArray.h>
 #include <maya/MString.h>
 
 // appleseed.maya headers.
@@ -58,8 +59,11 @@ class MPxNodeExporter
     // Destructor.
     virtual ~MPxNodeExporter();
 
+    // Collect dependency nodes to export (materials, ...).
+    virtual void collectDependencyNodesToExport(MObjectArray& nodes);
+
     // Create appleseed entities.
-    virtual void createEntity() = 0;
+    virtual void createEntity(const AppleseedSession::Options& options) = 0;
 
     // Flush entities to the renderer.
     virtual void flushEntity() = 0;

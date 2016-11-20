@@ -29,23 +29,47 @@
 # Standard imports.
 import os
 
+# Maya imports.
+import maya.cmds as mc
+import maya.mel as mel
 
-__g_appleseedIconsLocationInit = False
-__g_appleseedIconsLocation = None
+# appleseedMaya imports.
+from util import appleseedIconsPath
 
 
-# It seems Maya cannot find the icons using relative paths,
-# even if XBMLANGPATH is set correctly.
-# Find our icon in XBMLANGPATH manually.
+def showAbout():
+    if mc.window('appleseedAboutDialog', query=True, exists=True):
+        mc.deleteUI('appleseedAboutDialog')
 
-def appleseedIconsPath():
-    global __g_appleseedIconsLocationInit
-    global __g_appleseedIconsLocation
+    window = mc.window('appleseedAboutDialog', title='Appleseed Maya')
 
-    if not __g_appleseedIconsLocationInit:
-        __g_appleseedIconsLocationInit = True
-        for iconPath in os.environ.get('XBMLANGPATH').split(os.pathsep):
-            if os.path.exists(os.path.join(iconPath, "appleseed.png")):
-                __g_appleseedIconsLocation = iconPath
+    mc.columnLayout(rs=20, columnOffset=['both', 22], width=300)
+    mc.text('', height=10)
 
-    return __g_appleseedIconsLocation
+    if appleseedIconsPath():
+        mc.image(image=os.path.join(appleseedIconsPath(), 'appleseed-logo-256.png'))
+
+    mc.text('todo: add info here...')
+
+    mc.setParent('..')
+    mc.showWindow(window)
+
+__g_appleseedMenu = None
+
+def createMenu():
+    global __g_appleseedMenu
+
+    deleteMenu()
+
+    gMainWindow = mel.eval('$temp1=$gMainWindow')
+    __g_appleseedMenu = mc.menu('appleseedMenu', parent=gMainWindow, label='Appleseed', tearOff=True)
+
+    mc.menuItem(label='About', parent='appleseedMenu', command='import appleseedMaya.menu\nappleseedMaya.menu.showAbout()')
+
+def deleteMenu():
+    global __g_appleseedMenu
+
+    try:
+        mc.deleteUI(__g_appleseedMenu)
+    except:
+        pass

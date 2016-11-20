@@ -36,6 +36,7 @@
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
 // appleseed.renderer headers.
+#include "renderer/api/color.h"
 #include "renderer/api/light.h"
 
 // Forward declarations.
@@ -56,7 +57,7 @@ class LightExporter
 
     bool supportsMotionBlur() const;
 
-    virtual void createEntity();
+    virtual void createEntity(const AppleseedSession::Options& options);
 
     virtual void flushEntity();
 
@@ -67,7 +68,8 @@ class LightExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
-    AppleseedEntityPtr<renderer::Light> m_light;
+    AppleseedEntityPtr<renderer::Light>       m_light;
+    AppleseedEntityPtr<renderer::ColorEntity> m_lightColor;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H

@@ -69,7 +69,7 @@ CameraExporter::CameraExporter(
 {
 }
 
-void CameraExporter::createEntity()
+void CameraExporter::createEntity(const AppleseedSession::Options& options)
 {
     MStatus status;
     MFnCamera camera(dagPath());
@@ -84,13 +84,20 @@ void CameraExporter::createEntity()
     }
     else
     {
-        cameraFactory = cameraFactories.lookup("pinhole_camera");
+        const bool dofEnabled = false;
+
+        if(dofEnabled) // depth of field enabled.
+            cameraFactory = cameraFactories.lookup("thin_lens_camera");
+        else
+            cameraFactory = cameraFactories.lookup("pinhole_camera");
 
         MPlug plug = camera.findPlug("horizontalFilmAperture", &status);
         float horizontalFilmAperture = plug.asFloat();
 
         plug = camera.findPlug("verticalFilmAperture", &status);
         float verticalFilmAperture = plug.asFloat();
+
+        // TODO: handle film fits, ..., ...
 
         plug = camera.findPlug("focalLength", &status);
         float focalLength = plug.asFloat();
@@ -103,7 +110,13 @@ void CameraExporter::createEntity()
         ss << horizontalFilmAperture << " " << verticalFilmAperture;
         cameraParams.insert("film_dimensions", ss.str().c_str());
 
+        // Maya's apperture is given in mm so we convert it to meters.
         cameraParams.insert("focal_length", focalLength * 0.001f);
+
+        if(dofEnabled)
+        {
+            // TODO: extract dof params here...
+        }
     }
 
     m_camera = cameraFactory->create(appleseedName().asChar(), cameraParams);

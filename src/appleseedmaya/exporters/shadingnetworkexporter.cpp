@@ -78,7 +78,7 @@ ShadingNetworkExporter::ShadingNetworkExporter(
 {
 }
 
-void ShadingNetworkExporter::createEntity()
+void ShadingNetworkExporter::createEntity(const AppleseedSession::Options& options)
 {
     MString name = appleseedName() + MString("_shader_group");
     m_shaderGroup = asr::ShaderGroupFactory::create(name.asChar());

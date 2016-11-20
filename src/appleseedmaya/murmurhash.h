@@ -39,6 +39,8 @@
 // Maya headers.
 #include <maya/MString.h>
 
+// appleseed.foundation headers.
+#include "foundation/utility/containers/dictionary.h"
 
 //
 // MurmurHash.
@@ -89,7 +91,10 @@ class MurmurHash
         append(str.asChar(), str.length());
     }
 
+    void append(const foundation::StringDictionary& dictionary);
+
   private:
+
     void append(const void *data, size_t bytes);
 
     uint64_t m_h1;

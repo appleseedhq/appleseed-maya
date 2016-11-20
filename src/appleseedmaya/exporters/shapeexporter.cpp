@@ -29,6 +29,9 @@
 // Interface header.
 #include "appleseedmaya/exporters/shapeexporter.h"
 
+// appleseed.renderer headers.
+#include "renderer/api/scene.h"
+
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -57,4 +60,68 @@ void ShapeExporter::exportTransformMotionStep(float time)
 void ShapeExporter::flushEntity()
 {
     m_transformSequence.optimize();
+
+    // Check if we need to create an assembly for this object.
+    if( sessionMode() == AppleseedSession::ProgressiveRenderSession ||
+        m_numInstances > 0 || m_transformSequence.size() > 1)
+    {
+        const MString assemblyName = appleseedName() + MString("_assembly");
+        m_objectAssembly.reset(
+            asr::AssemblyFactory().create(assemblyName.asChar(), asr::ParamArray()));
+
+        mainAssembly().assemblies().insert(m_objectAssembly.release());
+
+        const MString assemblyInstanceName = assemblyName + MString("_instance");
+
+        asr::ParamArray params;
+        visibilityAttributesToParams(params);
+        m_objectAssemblyInstance.reset(
+            asr::AssemblyInstanceFactory::create(
+                assemblyInstanceName.asChar(),
+                params,
+                assemblyName.asChar()));
+
+        m_objectAssemblyInstance->transform_sequence() = m_transformSequence;
+        mainAssembly().assembly_instances().insert(m_objectAssemblyInstance.release());
+    }
+}
+
+void ShapeExporter::shapeAttributesToParams(renderer::ParamArray& params)
+{
+    // TODO: implement this...
+}
+
+void ShapeExporter::visibilityAttributesToParams(renderer::ParamArray& params)
+{
+    // TODO: implement this...
+}
+
+void ShapeExporter::createObjectInstance(const MString& objectName)
+{
+    asr::Assembly *objectAssembly = &mainAssembly();
+    asf::Transformd objectInstanceTransform;
+    asr::ParamArray params;
+
+    if(m_objectAssembly.get())
+    {
+        objectAssembly = m_objectAssembly.get();
+        objectInstanceTransform = asf::Transformd::identity();
+    }
+    else
+    {
+        objectInstanceTransform = m_transformSequence.get_earliest_transform();
+        visibilityAttributesToParams(params);
+    }
+
+    const MString objectInstanceName = appleseedName() + MString("_instance");
+    m_objectInstance.reset(
+        asr::ObjectInstanceFactory::create(
+            objectInstanceName.asChar(),
+            params,
+            objectName.asChar(),
+            objectInstanceTransform,
+            m_materialMappings,
+            m_materialMappings));
+
+    objectAssembly->object_instances().insert(m_objectInstance.release());
 }

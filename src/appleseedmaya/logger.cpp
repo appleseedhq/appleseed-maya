@@ -26,29 +26,63 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXCEPTIONS_H
-#define APPLESEED_MAYA_EXCEPTIONS_H
+// interface header.
+#include "logger.h"
 
 // Standard headers.
-#include <exception>
+#include <iostream>
 
-// Maya headers.
-#include <maya/MStatus.h>
-#include <maya/MString.h>
-
-
-struct AppleseedMayaException
+namespace Logger
 {
-};
 
-struct NoExporterForNode
-  : public AppleseedMayaException
+MStatus initialize()
 {
-};
+    return MS::kSuccess;
+}
 
-struct UnknownShadingNode
-  : public NoExporterForNode
+MStatus uninitialize()
 {
-};
+    return MS::kSuccess;
+}
 
-#endif  // !APPLESEED_MAYA_EXCEPTIONS_H
+void debug(const char *msg)
+{
+    std::cout << "Debug: " << msg << std::endl;
+}
+
+void debug(const MString& msg)
+{
+    debug(msg.asChar());
+}
+
+void info(const char *msg)
+{
+    std::cout << "Info: " << msg << std::endl;
+}
+
+void info(const MString& msg)
+{
+    info(msg.asChar());
+}
+
+void warning(const char *msg)
+{
+    std::cout << "Warning: " << msg << std::endl;
+}
+
+void warning(const MString& msg)
+{
+    warning(msg.asChar());
+}
+
+void error(const char *msg)
+{
+    std::cout << "Error: " << msg << std::endl;
+}
+
+void error(const MString& msg)
+{
+    error(msg.asChar());
+}
+
+} // namespace Logger.

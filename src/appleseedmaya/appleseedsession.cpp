@@ -30,6 +30,7 @@
 #include "appleseedmaya/appleseedsession.h"
 
 // Standard headers.
+#include <sstream>
 #include <vector>
 
 // Boost headers.
@@ -68,6 +69,8 @@
 #include "renderer/api/utility.h"
 
 // appleseed.maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exceptions.h"
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/exporters/mpxnodeexporter.h"
@@ -184,10 +187,30 @@ struct SessionImpl
         m_project->get_scene()->assembly_instances().insert(assemblyInstance);
     }
 
+    void exportProject()
+    {
+        MObject defaultRenderGlobalsNode = exportDefaultRenderGlobals();
+        MObject appleseedRenderGlobalsNode = exportAppleseedRenderGlobals();
+
+        exportScene();
+
+        // update the frame.
+        {
+            asr::ParamArray params = m_project->get_frame()->get_parameters();
+            params.insert("camera", m_options.m_camera.asChar());
+
+            std::stringstream ss;
+            ss << m_options.m_width << " " << m_options.m_height;
+            params.insert("resolution", ss.str().c_str());
+
+            // TODO: set crop window here...
+
+            m_project->set_frame(asr::FrameFactory().create("beauty", params));
+        }
+    }
+
     void exportScene()
     {
-        exportDefaultRenderGlobals();
-        exportAppleseedRenderGlobals();
         createExporters();
 
         // Collect motion blur times.
@@ -197,10 +220,10 @@ struct SessionImpl
 
         // Create appleseed entities.
         for(MPxExporterMap::const_iterator it = m_mpxExporters.begin(), e = m_mpxExporters.end(); it != e; ++it)
-            it->second->createEntity();
+            it->second->createEntity(m_options);
 
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
-            it->second->createEntity();
+            it->second->createEntity(m_options);
 
         // for each time step...
         {
@@ -216,11 +239,14 @@ struct SessionImpl
         }
 
         // Handle auto-instancing here if enabled.
-        for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+        if(m_sessionMode != AppleseedSession::ProgressiveRenderSession)
         {
-            if(it->second->supportsInstancing())
+            for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             {
-                // ...
+                if(it->second->supportsInstancing())
+                {
+                    // ...
+                }
             }
         }
 
@@ -232,38 +258,32 @@ struct SessionImpl
             it->second->flushEntity();
     }
 
-    void exportDefaultRenderGlobals()
+    MObject exportDefaultRenderGlobals()
     {
         std::cout << "Exporting default render globals" << std::endl;
 
-        MSelectionList selList;
-        selList.add("defaultRenderGlobals");
         MObject defaultRenderGlobalsNode;
-        MFnDependencyNode defaultGlobalsDepFn;
-        if(!selList.isEmpty())
+        if(getNodeMObject("defaultRenderGlobals", defaultRenderGlobalsNode))
         {
-            selList.getDependNode(0, defaultRenderGlobalsNode);
-            defaultGlobalsDepFn.setObject(defaultRenderGlobalsNode);
+            MFnDependencyNode defaultGlobalsDepFn(defaultRenderGlobalsNode);
+            // ...
         }
 
-        // ...
+        return defaultRenderGlobalsNode;
     }
 
-    void exportAppleseedRenderGlobals()
+    MObject exportAppleseedRenderGlobals()
     {
         std::cout << "Exporting appleseed render globals" << std::endl;
 
-        MSelectionList selList;
-        selList.add("appleseedRenderGlobals");
         MObject appleseedRenderGlobalsNode;
-        MFnDependencyNode appleseedGlobalsDepFn;
-        if(!selList.isEmpty())
+        if(getNodeMObject("appleseedRenderGlobals", appleseedRenderGlobalsNode))
         {
-            selList.getDependNode(0, appleseedRenderGlobalsNode);
-            appleseedGlobalsDepFn.setObject(appleseedRenderGlobalsNode);
+            MFnDependencyNode appleseedGlobalsDepFn(appleseedRenderGlobalsNode);
+            // ...
         }
 
-        // ...
+        return appleseedRenderGlobalsNode;
     }
 
     void createExporters()
@@ -285,19 +305,21 @@ struct SessionImpl
 
         for(int i = 0, e = extraObjects.length(); i < e; ++i)
             createMPxNodeExporter(extraObjects[i]);
+
+        // Collect more extra dependency nodes to export.
+        extraObjects.clear();
+        for(MPxExporterMap::const_iterator it = m_mpxExporters.begin(), e = m_mpxExporters.end(); it != e; ++it)
+            it->second->collectDependencyNodesToExport(extraObjects);
+
+        for(int i = 0, e = extraObjects.length(); i < e; ++i)
+            createMPxNodeExporter(extraObjects[i]);
     }
 
     void exportDefaultMaterial()
     {
-        // Create exporter for default material.
-        MSelectionList selList;
-        selList.add("lambert1");
         MObject initialShadingGroup;
-        if(!selList.isEmpty())
-        {
-            selList.getDependNode(0, initialShadingGroup);
+        if(getNodeMObject("initialShadingGroup", initialShadingGroup))
             createMPxNodeExporter(initialShadingGroup);
-        }
     }
 
     void createMPxNodeExporter(const MObject& object)
@@ -306,10 +328,21 @@ struct SessionImpl
         if(m_mpxExporters.count(depNodeFn.name()) != 0)
             return;
 
-        MPxNodeExporterPtr exporter(NodeExporterFactory::createMPxNodeExporter(
-            object,
-            *m_project,
-            m_sessionMode));
+        MPxNodeExporterPtr exporter;
+
+        try
+        {
+            exporter.reset(NodeExporterFactory::createMPxNodeExporter(
+                object,
+                *m_project,
+                m_sessionMode));
+        }
+        catch(const NoExporterForNode&)
+        {
+            // TODO: add warning here...!
+            std::cout << "No MPx exporter found for node " << std::endl;
+            return;
+        }
 
         if(exporter)
         {
@@ -336,10 +369,21 @@ struct SessionImpl
         MFnDagNode dagNodeFn(path);
         // todo: test here visibility flags, intermediate objects, .., ...?
 
-        DagNodeExporterPtr exporter(NodeExporterFactory::createDagNodeExporter(
-            path,
-            *m_project,
-            m_sessionMode));
+        DagNodeExporterPtr exporter;
+
+        try
+        {
+            exporter.reset(NodeExporterFactory::createDagNodeExporter(
+                path,
+                *m_project,
+                m_sessionMode));
+        }
+        catch(const NoExporterForNode&)
+        {
+            // TODO: add warning here...!
+            std::cout << "No Dag exporter found for node " << std::endl;
+            return;
+        }
 
         if(exporter)
         {
@@ -365,6 +409,17 @@ struct SessionImpl
             m_fileName.asChar(),
             asr::ProjectFileWriter::OmitHandlingAssetFiles |
             asr::ProjectFileWriter::OmitWritingGeometryFiles);
+    }
+
+    MStatus getNodeMObject(const MString& nodeName, MObject& node)
+    {
+        MSelectionList selList;
+        selList.add(nodeName);
+
+        if(selList.isEmpty())
+            return MS::kFailure;
+
+        selList.getDependNode(0, node);
     }
 
     typedef std::map<MString, MPxNodeExporterPtr, MStringCompareLess> MPxExporterMap;
@@ -397,19 +452,22 @@ MTime gSavedTime;
 
 } // unnamed
 
-MStatus AppleseedSession::initialize(const MString& pluginPath)
+namespace AppleseedSession
+{
+
+MStatus initialize(const MString& pluginPath)
 {
     gPluginPath = pluginPath.asChar();
     return MS::kSuccess;
 }
 
-MStatus AppleseedSession::uninitialize()
+MStatus uninitialize()
 {
     gGlobalSession.reset();
     return MS::kSuccess;
 }
 
-void AppleseedSession::beginProjectExport(
+void beginProjectExport(
     const MString& fileName,
     const Options& options)
 {
@@ -419,11 +477,11 @@ void AppleseedSession::beginProjectExport(
 
     // for each option...
     gGlobalSession.reset(new SessionImpl(fileName, options));
-    gGlobalSession->exportScene();
+    gGlobalSession->exportProject();
     gGlobalSession->writeProject();
 }
 
-void AppleseedSession::endProjectExport()
+void endProjectExport()
 {
     assert(gGlobalSession.get());
 
@@ -431,7 +489,7 @@ void AppleseedSession::endProjectExport()
     MAnimControl::setCurrentTime(gSavedTime);
 }
 
-void AppleseedSession::beginFinalRender(
+void beginFinalRender(
     const Options& options)
 {
     assert(gGlobalSession.get() == 0);
@@ -440,7 +498,7 @@ void AppleseedSession::beginFinalRender(
     gGlobalSession.reset(new SessionImpl(FinalRenderSession, options));
 }
 
-void AppleseedSession::endFinalRender()
+void endFinalRender()
 {
     assert(gGlobalSession.get());
 
@@ -448,7 +506,7 @@ void AppleseedSession::endFinalRender()
     MAnimControl::setCurrentTime(gSavedTime);
 }
 
-void AppleseedSession::beginProgressiveRender(
+void beginProgressiveRender(
     const Options& options)
 {
     assert(gGlobalSession.get() == 0);
@@ -457,7 +515,7 @@ void AppleseedSession::beginProgressiveRender(
     gGlobalSession.reset(new SessionImpl(ProgressiveRenderSession, options));
 }
 
-void AppleseedSession::endProgressiveRender()
+void endProgressiveRender()
 {
     assert(gGlobalSession.get());
 
@@ -465,7 +523,7 @@ void AppleseedSession::endProgressiveRender()
     MAnimControl::setCurrentTime(gSavedTime);
 }
 
-AppleseedSession::SessionMode AppleseedSession::sessionMode()
+SessionMode sessionMode()
 {
     if(gGlobalSession.get() == 0)
         return NoSession;
@@ -473,13 +531,11 @@ AppleseedSession::SessionMode AppleseedSession::sessionMode()
     return gGlobalSession->m_sessionMode;
 }
 
-const AppleseedSession::Options& AppleseedSession::options()
+const Options& options()
 {
     assert(gGlobalSession.get());
 
     return gGlobalSession->m_options;
 }
 
-
-
-
+} // namespace AppleseedSession.

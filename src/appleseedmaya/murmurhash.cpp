@@ -30,6 +30,8 @@
 #include "appleseedmaya/murmurhash.h"
 
 
+namespace asf = foundation;
+
 uint64_t rotl64(uint64_t x, int8_t r)
 {
     return (x << r) | (x >> (64 - r));
@@ -170,4 +172,15 @@ std::ostream& operator<<(std::ostream& o, const MurmurHash& hash)
 {
     o << hash.toString();
     return o;
+}
+
+void MurmurHash::append(const foundation::StringDictionary& dictionary)
+{
+    asf::StringDictionary::const_iterator it(dictionary.begin());
+    asf::StringDictionary::const_iterator e(dictionary.end());
+    for(; it != e; ++it)
+    {
+        append(it.key());
+        append(it.value());
+    }
 }

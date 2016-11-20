@@ -64,7 +64,7 @@ EnvLightExporter::EnvLightExporter(
 {
 }
 
-void EnvLightExporter::createEntity()
+void EnvLightExporter::createEntity(const AppleseedSession::Options& options)
 {
 }
 

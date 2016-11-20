@@ -56,7 +56,7 @@ class ShadingNetworkExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
-    virtual void createEntity();
+    virtual void createEntity(const AppleseedSession::Options& options);
 
     virtual void flushEntity();
 

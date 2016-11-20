@@ -58,10 +58,14 @@ set (appleseed_maya_sources
     appleseedmaya/exporters/meshexporter.h
     appleseedmaya/exporters/mpxnodeexporter.cpp
     appleseedmaya/exporters/mpxnodeexporter.h
+    appleseedmaya/exporters/shadingengineexporter.cpp
+    appleseedmaya/exporters/shadingengineexporter.h
     appleseedmaya/exporters/shadingnetworkexporter.cpp
     appleseedmaya/exporters/shadingnetworkexporter.h
     appleseedmaya/exporters/shapeexporter.cpp
     appleseedmaya/exporters/shapeexporter.h
+    appleseedmaya/logger.cpp
+    appleseedmaya/logger.h
     appleseedmaya/murmurhash.cpp
     appleseedmaya/murmurhash.h
     appleseedmaya/pluginmain.cpp

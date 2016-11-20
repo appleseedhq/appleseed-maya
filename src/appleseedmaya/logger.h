@@ -26,29 +26,37 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXCEPTIONS_H
-#define APPLESEED_MAYA_EXCEPTIONS_H
-
-// Standard headers.
-#include <exception>
+#ifndef APPLESEED_MAYA_LOGGER_H
+#define APPLESEED_MAYA_LOGGER_H
 
 // Maya headers.
 #include <maya/MStatus.h>
 #include <maya/MString.h>
 
 
-struct AppleseedMayaException
-{
-};
+//
+// Simple logging. For now a placeholder for something better.
+// Todo: check if we can reuse appleseed's logging code somehow.
+//
 
-struct NoExporterForNode
-  : public AppleseedMayaException
+namespace Logger
 {
-};
 
-struct UnknownShadingNode
-  : public NoExporterForNode
-{
-};
+MStatus initialize();
+MStatus uninitialize();
 
-#endif  // !APPLESEED_MAYA_EXCEPTIONS_H
+void debug(const char *msg);
+void debug(const MString& msg);
+
+void info(const char *msg);
+void info(const MString& msg);
+
+void warning(const char *msg);
+void warning(const MString& msg);
+
+void error(const char *msg);
+void error(const MString& msg);
+
+} // namespace Logger
+
+#endif  // !APPLESEED_MAYA_LOGGER_H

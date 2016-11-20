@@ -27,66 +27,70 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/mpxnodeexporter.h"
+#include "appleseedmaya/exporters/shadingengineexporter.h"
 
 // Maya headers.
 #include <maya/MFnDependencyNode.h>
+#include <maya/MPlug.h>
+#include <maya/MPlugArray.h>
 
 // appleseed.renderer headers.
-#include "renderer/api/project.h"
+#include "renderer/api/material.h"
 #include "renderer/api/scene.h"
+
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/exporterfactory.h"
 
 
 namespace asf = foundation;
 namespace asr = renderer;
 
-MPxNodeExporter::MPxNodeExporter(
+void ShadingEngineExporter::registerExporter()
+{
+    NodeExporterFactory::registerMPxNodeExporter("shadingEngine", &ShadingEngineExporter::create);
+}
+
+MPxNodeExporter *ShadingEngineExporter::create(
     const MObject&                  object,
     asr::Project&                   project,
     AppleseedSession::SessionMode   sessionMode)
-  : m_object(object)
-  , m_sessionMode(sessionMode)
-  , m_project(project)
-  , m_scene(*project.get_scene())
-  , m_mainAssembly(*m_scene.assemblies().get_by_name("assembly"))
+{
+    return new ShadingEngineExporter(object, project, sessionMode);
+}
+
+ShadingEngineExporter::ShadingEngineExporter(
+    const MObject&                  object,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+  : MPxNodeExporter(object, project, sessionMode)
 {
 }
 
-MPxNodeExporter::~MPxNodeExporter()
+void ShadingEngineExporter::collectDependencyNodesToExport(MObjectArray& nodes)
+{
+    MFnDependencyNode depNodeFn(node());
+
+    MStatus status;
+
+    MPlug plug = depNodeFn.findPlug("surfaceShader", &status);
+
+    if(plug.isConnected())
+    {
+        MPlugArray otherPlugs;
+        plug.connectedTo(otherPlugs, true, false, &status);
+
+        if(otherPlugs.length() == 1)
+        {
+            MObject otherNode = otherPlugs[0].node();
+            nodes.append(otherPlugs[0].node());
+        }
+    }
+}
+
+void ShadingEngineExporter::createEntity(const AppleseedSession::Options& options)
 {
 }
 
-void MPxNodeExporter::collectDependencyNodesToExport(MObjectArray& nodes)
+void ShadingEngineExporter::flushEntity()
 {
-}
-
-const MObject& MPxNodeExporter::node() const
-{
-    return m_object;
-}
-
-AppleseedSession::SessionMode MPxNodeExporter::sessionMode() const
-{
-    return m_sessionMode;
-}
-
-MString MPxNodeExporter::appleseedName() const
-{
-    MFnDependencyNode depNodeFn(m_object);
-    return depNodeFn.name();
-}
-
-asr::Project& MPxNodeExporter::project()
-{
-    return m_project;
-}
-
-asr::Scene& MPxNodeExporter::scene()
-{
-    return m_scene;
-}
-
-asr::Assembly& MPxNodeExporter::mainAssembly()
-{
-    return m_mainAssembly;
 }

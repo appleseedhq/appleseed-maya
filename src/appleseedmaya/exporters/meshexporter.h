@@ -29,6 +29,10 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H
 
+// Standard headers.
+#include <string>
+#include <vector>
+
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/shapeexporter.h"
 
@@ -56,7 +60,7 @@ class MeshExporter
 
     virtual void collectDependencyNodesToExport(MObjectArray& nodes);
 
-    virtual void createEntity();
+    virtual void createEntity(const AppleseedSession::Options& options);
 
     virtual void exportShapeMotionStep(float time);
 
@@ -69,10 +73,16 @@ class MeshExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
+    void meshAttributesToParams(renderer::ParamArray& params);
+
+    void fillTopology();
+    void exportGeometry();
+
     AppleseedEntityPtr<renderer::MeshObject>      m_mesh;
-    foundation::StringDictionary                  m_materialMappings;
-    AppleseedEntityPtr<renderer::SurfaceShader>   m_surfaceShader;
-    AppleseedEntityPtr<renderer::Material>        m_material;
+    AppleseedEntityPtr<renderer::ObjectInstance>  m_objectInstace;
+    bool                                          m_exportUVs;
+    bool                                          m_exportNormals;
+    std::vector<std::string>                      m_fileNames;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H

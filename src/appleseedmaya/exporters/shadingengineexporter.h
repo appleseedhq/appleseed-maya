@@ -26,29 +26,49 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXCEPTIONS_H
-#define APPLESEED_MAYA_EXCEPTIONS_H
-
-// Standard headers.
-#include <exception>
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
 
 // Maya headers.
-#include <maya/MStatus.h>
-#include <maya/MString.h>
+#include <maya/MObjectArray.h>
+
+// appleseed.foundation headers.
+
+// appleseed.renderer headers.
+#include "renderer/api/material.h"
+#include "renderer/api/surfaceshader.h"
+
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/mpxnodeexporter.h"
+
+// Forward declarations.
+namespace renderer { class Project; }
 
 
-struct AppleseedMayaException
+class ShadingEngineExporter
+  : public MPxNodeExporter
 {
+  public:
+
+    static void registerExporter();
+
+    static MPxNodeExporter *create(
+        const MObject&                object,
+        renderer::Project&            project,
+        AppleseedSession::SessionMode sessionMode);
+
+    virtual void collectDependencyNodesToExport(MObjectArray& nodes);
+
+    virtual void createEntity(const AppleseedSession::Options& options);
+
+    virtual void flushEntity();
+
+  private:
+
+    ShadingEngineExporter(
+        const MObject&                object,
+        renderer::Project&            project,
+        AppleseedSession::SessionMode sessionMode);
 };
 
-struct NoExporterForNode
-  : public AppleseedMayaException
-{
-};
-
-struct UnknownShadingNode
-  : public NoExporterForNode
-{
-};
-
-#endif  // !APPLESEED_MAYA_EXCEPTIONS_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H

@@ -44,6 +44,7 @@
 #include "appleseedmaya/exporters/envlightexporter.h"
 #include "appleseedmaya/exporters/lightexporter.h"
 #include "appleseedmaya/exporters/meshexporter.h"
+#include "appleseedmaya/exporters/shadingengineexporter.h"
 #include "appleseedmaya/exporters/shadingnetworkexporter.h"
 #include "appleseedmaya/utils.h"
 
@@ -79,6 +80,7 @@ MStatus NodeExporterFactory::initialize(const MString& pluginPath)
     EnvLightExporter::registerExporter();
     LightExporter::registerExporter();
     MeshExporter::registerExporter();
+    ShadingEngineExporter::registerExporter();
     ShadingNetworkExporter::registerExporter();
     return MS::kSuccess;
 }
@@ -109,10 +111,7 @@ MPxNodeExporter* NodeExporterFactory::createMPxNodeExporter(
     CreateMPxExporterMapType::const_iterator it = gMPxNodeExporters.find(depNodeFn.typeName());
 
     if(it == gMPxNodeExporters.end())
-    {
-        //throw NoExporterForNode();
-        return 0;
-    }
+        throw NoExporterForNode();
 
     return it->second(object, project, sessionMode);
 }
@@ -138,10 +137,7 @@ DagNodeExporter* NodeExporterFactory::createDagNodeExporter(
     CreateDagExporterMapType::const_iterator it = gDagNodeExporters.find(dagNodeFn.typeName());
 
     if(it == gDagNodeExporters.end())
-    {
-        //throw NoExporterForNode();
-        return 0;
-    }
+        throw NoExporterForNode();
 
     return it->second(path, project, sessionMode);
 }

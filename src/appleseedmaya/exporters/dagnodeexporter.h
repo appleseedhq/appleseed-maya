@@ -32,7 +32,6 @@
 // Maya headers.
 #include <maya/MDagPath.h>
 #include <maya/MMatrix.h>
-#include <maya/MObjectArray.h>
 
 // appleseed.foundation headers.
 #include "foundation/math/matrix.h"
@@ -54,9 +53,6 @@ class DagNodeExporter
 
     // Returns true if the entity created by this exporter can be instanced.
     virtual bool supportsInstancing() const;
-
-    // Collect dependency nodes to export (materials, ...).
-    virtual void collectDependencyNodesToExport(MObjectArray& nodes);
 
     // Motion blur.
     virtual void collectMotionBlurSteps(MotionBlurTimes& motionTimes) const;

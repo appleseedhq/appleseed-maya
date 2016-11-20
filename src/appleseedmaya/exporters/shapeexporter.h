@@ -30,6 +30,7 @@
 #define APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
 
 // appleseed.renderer headers.
+#include "renderer/api/scene.h"
 #include "renderer/api/utility.h"
 
 // appleseed.maya headers.
@@ -55,8 +56,19 @@ class ShapeExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
-    renderer::TransformSequence m_transformSequence;
-    MurmurHash                  m_shapeHash;
+    void shapeAttributesToParams(renderer::ParamArray& params);
+    void visibilityAttributesToParams(renderer::ParamArray& params);
+
+    void createObjectInstance(const MString& objectName);
+
+    renderer::TransformSequence                     m_transformSequence;
+    MurmurHash                                      m_shapeHash;
+    size_t                                          m_numInstances;
+    foundation::StringDictionary                    m_materialMappings;
+
+    AppleseedEntityPtr<renderer::Assembly>          m_objectAssembly;
+    AppleseedEntityPtr<renderer::AssemblyInstance>  m_objectAssemblyInstance;
+    AppleseedEntityPtr<renderer::ObjectInstance>    m_objectInstance;
 };
 
 typedef boost::shared_ptr<ShapeExporter> ShapeExporterPtr;

@@ -28,11 +28,3 @@
 
 // Interface header.
 #include "appleseedmaya/exceptions.h"
-
-Exception::Exception()
-{
-}
-
-NoExporterForNode::NoExporterForNode()
-{
-}

@@ -1,0 +1,26 @@
+
+General:
+
+    ☐ Logging.
+
+Project Export:
+
+    ☐ Export render globals.
+    ☐ Camera export.
+    ☐ Light export.
+    ☐ Environment export.
+    ☐ Mesh export.
+    ☐ Shading network export.
+
+Rendering:
+
+Shading:
+
+    ☐ Custom shaders.
+    ☐ Place2d node.
+    ☐ Place3d node.
+
+User Interface:
+
+    ☐ Translator ui.
+    ☐ About dialog.

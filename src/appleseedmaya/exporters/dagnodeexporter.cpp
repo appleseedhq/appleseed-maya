@@ -52,10 +52,6 @@ bool DagNodeExporter::supportsInstancing() const
     return false;
 }
 
-void DagNodeExporter::collectDependencyNodesToExport(MObjectArray& nodes)
-{
-}
-
 void DagNodeExporter::collectMotionBlurSteps(MotionBlurTimes& motionTimes) const
 {
 }

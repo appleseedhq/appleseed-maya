@@ -36,6 +36,7 @@
 #include "appleseedmaya/appleseedtranslator.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/logger.h"
 #include "appleseedmaya/rendercommands.h"
 #include "appleseedmaya/renderglobalsnode.h"
 #include "appleseedmaya/shadingnoderegistry.h"
@@ -80,6 +81,11 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         "Any");
 
     MStatus status;
+
+    status = Logger::initialize();
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to initialize logger");
 
     status = fnPlugin.registerNode(
         RenderGlobalsNode::nodeName,
@@ -264,6 +270,11 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
     APPLESEED_MAYA_CHECK_MSTATUS_MSG(
         status,
         "appleseedMaya: failed to uninitialize render");
+
+    status = Logger::uninitialize();
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to uninitialize logger");
 
     return status;
 }

@@ -29,13 +29,20 @@
 // Interface header.
 #include "appleseedmaya/exporters/lightexporter.h"
 
+// Standard headers.
+#include <sstream>
+
 // Maya headers.
 #include <maya/MFnDagNode.h>
+
+// appleseed.foundation headers.
+#include "foundation/math/scalar.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 
 // appleseed.maya headers.
+#include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 
 
@@ -70,25 +77,70 @@ bool LightExporter::supportsMotionBlur() const
     return false;
 }
 
-void LightExporter::createEntity()
+void LightExporter::createEntity(const AppleseedSession::Options& options)
 {
     asr::LightFactoryRegistrar lightFactories;
     const asr::ILightFactory *lightFactory = 0;
     asr::ParamArray lightParams;
 
-    MFnDagNode dagNodeFn(dagPath());
+    MFnDependencyNode depNodeFn(node());
 
-    if(dagNodeFn.typeName() == "directionalLight")
+    MStatus status;
+    MPlug plug = depNodeFn.findPlug("intensity", &status);
+    if(plug.isConnected())
+    {
+        // todo: add warning here...
+    }
+
+    float intensity = 1.0;
+    AttributeUtils::get(plug, intensity);
+
+    plug = depNodeFn.findPlug("color", &status);
+    if(plug.isConnected())
+    {
+        // todo: add warning here...
+    }
+
+    // Create a color entity.
+    MString colorName = appleseedName() + MString("_intensity_color");
+    {
+        MColor color(1.0f, 1.0f, 1.0f);
+        AttributeUtils::get(plug, color);
+        asr::ColorValueArray values(3, &color.r);
+
+        asr::ParamArray params;
+        params.insert("color_space", "linear_rgb");
+        m_lightColor.reset(
+            asr::ColorEntityFactory::create(colorName.asChar(), params, values));
+    }
+
+    if(depNodeFn.typeName() == "directionalLight")
     {
         lightFactory = lightFactories.lookup("directional_light");
+        lightParams.insert("irradiance", colorName.asChar());
+        lightParams.insert("irradiance_multiplier", intensity);
     }
-    if(dagNodeFn.typeName() == "pointLight")
+    if(depNodeFn.typeName() == "pointLight")
     {
         lightFactory = lightFactories.lookup("point_light");
+        lightParams.insert("intensity", colorName.asChar());
+        lightParams.insert("intensity_multiplier", intensity);
     }
     else // spotLight
     {
-        lightFactory = lightFactories.lookup("directional_light");
+        lightFactory = lightFactories.lookup("spot_light");
+        lightParams.insert("intensity", colorName.asChar());
+        lightParams.insert("intensity_multiplier", intensity);
+
+        // TODO: use MAngle to do the right thing and remove
+        // deg / rad conversions...
+        float coneAngle = asf::deg_to_rad(20.0f);
+        AttributeUtils::get(node(), "coneAngle", coneAngle);
+        lightParams.insert("inner_angle", asf::rad_to_deg(coneAngle));
+
+        float penumbraAngle = asf::deg_to_rad(5.0f);
+        AttributeUtils::get(node(), "penumbraAngle", penumbraAngle);
+        lightParams.insert("outer_angle", asf::rad_to_deg(coneAngle + 2.0 * penumbraAngle));
     }
 
     m_light = lightFactory->create(appleseedName().asChar(), lightParams);
@@ -101,5 +153,6 @@ void LightExporter::createEntity()
 
 void LightExporter::flushEntity()
 {
+    mainAssembly().colors().insert(m_lightColor.release());
     mainAssembly().lights().insert(m_light.release());
 }

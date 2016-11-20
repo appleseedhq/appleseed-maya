@@ -32,6 +32,10 @@
 // Standard headers.
 #include <iostream>
 
+// Maya headers.
+#include <maya/MCommonRenderSettingsData.h>
+#include <maya/MRenderUtil.h>
+
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
 
@@ -70,6 +74,12 @@ MStatus AppleseedTranslator::writer(
     {
         options.m_selectionOnly = true;
     }
+
+    // Get width and height from render globals.
+    MCommonRenderSettingsData renderSettings;
+    MRenderUtil::getCommonRenderSettings(renderSettings);
+    options.m_width = renderSettings.width;
+    options.m_height = renderSettings.height;
 
     AppleseedSession::beginProjectExport(file.fullName(), options);
     AppleseedSession::endProjectExport();

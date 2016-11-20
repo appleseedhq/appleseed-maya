@@ -50,68 +50,67 @@ struct MotionBlurTimes
 };
 
 
-class AppleseedSession
-  : NonCopyable
+namespace AppleseedSession
 {
-  public:
 
-    static MStatus initialize(const MString& pluginPath);
-    static MStatus uninitialize();
+MStatus initialize(const MString& pluginPath);
+MStatus uninitialize();
 
-    enum SessionMode
-    {
-        NoSession,
-        ExportSession,
-        FinalRenderSession,
-        ProgressiveRenderSession
-    };
-
-    struct Options
-    {
-        Options()
-          : m_width(-1)
-          , m_height(-1)
-          , m_selectionOnly(false)
-          , m_sequence(false)
-        {
-        }
-
-        // Common options.
-        int m_width;
-        int m_height;
-        MString m_camera;
-        bool m_selectionOnly;
-
-        // Final render options.
-        // ...
-
-        // IPR options.
-        // ...
-
-        // Project export options.
-        bool m_sequence;
-        int m_firstFrame;
-        int m_lastFrame;
-    };
-
-    static void beginProjectExport(
-        const MString& fileName,
-        const Options& options);
-
-    static void endProjectExport();
-
-    static void beginFinalRender(
-        const Options& options);
-
-    static void endFinalRender();
-
-    static void beginProgressiveRender(
-        const Options& options);
-
-    static void endProgressiveRender();
-
-    static SessionMode sessionMode();
-    static const Options& options();
+enum SessionMode
+{
+    NoSession,
+    ExportSession,
+    FinalRenderSession,
+    ProgressiveRenderSession
 };
+
+struct Options
+{
+    Options()
+        : m_width(-1)
+        , m_height(-1)
+        , m_selectionOnly(false)
+        , m_sequence(false)
+    {
+    }
+
+    // Common options.
+    int m_width;
+    int m_height;
+    MString m_camera;
+    bool m_selectionOnly;
+
+    // Final render options.
+    // ...
+
+    // IPR options.
+    // ...
+
+    // Project export options.
+    bool m_sequence;
+    int m_firstFrame;
+    int m_lastFrame;
+};
+
+void beginProjectExport(
+    const MString& fileName,
+    const Options& options);
+
+void endProjectExport();
+
+void beginFinalRender(
+    const Options& options);
+
+void endFinalRender();
+
+void beginProgressiveRender(
+    const Options& options);
+
+void endProgressiveRender();
+
+SessionMode sessionMode();
+const Options& options();
+
+} // namespace AppleseedSession.
 
 #endif  // !APPLESEED_MAYA_SESSION_H
