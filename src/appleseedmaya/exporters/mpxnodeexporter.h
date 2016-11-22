@@ -59,6 +59,9 @@ class MPxNodeExporter
     // Destructor.
     virtual ~MPxNodeExporter();
 
+    // Return the name of the appleseed entity created by this exporter.
+    virtual MString appleseedName() const;
+
     // Collect dependency nodes to export (materials, ...).
     virtual void collectDependencyNodesToExport(MObjectArray& nodes);
 
@@ -82,11 +85,13 @@ class MPxNodeExporter
     // Return the session mode.
     AppleseedSession::SessionMode sessionMode() const;
 
-    // Return the name of the appleseed entity created by this exporter.
-    virtual MString appleseedName() const;
-
+    // Return a reference to the appleseed project.
     renderer::Project& project();
+
+    // Return a reference to the appleseed scene.
     renderer::Scene& scene();
+
+    // Return a reference to the appleseed main assembly.
     renderer::Assembly& mainAssembly();
 
   private:

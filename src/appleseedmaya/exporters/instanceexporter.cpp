@@ -45,8 +45,10 @@ InstanceExporter::InstanceExporter(
     asr::Project&                   project,
     const asr::TransformSequence&   transformSequence)
   : ShapeExporter(path, project, sessionMode)
+  , m_masterShapeName(master.appleseedName())
 {
     m_transformSequence = transformSequence;
+    master.instanceCreated();
 }
 
 bool InstanceExporter::supportsInstancing() const
@@ -56,7 +58,17 @@ bool InstanceExporter::supportsInstancing() const
 
 void InstanceExporter::flushEntity()
 {
-    ShapeExporter::flushEntity();
+    const MString assemblyName = m_masterShapeName + MString("_assembly");
+    const MString assemblyInstanceName = appleseedName() + MString("_instance");
 
-    // todo: implement this...
+    asr::ParamArray params;
+    visibilityAttributesToParams(params);
+    asf::auto_release_ptr<asr::AssemblyInstance> assemblyInstance(
+        asr::AssemblyInstanceFactory::create(
+            assemblyInstanceName.asChar(),
+            params,
+            assemblyName.asChar()));
+
+    assemblyInstance->transform_sequence() = m_transformSequence;
+    mainAssembly().assembly_instances().insert(assemblyInstance);
 }

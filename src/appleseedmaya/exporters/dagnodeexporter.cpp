@@ -47,11 +47,6 @@ bool DagNodeExporter::supportsMotionBlur() const
     return true;
 }
 
-bool DagNodeExporter::supportsInstancing() const
-{
-    return false;
-}
-
 void DagNodeExporter::collectMotionBlurSteps(MotionBlurTimes& motionTimes) const
 {
 }

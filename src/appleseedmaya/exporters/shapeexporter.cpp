@@ -41,12 +41,23 @@ ShapeExporter::ShapeExporter(
     asr::Project&                   project,
     AppleseedSession::SessionMode   sessionMode)
   : DagNodeExporter(path, project, sessionMode)
+  , m_numInstances(0)
 {
+}
+
+const asr::TransformSequence& ShapeExporter::transformSequence() const
+{
+    return m_transformSequence;
 }
 
 bool ShapeExporter::supportsInstancing() const
 {
     return true;
+}
+
+void ShapeExporter::instanceCreated() const
+{
+    m_numInstances++;
 }
 
 void ShapeExporter::exportTransformMotionStep(float time)

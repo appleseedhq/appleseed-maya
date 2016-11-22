@@ -43,7 +43,11 @@ class ShapeExporter
 {
   public:
 
+    const renderer::TransformSequence& transformSequence() const;
+
     virtual bool supportsInstancing() const;
+
+    void instanceCreated() const;
 
     virtual void exportTransformMotionStep(float time);
 
@@ -63,7 +67,7 @@ class ShapeExporter
 
     renderer::TransformSequence                     m_transformSequence;
     MurmurHash                                      m_shapeHash;
-    size_t                                          m_numInstances;
+    mutable size_t                                  m_numInstances;
     foundation::StringDictionary                    m_materialMappings;
 
     AppleseedEntityPtr<renderer::Assembly>          m_objectAssembly;

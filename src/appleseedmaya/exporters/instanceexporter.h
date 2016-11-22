@@ -57,6 +57,10 @@ class InstanceExporter
     virtual bool supportsInstancing() const;
 
     virtual void flushEntity();
+
+  private:
+
+    MString m_masterShapeName;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H

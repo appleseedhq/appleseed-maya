@@ -74,6 +74,7 @@
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/exporters/mpxnodeexporter.h"
+#include "appleseedmaya/exporters/shapeexporter.h"
 #include "appleseedmaya/renderercontroller.h"
 #include "appleseedmaya/utils.h"
 
@@ -238,14 +239,26 @@ struct SessionImpl
             }
         }
 
-        // Handle auto-instancing here if enabled.
+        // Handle auto-instancing.
         if(m_sessionMode != AppleseedSession::ProgressiveRenderSession)
         {
             for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             {
-                if(it->second->supportsInstancing())
+                const ShapeExporter *shape = dynamic_cast<const ShapeExporter*>(it->second.get());
+
+                if(shape && shape->supportsInstancing())
                 {
-                    // ...
+                    /*
+                    hash = exporter->hash();
+                    if(instanceMap.find(hash) != end())
+                    {
+                        DagNodeExporterPtr exporter(shape);
+                        // Create InstanceExporter(...)
+                        m_dagExporters[it->first] = instanceExporter;
+                    }
+                    else
+                        map[hash] = ShapeExporterPtr(exporter)
+                    */
                 }
             }
         }

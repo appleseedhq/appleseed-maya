@@ -48,15 +48,13 @@ class DagNodeExporter
 {
   public:
 
+    virtual MString appleseedName() const;
+
     // Returns true if the entity created by this exporter can be motion blurred.
     virtual bool supportsMotionBlur() const;
 
-    // Returns true if the entity created by this exporter can be instanced.
-    virtual bool supportsInstancing() const;
-
     // Motion blur.
     virtual void collectMotionBlurSteps(MotionBlurTimes& motionTimes) const;
-
     virtual void exportCameraMotionStep(float time);
     virtual void exportTransformMotionStep(float time);
     virtual void exportShapeMotionStep(float time);
@@ -69,8 +67,6 @@ class DagNodeExporter
       AppleseedSession::SessionMode sessionMode);
 
     const MDagPath& dagPath() const;
-
-    virtual MString appleseedName() const;
 
     foundation::Matrix4d convert(const MMatrix& m) const;
 
