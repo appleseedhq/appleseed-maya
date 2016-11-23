@@ -90,6 +90,8 @@ find_package (OpenGL REQUIRED)
 find_package (Maya REQUIRED)
 message ("Maya API version = ${MAYA_API_VERSION}")
 
+find_package (XGen)
+
 if (WITH_PYTHON_BRIDGE)
     find_package (PythonLibs REQUIRED)
 endif ()
@@ -136,4 +138,4 @@ endif ()
 # Products.
 #--------------------------------------------------------------------------------------------------
 
-add_subdirectory (src)
+add_subdirectory (src/appleseedmaya)

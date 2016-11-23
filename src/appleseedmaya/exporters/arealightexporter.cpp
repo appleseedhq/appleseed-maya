@@ -26,47 +26,53 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
+// Interface header.
+#include "appleseedmaya/exporters/arealightexporter.h"
 
 // Maya headers.
-#include <maya/MObjectArray.h>
+#include <maya/MFnDagNode.h>
 
 // appleseed.renderer headers.
-#include "renderer/api/material.h"
-#include "renderer/api/surfaceshader.h"
+#include "renderer/api/scene.h"
 
 // appleseed.maya headers.
-#include "appleseedmaya/exporters/mpxnodeexporter.h"
-
-// Forward declarations.
-namespace renderer { class Project; }
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
 
 
-class ShadingEngineExporter
-  : public MPxNodeExporter
+namespace asf = foundation;
+namespace asr = renderer;
+
+void AreaLightExporter::registerExporter()
 {
-  public:
+    NodeExporterFactory::registerDagNodeExporter("areaLight", &AreaLightExporter::create);
+}
 
-    static void registerExporter();
+DagNodeExporter *AreaLightExporter::create(
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+{
+    return new AreaLightExporter(path, project, sessionMode);
+}
 
-    static MPxNodeExporter *create(
-        const MObject&                object,
-        renderer::Project&            project,
-        AppleseedSession::SessionMode sessionMode);
+AreaLightExporter::AreaLightExporter(
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+  : DagNodeExporter(path, project, sessionMode)
+{
+}
 
-    virtual void collectDependencyNodesToExport(MObjectArray& nodes);
+bool AreaLightExporter::supportsMotionBlur() const
+{
+    return false;
+}
 
-    virtual void createEntity(const AppleseedSession::Options& options);
+void AreaLightExporter::createEntity(const AppleseedSession::Options& options)
+{
+}
 
-    virtual void flushEntity();
-
-  private:
-
-    ShadingEngineExporter(
-        const MObject&                object,
-        renderer::Project&            project,
-        AppleseedSession::SessionMode sessionMode);
-};
-
-#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
+void AreaLightExporter::flushEntity()
+{
+}

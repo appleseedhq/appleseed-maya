@@ -226,7 +226,7 @@ struct SessionImpl
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->createEntity(m_options);
 
-        // for each time step...
+        // For each time step...
         {
             for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             {

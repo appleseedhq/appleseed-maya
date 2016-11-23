@@ -40,6 +40,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/exceptions.h"
+#include "appleseedmaya/exporters/arealightexporter.h"
 #include "appleseedmaya/exporters/cameraexporter.h"
 #include "appleseedmaya/exporters/envlightexporter.h"
 #include "appleseedmaya/exporters/lightexporter.h"
