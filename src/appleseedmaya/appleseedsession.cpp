@@ -301,9 +301,11 @@ struct SessionImpl
 
     void createExporters()
     {
+        std::cout << "Exporting default material" << std::endl;
         exportDefaultMaterial();
 
         // Create exporters for all dag nodes in the scene.
+        std::cout << "Creating Dag exporters" << std::endl;
         MDagPath path;
         for(MItDag it(MItDag::kDepthFirst); !it.isDone(); it.next())
         {

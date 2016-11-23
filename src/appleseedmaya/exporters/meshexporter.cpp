@@ -57,7 +57,10 @@ namespace asr = renderer;
 namespace
 {
 
-void meshObjectTopologyHash(const asr::MeshObject& mesh, MurmurHash& hash)
+void meshObjectTopologyHash(
+    const asr::MeshObject&          mesh,
+    const asf::StringDictionary&    materialMappings,
+    MurmurHash&                     hash)
 {
     hash.append(mesh.get_tex_coords_count());
     for(int i = 0, e = mesh.get_tex_coords_count(); i < e; ++i)
@@ -70,11 +73,20 @@ void meshObjectTopologyHash(const asr::MeshObject& mesh, MurmurHash& hash)
     hash.append(mesh.get_material_slot_count());
     for(int i = 0, e = mesh.get_material_slot_count(); i < e; ++i)
         hash.append(mesh.get_material_slot(i));
+
+    hash.append(materialMappings.size());
+    asf::StringDictionary::const_iterator it(materialMappings.begin());
+    asf::StringDictionary::const_iterator e(materialMappings.end());
+    for(;it != e; ++it)
+        hash.append(it.value());
 }
 
-void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
+void staticMeshObjectHash(
+    const asr::MeshObject&          mesh,
+    const asf::StringDictionary&    materialMappings,
+    MurmurHash&                     hash)
 {
-    meshObjectTopologyHash(mesh, hash);
+    meshObjectTopologyHash(mesh, materialMappings, hash);
 
     hash.append(mesh.get_vertex_count());
     for(int i = 0, e = mesh.get_vertex_count(); i < e; ++i)
@@ -89,9 +101,12 @@ void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
         hash.append(mesh.get_vertex_tangent(i));
 }
 
-void meshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
+void meshObjectHash(
+    const asr::MeshObject&          mesh,
+    const asf::StringDictionary&    materialMappings,
+    MurmurHash&                     hash)
 {
-    staticMeshObjectHash(mesh, hash);
+    staticMeshObjectHash(mesh, materialMappings, hash);
 
     hash.append(mesh.get_motion_segment_count());
     for(int j = 0, je = mesh.get_motion_segment_count(); j < je; ++j)
@@ -132,8 +147,11 @@ MeshExporter::MeshExporter(
 
 void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
 {
-    MStatus status;
+    std::cout << "Collecting MPxNodes for dag node " << appleseedName() << std::endl;
 
+    MObjectArray shadingEngineNodes;
+
+    MStatus status;
     MObject obj = dagPath().node();
     MItDependencyGraph it(
         obj,
@@ -156,10 +174,22 @@ void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
     for(; it.isDone() != true; it.next())
     {
         MObject shadingEngine = it.thisNode();
-        nodes.append(shadingEngine);
+        MFnDependencyNode depNodeFn(shadingEngine);
+        std::cout << "Collected shading engine " << depNodeFn.name() << std::endl;
+        shadingEngineNodes.append(shadingEngine);
     }
 
-    // TODO: create material dict here...
+    if(shadingEngineNodes.length() > 1)
+    {
+        std::cout << "Per face assignments not supported yet." << std::endl;
+        std::cout << "Skipping material assignments" << std::endl;
+        return;
+    }
+
+    MFnDependencyNode depNodeFn(shadingEngineNodes[0]);
+    MString materialName = depNodeFn.name() + MString("_material");
+    m_materialMappings.insert("default", materialName.asChar());
+    nodes.append(shadingEngineNodes[0]);
 }
 
 void MeshExporter::createEntity(const AppleseedSession::Options& options)
@@ -171,19 +201,18 @@ void MeshExporter::createEntity(const AppleseedSession::Options& options)
     MString objectName = appleseedName();
     m_mesh = asr::MeshObjectFactory::create(objectName.asChar(), params);
 
-    /*
     // Create material slots.
+    if(!m_materialMappings.empty())
     {
         m_mesh->reserve_material_slots(m_materialMappings.size());
 
         asf::StringDictionary::const_iterator it(m_materialMappings.begin());
         asf::StringDictionary::const_iterator e(m_materialMappings.end());
         for(;it != e; ++it)
-        {
-        }
+            m_mesh->push_material_slot(it.key());
     }
-    */
-    m_mesh->push_material_slot("default");
+    else
+        m_mesh->push_material_slot("default");
 
     // For now, set to false...
     m_exportUVs = false;
@@ -199,7 +228,7 @@ void MeshExporter::exportShapeMotionStep(float time)
     if(sessionMode() == AppleseedSession::ExportSession)
     {
         MurmurHash meshHash;
-        staticMeshObjectHash(*m_mesh, meshHash);
+        staticMeshObjectHash(*m_mesh, m_materialMappings, meshHash);
         const std::string fileName = std::string("_geometry/") + meshHash.toString() + ".binarymesh";
 
         bfs::path projectPath = project().search_paths().get_root_path();
@@ -322,11 +351,9 @@ void MeshExporter::exportGeometry()
     // Vertices.
     m_mesh->reserve_vertices(meshFn.numVertices());
     {
-        MFloatPointArray points;
-        status = meshFn.getPoints(points);
-
+        const float *p = meshFn.getRawPoints(&status);
         for(size_t i = 0, e = meshFn.numVertices(); i < e; ++i)
-            m_mesh->push_vertex(asr::GVector3(points[i].x, points[i].y, points[i].z));
+            m_mesh->push_vertex(asr::GVector3(*p++, *p++, *p++));
     }
 
     if(m_exportUVs)

@@ -73,8 +73,8 @@ void ShapeExporter::flushEntity()
     m_transformSequence.optimize();
 
     // Check if we need to create an assembly for this object.
-    if( sessionMode() == AppleseedSession::ProgressiveRenderSession ||
-        m_numInstances > 0 || m_transformSequence.size() > 1)
+    if(sessionMode() == AppleseedSession::ProgressiveRenderSession ||
+       m_numInstances > 0 || m_transformSequence.size() > 1)
     {
         const MString assemblyName = appleseedName() + MString("_assembly");
         m_objectAssembly.reset(

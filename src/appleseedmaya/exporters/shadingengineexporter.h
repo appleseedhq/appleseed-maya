@@ -67,6 +67,10 @@ class ShadingEngineExporter
         const MObject&                object,
         renderer::Project&            project,
         AppleseedSession::SessionMode sessionMode);
+
+    renderer::ParamArray                          m_materialParams;
+    AppleseedEntityPtr<renderer::Material>        m_material;
+    AppleseedEntityPtr<renderer::SurfaceShader>   m_surfaceShader;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H

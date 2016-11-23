@@ -283,7 +283,18 @@ void ShadingNetworkExporter::addConnections(const MObject& node)
                 if(!srcShaderInfo)
                     continue;
 
-                if(const OSLParamInfo *srcParamInfo = srcShaderInfo->findParam(srcPlug.name()))
+                const OSLParamInfo *srcParamInfo =
+                    srcShaderInfo->findParam(
+                        srcPlug.partialName(
+                            false,
+                            false,
+                            false,
+                            false,
+                            false,
+                            true,   // use long names.
+                            &status));
+
+                if(srcParamInfo)
                 {
                     m_shaderGroup->add_connection(
                         srcDepNodeFn.name().asChar(),

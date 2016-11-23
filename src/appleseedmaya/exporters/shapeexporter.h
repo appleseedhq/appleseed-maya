@@ -69,7 +69,6 @@ class ShapeExporter
     MurmurHash                                      m_shapeHash;
     mutable size_t                                  m_numInstances;
     foundation::StringDictionary                    m_materialMappings;
-
     AppleseedEntityPtr<renderer::Assembly>          m_objectAssembly;
     AppleseedEntityPtr<renderer::AssemblyInstance>  m_objectAssemblyInstance;
     AppleseedEntityPtr<renderer::ObjectInstance>    m_objectInstance;

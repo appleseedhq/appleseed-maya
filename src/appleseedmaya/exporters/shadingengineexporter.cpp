@@ -35,7 +35,6 @@
 #include <maya/MPlugArray.h>
 
 // appleseed.renderer headers.
-#include "renderer/api/material.h"
 #include "renderer/api/scene.h"
 
 // appleseed.maya headers.
@@ -71,7 +70,6 @@ void ShadingEngineExporter::collectDependencyNodesToExport(MObjectArray& nodes)
     MFnDependencyNode depNodeFn(node());
 
     MStatus status;
-
     MPlug plug = depNodeFn.findPlug("surfaceShader", &status);
 
     if(plug.isConnected())
@@ -83,14 +81,32 @@ void ShadingEngineExporter::collectDependencyNodesToExport(MObjectArray& nodes)
         {
             MObject otherNode = otherPlugs[0].node();
             nodes.append(otherPlugs[0].node());
+
+            MFnDependencyNode otherDepNodeFn(otherNode);
+            MString shaderGroupName = otherDepNodeFn.name() + MString("_shader_group");
+            m_materialParams.insert(
+                "osl_surface",
+                shaderGroupName.asChar());
         }
     }
 }
 
 void ShadingEngineExporter::createEntity(const AppleseedSession::Options& options)
 {
+    MString surfaceShaderName = appleseedName() + MString("_surface_shader");
+    m_surfaceShader.reset(
+        asr::PhysicalSurfaceShaderFactory().create(
+            surfaceShaderName.asChar(),
+            asr::ParamArray()));
+
+    MString materialName = appleseedName() + MString("_material");
+    m_materialParams.insert("surface_shader", surfaceShaderName.asChar());
+    m_material.reset(
+        asr::OSLMaterialFactory().create(materialName.asChar(), m_materialParams));
 }
 
 void ShadingEngineExporter::flushEntity()
 {
+    mainAssembly().materials().insert(m_material.release());
+    mainAssembly().surface_shaders().insert(m_surfaceShader.release());
 }
