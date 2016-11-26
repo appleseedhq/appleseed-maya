@@ -56,10 +56,6 @@ MPxNodeExporter::~MPxNodeExporter()
 {
 }
 
-void MPxNodeExporter::collectDependencyNodesToExport(MObjectArray& nodes)
-{
-}
-
 const MObject& MPxNodeExporter::node() const
 {
     return m_object;

@@ -62,9 +62,6 @@ class MPxNodeExporter
     // Return the name of the appleseed entity created by this exporter.
     virtual MString appleseedName() const;
 
-    // Collect dependency nodes to export (materials, ...).
-    virtual void collectDependencyNodesToExport(MObjectArray& nodes);
-
     // Create appleseed entities.
     virtual void createEntity(const AppleseedSession::Options& options) = 0;
 

@@ -323,15 +323,6 @@ struct SessionImpl
 
         for(int i = 0, e = extraObjects.length(); i < e; ++i)
             createMPxNodeExporter(extraObjects[i]);
-
-        // Collect more extra dependency nodes to export.
-        RENDERER_LOG_DEBUG("Collecting dependency nodes to export part 2");
-        extraObjects.clear();
-        for(MPxExporterMap::const_iterator it = m_mpxExporters.begin(), e = m_mpxExporters.end(); it != e; ++it)
-            it->second->collectDependencyNodesToExport(extraObjects);
-
-        for(int i = 0, e = extraObjects.length(); i < e; ++i)
-            createMPxNodeExporter(extraObjects[i]);
     }
 
     void exportDefaultMaterial()

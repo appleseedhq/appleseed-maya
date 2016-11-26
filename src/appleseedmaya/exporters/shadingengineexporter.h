@@ -38,6 +38,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/mpxnodeexporter.h"
+#include "appleseedmaya/exporters/shadingnetworkexporter.h"
 
 // Forward declarations.
 namespace renderer { class Project; }
@@ -55,8 +56,6 @@ class ShadingEngineExporter
         renderer::Project&            project,
         AppleseedSession::SessionMode sessionMode);
 
-    virtual void collectDependencyNodesToExport(MObjectArray& nodes);
-
     virtual void createEntity(const AppleseedSession::Options& options);
 
     virtual void flushEntity();
@@ -68,9 +67,12 @@ class ShadingEngineExporter
         renderer::Project&            project,
         AppleseedSession::SessionMode sessionMode);
 
-    renderer::ParamArray                          m_materialParams;
+    void createShadingNetworkExporters(const AppleseedSession::Options& options);
+
     AppleseedEntityPtr<renderer::Material>        m_material;
     AppleseedEntityPtr<renderer::SurfaceShader>   m_surfaceShader;
+
+    ShadingNetworkExporterPtr                     m_surfaceExporter;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H

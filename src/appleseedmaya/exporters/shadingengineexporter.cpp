@@ -39,6 +39,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/shadingnoderegistry.h"
 
 
 namespace asf = foundation;
@@ -65,6 +66,7 @@ ShadingEngineExporter::ShadingEngineExporter(
 {
 }
 
+/*
 void ShadingEngineExporter::collectDependencyNodesToExport(MObjectArray& nodes)
 {
     MFnDependencyNode depNodeFn(node());
@@ -90,23 +92,74 @@ void ShadingEngineExporter::collectDependencyNodesToExport(MObjectArray& nodes)
         }
     }
 }
+*/
 
 void ShadingEngineExporter::createEntity(const AppleseedSession::Options& options)
 {
     MString surfaceShaderName = appleseedName() + MString("_surface_shader");
+    asr::ParamArray params;
     m_surfaceShader.reset(
         asr::PhysicalSurfaceShaderFactory().create(
             surfaceShaderName.asChar(),
-            asr::ParamArray()));
+            params));
+    params.clear();
 
     MString materialName = appleseedName() + MString("_material");
-    m_materialParams.insert("surface_shader", surfaceShaderName.asChar());
+    params.insert("surface_shader", surfaceShaderName.asChar());
     m_material.reset(
-        asr::OSLMaterialFactory().create(materialName.asChar(), m_materialParams));
+        asr::OSLMaterialFactory().create(materialName.asChar(), params));
+
+    createShadingNetworkExporters(options);
 }
 
 void ShadingEngineExporter::flushEntity()
 {
+    if(m_surfaceExporter)
+    {
+        m_surfaceExporter->flushEntity();
+        m_material->get_parameters().insert(
+            "osl_surface",
+            m_surfaceExporter->shaderGroupName().asChar());
+    }
+
     mainAssembly().materials().insert(m_material.release());
     mainAssembly().surface_shaders().insert(m_surfaceShader.release());
+}
+
+void ShadingEngineExporter::createShadingNetworkExporters(
+    const AppleseedSession::Options& options)
+{
+    MFnDependencyNode depNodeFn(node());
+
+    MStatus status;
+    MPlug plug = depNodeFn.findPlug("surfaceShader", &status);
+
+    if(plug.isConnected())
+    {
+        MPlugArray otherPlugs;
+        plug.connectedTo(otherPlugs, true, false, &status);
+
+        if(otherPlugs.length() == 1)
+        {
+            MObject otherNode = otherPlugs[0].node();
+            MFnDependencyNode otherDepNodeFn(otherNode);
+
+            if(ShadingNodeRegistry::isShaderSupported(otherDepNodeFn.typeName()))
+            {
+                m_surfaceExporter.reset(
+                    new ShadingNetworkExporter(
+                        ShadingNetworkExporter::SurfaceContext,
+                        otherNode,
+                        project(),
+                        sessionMode()));
+                m_surfaceExporter->createEntity(options);
+            }
+            else
+            {
+                RENDERER_LOG_WARNING(
+                    "Unsupported shading node type %s found",
+                    otherDepNodeFn.typeName().asChar());
+            }
+        }
+    }
 }

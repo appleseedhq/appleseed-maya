@@ -45,7 +45,6 @@
 #include "appleseedmaya/exporters/lightexporter.h"
 #include "appleseedmaya/exporters/meshexporter.h"
 #include "appleseedmaya/exporters/shadingengineexporter.h"
-#include "appleseedmaya/exporters/shadingnetworkexporter.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/utils.h"
 
@@ -81,7 +80,6 @@ MStatus NodeExporterFactory::initialize(const MString& pluginPath)
     LightExporter::registerExporter();
     MeshExporter::registerExporter();
     ShadingEngineExporter::registerExporter();
-    ShadingNetworkExporter::registerExporter();
     return MS::kSuccess;
 }
 

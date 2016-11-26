@@ -31,13 +31,14 @@
 
 // Standard headers.
 #include <cstring>
+#include <string>
 
 // Maya headers.
 #include <maya/MString.h>
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
-
+#include "foundation/utility/string.h"
 
 //
 // NonCopyable.
@@ -155,5 +156,35 @@ class AppleseedEntityPtr
     T*      m_ptr;
     bool    m_releaseObj;
 };
+
+
+template<class Container, class T>
+void insertEntityWithUniqueName(
+    Container&              container,
+    AppleseedEntityPtr<T>&  entity)
+{
+    std::string name = entity->get_name();
+
+    if(container.get_by_name(name.c_str()) == 0)
+    {
+        container.insert(entity.release());
+        return;
+    }
+
+    std::string pattern = name + "_#";
+    size_t i = 2;
+
+    while(true)
+    {
+        std::string new_name = foundation::get_numbered_string(pattern, i++);
+
+        if(container.get_by_name(new_name.c_str()) == 0)
+        {
+            entity->set_name(new_name.c_str());
+            container.insert(entity.release());
+            break;
+        }
+    }
+}
 
 #endif  // !APPLESEED_MAYA_UTILS_H

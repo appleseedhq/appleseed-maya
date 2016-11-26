@@ -49,35 +49,51 @@ class ShadingNetworkExporter
 {
   public:
 
-    static void registerExporter();
+    enum Context
+    {
+        SurfaceContext,
+        DisplacementContext
+    };
 
-    static MPxNodeExporter *create(
-      const MObject&                object,
-      renderer::Project&            project,
-      AppleseedSession::SessionMode sessionMode);
+    MString shaderGroupName() const;
 
     virtual void createEntity(const AppleseedSession::Options& options);
 
     virtual void flushEntity();
 
   private:
+    friend class ShadingEngineExporter;
 
     ShadingNetworkExporter(
+      const Context                 context,
       const MObject&                object,
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
-    void createShader(const MObject& node);
+    void exportShader(const MObject& node);
 
-    void processAttribute(
+    void exportAttributeValue(
       const MPlug&          plug,
       const OSLParamInfo&   paramInfo,
       renderer::ParamArray& shaderParams);
 
-    void addConnections(const MObject& node);
+    void exportArrayAttributeValue(
+      const MPlug&          plug,
+      const OSLParamInfo&   paramInfo,
+      renderer::ParamArray& shaderParams);
 
+    void exportConnections(const MObject& node);
+
+    void createCompoundChildConnectionAdapterShader(
+      const MPlug&          plug,
+      const OSLParamInfo&   paramInfo);
+
+    Context                                   m_context;
     AppleseedEntityPtr<renderer::ShaderGroup> m_shaderGroup;
     std::set<MString, MStringCompareLess>     m_shadersExported;
+    size_t                                    m_numAdaptersCreated;
 };
+
+typedef boost::shared_ptr<ShadingNetworkExporter> ShadingNetworkExporterPtr;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
