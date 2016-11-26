@@ -39,7 +39,6 @@
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 
-
 namespace asf = foundation;
 namespace asr = renderer;
 

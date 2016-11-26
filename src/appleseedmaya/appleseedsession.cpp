@@ -75,9 +75,10 @@
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/exporters/mpxnodeexporter.h"
 #include "appleseedmaya/exporters/shapeexporter.h"
+#include "appleseedmaya/logger.h"
 #include "appleseedmaya/renderercontroller.h"
+#include "appleseedmaya/renderglobalsnode.h"
 #include "appleseedmaya/utils.h"
-
 
 namespace bfs = boost::filesystem;
 namespace asf = foundation;
@@ -273,7 +274,7 @@ struct SessionImpl
 
     MObject exportDefaultRenderGlobals()
     {
-        std::cout << "Exporting default render globals" << std::endl;
+        RENDERER_LOG_DEBUG("Exporting default render globals");
 
         MObject defaultRenderGlobalsNode;
         if(getNodeMObject("defaultRenderGlobals", defaultRenderGlobalsNode))
@@ -287,13 +288,14 @@ struct SessionImpl
 
     MObject exportAppleseedRenderGlobals()
     {
-        std::cout << "Exporting appleseed render globals" << std::endl;
+        RENDERER_LOG_DEBUG("Exporting appleseed render globals");
 
         MObject appleseedRenderGlobalsNode;
         if(getNodeMObject("appleseedRenderGlobals", appleseedRenderGlobalsNode))
         {
-            MFnDependencyNode appleseedGlobalsDepFn(appleseedRenderGlobalsNode);
-            // ...
+            RenderGlobalsNode::applyGlobalsToProject(
+                appleseedRenderGlobalsNode,
+                *m_project);
         }
 
         return appleseedRenderGlobalsNode;
@@ -301,11 +303,11 @@ struct SessionImpl
 
     void createExporters()
     {
-        std::cout << "Exporting default material" << std::endl;
+        RENDERER_LOG_DEBUG("Exporting default material");
         exportDefaultMaterial();
 
         // Create exporters for all dag nodes in the scene.
-        std::cout << "Creating Dag exporters" << std::endl;
+        RENDERER_LOG_DEBUG("Creating dag node exporters");
         MDagPath path;
         for(MItDag it(MItDag::kDepthFirst); !it.isDone(); it.next())
         {
@@ -314,6 +316,7 @@ struct SessionImpl
         }
 
         // Collect extra dependency nodes to export.
+        RENDERER_LOG_DEBUG("Collecting dependency nodes to export");
         MObjectArray extraObjects;
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->collectDependencyNodesToExport(extraObjects);
@@ -322,6 +325,7 @@ struct SessionImpl
             createMPxNodeExporter(extraObjects[i]);
 
         // Collect more extra dependency nodes to export.
+        RENDERER_LOG_DEBUG("Collecting dependency nodes to export part 2");
         extraObjects.clear();
         for(MPxExporterMap::const_iterator it = m_mpxExporters.begin(), e = m_mpxExporters.end(); it != e; ++it)
             it->second->collectDependencyNodesToExport(extraObjects);
@@ -354,25 +358,18 @@ struct SessionImpl
         }
         catch(const NoExporterForNode&)
         {
-            // TODO: add warning here...!
-            std::cout << "No MPx exporter found for node " << std::endl;
+            RENDERER_LOG_WARNING(
+                "No mpx exporter found for node type %s",
+                depNodeFn.typeName().asChar());
             return;
         }
 
         if(exporter)
         {
             m_mpxExporters[depNodeFn.name()] = exporter;
-            std::cout << "Created exporter for node: " << depNodeFn.name() << "\n";
-            std::cout << "  type       = " << depNodeFn.typeName() << "\n";
-            std::cout << "  apiTypeStr = " << object.apiTypeStr() << "\n";
-            std::cout << std::endl;
-        }
-        else
-        {
-            std::cout << "Skipping unknown node: " << depNodeFn.name() << "\n";
-            std::cout << "  type       = " << depNodeFn.typeName() << "\n";
-            std::cout << "  apiTypeStr = " << object.apiTypeStr() << "\n";
-            std::cout << std::endl;
+            RENDERER_LOG_DEBUG(
+                "Created mpx exporter for node %s",
+                depNodeFn.name().asChar());
         }
     }
 
@@ -395,25 +392,18 @@ struct SessionImpl
         }
         catch(const NoExporterForNode&)
         {
-            // TODO: add warning here...!
-            std::cout << "No Dag exporter found for node " << std::endl;
+            RENDERER_LOG_WARNING(
+                "No dag exporter found for node type %s",
+                dagNodeFn.typeName().asChar());
             return;
         }
 
         if(exporter)
         {
             m_dagExporters[path.fullPathName()] = exporter;
-            std::cout << "Created exporter for node: " << path.partialPathName() << "\n";
-            std::cout << "  type       = " << dagNodeFn.typeName() << "\n";
-            std::cout << "  apiTypeStr = " << path.node().apiTypeStr() << "\n";
-            std::cout << std::endl;
-        }
-        else
-        {
-            std::cout << "Skipping unknown node: " << path.partialPathName() << "\n";
-            std::cout << "  type       = " << dagNodeFn.typeName() << "\n";
-            std::cout << "  apiTypeStr = " << path.node().apiTypeStr() << "\n";
-            std::cout << std::endl;
+            RENDERER_LOG_DEBUG(
+                "Created dag exporter for node %s",
+                dagNodeFn.name().asChar());
         }
     }
 

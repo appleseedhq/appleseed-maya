@@ -38,6 +38,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/logger.h"
 
 
 const MString AppleseedTranslator::translatorName("appleseed");

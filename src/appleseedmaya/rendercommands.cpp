@@ -40,6 +40,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/config.h"
+#include "appleseedmaya/logger.h"
 
 
 namespace
