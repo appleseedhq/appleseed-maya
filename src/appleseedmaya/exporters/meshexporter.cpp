@@ -245,9 +245,15 @@ void MeshExporter::exportShapeMotionStep(float time)
             if(!asr::MeshObjectWriter::write(*m_mesh, "mesh", p.string().c_str()))
             {
                 RENDERER_LOG_ERROR(
-                    "Couldn't export mesh file for object %s",
+                    "Couldn't export mesh file for object %s.",
                     m_mesh->get_name());
             }
+        }
+        else
+        {
+            RENDERER_LOG_INFO(
+                "Mesh file for object %s already exists.",
+                m_mesh->get_name());
         }
 
         m_fileNames.push_back(fileName);

@@ -60,7 +60,6 @@
 #include "appleseedmaya/shadingnodetemplatebuilder.h"
 #include "appleseedmaya/utils.h"
 
-
 namespace bfs = boost::filesystem;
 namespace asr = renderer;
 namespace asf = foundation;
@@ -144,11 +143,17 @@ bool doRegisterShader(
             }
         }
 
+        RENDERER_LOG_INFO(
+            "Registered OSL shader %s",
+            shaderInfo.shaderName.asChar());
+
         gShadersInfo[shaderInfo.mayaName] = shaderInfo;
 
+        /*
         #ifndef NDEBUG
             logShader(shaderInfo);
         #endif
+        */
 
         if(shaderInfo.typeId != 0)
         {
@@ -180,9 +185,11 @@ bool doRegisterShader(
             // Build and register an AE template for the node.
             ShadingNodeTemplateBuilder aeBuilder(shaderInfo);
 
+            /*
             #ifndef NDEBUG
                 aeBuilder.logAETemplate();
             #endif
+            */
 
             aeBuilder.registerAETemplate();
         }
@@ -310,6 +317,9 @@ MStatus registerShadingNodes(MObject plugin)
         registerShadersInDirectory(shaderPaths[i], pluginFn, *query);
     }
 
+	MString command("if(`window -exists createRenderNodeWindow`) {refreshCreateRenderNodeWindow(\"\");}\n");
+    MGlobal::executeCommand(command);
+
     return MS::kSuccess;
 }
 
@@ -326,6 +336,9 @@ MStatus unregisterShadingNodes(MObject plugin)
         if(shaderInfo.typeId != 0)
             pluginFn.deregisterNode(MTypeId(shaderInfo.typeId));
     }
+
+	MString command("if(`window -exists createRenderNodeWindow`) {refreshCreateRenderNodeWindow(\"\");}\n");
+    MGlobal::executeCommand(command);
 
     return MS::kSuccess;
 }

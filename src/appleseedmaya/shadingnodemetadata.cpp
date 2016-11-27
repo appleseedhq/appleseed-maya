@@ -50,7 +50,6 @@ const char* MayaClassificationKey   = "maya_classification";
 const char* MayaTypeIdKey           = "maya_type_id";
 const char* MayaAttributeNameKey    = "maya_attribute_name";
 
-
 OSLMetadataExtractor::OSLMetadataExtractor(const foundation::Dictionary& metadata)
     : m_metadata(metadata)
 {
@@ -84,7 +83,7 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
 
     if(validDefault)
     {
-        //T default_value = ...
+        //TODO: get default_value here.
     }
 
     isOutput = paramInfo.get<bool>("isoutput");
@@ -106,7 +105,7 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
         OSLMetadataExtractor metadata(paramInfo.dictionary("metadata"));
 
         metadata.getValue(MayaAttributeNameKey, mayaAttributeName);
-        // todo: get more metadata here...
+        // TODO: get more metadata here...
     }
 }
 

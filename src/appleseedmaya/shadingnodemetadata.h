@@ -45,7 +45,6 @@
 // Forward declarations.
 namespace renderer { class ShaderQuery; }
 
-
 class OSLMetadataExtractor
   : NonCopyable
 {

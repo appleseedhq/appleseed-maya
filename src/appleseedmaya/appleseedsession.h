@@ -71,6 +71,9 @@ struct Options
         , m_height(-1)
         , m_selectionOnly(false)
         , m_sequence(false)
+        , m_firstFrame(1)
+        , m_lastFrame(1)
+        , m_frameStep(1)
     {
     }
 
@@ -90,23 +93,20 @@ struct Options
     bool m_sequence;
     int m_firstFrame;
     int m_lastFrame;
+    int m_frameStep;
 };
 
 void beginProjectExport(
     const MString& fileName,
     const Options& options);
 
-void endProjectExport();
-
 void beginFinalRender(
     const Options& options);
-
-void endFinalRender();
 
 void beginProgressiveRender(
     const Options& options);
 
-void endProgressiveRender();
+void endSession();
 
 SessionMode sessionMode();
 const Options& options();

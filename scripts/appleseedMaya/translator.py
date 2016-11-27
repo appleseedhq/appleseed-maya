@@ -27,18 +27,113 @@
 #
 
 # Maya imports.
+import maya.cmds as mc
 import maya.mel as mel
 
+# appleseedMaya imports.
+from logger import logger
+
 def appleseedTranslatorOptions(parent, action, initialSettings, resultCallback):
+    defaults = {
+        "activeCamera" : "<Current>",
+        "exportAnim"   : False,
+        "startFrame"   : 1,
+        "endFrame"     : 100,
+        "stepFrame"    : 1
+    }
+
     if initialSettings:
-        pass
+        logger.debug("Parsing initial translator settings %s" % initialSettings)
+
+        opts = initialSettings.split(";")
+        for opt in opts:
+            opt = opt.strip()
+
+            if opt == "":
+                continue
+
+            name, value = opt.split("=")
+            if name in defaults:
+                if isinstance(defaults[name], basestring):
+                    defaults[name] = value
+                elif isinstance(defaults[name], bool):
+                    defaults[name] = bool(value)
+                elif isinstance(defaults[name], int):
+                    defaults[name] = int(value)
+                else:
+                    logger.warning("Unhandled param %s in translator options" % name)
 
     if action == "post":
-        # TODO: build UI here...
-        pass
+        mc.setParent(parent)
+        mc.setUITemplate("DefaultTemplate", pushTemplate=True)
+        mc.columnLayout(adj=True)
+
+        mc.optionMenuGrp(
+            "as_exportOpts_activeCamera",
+            label="Render camera")
+        mc.menuItem(label='<Current>', divider=True)
+        for camera in mc.ls(type='camera'):
+            if not mc.getAttr(camera + '.orthographic'):
+                mc.menuItem(label=camera)
+
+        mc.separator(style="single")
+
+        exportAnim = defaults["exportAnim"]
+        mc.checkBoxGrp(
+            "as_exportOpts_exportAnim",
+            numberOfCheckBoxes=1,
+            label=" ",
+            label1="Animation",
+            #cc=cllback...
+            value1=exportAnim)
+
+        mc.intSliderGrp(
+            "as_exportOpts_startFrame",
+            label="Start:",
+            field=True,
+            min=1,
+            max=1000,
+            #enable=exportAnim,
+            value=defaults["startFrame"])
+
+        mc.intSliderGrp(
+            "as_exportOpts_endFrame",
+            label="End:",
+            field=True,
+            min=1,
+            max=1000,
+            #enable=exportAnim,
+            value=defaults["endFrame"])
+
+        mc.intSliderGrp(
+            "as_exportOpts_stepFrame",
+            label="Step:",
+            field=True,
+            min=1,
+            max=100,
+            #enable=exportAnim,
+            value=defaults["stepFrame"])
+
     elif action == "query":
         options = ""
-        # TODO: build options string here...
+
+        value = mc.optionMenuGrp("as_exportOpts_activeCamera", query=True, value=True)
+        options +="camera=" + value + ";"
+
+        exportAnim = mc.checkBoxGrp("as_exportOpts_exportAnim", query=True, value1=True)
+        if exportAnim:
+            options += "exportAnim=true;"
+
+            value = mc.intSliderGrp("as_exportOpts_startFrame", query=True, value=True)
+            options += "startFrame=" + str(value) + ";"
+
+            value = mc.intSliderGrp("as_exportOpts_endFrame", query=True, value=True)
+            options += "endFrame=" + str(value) + ";"
+
+            value = mc.intSliderGrp("as_exportOpts_stepFrame", query=True, value=True)
+            options += "stepFrame=" + str(value) + ";"
+
+        logger.debug("calling translator callback, options = %s" % options)
         mel.eval('%s "%s"' % (resultCallback, options))
 
 def createTranslatorMelProcedures():

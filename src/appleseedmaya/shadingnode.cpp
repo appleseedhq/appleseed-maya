@@ -80,6 +80,7 @@ void ShadingNode::postConstructor()
 
         if(p.paramType == "color")
         {
+            //	CHECK_MSTATUS( nAttr.setUsedAsColor( true ) );
         }
         else if(p.paramType == "float")
         {
@@ -112,6 +113,11 @@ void ShadingNode::postConstructor()
 
         if(p.isOutput)
         {
+            /*
+            CHECK_MSTATUS( nAttr.setHidden( false ) );
+            CHECK_MSTATUS( nAttr.setReadable( true ) );
+            CHECK_MSTATUS( nAttr.setWritable( false ) );
+            */
         }
         else
         {

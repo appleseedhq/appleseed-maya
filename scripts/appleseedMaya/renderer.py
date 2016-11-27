@@ -29,7 +29,6 @@
 # Maya imports.
 import maya.mel as mel
 
-
 def createRenderMelProcedures():
     mel.eval('''
         global proc appleseedRenderProcedure(int $width, int $height, int $doShadows, int $doGlowPass, string $camera, string $option)
@@ -96,9 +95,10 @@ def createRenderMelProcedures():
     )
 
     mel.eval('''
-        global proc appleseedIsRunningIprRenderProcedure()
+        global proc int appleseedIsRunningIprRenderProcedure()
         {
-            appleseedProgressiveRender -action "running";
+            int $result = `appleseedProgressiveRender -action "running"`;
+            return $result;
         }
         '''
     )

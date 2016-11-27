@@ -444,7 +444,7 @@ boost::scoped_ptr<SessionImpl> gGlobalSession;
 bfs::path gPluginPath;
 
 // Saved time.
-MTime gSavedTime;
+MTime g_savedTime;
 
 } // unnamed
 
@@ -469,20 +469,12 @@ void beginProjectExport(
 {
     assert(gGlobalSession.get() == 0);
 
-    gSavedTime = MAnimControl::currentTime();
+    g_savedTime = MAnimControl::currentTime();
 
-    // for each option...
+    // for each frame...
     gGlobalSession.reset(new SessionImpl(fileName, options));
     gGlobalSession->exportProject();
     gGlobalSession->writeProject();
-}
-
-void endProjectExport()
-{
-    assert(gGlobalSession.get());
-
-    gGlobalSession.reset();
-    MAnimControl::setCurrentTime(gSavedTime);
 }
 
 void beginFinalRender(
@@ -490,16 +482,8 @@ void beginFinalRender(
 {
     assert(gGlobalSession.get() == 0);
 
-    gSavedTime = MAnimControl::currentTime();
+    g_savedTime = MAnimControl::currentTime();
     gGlobalSession.reset(new SessionImpl(FinalRenderSession, options));
-}
-
-void endFinalRender()
-{
-    assert(gGlobalSession.get());
-
-    gGlobalSession.reset();
-    MAnimControl::setCurrentTime(gSavedTime);
 }
 
 void beginProgressiveRender(
@@ -507,16 +491,18 @@ void beginProgressiveRender(
 {
     assert(gGlobalSession.get() == 0);
 
-    gSavedTime = MAnimControl::currentTime();
+    g_savedTime = MAnimControl::currentTime();
     gGlobalSession.reset(new SessionImpl(ProgressiveRenderSession, options));
 }
 
-void endProgressiveRender()
+void endSession()
 {
     assert(gGlobalSession.get());
 
     gGlobalSession.reset();
-    MAnimControl::setCurrentTime(gSavedTime);
+
+    if(g_savedTime != MAnimControl::currentTime())
+        MAnimControl::setCurrentTime(g_savedTime);
 }
 
 SessionMode sessionMode()

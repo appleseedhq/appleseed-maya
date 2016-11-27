@@ -30,16 +30,22 @@
 #include "appleseedmaya/appleseedtranslator.h"
 
 // Standard headers.
-#include <iostream>
+#include <stdlib.h>
+#include <string>
+#include <vector>
 
 // Maya headers.
 #include <maya/MCommonRenderSettingsData.h>
 #include <maya/MRenderUtil.h>
 
+// appleseed.foundation headers.
+#include "foundation/utility/string.h"
+
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/logger.h"
 
+namespace asf = foundation;
 
 const MString AppleseedTranslator::translatorName("appleseed");
 
@@ -62,19 +68,62 @@ MStatus AppleseedTranslator::writer(
     const MString&                      opts,
     MPxFileTranslator::FileAccessMode   mode)
 {
-    std::cout << "AppleseedTranslator::write called, options = " << opts << std::endl;
+    RENDERER_LOG_DEBUG("AppleseedTranslator::write called, options = %s", opts.asChar());
 
     AppleseedSession::Options options;
-    // todo: parse opts here...
+
+    // Parse the options string.
+    std::vector<std::string> tokens;
+    asf::tokenize(
+        asf::trim_both(opts.asChar()),
+        ";",
+        tokens);
+
+    std::vector<std::string> optNameValue;
+    for(size_t i = 0, e = tokens.size(); i < e; ++i)
+    {
+        optNameValue.clear();
+        asf::tokenize(
+            asf::trim_both(tokens[i]),
+            "=",
+            optNameValue);
+
+        if(optNameValue.size() == 2)
+        {
+            if(optNameValue[0] == "activeCamera")
+            {
+                if(optNameValue[1] == "<Current>")
+                {
+                    // todo: fetch the active camera here...
+                }
+                else
+                    options.m_camera = optNameValue[1].c_str();
+            }
+            else if(optNameValue[0] == "exportAnim")
+                options.m_sequence = (optNameValue[1] == "true");
+            else if(optNameValue[0] == "startFrame")
+                options.m_firstFrame = atoi(optNameValue[1].c_str());
+            else if(optNameValue[0] == "endFrame")
+                options.m_lastFrame = atoi(optNameValue[1].c_str());
+            else if(optNameValue[0] == "stepFrame")
+                options.m_frameStep = atoi(optNameValue[1].c_str());
+            else
+            {
+                RENDERER_LOG_WARNING(
+                    "Unknown option %s in appleseed translator.", tokens[i].c_str());
+            }
+        }
+        else
+        {
+            RENDERER_LOG_WARNING(
+                "Bad option %s in appleseed translator.", tokens[i].c_str());
+        }
+    }
 
     if(MPxFileTranslator::kExportAccessMode == mode)
-    {
         options.m_selectionOnly = false;
-    }
     else if(MPxFileTranslator::kExportActiveAccessMode == mode)
-    {
         options.m_selectionOnly = true;
-    }
 
     // Get width and height from render globals.
     MCommonRenderSettingsData renderSettings;
@@ -82,8 +131,9 @@ MStatus AppleseedTranslator::writer(
     options.m_width = renderSettings.width;
     options.m_height = renderSettings.height;
 
+    // Export the scene.
     AppleseedSession::beginProjectExport(file.fullName(), options);
-    AppleseedSession::endProjectExport();
+    AppleseedSession::endSession();
     return MS::kSuccess;
 }
 
