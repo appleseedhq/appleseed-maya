@@ -32,6 +32,7 @@
 // Maya headers.
 #include <maya/MDagPath.h>
 #include <maya/MMatrix.h>
+#include <maya/MObjectArray.h>
 
 // appleseed.foundation headers.
 #include "foundation/math/matrix.h"
@@ -42,13 +43,15 @@
 // Forward declarations.
 class MotionBlurTimes;
 
-
 class DagNodeExporter
   : public MPxNodeExporter
 {
   public:
 
     virtual MString appleseedName() const;
+
+    // Collect dependency nodes to export (materials, ...).
+    virtual void collectDependencyNodesToExport(MObjectArray& nodes);
 
     // Returns true if the entity created by this exporter can be motion blurred.
     virtual bool supportsMotionBlur() const;

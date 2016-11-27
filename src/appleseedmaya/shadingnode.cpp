@@ -54,6 +54,8 @@ ShadingNode::ShadingNode()
 
 void ShadingNode::postConstructor()
 {
+    setMPSafe(true);
+
     m_shaderInfo = ShadingNodeRegistry::getShaderInfo(typeName());
     assert(m_shaderInfo != 0);
 

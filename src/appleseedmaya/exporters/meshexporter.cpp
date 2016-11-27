@@ -30,7 +30,6 @@
 #include "appleseedmaya/exporters/meshexporter.h"
 
 // Standard headers.
-#include <iostream>
 #include <sstream>
 
 // Boost headers.
@@ -47,6 +46,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/logger.h"
 
 
 namespace bfs = boost::filesystem;
@@ -147,8 +147,6 @@ MeshExporter::MeshExporter(
 
 void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
 {
-    std::cout << "Collecting MPxNodes for dag node " << appleseedName() << std::endl;
-
     MObjectArray shadingEngineNodes;
 
     MStatus status;
@@ -163,7 +161,9 @@ void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
 
     if(status == MS::kFailure)
     {
-        std::cout << "No shading engines connected to shape " << appleseedName() << std::endl;
+        RENDERER_LOG_WARNING(
+            "No shading engines connected to shape %s",
+            appleseedName().asChar());
         return;
     }
 
@@ -175,14 +175,18 @@ void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
     {
         MObject shadingEngine = it.thisNode();
         MFnDependencyNode depNodeFn(shadingEngine);
-        std::cout << "Collected shading engine " << depNodeFn.name() << std::endl;
+
+        RENDERER_LOG_DEBUG(
+            "Collected shading engine %s",
+            depNodeFn.name().asChar());
         shadingEngineNodes.append(shadingEngine);
     }
 
     if(shadingEngineNodes.length() > 1)
     {
-        std::cout << "Per face assignments not supported yet." << std::endl;
-        std::cout << "Skipping material assignments" << std::endl;
+        RENDERER_LOG_ERROR(
+            "Mesh %s has per face material assignments.",
+            appleseedName().asChar());
         return;
     }
 
@@ -217,6 +221,7 @@ void MeshExporter::createEntity(const AppleseedSession::Options& options)
     // For now, set to false...
     m_exportUVs = false;
     m_exportNormals = false;
+    m_exportTangents = false;
 
     fillTopology();
 }
@@ -239,7 +244,9 @@ void MeshExporter::exportShapeMotionStep(float time)
         {
             if(!asr::MeshObjectWriter::write(*m_mesh, "mesh", p.string().c_str()))
             {
-                std::cout << "Couldn't export mesh file for object " << m_mesh->get_name() << std::endl;
+                RENDERER_LOG_ERROR(
+                    "Couldn't export mesh file for object %s",
+                    m_mesh->get_name());
             }
         }
 
@@ -284,13 +291,13 @@ void MeshExporter::flushEntity()
         objectName += ".mesh";
     }
 
-    std::cout << "Flushing mesh: " << m_mesh->get_name() << std::endl;
+    RENDERER_LOG_DEBUG("Flushing mesh object %s", m_mesh->get_name());
     if(m_objectAssembly.get())
         m_objectAssembly->objects().insert(m_mesh.releaseAs<asr::Object>());
     else
         mainAssembly().objects().insert(m_mesh.releaseAs<asr::Object>());
 
-    std::cout << "Flushing object instance: " << m_mesh->get_name() << std::endl;
+    RENDERER_LOG_DEBUG("Flushing object instance %s", m_mesh->get_name());
     createObjectInstance(objectName);
 }
 
@@ -323,7 +330,8 @@ void MeshExporter::fillTopology()
             asr::Triangle triangle(
                 triangleVertices[vertexIndex],
                 triangleVertices[vertexIndex + 1],
-                triangleVertices[vertexIndex + 2]);
+                triangleVertices[vertexIndex + 2],
+                0);
 
             if(m_exportUVs)
             {
@@ -333,6 +341,11 @@ void MeshExporter::fillTopology()
             if(m_exportNormals)
             {
                 // TODO: set normal indices here...
+            }
+
+            if(m_exportTangents)
+            {
+                // TODO: set tangent indices here...
             }
 
             // TODO: get face material index here...
@@ -365,6 +378,12 @@ void MeshExporter::exportGeometry()
     if(m_exportNormals)
     {
         // m_mesh->reserve_vertex_normals(meshFn.numNormals());
+        // ...
+    }
+
+    if(m_exportTangents)
+    {
+        // m_mesh->reserve_vertex_tangents(meshFn.numTangents());
         // ...
     }
 }

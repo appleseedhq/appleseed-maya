@@ -42,40 +42,25 @@
 #include "renderer/api/scene.h"
 
 // appleseed.maya headers.
-#include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/attributeutils.h"
-
+#include "appleseedmaya/logger.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
 
-void ShadingNetworkExporter::registerExporter()
-{
-    MStringArray nodeNames;
-    ShadingNodeRegistry::getShaderNodeNames(nodeNames);
-
-    for(int i = 0, e = nodeNames.length(); i < e; ++i)
-    {
-        NodeExporterFactory::registerMPxNodeExporter(
-            nodeNames[i],
-            &ShadingNetworkExporter::create);
-    }
-}
-
-MPxNodeExporter *ShadingNetworkExporter::create(
-    const MObject&                  object,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
-{
-    return new ShadingNetworkExporter(object, project, sessionMode);
-}
-
 ShadingNetworkExporter::ShadingNetworkExporter(
+    const Context                   context,
     const MObject&                  object,
     asr::Project&                   project,
     AppleseedSession::SessionMode   sessionMode)
   : MPxNodeExporter(object, project, sessionMode)
+  , m_context(context)
 {
+}
+
+MString ShadingNetworkExporter::shaderGroupName() const
+{
+    return m_shaderGroup->get_name();
 }
 
 void ShadingNetworkExporter::createEntity(const AppleseedSession::Options& options)
@@ -84,18 +69,21 @@ void ShadingNetworkExporter::createEntity(const AppleseedSession::Options& optio
     m_shaderGroup = asr::ShaderGroupFactory::create(name.asChar());
 
     m_shadersExported.clear();
-    createShader(node());
+    exportShader(node());
 
     m_shadersExported.clear();
-    addConnections(node());
+    m_numAdaptersCreated = 1;
+    exportConnections(node());
 }
 
 void ShadingNetworkExporter::flushEntity()
 {
-    mainAssembly().shader_groups().insert(m_shaderGroup.release());
+    insertEntityWithUniqueName(
+        mainAssembly().shader_groups(),
+        m_shaderGroup);
 }
 
-void ShadingNetworkExporter::createShader(const MObject& node)
+void ShadingNetworkExporter::exportShader(const MObject& node)
 {
     MStatus status;
     MFnDependencyNode depNodeFn(node);
@@ -105,76 +93,84 @@ void ShadingNetworkExporter::createShader(const MObject& node)
 
     if(!shaderInfo)
     {
-        std::cout << "Skipping unsupported shader: " << depNodeFn.typeName() << "\n";
+        RENDERER_LOG_WARNING(
+            "Unsupported shading node type %s found",
+            depNodeFn.typeName().asChar());
         return;
     }
 
     if(m_shadersExported.count(depNodeFn.name()) != 0)
     {
-        std::cout << "Skipping already exported shader: " << depNodeFn.name() << "\n";
+        RENDERER_LOG_DEBUG(
+            "Skipping already exported shading node %s.",
+            depNodeFn.name().asChar());
         return;
     }
 
     m_shadersExported.insert(depNodeFn.name());
 
     asr::ParamArray shaderParams;
-
     for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& paramInfo = shaderInfo->paramInfo[i];
 
         // Skip output attributes.
         if(paramInfo.isOutput)
-        {
-            std::cout << "Skipping output attribute: " << "\n";
-            std::cout << paramInfo << std::endl;
             continue;
-        }
-
-        if(!paramInfo.validDefault)
-        {
-            std::cout << "Skipping attribute without valid default: " << "\n";
-            std::cout << paramInfo << std::endl;
-            continue;
-        }
-
-        if(paramInfo.isArray)
-        {
-            std::cout << "Skipping array attribute: " << "\n";
-            std::cout << paramInfo << std::endl;
-            continue;
-        }
 
         MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
         if(!status)
         {
-            std::cout << "Skipping unknown attribute: "
-                        << paramInfo.mayaAttributeName << std::endl;
+            RENDERER_LOG_WARNING(
+                "Skipping unknown attribute %s of shading node %s",
+                paramInfo.mayaAttributeName.asChar(),
+                depNodeFn.typeName().asChar());
             continue;
         }
 
+        // Export shading nodes connected to this attribute.
         if(plug.isConnected())
         {
             MObject srcNode;
             if(AttributeUtils::get(plug, srcNode))
-                createShader(srcNode);
+                exportShader(srcNode);
 
             continue;
         }
 
         if(plug.isCompound() && plug.numConnectedChildren() != 0)
         {
-            std::cout << "Skipping connected compound attribute: " << plug.name() << "\n";
+            for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
+            {
+                MPlug childPlug = plug.child(i, &status);
+                if(status)
+                {
+                    MObject srcNode;
+                    if(AttributeUtils::get(childPlug, srcNode))
+                        exportShader(srcNode);
+                }
+            }
+
             continue;
         }
 
         if(plug.isArray() && plug.numConnectedElements() != 0)
         {
-            std::cout << "Skipping connected array attribute: " << plug.name() << "\n";
-            continue;
+            for(size_t i = 0, e = plug.numElements(); i < e; ++i)
+            {
+                MPlug elementPlug = plug.elementByLogicalIndex(i, &status);
+                if(status)
+                {
+                    MObject srcNode;
+                    if(AttributeUtils::get(elementPlug, srcNode))
+                        exportShader(srcNode);
+                }
+            }
         }
 
-        processAttribute(plug, paramInfo, shaderParams);
+        if(plug.isArray())
+            exportArrayAttributeValue(plug, paramInfo, shaderParams);
+        else exportAttributeValue(plug, paramInfo, shaderParams);
     }
 
     m_shaderGroup->add_shader(
@@ -184,13 +180,14 @@ void ShadingNetworkExporter::createShader(const MObject& node)
         shaderParams);
 }
 
-void ShadingNetworkExporter::processAttribute(
+void ShadingNetworkExporter::exportAttributeValue(
     const MPlug&        plug,
     const OSLParamInfo& paramInfo,
     asr::ParamArray&    shaderParams)
 {
-    std::cout << "Processing shading node attr:" << std::endl;
-    std::cout << paramInfo << std::endl;
+    RENDERER_LOG_DEBUG(
+        "Exporting shading node attr %s.",
+        paramInfo.mayaAttributeName.asChar());
 
     std::stringstream ss;
 
@@ -225,14 +222,34 @@ void ShadingNetworkExporter::processAttribute(
             ss << "vector " << value.z << " " << value.y << " " << value.z;
     }
     else
-        std::cout << "Skipping param of type: " << paramInfo.paramType << std::endl;
+    {
+        RENDERER_LOG_WARNING(
+            "Skipping shading node attr %s of unknown type %s.",
+            paramInfo.mayaAttributeName.asChar(),
+            paramInfo.paramType.asChar());
+    }
 
     std::string valueAsString = ss.str();
     if(!valueAsString.empty())
         shaderParams.insert(paramInfo.paramName.asChar(), ss.str().c_str());
 }
 
-void ShadingNetworkExporter::addConnections(const MObject& node)
+void ShadingNetworkExporter::exportArrayAttributeValue(
+    const MPlug&        plug,
+    const OSLParamInfo& paramInfo,
+    asr::ParamArray&    shaderParams)
+{
+    RENDERER_LOG_DEBUG(
+        "Exporting shading node array attr %s.",
+        paramInfo.mayaAttributeName.asChar());
+
+    RENDERER_LOG_WARNING(
+        "Skipping shading node array attr %s of unknown type %s.",
+        paramInfo.mayaAttributeName.asChar(),
+        paramInfo.paramType.asChar());
+}
+
+void ShadingNetworkExporter::exportConnections(const MObject& node)
 {
     MStatus status;
     MFnDependencyNode depNodeFn(node);
@@ -242,13 +259,17 @@ void ShadingNetworkExporter::addConnections(const MObject& node)
 
     if(!shaderInfo)
     {
-        std::cout << "Skipping unsupported shader: " << depNodeFn.typeName() << "\n";
+        RENDERER_LOG_WARNING(
+            "Unsupported shading node type %s found",
+            depNodeFn.typeName().asChar());
         return;
     }
 
     if(m_shadersExported.count(depNodeFn.name()) != 0)
     {
-        std::cout << "Skipping already exported shader: " << depNodeFn.name() << "\n";
+        RENDERER_LOG_DEBUG(
+            "Skipping connections for already exported shading node %s.",
+            depNodeFn.name().asChar());
         return;
     }
 
@@ -265,8 +286,10 @@ void ShadingNetworkExporter::addConnections(const MObject& node)
         MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
         if(!status)
         {
-            std::cout << "Skipping unknown attribute: "
-                        << paramInfo.mayaAttributeName << std::endl;
+            RENDERER_LOG_WARNING(
+                "Skipping unknown attribute %s of shading node %s",
+                paramInfo.mayaAttributeName.asChar(),
+                depNodeFn.typeName().asChar());
             continue;
         }
 
@@ -281,40 +304,84 @@ void ShadingNetworkExporter::addConnections(const MObject& node)
                     ShadingNodeRegistry::getShaderInfo(srcDepNodeFn.typeName());
 
                 if(!srcShaderInfo)
+                {
+                    RENDERER_LOG_WARNING(
+                        "Unsupported shading node type %s found",
+                        srcDepNodeFn.typeName().asChar());
                     continue;
+                }
 
-                const OSLParamInfo *srcParamInfo =
-                    srcShaderInfo->findParam(
-                        srcPlug.partialName(
-                            false,
-                            false,
-                            false,
-                            false,
-                            false,
-                            true,   // use long names.
-                            &status));
+                const MString srcPlugName =
+                    srcPlug.partialName(
+                        false,
+                        false,
+                        false,
+                        false,
+                        false,
+                        true,   // use long names.
+                        &status);
 
-                if(srcParamInfo)
+                if(const OSLParamInfo *srcParamInfo = srcShaderInfo->findParam(srcPlugName))
                 {
                     m_shaderGroup->add_connection(
                         srcDepNodeFn.name().asChar(),
                         srcParamInfo->paramName.asChar(),
                         depNodeFn.name().asChar(),
                         paramInfo.paramName.asChar());
-                }
 
-                addConnections(srcPlug.node());
+                    exportConnections(srcPlug.node());
+                }
+                else
+                {
+                    RENDERER_LOG_DEBUG(
+                        "Skipping unknown attribute %s of shading node %s",
+                        srcPlugName.asChar(),
+                        srcDepNodeFn.typeName().asChar());
+                }
             }
         }
 
         if(plug.isCompound() && plug.numConnectedChildren() != 0)
         {
-            // ???
+            for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
+            {
+                MPlug childPlug = plug.child(i, &status);
+                if(status)
+                {
+                    MObject srcNode;
+                    if(AttributeUtils::get(childPlug, srcNode))
+                        exportConnections(srcNode);
+                }
+            }
+
+            // Create adapter node here...
         }
 
         if(plug.isArray() && plug.numConnectedElements() != 0)
         {
-            // ???
+            for(size_t i = 0, e = plug.numElements(); i < e; ++i)
+            {
+                MPlug elementPlug = plug.elementByLogicalIndex(i, &status);
+                if(status)
+                {
+                    MObject srcNode;
+                    if(AttributeUtils::get(elementPlug, srcNode))
+                        exportConnections(srcNode);
+                }
+            }
         }
     }
+}
+
+void ShadingNetworkExporter::createCompoundChildConnectionAdapterShader(
+    const MPlug&          plug,
+    const OSLParamInfo&   paramInfo)
+{
+    MFnDependencyNode depNodeFn(plug.node());
+
+    //TODO:
+    //    - Create adapter with defaults == plug value.
+    m_numAdaptersCreated++;
+    //    - Add connection between node and adapter.
+    //    - Connect src shader connections
 }

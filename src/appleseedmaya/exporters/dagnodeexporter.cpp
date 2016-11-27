@@ -42,6 +42,10 @@ DagNodeExporter::DagNodeExporter(
 {
 }
 
+void DagNodeExporter::collectDependencyNodesToExport(MObjectArray& nodes)
+{
+}
+
 bool DagNodeExporter::supportsMotionBlur() const
 {
     return true;

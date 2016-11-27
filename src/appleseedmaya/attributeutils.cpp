@@ -56,6 +56,12 @@ MStatus get3(const MPlug& plug, T& x, T& y, T& z)
 namespace AttributeUtils
 {
 
+MStatus get(const MPlug& plug, MAngle& value)
+{
+    return plug.getValue(value);
+}
+
+
 MStatus get(const MPlug& plug, MColor& value)
 {
     value.a = 1.0f;

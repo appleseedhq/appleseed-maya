@@ -32,7 +32,6 @@
 // Standard headers.
 #include <cassert>
 #include <map>
-#include <iostream>
 
 // Maya headers.
 #include <maya/MFnDagNode.h>
@@ -46,9 +45,8 @@
 #include "appleseedmaya/exporters/lightexporter.h"
 #include "appleseedmaya/exporters/meshexporter.h"
 #include "appleseedmaya/exporters/shadingengineexporter.h"
-#include "appleseedmaya/exporters/shadingnetworkexporter.h"
+#include "appleseedmaya/logger.h"
 #include "appleseedmaya/utils.h"
-
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -82,7 +80,6 @@ MStatus NodeExporterFactory::initialize(const MString& pluginPath)
     LightExporter::registerExporter();
     MeshExporter::registerExporter();
     ShadingEngineExporter::registerExporter();
-    ShadingNetworkExporter::registerExporter();
     return MS::kSuccess;
 }
 
@@ -98,9 +95,9 @@ void NodeExporterFactory::registerMPxNodeExporter(
     assert(createFn != 0);
 
     gMPxNodeExporters[mayaTypeName] = createFn;
-
-    std::cout << "NodeExporterFactory: registered mpx node exporter for node: "
-              << mayaTypeName << std::endl;
+    RENDERER_LOG_INFO(
+        "NodeExporterFactory: registered mpx node exporter for node %s",
+        mayaTypeName.asChar());
 }
 
 MPxNodeExporter* NodeExporterFactory::createMPxNodeExporter(
@@ -125,8 +122,9 @@ void NodeExporterFactory::registerDagNodeExporter(
 
     gDagNodeExporters[mayaTypeName] = createFn;
 
-    std::cout << "NodeExporterFactory: registered dag node exporter for node: "
-              << mayaTypeName << std::endl;
+    RENDERER_LOG_INFO(
+        "NodeExporterFactory: registered dag node exporter for node %s",
+        mayaTypeName.asChar());
 }
 
 DagNodeExporter* NodeExporterFactory::createDagNodeExporter(
