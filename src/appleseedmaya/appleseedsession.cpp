@@ -42,6 +42,7 @@
 
 // Maya headers.
 #include <maya/MAnimControl.h>
+#include <maya/MComputation.h>
 #include <maya/MDagPath.h>
 #include <maya/MFnDagNode.h>
 #include <maya/MFnDependencyNode.h>
@@ -471,10 +472,41 @@ void beginProjectExport(
 
     g_savedTime = MAnimControl::currentTime();
 
-    // for each frame...
-    gGlobalSession.reset(new SessionImpl(fileName, options));
-    gGlobalSession->exportProject();
-    gGlobalSession->writeProject();
+    if(options.m_sequence)
+    {
+        std::string fname = fileName.asChar();
+        if(fname.find('#') == std::string::npos)
+        {
+            RENDERER_LOG_ERROR("No frame placeholders in filename.");
+            return;
+        }
+
+        MComputation computation;
+        computation.beginComputation();
+
+        for(int frame = options.m_firstFrame; frame <= options.m_lastFrame; frame += options.m_frameStep)
+        {
+            if (computation.isInterruptRequested())
+            {
+                RENDERER_LOG_INFO("Project export aborted.");
+                break;
+            }
+
+            MGlobal::viewFrame(frame);
+            fname = asf::get_numbered_string(fname, frame);
+            gGlobalSession.reset(new SessionImpl(fname.c_str(), options));
+            gGlobalSession->exportProject();
+            gGlobalSession->writeProject();
+        }
+
+        computation.endComputation();
+    }
+    else
+    {
+        gGlobalSession.reset(new SessionImpl(fileName, options));
+        gGlobalSession->exportProject();
+        gGlobalSession->writeProject();
+    }
 }
 
 void beginFinalRender(
@@ -502,7 +534,7 @@ void endSession()
     gGlobalSession.reset();
 
     if(g_savedTime != MAnimControl::currentTime())
-        MAnimControl::setCurrentTime(g_savedTime);
+        MGlobal::viewFrame(g_savedTime);
 }
 
 SessionMode sessionMode()
