@@ -38,12 +38,6 @@
 // appleseed.renderer headers.
 #include "renderer/api/project.h"
 
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/exporters/mpxnodeexporter.h"
-#include "appleseedmaya/exporters/dagnodeexporter.h"
-#include "appleseedmaya/exporters/shapeexporter.h"
-
 namespace bpy = boost::python;
 namespace asf = foundation;
 namespace asr = renderer;
@@ -81,20 +75,6 @@ MStatus PythonBridge::initialize(const MString& pluginPath)
         // Fetch appleseedMaya module namespace.
         bpy::object appleseedMayaModule = bpy::import("appleseedMaya");
         gAppleseedMayaNamespace = appleseedMayaModule.attr("__dict__");
-
-        // Expose some C++ classes to appleseedMaya...
-        // todo: add the needed wrappers to allow python subclassing.
-        gAppleseedMayaNamespace["MPxNodeExporter"] =
-            bpy::class_<MPxNodeExporter, MPxNodeExporterPtr, boost::noncopyable>("MPxNodeExporter", bpy::no_init)
-                ;
-
-        gAppleseedMayaNamespace["DagNodeExporter"] =
-            bpy::class_<DagNodeExporter, DagNodeExporterPtr, bpy::bases<MPxNodeExporter>, boost::noncopyable>("DagNodeExporter", bpy::no_init)
-                ;
-
-        gAppleseedMayaNamespace["ShapeExporter"] =
-            bpy::class_<ShapeExporter, ShapeExporterPtr, bpy::bases<DagNodeExporter>, boost::noncopyable>("ShapeExporter", bpy::no_init)
-                ;
 
         // Init the current project global (to None).
         gAppleseedMayaNamespace["currentProject"] = bpy::object();

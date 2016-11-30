@@ -29,12 +29,16 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
 
+// Standard headers.
+#include <vector>
+
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 #include "renderer/api/utility.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
+#include "appleseedmaya/exporters/shadingengineexporter.h"
 #include "appleseedmaya/murmurhash.h"
 
 
@@ -61,9 +65,12 @@ class ShapeExporter
       AppleseedSession::SessionMode sessionMode);
 
     void shapeAttributesToParams(renderer::ParamArray& params);
+
     void visibilityAttributesToParams(renderer::ParamArray& params);
 
     void createObjectInstance(const MString& objectName);
+
+    void createMaterialEntities(const AppleseedSession::Options& options);
 
     renderer::TransformSequence                     m_transformSequence;
     MurmurHash                                      m_shapeHash;
@@ -72,6 +79,7 @@ class ShapeExporter
     AppleseedEntityPtr<renderer::Assembly>          m_objectAssembly;
     AppleseedEntityPtr<renderer::AssemblyInstance>  m_objectAssemblyInstance;
     AppleseedEntityPtr<renderer::ObjectInstance>    m_objectInstance;
+    std::vector<ShadingEngineExporterPtr>           m_shadingEngines;
 };
 
 typedef boost::shared_ptr<ShapeExporter> ShapeExporterPtr;

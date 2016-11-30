@@ -33,9 +33,6 @@
 #include <string>
 #include <vector>
 
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/shapeexporter.h"
-
 // appleseed.foundation headers.
 #include "renderer/api/material.h"
 #include "renderer/api/surfaceshader.h"
@@ -45,6 +42,8 @@
 #include "renderer/api/object.h"
 #include "renderer/api/scene.h"
 
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/shapeexporter.h"
 
 class MeshExporter
   : public ShapeExporter
@@ -57,8 +56,6 @@ class MeshExporter
       const MDagPath&               path,
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
-
-    virtual void collectDependencyNodesToExport(MObjectArray& nodes);
 
     virtual void createEntity(const AppleseedSession::Options& options);
 

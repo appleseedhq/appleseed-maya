@@ -74,7 +74,6 @@
 #include "appleseedmaya/exceptions.h"
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/exporters/mpxnodeexporter.h"
 #include "appleseedmaya/exporters/shapeexporter.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/renderercontroller.h"
@@ -222,9 +221,6 @@ struct SessionImpl
             it->second->collectMotionBlurSteps(motionBlurTimes);
 
         // Create appleseed entities.
-        for(MPxExporterMap::const_iterator it = m_mpxExporters.begin(), e = m_mpxExporters.end(); it != e; ++it)
-            it->second->createEntity(m_options);
-
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->createEntity(m_options);
 
@@ -266,9 +262,6 @@ struct SessionImpl
         }
 
         // Flush entities to the renderer.
-        for(MPxExporterMap::const_iterator it = m_mpxExporters.begin(), e = m_mpxExporters.end(); it != e; ++it)
-            it->second->flushEntity();
-
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->flushEntity();
     }
@@ -315,54 +308,15 @@ struct SessionImpl
             it.getPath(path);
             createDagNodeExporter(path);
         }
-
-        // Collect extra dependency nodes to export.
-        RENDERER_LOG_DEBUG("Collecting dependency nodes to export");
-        MObjectArray extraObjects;
-        for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
-            it->second->collectDependencyNodesToExport(extraObjects);
-
-        for(int i = 0, e = extraObjects.length(); i < e; ++i)
-            createMPxNodeExporter(extraObjects[i]);
     }
 
     void exportDefaultMaterial()
     {
+        /*
         MObject initialShadingGroup;
         if(getNodeMObject("initialShadingGroup", initialShadingGroup))
             createMPxNodeExporter(initialShadingGroup);
-    }
-
-    void createMPxNodeExporter(const MObject& object)
-    {
-        MFnDependencyNode depNodeFn(object);
-        if(m_mpxExporters.count(depNodeFn.name()) != 0)
-            return;
-
-        MPxNodeExporterPtr exporter;
-
-        try
-        {
-            exporter.reset(NodeExporterFactory::createMPxNodeExporter(
-                object,
-                *m_project,
-                m_sessionMode));
-        }
-        catch(const NoExporterForNode&)
-        {
-            RENDERER_LOG_WARNING(
-                "No mpx exporter found for node type %s",
-                depNodeFn.typeName().asChar());
-            return;
-        }
-
-        if(exporter)
-        {
-            m_mpxExporters[depNodeFn.name()] = exporter;
-            RENDERER_LOG_DEBUG(
-                "Created mpx exporter for node %s",
-                depNodeFn.name().asChar());
-        }
+        */
     }
 
     void createDagNodeExporter(const MDagPath& path)
@@ -419,7 +373,6 @@ struct SessionImpl
         selList.getDependNode(0, node);
     }
 
-    typedef std::map<MString, MPxNodeExporterPtr, MStringCompareLess> MPxExporterMap;
     typedef std::map<MString, DagNodeExporterPtr, MStringCompareLess> DagExporterMap;
 
     AppleseedSession::SessionMode               m_sessionMode;
@@ -431,7 +384,6 @@ struct SessionImpl
     MString                                     m_fileName;
     bfs::path                                   m_projectPath;
 
-    MPxExporterMap                              m_mpxExporters;
     DagExporterMap                              m_dagExporters;
 
     boost::scoped_ptr<asr::MasterRenderer>      m_renderer;

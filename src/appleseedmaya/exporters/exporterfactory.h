@@ -39,7 +39,6 @@
 
 // Forward declarations.
 class DagNodeExporter;
-class MPxNodeExporter;
 
 namespace renderer { class Project; }
 
@@ -50,20 +49,6 @@ class NodeExporterFactory
 
     static MStatus initialize(const MString& pluginPath);
     static MStatus uninitialize();
-
-    typedef MPxNodeExporter* (*CreateMPxNodeExporterFn)(
-      const MObject&,
-      renderer::Project&,
-      AppleseedSession::SessionMode);
-
-    static void registerMPxNodeExporter(
-      const MString&          mayaTypeName,
-      CreateMPxNodeExporterFn createFn);
-
-    static MPxNodeExporter* createMPxNodeExporter(
-      const MObject&                object,
-      renderer::Project&            project,
-      AppleseedSession::SessionMode sessionMode);
 
     typedef DagNodeExporter* (*CreateDagNodeExporterFn)(
       const MDagPath&,

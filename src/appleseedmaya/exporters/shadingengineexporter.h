@@ -29,50 +29,51 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
 
+// Boost headers.
+#include "boost/shared_ptr.hpp"
+
 // Maya headers.
-#include <maya/MObjectArray.h>
+#include <maya/MObject.h>
 
 // appleseed.renderer headers.
 #include "renderer/api/material.h"
 #include "renderer/api/surfaceshader.h"
 
 // appleseed.maya headers.
-#include "appleseedmaya/exporters/mpxnodeexporter.h"
-#include "appleseedmaya/exporters/shadingnetworkexporter.h"
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/utils.h"
 
 // Forward declarations.
+namespace renderer { class Assembly; }
 namespace renderer { class Project; }
-
+namespace renderer { class Scene; }
 
 class ShadingEngineExporter
-  : public MPxNodeExporter
+  : public NonCopyable
 {
   public:
 
-    static void registerExporter();
-
-    static MPxNodeExporter *create(
+    ShadingEngineExporter(
         const MObject&                object,
-        renderer::Project&            project,
-        AppleseedSession::SessionMode sessionMode);
+        renderer::Project&            project);
 
-    virtual void createEntity(const AppleseedSession::Options& options);
+    // Create appleseed entities.
+    void createEntity(const AppleseedSession::Options& options);
 
-    virtual void flushEntity();
+    // Flush entities to the renderer.
+    void flushEntity();
 
   private:
 
-    ShadingEngineExporter(
-        const MObject&                object,
-        renderer::Project&            project,
-        AppleseedSession::SessionMode sessionMode);
-
-    void createShadingNetworkExporters(const AppleseedSession::Options& options);
+    MObject                       m_object;
+    renderer::Project&            m_project;
+    renderer::Scene&              m_scene;
+    renderer::Assembly&           m_mainAssembly;
 
     AppleseedEntityPtr<renderer::Material>        m_material;
     AppleseedEntityPtr<renderer::SurfaceShader>   m_surfaceShader;
-
-    ShadingNetworkExporterPtr                     m_surfaceExporter;
 };
+
+typedef boost::shared_ptr<ShadingEngineExporter> ShadingEngineExporterPtr;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H

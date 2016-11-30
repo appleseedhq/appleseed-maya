@@ -145,6 +145,7 @@ MeshExporter::MeshExporter(
 {
 }
 
+/*
 void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
 {
     MObjectArray shadingEngineNodes;
@@ -195,9 +196,12 @@ void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
     m_materialMappings.insert("default", materialName.asChar());
     nodes.append(shadingEngineNodes[0]);
 }
+*/
 
 void MeshExporter::createEntity(const AppleseedSession::Options& options)
 {
+    // todo: create shading engine exporters here..
+
     asr::ParamArray params;
     shapeAttributesToParams(params);
     meshAttributesToParams(params);
@@ -224,6 +228,8 @@ void MeshExporter::createEntity(const AppleseedSession::Options& options)
     m_exportTangents = false;
 
     fillTopology();
+
+    createMaterialEntities(options);
 }
 
 void MeshExporter::exportShapeMotionStep(float time)

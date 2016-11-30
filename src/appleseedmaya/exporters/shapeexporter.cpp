@@ -70,6 +70,9 @@ void ShapeExporter::exportTransformMotionStep(float time)
 
 void ShapeExporter::flushEntity()
 {
+    for(size_t i = 0, e = m_shadingEngines.size(); i < e; ++i)
+        m_shadingEngines[i]->flushEntity();
+
     m_transformSequence.optimize();
 
     // Check if we need to create an assembly for this object.
@@ -135,4 +138,10 @@ void ShapeExporter::createObjectInstance(const MString& objectName)
             m_materialMappings));
 
     objectAssembly->object_instances().insert(m_objectInstance.release());
+}
+
+void ShapeExporter::createMaterialEntities(const AppleseedSession::Options& options)
+{
+    for(size_t i = 0, e = m_shadingEngines.size(); i < e; ++i)
+        m_shadingEngines[i]->createEntity(options);
 }

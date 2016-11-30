@@ -44,7 +44,6 @@
 #include "appleseedmaya/exporters/envlightexporter.h"
 #include "appleseedmaya/exporters/lightexporter.h"
 #include "appleseedmaya/exporters/meshexporter.h"
-#include "appleseedmaya/exporters/shadingengineexporter.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/utils.h"
 
@@ -53,15 +52,6 @@ namespace asr = renderer;
 
 namespace
 {
-
-typedef std::map<
-    MString,
-    NodeExporterFactory::CreateMPxNodeExporterFn,
-    MStringCompareLess
-    > CreateMPxExporterMapType;
-
-CreateMPxExporterMapType gMPxNodeExporters;
-
 
 typedef std::map<
     MString,
@@ -79,39 +69,12 @@ MStatus NodeExporterFactory::initialize(const MString& pluginPath)
     EnvLightExporter::registerExporter();
     LightExporter::registerExporter();
     MeshExporter::registerExporter();
-    ShadingEngineExporter::registerExporter();
     return MS::kSuccess;
 }
 
 MStatus NodeExporterFactory::uninitialize()
 {
     return MS::kSuccess;
-}
-
-void NodeExporterFactory::registerMPxNodeExporter(
-    const MString&          mayaTypeName,
-    CreateMPxNodeExporterFn createFn)
-{
-    assert(createFn != 0);
-
-    gMPxNodeExporters[mayaTypeName] = createFn;
-    RENDERER_LOG_INFO(
-        "NodeExporterFactory: registered mpx node exporter for node %s",
-        mayaTypeName.asChar());
-}
-
-MPxNodeExporter* NodeExporterFactory::createMPxNodeExporter(
-    const MObject&                  object,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
-{
-    MFnDependencyNode depNodeFn(object);
-    CreateMPxExporterMapType::const_iterator it = gMPxNodeExporters.find(depNodeFn.typeName());
-
-    if(it == gMPxNodeExporters.end())
-        throw NoExporterForNode();
-
-    return it->second(object, project, sessionMode);
 }
 
 void NodeExporterFactory::registerDagNodeExporter(

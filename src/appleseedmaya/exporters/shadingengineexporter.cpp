@@ -35,35 +35,55 @@
 #include <maya/MPlugArray.h>
 
 // appleseed.renderer headers.
+#include "renderer/api/project.h"
 #include "renderer/api/scene.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/shadingnoderegistry.h"
-
 
 namespace asf = foundation;
 namespace asr = renderer;
 
-void ShadingEngineExporter::registerExporter()
-{
-    NodeExporterFactory::registerMPxNodeExporter("shadingEngine", &ShadingEngineExporter::create);
-}
-
-MPxNodeExporter *ShadingEngineExporter::create(
-    const MObject&                  object,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
-{
-    return new ShadingEngineExporter(object, project, sessionMode);
-}
-
 ShadingEngineExporter::ShadingEngineExporter(
     const MObject&                  object,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
-  : MPxNodeExporter(object, project, sessionMode)
+    asr::Project&                   project)
+  : m_object(object)
+  , m_project(project)
+  , m_scene(*project.get_scene())
+  , m_mainAssembly(*m_scene.assemblies().get_by_name("assembly"))
 {
+}
+
+void ShadingEngineExporter::createEntity(const AppleseedSession::Options& options)
+{
+    MFnDependencyNode depNodeFn(m_object);
+    const MString appleseedName = depNodeFn.name();
+
+    MString surfaceShaderName = appleseedName + MString("_surface_shader");
+    asr::ParamArray params;
+    m_surfaceShader.reset(
+        asr::PhysicalSurfaceShaderFactory().create(
+            surfaceShaderName.asChar(),
+            params));
+    params.clear();
+
+    MString materialName = appleseedName + MString("_material");
+    params.insert("surface_shader", surfaceShaderName.asChar());
+    m_material.reset(
+        asr::OSLMaterialFactory().create(materialName.asChar(), params));
+}
+
+void ShadingEngineExporter::flushEntity()
+{
+    /*
+    if(m_surfaceExporter)
+    {
+        m_surfaceExporter->flushEntity();
+        m_material->get_parameters().insert(
+            "osl_surface",
+            m_surfaceExporter->shaderGroupName().asChar());
+    }
+    */
+
+    m_mainAssembly.materials().insert(m_material.release());
+    m_mainAssembly.surface_shaders().insert(m_surfaceShader.release());
 }
 
 /*
@@ -94,38 +114,7 @@ void ShadingEngineExporter::collectDependencyNodesToExport(MObjectArray& nodes)
 }
 */
 
-void ShadingEngineExporter::createEntity(const AppleseedSession::Options& options)
-{
-    MString surfaceShaderName = appleseedName() + MString("_surface_shader");
-    asr::ParamArray params;
-    m_surfaceShader.reset(
-        asr::PhysicalSurfaceShaderFactory().create(
-            surfaceShaderName.asChar(),
-            params));
-    params.clear();
-
-    MString materialName = appleseedName() + MString("_material");
-    params.insert("surface_shader", surfaceShaderName.asChar());
-    m_material.reset(
-        asr::OSLMaterialFactory().create(materialName.asChar(), params));
-
-    createShadingNetworkExporters(options);
-}
-
-void ShadingEngineExporter::flushEntity()
-{
-    if(m_surfaceExporter)
-    {
-        m_surfaceExporter->flushEntity();
-        m_material->get_parameters().insert(
-            "osl_surface",
-            m_surfaceExporter->shaderGroupName().asChar());
-    }
-
-    mainAssembly().materials().insert(m_material.release());
-    mainAssembly().surface_shaders().insert(m_surfaceShader.release());
-}
-
+/*
 void ShadingEngineExporter::createShadingNetworkExporters(
     const AppleseedSession::Options& options)
 {
@@ -163,3 +152,4 @@ void ShadingEngineExporter::createShadingNetworkExporters(
         }
     }
 }
+*/
