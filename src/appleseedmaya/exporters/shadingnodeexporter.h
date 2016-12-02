@@ -26,38 +26,42 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
-#define APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H
+
+// Boost headers.
+#include "boost/shared_ptr.hpp"
 
 // Maya headers.
 #include <maya/MObject.h>
-#include <maya/MStatus.h>
-#include <maya/MStringArray.h>
-
-// appleseed.foundation headers.
-#include "foundation/utility/containers/dictionary.h"
+#include <maya/MString.h>
 
 // appleseed.renderer headers.
 #include "renderer/api/shadergroup.h"
 
 // appleseed.maya headers.
-#include "appleseedmaya/shadingnodemetadata.h"
+#include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/utils.h"
 
-//
-// ShadingNodeRegistry.
-//
 
-namespace ShadingNodeRegistry
+class ShadingNodeExporter
+  : public NonCopyable
 {
-    MStatus registerShadingNodes(MObject plugin);
-    MStatus unregisterShadingNodes(MObject plugin);
+  public:
 
-    void getShaderNodeNames(MStringArray& nodeNames);
+    static void registerExporters();
 
-    const OSLShaderInfo *getShaderInfo(const MString& nodeName);
+    static ShadingNodeExporter *create(const MObject& object);
 
-    bool isShaderSupported(const MString& nodeName);
-} // namespace ShadingNodeRegistry
+    virtual void createEntity(const AppleseedSession::Options& options);
 
-#endif  // !APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
+  private:
+
+    explicit ShadingNodeExporter(const MObject& object);
+
+    MObject m_object;
+};
+
+typedef boost::shared_ptr<ShadingNodeExporter> ShadingNodeExporterPtr;
+
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H

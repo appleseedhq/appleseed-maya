@@ -60,8 +60,10 @@ set (appleseed_maya_sources
     exporters/meshexporter.h
     exporters/shadingengineexporter.cpp
     exporters/shadingengineexporter.h
-    #exporters/shadingnetworkexporter.cpp
-    #exporters/shadingnetworkexporter.h
+    exporters/shadingnetworkexporter.cpp
+    exporters/shadingnetworkexporter.h
+    exporters/shadingnodeexporter.cpp
+    exporters/shadingnodeexporter.h
     exporters/shapeexporter.cpp
     exporters/shapeexporter.h
     logger.cpp

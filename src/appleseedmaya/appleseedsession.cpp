@@ -74,6 +74,7 @@
 #include "appleseedmaya/exceptions.h"
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/exporters/shadingengineexporter.h"
 #include "appleseedmaya/exporters/shapeexporter.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/renderercontroller.h"
@@ -220,6 +221,9 @@ struct SessionImpl
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->collectMotionBlurSteps(motionBlurTimes);
 
+        if(m_defaultMaterialExporter)
+            m_defaultMaterialExporter->createEntity(m_options);
+
         // Create appleseed entities.
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->createEntity(m_options);
@@ -260,6 +264,9 @@ struct SessionImpl
                 }
             }
         }
+
+        if(m_defaultMaterialExporter)
+            m_defaultMaterialExporter->flushEntity();
 
         // Flush entities to the renderer.
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
@@ -312,11 +319,14 @@ struct SessionImpl
 
     void exportDefaultMaterial()
     {
-        /*
+        // todo: this fails in 2016 when the hypershade is open.
         MObject initialShadingGroup;
         if(getNodeMObject("initialShadingGroup", initialShadingGroup))
-            createMPxNodeExporter(initialShadingGroup);
-        */
+        {
+            asr::Scene *scene = m_project->get_scene();
+            asr::Assembly *mainAssembly = scene->assemblies().get_by_name("assembly");
+            m_defaultMaterialExporter.reset(new ShadingEngineExporter(initialShadingGroup, *mainAssembly, m_sessionMode));
+        }
     }
 
     void createDagNodeExporter(const MDagPath& path)
@@ -384,6 +394,7 @@ struct SessionImpl
     MString                                     m_fileName;
     bfs::path                                   m_projectPath;
 
+    ShadingEngineExporterPtr                    m_defaultMaterialExporter;
     DagExporterMap                              m_dagExporters;
 
     boost::scoped_ptr<asr::MasterRenderer>      m_renderer;

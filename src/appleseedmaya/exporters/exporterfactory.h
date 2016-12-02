@@ -39,6 +39,7 @@
 
 // Forward declarations.
 class DagNodeExporter;
+class ShadingNodeExporter;
 
 namespace renderer { class Project; }
 
@@ -63,6 +64,14 @@ class NodeExporterFactory
       const MDagPath&               path,
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
+
+    typedef ShadingNodeExporter* (*CreateShadingNodeExporterFn)(const MObject&);
+
+    static void registerShadingNodeExporter(
+      const MString&          mayaTypeName,
+      CreateShadingNodeExporterFn createFn);
+
+    static ShadingNodeExporter* createShadingNodeExporter(const MObject& object);
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_NODEEXPORTER_FACTORY_H

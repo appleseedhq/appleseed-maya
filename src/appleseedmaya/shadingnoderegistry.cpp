@@ -317,7 +317,7 @@ MStatus registerShadingNodes(MObject plugin)
         registerShadersInDirectory(shaderPaths[i], pluginFn, *query);
     }
 
-	MString command("if(`window -exists createRenderNodeWindow`) {refreshCreateRenderNodeWindow(\"\");}\n");
+    MString command("if(`window -exists createRenderNodeWindow`) {refreshCreateRenderNodeWindow(\"\");}\n");
     MGlobal::executeCommand(command);
 
     return MS::kSuccess;
@@ -337,10 +337,16 @@ MStatus unregisterShadingNodes(MObject plugin)
             pluginFn.deregisterNode(MTypeId(shaderInfo.typeId));
     }
 
-	MString command("if(`window -exists createRenderNodeWindow`) {refreshCreateRenderNodeWindow(\"\");}\n");
+    MString command("if(`window -exists createRenderNodeWindow`) {refreshCreateRenderNodeWindow(\"\");}\n");
     MGlobal::executeCommand(command);
 
     return MS::kSuccess;
+}
+
+void getShaderNodeNames(MStringArray& nodeNames)
+{
+    for(OSLShaderInfoMap::const_iterator it = gShadersInfo.begin(), e = gShadersInfo.end(); it != e; ++it)
+        nodeNames.append(it->first);
 }
 
 const OSLShaderInfo *getShaderInfo(const MString& nodeName)

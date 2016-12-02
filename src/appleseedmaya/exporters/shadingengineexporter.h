@@ -41,12 +41,11 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/exporters/shadingnetworkexporter.h"
 #include "appleseedmaya/utils.h"
 
 // Forward declarations.
 namespace renderer { class Assembly; }
-namespace renderer { class Project; }
-namespace renderer { class Scene; }
 
 class ShadingEngineExporter
   : public NonCopyable
@@ -55,7 +54,8 @@ class ShadingEngineExporter
 
     ShadingEngineExporter(
         const MObject&                object,
-        renderer::Project&            project);
+        renderer::Assembly&           mainAssembly,
+        AppleseedSession::SessionMode sessionMode);
 
     // Create appleseed entities.
     void createEntity(const AppleseedSession::Options& options);
@@ -65,13 +65,12 @@ class ShadingEngineExporter
 
   private:
 
-    MObject                       m_object;
-    renderer::Project&            m_project;
-    renderer::Scene&              m_scene;
-    renderer::Assembly&           m_mainAssembly;
-
-    AppleseedEntityPtr<renderer::Material>        m_material;
-    AppleseedEntityPtr<renderer::SurfaceShader>   m_surfaceShader;
+    AppleseedSession::SessionMode                   m_sessionMode;
+    MObject                                         m_object;
+    renderer::Assembly&                             m_mainAssembly;
+    AppleseedEntityPtr<renderer::Material>          m_material;
+    AppleseedEntityPtr<renderer::SurfaceShader>     m_surfaceShader;
+    ShadingNetworkExporterPtr                       m_surfaceExporter;
 };
 
 typedef boost::shared_ptr<ShadingEngineExporter> ShadingEngineExporterPtr;

@@ -26,38 +26,51 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
-#define APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
+// Interface header.
+#include "appleseedmaya/exporters/shadingnodeexporter.h"
+
+// Standard headers.
+#include <iostream>
+#include <sstream>
 
 // Maya headers.
-#include <maya/MObject.h>
-#include <maya/MStatus.h>
-#include <maya/MStringArray.h>
-
-// appleseed.foundation headers.
-#include "foundation/utility/containers/dictionary.h"
+#include <maya/MFnDependencyNode.h>
+#include <maya/MPlug.h>
 
 // appleseed.renderer headers.
-#include "renderer/api/shadergroup.h"
 
 // appleseed.maya headers.
-#include "appleseedmaya/shadingnodemetadata.h"
-#include "appleseedmaya/utils.h"
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/logger.h"
+#include "appleseedmaya/shadingnoderegistry.h"
 
-//
-// ShadingNodeRegistry.
-//
+namespace asf = foundation;
+namespace asr = renderer;
 
-namespace ShadingNodeRegistry
+void ShadingNodeExporter::registerExporters()
 {
-    MStatus registerShadingNodes(MObject plugin);
-    MStatus unregisterShadingNodes(MObject plugin);
+    MStringArray nodeNames;
+    ShadingNodeRegistry::getShaderNodeNames(nodeNames);
 
-    void getShaderNodeNames(MStringArray& nodeNames);
+    for(int i = 0, e = nodeNames.length(); i < e; ++i)
+    {
+        NodeExporterFactory::registerShadingNodeExporter(
+            nodeNames[i],
+            &ShadingNodeExporter::create);
+    }
+}
 
-    const OSLShaderInfo *getShaderInfo(const MString& nodeName);
+ShadingNodeExporter *ShadingNodeExporter::create(const MObject& object)
+{
+    return new ShadingNodeExporter(object);
+}
 
-    bool isShaderSupported(const MString& nodeName);
-} // namespace ShadingNodeRegistry
+ShadingNodeExporter::ShadingNodeExporter(const MObject& object)
+  : m_object(object)
+{
+}
 
-#endif  // !APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
+void ShadingNodeExporter::createEntity(const AppleseedSession::Options& options)
+{
+}

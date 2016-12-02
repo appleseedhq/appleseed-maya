@@ -44,6 +44,7 @@
 #include "appleseedmaya/exporters/envlightexporter.h"
 #include "appleseedmaya/exporters/lightexporter.h"
 #include "appleseedmaya/exporters/meshexporter.h"
+#include "appleseedmaya/exporters/shadingnodeexporter.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/utils.h"
 
@@ -59,7 +60,15 @@ typedef std::map<
     MStringCompareLess
     > CreateDagExporterMapType;
 
-CreateDagExporterMapType gDagNodeExporters;
+CreateDagExporterMapType            gDagNodeExporters;
+
+typedef std::map<
+    MString,
+    NodeExporterFactory::CreateShadingNodeExporterFn,
+    MStringCompareLess
+    > CreateShadingNodeExporterMapType;
+
+CreateShadingNodeExporterMapType    gShadingNodeExporters;
 
 } // unnamed
 
@@ -69,6 +78,8 @@ MStatus NodeExporterFactory::initialize(const MString& pluginPath)
     EnvLightExporter::registerExporter();
     LightExporter::registerExporter();
     MeshExporter::registerExporter();
+
+    ShadingNodeExporter::registerExporters();
     return MS::kSuccess;
 }
 
@@ -102,4 +113,28 @@ DagNodeExporter* NodeExporterFactory::createDagNodeExporter(
         throw NoExporterForNode();
 
     return it->second(path, project, sessionMode);
+}
+
+void NodeExporterFactory::registerShadingNodeExporter(
+    const MString&                  mayaTypeName,
+    CreateShadingNodeExporterFn     createFn)
+{
+    assert(createFn != 0);
+
+    gShadingNodeExporters[mayaTypeName] = createFn;
+
+    RENDERER_LOG_INFO(
+        "NodeExporterFactory: registered shading node exporter for node %s",
+        mayaTypeName.asChar());
+}
+
+ShadingNodeExporter* NodeExporterFactory::createShadingNodeExporter(const MObject& object)
+{
+    MFnDependencyNode depNodeFn(object);
+    CreateShadingNodeExporterMapType::const_iterator it = gShadingNodeExporters.find(depNodeFn.typeName());
+
+    if(it == gShadingNodeExporters.end())
+        throw NoExporterForNode();
+
+    return it->second(object);
 }
