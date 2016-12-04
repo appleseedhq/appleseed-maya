@@ -29,14 +29,12 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
 
-// Standard headers.
-#include <map>
-
-// Boost headers.
-#include "boost/shared_ptr.hpp"
+// Forward declaration header.
+#include "shadingnetworkexporterfwd.h"
 
 // Maya headers.
 #include <maya/MObject.h>
+#include <maya/MPlug.h>
 #include <maya/MString.h>
 
 // appleseed.renderer headers.
@@ -54,13 +52,6 @@ class ShadingNetworkExporter
 {
   public:
 
-    enum Context
-    {
-        SurfaceContext,
-        DisplacementContext,
-        LightAttenuation
-    };
-
     MString shaderGroupName() const;
 
     // Create appleseed entities.
@@ -70,21 +61,20 @@ class ShadingNetworkExporter
     void flushEntity();
 
   private:
-    friend class ShadingEngineExporter;
+    friend class NodeExporterFactory;
 
     ShadingNetworkExporter(
-      const Context                 context,
+      const ShadingNetworkContext   context,
       const MObject&                object,
+      const MPlug&                  outputPlug,
       renderer::Assembly&           mainAssembly,
       AppleseedSession::SessionMode sessionMode);
 
-    Context                                     m_context;
+    ShadingNetworkContext                       m_context;
     AppleseedSession::SessionMode               m_sessionMode;
     MObject                                     m_object;
     renderer::Assembly&                         m_mainAssembly;
     AppleseedEntityPtr<renderer::ShaderGroup>   m_shaderGroup;
 };
-
-typedef boost::shared_ptr<ShadingNetworkExporter> ShadingNetworkExporterPtr;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H

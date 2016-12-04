@@ -38,9 +38,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
-#include "appleseedmaya/exporters/shadingengineexporter.h"
 #include "appleseedmaya/murmurhash.h"
-
 
 class ShapeExporter
   : public DagNodeExporter
@@ -48,8 +46,6 @@ class ShapeExporter
   public:
 
     const renderer::TransformSequence& transformSequence() const;
-
-    virtual bool supportsInstancing() const;
 
     void instanceCreated() const;
 
@@ -70,8 +66,6 @@ class ShapeExporter
 
     void createObjectInstance(const MString& objectName);
 
-    void createMaterialEntities(const AppleseedSession::Options& options);
-
     renderer::TransformSequence                     m_transformSequence;
     MurmurHash                                      m_shapeHash;
     mutable size_t                                  m_numInstances;
@@ -79,7 +73,6 @@ class ShapeExporter
     AppleseedEntityPtr<renderer::Assembly>          m_objectAssembly;
     AppleseedEntityPtr<renderer::AssemblyInstance>  m_objectAssemblyInstance;
     AppleseedEntityPtr<renderer::ObjectInstance>    m_objectInstance;
-    std::vector<ShadingEngineExporterPtr>           m_shadingEngines;
 };
 
 typedef boost::shared_ptr<ShapeExporter> ShapeExporterPtr;

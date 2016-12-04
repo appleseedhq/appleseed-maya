@@ -41,7 +41,6 @@
 // Forward declarations.
 namespace renderer { class Project; }
 
-
 class InstanceExporter
   : public ShapeExporter
 {
@@ -53,8 +52,6 @@ class InstanceExporter
       const ShapeExporter&                master,
       renderer::Project&                  project,
       const renderer::TransformSequence&  transformSequence);
-
-    virtual bool supportsInstancing() const;
 
     virtual void flushEntity();
 

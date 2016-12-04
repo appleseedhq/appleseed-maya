@@ -29,15 +29,8 @@
 // Interface header.
 #include "appleseedmaya/exporters/shadingnodeexporter.h"
 
-// Standard headers.
-#include <iostream>
-#include <sstream>
-
 // Maya headers.
 #include <maya/MFnDependencyNode.h>
-#include <maya/MPlug.h>
-
-// appleseed.renderer headers.
 
 // appleseed.maya headers.
 #include "appleseedmaya/attributeutils.h"
@@ -61,16 +54,17 @@ void ShadingNodeExporter::registerExporters()
     }
 }
 
-ShadingNodeExporter *ShadingNodeExporter::create(const MObject& object)
+ShadingNodeExporter *ShadingNodeExporter::create(
+    const MObject&      object,
+    asr::ShaderGroup&   shaderGroup)
 {
-    return new ShadingNodeExporter(object);
+    return new ShadingNodeExporter(object, shaderGroup);
 }
 
-ShadingNodeExporter::ShadingNodeExporter(const MObject& object)
+ShadingNodeExporter::ShadingNodeExporter(
+    const MObject&      object,
+    asr::ShaderGroup&   shaderGroup)
   : m_object(object)
-{
-}
-
-void ShadingNodeExporter::createEntity(const AppleseedSession::Options& options)
+  , m_shaderGroup(shaderGroup)
 {
 }

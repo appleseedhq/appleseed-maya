@@ -118,7 +118,7 @@ def appleseedTranslatorOptions(parent, action, initialSettings, resultCallback):
         options = ""
 
         value = mc.optionMenuGrp("as_exportOpts_activeCamera", query=True, value=True)
-        options +="camera=" + value + ";"
+        options +="activeCamera=" + value + ";"
 
         exportAnim = mc.checkBoxGrp("as_exportOpts_exportAnim", query=True, value1=True)
         if exportAnim:

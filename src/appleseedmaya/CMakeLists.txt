@@ -5,7 +5,7 @@
 #
 # This software is released under the MIT license.
 #
-# Copyright (c) 2016 Haggi Krey, The appleseedhq Organization
+# Copyright (c) 2016 Esteban Tovagliari, The appleseedhq Organization
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -50,6 +50,7 @@ set (appleseed_maya_sources
     exporters/envlightexporter.h
     exporters/dagnodeexporter.cpp
     exporters/dagnodeexporter.h
+    exporters/dagnodeexporterfwd.h
     exporters/exporterfactory.cpp
     exporters/exporterfactory.h
     exporters/instanceexporter.cpp
@@ -60,10 +61,13 @@ set (appleseed_maya_sources
     exporters/meshexporter.h
     exporters/shadingengineexporter.cpp
     exporters/shadingengineexporter.h
+    exporters/shadingengineexporterfwd.h
     exporters/shadingnetworkexporter.cpp
     exporters/shadingnetworkexporter.h
+    exporters/shadingnetworkexporterfwd.h
     exporters/shadingnodeexporter.cpp
     exporters/shadingnodeexporter.h
+    exporters/shadingnodeexporterfwd.h
     exporters/shapeexporter.cpp
     exporters/shapeexporter.h
     logger.cpp

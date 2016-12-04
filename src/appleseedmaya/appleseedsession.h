@@ -33,12 +33,14 @@
 #include<set>
 
 // Maya headers.
+#include <maya/MObject.h>
 #include <maya/MStatus.h>
 #include <maya/MString.h>
 
 // appleseed.maya headers.
+#include "appleseedmaya/exporters/shadingengineexporterfwd.h"
+#include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
 #include "appleseedmaya/utils.h"
-
 
 struct MotionBlurTimes
 {
@@ -48,7 +50,6 @@ struct MotionBlurTimes
 
     std::set<float> m_allTimes;
 };
-
 
 namespace AppleseedSession
 {
@@ -96,6 +97,20 @@ struct Options
     int m_frameStep;
 };
 
+class Services
+  : public NonCopyable
+{
+  public:
+
+    virtual ~Services();
+
+    virtual ShadingEngineExporterPtr createShadingEngineExporter(const MObject& object) const = 0;
+
+  protected:
+
+    Services();
+};
+
 void beginProjectExport(
     const MString& fileName,
     const Options& options);
@@ -109,6 +124,7 @@ void beginProgressiveRender(
 void endSession();
 
 SessionMode sessionMode();
+
 const Options& options();
 
 } // namespace AppleseedSession.

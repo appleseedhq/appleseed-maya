@@ -41,7 +41,6 @@
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/exporterfactory.h"
 
-
 namespace asf = foundation;
 namespace asr = renderer;
 

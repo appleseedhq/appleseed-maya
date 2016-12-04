@@ -29,20 +29,20 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H
 
-// Boost headers.
-#include "boost/shared_ptr.hpp"
+// Forward declaration header.
+#include "shadingnodeexporterfwd.h"
 
 // Maya headers.
 #include <maya/MObject.h>
+#include <maya/MPlug.h>
 #include <maya/MString.h>
 
-// appleseed.renderer headers.
-#include "renderer/api/shadergroup.h"
-
 // appleseed.maya headers.
-#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/shadingnoderegistry.h"
 #include "appleseedmaya/utils.h"
 
+// Forward declarations.
+namespace renderer { class ShaderGroup; }
 
 class ShadingNodeExporter
   : public NonCopyable
@@ -51,17 +51,18 @@ class ShadingNodeExporter
 
     static void registerExporters();
 
-    static ShadingNodeExporter *create(const MObject& object);
-
-    virtual void createEntity(const AppleseedSession::Options& options);
+    static ShadingNodeExporter *create(
+        const MObject&          object,
+        renderer::ShaderGroup&  shaderGroup);
 
   private:
 
-    explicit ShadingNodeExporter(const MObject& object);
+    ShadingNodeExporter(
+        const MObject&          object,
+        renderer::ShaderGroup&  shaderGroup);
 
-    MObject m_object;
+    MObject                 m_object;
+    renderer::ShaderGroup&  m_shaderGroup;
 };
-
-typedef boost::shared_ptr<ShadingNodeExporter> ShadingNodeExporterPtr;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H

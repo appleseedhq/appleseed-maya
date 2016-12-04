@@ -44,6 +44,8 @@
 #include "appleseedmaya/exporters/envlightexporter.h"
 #include "appleseedmaya/exporters/lightexporter.h"
 #include "appleseedmaya/exporters/meshexporter.h"
+#include "appleseedmaya/exporters/shadingengineexporter.h"
+#include "appleseedmaya/exporters/shadingnetworkexporter.h"
 #include "appleseedmaya/exporters/shadingnodeexporter.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/utils.h"
@@ -78,7 +80,6 @@ MStatus NodeExporterFactory::initialize(const MString& pluginPath)
     EnvLightExporter::registerExporter();
     LightExporter::registerExporter();
     MeshExporter::registerExporter();
-
     ShadingNodeExporter::registerExporters();
     return MS::kSuccess;
 }
@@ -89,8 +90,8 @@ MStatus NodeExporterFactory::uninitialize()
 }
 
 void NodeExporterFactory::registerDagNodeExporter(
-    const MString&          mayaTypeName,
-    CreateDagNodeExporterFn createFn)
+    const MString&                  mayaTypeName,
+    CreateDagNodeExporterFn         createFn)
 {
     assert(createFn != 0);
 
@@ -115,6 +116,29 @@ DagNodeExporter* NodeExporterFactory::createDagNodeExporter(
     return it->second(path, project, sessionMode);
 }
 
+ShadingEngineExporter* NodeExporterFactory::createShadingEngineExporter(
+    const MObject&                  object,
+    renderer::Assembly&             mainAssembly,
+    AppleseedSession::SessionMode   sessionMode)
+{
+    return new ShadingEngineExporter(object, mainAssembly, sessionMode);
+}
+
+ShadingNetworkExporter* NodeExporterFactory::createShadingNetworkExporter(
+    const ShadingNetworkContext     context,
+    const MObject&                  object,
+    const MPlug&                    outputPlug,
+    renderer::Assembly&             mainAssembly,
+    AppleseedSession::SessionMode   sessionMode)
+{
+    return new ShadingNetworkExporter(
+        context,
+        object,
+        outputPlug,
+        mainAssembly,
+        sessionMode);
+}
+
 void NodeExporterFactory::registerShadingNodeExporter(
     const MString&                  mayaTypeName,
     CreateShadingNodeExporterFn     createFn)
@@ -128,7 +152,9 @@ void NodeExporterFactory::registerShadingNodeExporter(
         mayaTypeName.asChar());
 }
 
-ShadingNodeExporter* NodeExporterFactory::createShadingNodeExporter(const MObject& object)
+ShadingNodeExporter* NodeExporterFactory::createShadingNodeExporter(
+    const MObject&                  object,
+    asr::ShaderGroup&               shaderGroup)
 {
     MFnDependencyNode depNodeFn(object);
     CreateShadingNodeExporterMapType::const_iterator it = gShadingNodeExporters.find(depNodeFn.typeName());
@@ -136,5 +162,5 @@ ShadingNodeExporter* NodeExporterFactory::createShadingNodeExporter(const MObjec
     if(it == gShadingNodeExporters.end())
         throw NoExporterForNode();
 
-    return it->second(object);
+    return it->second(object, shaderGroup);
 }

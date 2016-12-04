@@ -36,7 +36,6 @@
 // appleseed.maya headers.
 #include <appleseedmaya/shadingnoderegistry.h>
 
-
 void *ShadingNode::creator()
 {
     return new ShadingNode();

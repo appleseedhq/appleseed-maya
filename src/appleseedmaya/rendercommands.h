@@ -32,7 +32,6 @@
 // Maya headers.
 #include <maya/MPxCommand.h>
 
-
 class FinalRenderCommand
   : public MPxCommand
 {

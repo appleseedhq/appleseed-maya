@@ -37,7 +37,6 @@
 // Forward declarations.
 namespace renderer { class Project; }
 
-
 class RenderGlobalsNode
   : public MPxNode
 {

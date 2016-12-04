@@ -36,7 +36,6 @@
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/typeids.h"
 
-
 const MString EnvLightNode::nodeName("appleseedEnvLight");
 const MTypeId EnvLightNode::id(EnvLightNodeTypeId);
 const MString EnvLightNode::drawDbClassification("drawdb/geometry/appleseedEnvLight");

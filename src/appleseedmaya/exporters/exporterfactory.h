@@ -31,18 +31,22 @@
 
 // Maya headers.
 #include <maya/MDagPath.h>
+#include <maya/MObject.h>
+#include <maya/MPlug.h>
 #include <maya/MStatus.h>
 #include <maya/MString.h>
 
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/exporters/dagnodeexporterfwd.h"
+#include "appleseedmaya/exporters/shadingengineexporterfwd.h"
+#include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
+#include "appleseedmaya/exporters/shadingnodeexporterfwd.h"
 
 // Forward declarations.
-class DagNodeExporter;
-class ShadingNodeExporter;
-
+namespace renderer { class Assembly; }
 namespace renderer { class Project; }
-
+namespace renderer { class ShaderGroup; }
 
 class NodeExporterFactory
 {
@@ -52,26 +56,42 @@ class NodeExporterFactory
     static MStatus uninitialize();
 
     typedef DagNodeExporter* (*CreateDagNodeExporterFn)(
-      const MDagPath&,
-      renderer::Project&,
-      AppleseedSession::SessionMode);
+        const MDagPath&,
+        renderer::Project&,
+        AppleseedSession::SessionMode);
 
     static void registerDagNodeExporter(
-      const MString&          mayaTypeName,
-      CreateDagNodeExporterFn createFn);
+        const MString&                  mayaTypeName,
+        CreateDagNodeExporterFn         createFn);
 
     static DagNodeExporter* createDagNodeExporter(
-      const MDagPath&               path,
-      renderer::Project&            project,
-      AppleseedSession::SessionMode sessionMode);
+        const MDagPath&                 path,
+        renderer::Project&              project,
+        AppleseedSession::SessionMode   sessionMode);
 
-    typedef ShadingNodeExporter* (*CreateShadingNodeExporterFn)(const MObject&);
+    static ShadingEngineExporter* createShadingEngineExporter(
+        const MObject&                  object,
+        renderer::Assembly&             mainAssembly,
+        AppleseedSession::SessionMode   sessionMode);
+
+    static ShadingNetworkExporter* createShadingNetworkExporter(
+        const ShadingNetworkContext     context,
+        const MObject&                  object,
+        const MPlug&                    outputPlug,
+        renderer::Assembly&             mainAssembly,
+        AppleseedSession::SessionMode   sessionMode);
+
+    typedef ShadingNodeExporter* (*CreateShadingNodeExporterFn)(
+        const MObject&,
+        renderer::ShaderGroup&);
 
     static void registerShadingNodeExporter(
-      const MString&          mayaTypeName,
-      CreateShadingNodeExporterFn createFn);
+      const MString&                    mayaTypeName,
+      CreateShadingNodeExporterFn       createFn);
 
-    static ShadingNodeExporter* createShadingNodeExporter(const MObject& object);
+    static ShadingNodeExporter* createShadingNodeExporter(
+        const MObject&                  object,
+        renderer::ShaderGroup&          shaderGroup);
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_NODEEXPORTER_FACTORY_H

@@ -35,7 +35,6 @@
 // appleseed.renderer headers.
 #include "renderer/api/environmentedf.h"
 
-
 class EnvLightExporter
   : public DagNodeExporter
 {

@@ -29,7 +29,6 @@
 // Interface header.
 #include "appleseedmaya/murmurhash.h"
 
-
 namespace asf = foundation;
 
 uint64_t rotl64(uint64_t x, int8_t r)

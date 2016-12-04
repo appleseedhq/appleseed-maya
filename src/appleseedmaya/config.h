@@ -36,7 +36,6 @@
 // appleseed.maya headers.
 #include "appleseedmaya/version.h"
 
-
 // Windows dll exports
 #if defined(_WIN32) || defined(_WIN64) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__)
     #define APPLESEED_MAYA_PLUGIN_EXPORT __declspec(dllexport)

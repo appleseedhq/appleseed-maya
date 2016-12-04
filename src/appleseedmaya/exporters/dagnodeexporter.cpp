@@ -77,6 +77,10 @@ asr::Assembly& DagNodeExporter::mainAssembly()
     return m_mainAssembly;
 }
 
+void createExporters(const AppleseedSession::Services& services)
+{
+}
+
 bool DagNodeExporter::supportsMotionBlur() const
 {
     return true;

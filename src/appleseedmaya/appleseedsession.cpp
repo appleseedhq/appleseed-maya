@@ -34,6 +34,7 @@
 #include <vector>
 
 // Boost headers.
+#include "boost/array.hpp"
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/convenience.hpp"
 #include "boost/filesystem/operations.hpp"
@@ -75,6 +76,7 @@
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/exporters/shadingengineexporter.h"
+#include "appleseedmaya/exporters/shadingnetworkexporter.h"
 #include "appleseedmaya/exporters/shapeexporter.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/renderercontroller.h"
@@ -85,17 +87,63 @@ namespace bfs = boost::filesystem;
 namespace asf = foundation;
 namespace asr = renderer;
 
+namespace AppleseedSession
+{
+
+Services::Services()
+{
+}
+
+Services::~Services()
+{
+}
+
+} // namespace AppleseedSession.
+
 namespace
 {
 
 struct SessionImpl
 {
+    class ServicesImpl
+    : public AppleseedSession::Services
+    {
+      public:
+        ServicesImpl(SessionImpl& self)
+          : Services()
+          , m_self(self)
+        {
+        }
+
+        virtual ShadingEngineExporterPtr createShadingEngineExporter(const MObject& object) const
+        {
+            MFnDependencyNode depNodeFn(object);
+
+            ShadingEngineExporterMap::iterator it =
+                m_self.m_shadingEngineExporters.find(depNodeFn.name());
+
+            if(it != m_self.m_shadingEngineExporters.end())
+                return it->second;
+
+            ShadingEngineExporterPtr exporter(
+                NodeExporterFactory::createShadingEngineExporter(
+                    object,
+                    *m_self.mainAssembly(),
+                    m_self.m_sessionMode));
+            m_self.m_shadingEngineExporters[depNodeFn.name()] = exporter;
+            return exporter;
+        }
+
+        SessionImpl& m_self;
+    };
+
     // Constructor. (IPR or Batch)
     SessionImpl(
         AppleseedSession::SessionMode       mode,
         const AppleseedSession::Options&    options)
       : m_sessionMode(mode)
       , m_options(options)
+      , m_services(*this)
     {
         createProject();
     }
@@ -104,9 +152,10 @@ struct SessionImpl
     SessionImpl(
         const MString&                      fileName,
         const AppleseedSession::Options&    options)
-      : m_fileName(fileName)
-      , m_sessionMode(AppleseedSession::ExportSession)
+      : m_sessionMode(AppleseedSession::ExportSession)
       , m_options(options)
+      , m_services(*this)
+      , m_fileName(fileName)
     {
         m_projectPath = bfs::path(fileName.asChar()).parent_path();
 
@@ -192,8 +241,8 @@ struct SessionImpl
 
     void exportProject()
     {
-        MObject defaultRenderGlobalsNode = exportDefaultRenderGlobals();
-        MObject appleseedRenderGlobalsNode = exportAppleseedRenderGlobals();
+        exportDefaultRenderGlobals();
+        exportAppleseedRenderGlobals();
 
         exportScene();
 
@@ -216,19 +265,29 @@ struct SessionImpl
     {
         createExporters();
 
-        // Collect motion blur times.
+        RENDERER_LOG_DEBUG("Collecting motion blur times");
         MotionBlurTimes motionBlurTimes;
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->collectMotionBlurSteps(motionBlurTimes);
 
-        if(m_defaultMaterialExporter)
-            m_defaultMaterialExporter->createEntity(m_options);
-
         // Create appleseed entities.
+        RENDERER_LOG_DEBUG("Creating shading network entities");
+        for(size_t i = 0; i < NumShadingNetworkContexts; ++i)
+        {
+            for(ShadingNetworkExporterMap::const_iterator it = m_shadingNetworkExporters[i].begin(), e = m_shadingNetworkExporters[i].end(); it != e; ++it)
+                it->second->createEntity(m_options);
+        }
+
+        RENDERER_LOG_DEBUG("Creating shading engine entities");
+        for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
+            it->second->createEntity(m_options);
+
+        RENDERER_LOG_DEBUG("Creating dag entities");
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->createEntity(m_options);
 
         // For each time step...
+        RENDERER_LOG_DEBUG("Exporting motion steps");
         {
             for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             {
@@ -244,50 +303,39 @@ struct SessionImpl
         // Handle auto-instancing.
         if(m_sessionMode != AppleseedSession::ProgressiveRenderSession)
         {
-            for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
-            {
-                const ShapeExporter *shape = dynamic_cast<const ShapeExporter*>(it->second.get());
-
-                if(shape && shape->supportsInstancing())
-                {
-                    /*
-                    hash = exporter->hash();
-                    if(instanceMap.find(hash) != end())
-                    {
-                        DagNodeExporterPtr exporter(shape);
-                        // Create InstanceExporter(...)
-                        m_dagExporters[it->first] = instanceExporter;
-                    }
-                    else
-                        map[hash] = ShapeExporterPtr(exporter)
-                    */
-                }
-            }
+            RENDERER_LOG_DEBUG("Exporting objects to instances");
+            convertObjectsToInstances();
         }
 
-        if(m_defaultMaterialExporter)
-            m_defaultMaterialExporter->flushEntity();
-
         // Flush entities to the renderer.
+        RENDERER_LOG_DEBUG("Flushing shading network entities");
+        for(size_t i = 0; i < NumShadingNetworkContexts; ++i)
+        {
+            for(ShadingNetworkExporterMap::const_iterator it = m_shadingNetworkExporters[i].begin(), e = m_shadingNetworkExporters[i].end(); it != e; ++it)
+                it->second->flushEntity();
+        }
+
+        RENDERER_LOG_DEBUG("Flushing shading engines entities");
+        for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
+            it->second->flushEntity();
+
+        RENDERER_LOG_DEBUG("Flushing dag entities");
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->flushEntity();
     }
 
-    MObject exportDefaultRenderGlobals()
+    void exportDefaultRenderGlobals()
     {
         RENDERER_LOG_DEBUG("Exporting default render globals");
 
         MObject defaultRenderGlobalsNode;
         if(getNodeMObject("defaultRenderGlobals", defaultRenderGlobalsNode))
         {
-            MFnDependencyNode defaultGlobalsDepFn(defaultRenderGlobalsNode);
-            // ...
+            // todo: export globals here...
         }
-
-        return defaultRenderGlobalsNode;
     }
 
-    MObject exportAppleseedRenderGlobals()
+    void exportAppleseedRenderGlobals()
     {
         RENDERER_LOG_DEBUG("Exporting appleseed render globals");
 
@@ -298,14 +346,12 @@ struct SessionImpl
                 appleseedRenderGlobalsNode,
                 *m_project);
         }
-
-        return appleseedRenderGlobalsNode;
     }
 
     void createExporters()
     {
-        RENDERER_LOG_DEBUG("Exporting default material");
-        exportDefaultMaterial();
+        RENDERER_LOG_DEBUG("Creating default material exporter");
+        createDefaultMaterialExporter();
 
         // Create exporters for all dag nodes in the scene.
         RENDERER_LOG_DEBUG("Creating dag node exporters");
@@ -315,18 +361,15 @@ struct SessionImpl
             it.getPath(path);
             createDagNodeExporter(path);
         }
-    }
 
-    void exportDefaultMaterial()
-    {
-        // todo: this fails in 2016 when the hypershade is open.
-        MObject initialShadingGroup;
-        if(getNodeMObject("initialShadingGroup", initialShadingGroup))
-        {
-            asr::Scene *scene = m_project->get_scene();
-            asr::Assembly *mainAssembly = scene->assemblies().get_by_name("assembly");
-            m_defaultMaterialExporter.reset(new ShadingEngineExporter(initialShadingGroup, *mainAssembly, m_sessionMode));
-        }
+        // Create extra exporters.
+        RENDERER_LOG_DEBUG("Creating dag extra exporters");
+        for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+            it->second->createExporters(m_services);
+
+        RENDERER_LOG_DEBUG("Creating shading engines extra exporters");
+        for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
+            it->second->createExporters(m_services);
     }
 
     void createDagNodeExporter(const MDagPath& path)
@@ -363,6 +406,41 @@ struct SessionImpl
         }
     }
 
+    void createDefaultMaterialExporter()
+    {
+        MObject initialShadingGroup;
+        if(!getNodeMObject("initialShadingGroup", initialShadingGroup))
+        {
+            // todo: add workaround here for Maya 2016 when the hypershade is open.
+        }
+
+        if(!initialShadingGroup.isNull())
+            m_services.createShadingEngineExporter(initialShadingGroup);
+    }
+
+    void convertObjectsToInstances()
+    {
+        for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+        {
+            //const ShapeExporter *shape = dynamic_cast<const ShapeExporter*>(it->second.get());
+
+            //if(shape && shape->supportsInstancing())
+            //{
+                /*
+                hash = exporter->hash();
+                if(instanceMap.find(hash) != end())
+                {
+                    DagNodeExporterPtr exporter(shape);
+                    // Create InstanceExporter(...)
+                    m_dagExporters[it->first] = instanceExporter;
+                }
+                else
+                    map[hash] = ShapeExporterPtr(exporter)
+                */
+            //}
+        }
+    }
+
     bool writeProject() const
     {
         return asr::ProjectFileWriter::write(
@@ -370,6 +448,12 @@ struct SessionImpl
             m_fileName.asChar(),
             asr::ProjectFileWriter::OmitHandlingAssetFiles |
             asr::ProjectFileWriter::OmitWritingGeometryFiles);
+    }
+
+    asr::Assembly *mainAssembly()
+    {
+        asr::Scene *scene = m_project->get_scene();
+        return scene->assemblies().get_by_name("assembly");
     }
 
     MStatus getNodeMObject(const MString& nodeName, MObject& node)
@@ -380,13 +464,17 @@ struct SessionImpl
         if(selList.isEmpty())
             return MS::kFailure;
 
-        selList.getDependNode(0, node);
+        return selList.getDependNode(0, node);
     }
 
-    typedef std::map<MString, DagNodeExporterPtr, MStringCompareLess> DagExporterMap;
+    typedef std::map<MString, DagNodeExporterPtr, MStringCompareLess>           DagExporterMap;
+    typedef std::map<MString, ShadingEngineExporterPtr, MStringCompareLess>     ShadingEngineExporterMap;
+    typedef std::map<MString, ShadingNetworkExporterPtr, MStringCompareLess>    ShadingNetworkExporterMap;
+    typedef boost::array<ShadingNetworkExporterMap, NumShadingNetworkContexts>  ShadingNetworkExporterMapArray;
 
     AppleseedSession::SessionMode               m_sessionMode;
     AppleseedSession::Options                   m_options;
+    ServicesImpl                                m_services;
     MTime                                       m_savedTime;
 
     asf::auto_release_ptr<renderer::Project>    m_project;
@@ -394,21 +482,18 @@ struct SessionImpl
     MString                                     m_fileName;
     bfs::path                                   m_projectPath;
 
-    ShadingEngineExporterPtr                    m_defaultMaterialExporter;
     DagExporterMap                              m_dagExporters;
+    ShadingEngineExporterMap                    m_shadingEngineExporters;
+    ShadingNetworkExporterMapArray              m_shadingNetworkExporters;
 
     boost::scoped_ptr<asr::MasterRenderer>      m_renderer;
     RendererController                          m_rendererController;
 };
 
-// Global session.
-boost::scoped_ptr<SessionImpl> gGlobalSession;
-
-// Plugin path.
-bfs::path gPluginPath;
-
-// Saved time.
-MTime g_savedTime;
+// Globals.
+bfs::path gPluginPath;                          // Plugin path.
+MTime g_savedTime;                              // Saved time.
+boost::scoped_ptr<SessionImpl> gGlobalSession;  // Global session.
 
 } // unnamed
 

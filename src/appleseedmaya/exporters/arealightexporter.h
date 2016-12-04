@@ -35,12 +35,8 @@
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
-// appleseed.renderer headers.
-
-
 // Forward declarations.
 namespace renderer { class Project; }
-
 
 class AreaLightExporter
   : public DagNodeExporter

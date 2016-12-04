@@ -29,8 +29,8 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
 
-// Boost headers.
-#include "boost/shared_ptr.hpp"
+// Forward declaration header.
+#include "shadingengineexporterfwd.h"
 
 // Maya headers.
 #include <maya/MObject.h>
@@ -41,7 +41,6 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
-#include "appleseedmaya/exporters/shadingnetworkexporter.h"
 #include "appleseedmaya/utils.h"
 
 // Forward declarations.
@@ -52,10 +51,8 @@ class ShadingEngineExporter
 {
   public:
 
-    ShadingEngineExporter(
-        const MObject&                object,
-        renderer::Assembly&           mainAssembly,
-        AppleseedSession::SessionMode sessionMode);
+    // Create any extra exporter needed by this exporter (shading engines, ...).
+    void createExporters(const AppleseedSession::Services& services);
 
     // Create appleseed entities.
     void createEntity(const AppleseedSession::Options& options);
@@ -64,15 +61,18 @@ class ShadingEngineExporter
     void flushEntity();
 
   private:
+    friend class NodeExporterFactory;
+
+    ShadingEngineExporter(
+        const MObject&                object,
+        renderer::Assembly&           mainAssembly,
+        AppleseedSession::SessionMode sessionMode);
 
     AppleseedSession::SessionMode                   m_sessionMode;
     MObject                                         m_object;
     renderer::Assembly&                             m_mainAssembly;
     AppleseedEntityPtr<renderer::Material>          m_material;
     AppleseedEntityPtr<renderer::SurfaceShader>     m_surfaceShader;
-    ShadingNetworkExporterPtr                       m_surfaceExporter;
 };
-
-typedef boost::shared_ptr<ShadingEngineExporter> ShadingEngineExporterPtr;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H

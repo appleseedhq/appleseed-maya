@@ -29,8 +29,8 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_H
 
-// Boost headers.
-#include "boost/shared_ptr.hpp"
+// Forward declaration header.
+#include "dagnodeexporterfwd.h"
 
 // Maya headers.
 #include <maya/MDagPath.h>
@@ -60,22 +60,26 @@ class DagNodeExporter
     // Destructor.
     virtual ~DagNodeExporter();
 
+    // Return the name of the entity in the appleseed project.
     MString appleseedName() const;
 
-    // Returns true if the entity created by this exporter can be motion blurred.
+    // Return true if the entity created by this exporter can be motion blurred.
     virtual bool supportsMotionBlur() const;
+
+    // Create any extra exporter needed by this exporter (shading engines, ...).
+    virtual void createExporters(const AppleseedSession::Services& services);
 
     // Create appleseed entities.
     virtual void createEntity(const AppleseedSession::Options& options) = 0;
-
-    // Flush entities to the renderer.
-    virtual void flushEntity() = 0;
 
     // Motion blur.
     virtual void collectMotionBlurSteps(MotionBlurTimes& motionTimes) const;
     virtual void exportCameraMotionStep(float time);
     virtual void exportTransformMotionStep(float time);
     virtual void exportShapeMotionStep(float time);
+
+    // Flush entities to the renderer.
+    virtual void flushEntity() = 0;
 
   protected:
 
@@ -113,7 +117,5 @@ class DagNodeExporter
     renderer::Scene&              m_scene;
     renderer::Assembly&           m_mainAssembly;
 };
-
-typedef boost::shared_ptr<DagNodeExporter> DagNodeExporterPtr;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_H

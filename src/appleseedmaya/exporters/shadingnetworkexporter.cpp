@@ -31,21 +31,20 @@
 
 // Maya headers.
 #include <maya/MFnDependencyNode.h>
-#include <maya/MItDependencyGraph.h>
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/logger.h"
-#include "appleseedmaya/shadingnoderegistry.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
 
 ShadingNetworkExporter::ShadingNetworkExporter(
-    const Context                 context,
+    const ShadingNetworkContext   context,
     const MObject&                object,
+    const MPlug&                  outputPlug,
     renderer::Assembly&           mainAssembly,
     AppleseedSession::SessionMode sessionMode)
   : m_context(context)
@@ -63,42 +62,7 @@ MString ShadingNetworkExporter::shaderGroupName() const
 void ShadingNetworkExporter::createEntity(const AppleseedSession::Options& options)
 {
     MFnDependencyNode depNodeFn(m_object);
-
-    MString name = depNodeFn.name() + MString("_shader_group");
-    m_shaderGroup = asr::ShaderGroupFactory::create(name.asChar());
-
-    // Create adaptors, ..., here.
-    switch(m_context)
-    {
-        case SurfaceContext:
-        case DisplacementContext:
-        case LightAttenuation:
-        break;
-    }
-
-    MStatus status;
-    MItDependencyGraph it(
-        m_object,
-        MFn::kInvalid,
-        MItDependencyGraph::kUpstream,
-        MItDependencyGraph::kBreadthFirst,
-        MItDependencyGraph::kNodeLevel,
-        &status);
-
-    if(status == MS::kFailure)
-    {
-        RENDERER_LOG_WARNING(
-            "No nodes connected to shading node %s",
-            depNodeFn.name().asChar());
-        return;
-    }
-
-    // iterate through the output connected shading nodes.
-    for(; it.isDone() != true; it.next())
-    {
-        depNodeFn.setObject(it.thisNode());
-        RENDERER_LOG_INFO("Visiting node %s", depNodeFn.name().asChar());
-    }
+    m_shaderGroup = asr::ShaderGroupFactory::create(shaderGroupName().asChar());
 }
 
 void ShadingNetworkExporter::flushEntity()

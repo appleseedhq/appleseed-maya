@@ -48,7 +48,6 @@
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/logger.h"
 
-
 namespace bfs = boost::filesystem;
 namespace asf = foundation;
 namespace asr = renderer;
@@ -200,8 +199,6 @@ void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
 
 void MeshExporter::createEntity(const AppleseedSession::Options& options)
 {
-    // todo: create shading engine exporters here..
-
     asr::ParamArray params;
     shapeAttributesToParams(params);
     meshAttributesToParams(params);
@@ -228,8 +225,6 @@ void MeshExporter::createEntity(const AppleseedSession::Options& options)
     m_exportTangents = false;
 
     fillTopology();
-
-    createMaterialEntities(options);
 }
 
 void MeshExporter::exportShapeMotionStep(float time)
@@ -329,12 +324,11 @@ void MeshExporter::fillTopology()
     MIntArray triangleVertices;
     meshFn.getTriangles(triangleCounts, triangleVertices);
 
-    const size_t numFaces = triangleCounts.length();
-    const size_t numTriangles = triangleVertices.length() / 3;
-    m_mesh->reserve_triangles(numTriangles);
+    // Triangle buffer.
+    std::vector<asr::Triangle> triangles;
 
     size_t vertexIndex = 0;
-    for(size_t faceIndex = 0; faceIndex < numFaces; ++faceIndex)
+    for(size_t faceIndex = 0; faceIndex < triangleCounts.length(); ++faceIndex)
     {
         const size_t numTrianglesPerFace = triangleCounts[faceIndex];
         for(int triangleIndex = 0; triangleIndex < numTrianglesPerFace; ++triangleIndex)
@@ -362,10 +356,16 @@ void MeshExporter::fillTopology()
 
             // TODO: get face material index here...
 
+            triangles.push_back(triangle);
             m_mesh->push_triangle(triangle);
             vertexIndex += 3;
         }
     }
+
+    // Copy triangles to the mesh.
+    m_mesh->reserve_triangles(triangles.size());
+    for(size_t i = 0, e = triangles.size(); i < e; ++i)
+        m_mesh->push_triangle(triangles[i]);
 }
 
 void MeshExporter::exportGeometry()

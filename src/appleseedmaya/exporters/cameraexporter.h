@@ -35,7 +35,6 @@
 // appleseed.renderer headers.
 #include "renderer/api/camera.h"
 
-
 class CameraExporter
   : public DagNodeExporter
 {
