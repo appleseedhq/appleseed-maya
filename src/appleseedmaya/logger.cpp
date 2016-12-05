@@ -44,7 +44,6 @@ namespace asr = renderer;
 
 namespace Logger
 {
-
 namespace
 {
 
@@ -68,7 +67,7 @@ class LogTarget
         {
             case asf::LogMessage::Debug:
             #ifndef NDEBUG
-                std::cout << "[Debug] " << message << std::endl;
+                MGlobal::displayInfo(MString("[Debug]") + MString(message));
             #endif
             break;
 
@@ -91,7 +90,7 @@ class LogTarget
 
 LogTarget gLogTarget;
 
-}
+} // unnamed namespace.
 
 MStatus initialize()
 {

@@ -32,6 +32,9 @@
 // Forward declaration header.
 #include "shadingnetworkexporterfwd.h"
 
+// Standard headers.
+#include <vector>
+
 // Maya headers.
 #include <maya/MObject.h>
 #include <maya/MPlug.h>
@@ -42,6 +45,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/exporters/shadingnodeexporterfwd.h"
 #include "appleseedmaya/utils.h"
 
 // Forward declarations.
@@ -70,11 +74,13 @@ class ShadingNetworkExporter
       renderer::Assembly&           mainAssembly,
       AppleseedSession::SessionMode sessionMode);
 
-    ShadingNetworkContext                       m_context;
-    AppleseedSession::SessionMode               m_sessionMode;
-    MObject                                     m_object;
-    renderer::Assembly&                         m_mainAssembly;
-    AppleseedEntityPtr<renderer::ShaderGroup>   m_shaderGroup;
+    ShadingNetworkContext                                           m_context;
+    AppleseedSession::SessionMode                                   m_sessionMode;
+    MObject                                                         m_object;
+    MPlug                                                           m_outputPlug;
+    renderer::Assembly&                                             m_mainAssembly;
+    AppleseedEntityPtr<renderer::ShaderGroup>                       m_shaderGroup;
+    std::vector<ShadingNodeExporterPtr>                             m_nodeExporters;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H

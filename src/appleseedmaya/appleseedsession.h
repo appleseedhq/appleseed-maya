@@ -34,6 +34,7 @@
 
 // Maya headers.
 #include <maya/MObject.h>
+#include <maya/MPlug.h>
 #include <maya/MStatus.h>
 #include <maya/MString.h>
 
@@ -105,6 +106,11 @@ class Services
     virtual ~Services();
 
     virtual ShadingEngineExporterPtr createShadingEngineExporter(const MObject& object) const = 0;
+
+    virtual ShadingNetworkExporterPtr createShadingNetworkExporter(
+        const ShadingNetworkContext   context,
+        const MObject&                object,
+        const MPlug&                  outputPlug) const = 0;
 
   protected:
 

@@ -134,6 +134,30 @@ struct SessionImpl
             return exporter;
         }
 
+        virtual ShadingNetworkExporterPtr createShadingNetworkExporter(
+            const ShadingNetworkContext   context,
+            const MObject&                object,
+            const MPlug&                  outputPlug) const
+        {
+            MFnDependencyNode depNodeFn(object);
+
+            ShadingNetworkExporterMap::iterator it =
+                m_self.m_shadingNetworkExporters[context].find(depNodeFn.name());
+
+            if(it != m_self.m_shadingNetworkExporters[context].end())
+                return it->second;
+
+            ShadingNetworkExporterPtr exporter(
+                NodeExporterFactory::createShadingNetworkExporter(
+                    context,
+                    object,
+                    outputPlug,
+                    *m_self.mainAssembly(),
+                    m_self.m_sessionMode));
+            m_self.m_shadingNetworkExporters[context][depNodeFn.name()] = exporter;
+            return exporter;
+        }
+
         SessionImpl& m_self;
     };
 
@@ -353,7 +377,7 @@ struct SessionImpl
         RENDERER_LOG_DEBUG("Creating default material exporter");
         createDefaultMaterialExporter();
 
-        // Create exporters for all dag nodes in the scene.
+        // Create exporters for all the dag nodes in the scene.
         RENDERER_LOG_DEBUG("Creating dag node exporters");
         MDagPath path;
         for(MItDag it(MItDag::kDepthFirst); !it.isDone(); it.next())
@@ -362,11 +386,12 @@ struct SessionImpl
             createDagNodeExporter(path);
         }
 
-        // Create extra exporters.
+        // Create dag extra exporters.
         RENDERER_LOG_DEBUG("Creating dag extra exporters");
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->createExporters(m_services);
 
+        // Create shading engine extra exporters.
         RENDERER_LOG_DEBUG("Creating shading engines extra exporters");
         for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
             it->second->createExporters(m_services);

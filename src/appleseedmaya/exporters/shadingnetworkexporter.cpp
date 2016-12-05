@@ -29,7 +29,12 @@
 // Interface header.
 #include "appleseedmaya/exporters/shadingnetworkexporter.h"
 
+// Standard headers.
+#include <algorithm>
+#include <set>
+
 // Maya headers.
+#include <maya/MItDependencyGraph.h>
 #include <maya/MFnDependencyNode.h>
 
 // appleseed.renderer headers.
@@ -49,6 +54,7 @@ ShadingNetworkExporter::ShadingNetworkExporter(
     AppleseedSession::SessionMode sessionMode)
   : m_context(context)
   , m_object(object)
+  , m_outputPlug(outputPlug)
   , m_mainAssembly(mainAssembly)
   , m_sessionMode(sessionMode)
 {
@@ -61,8 +67,60 @@ MString ShadingNetworkExporter::shaderGroupName() const
 
 void ShadingNetworkExporter::createEntity(const AppleseedSession::Options& options)
 {
+    MStatus status;
+
     MFnDependencyNode depNodeFn(m_object);
-    m_shaderGroup = asr::ShaderGroupFactory::create(shaderGroupName().asChar());
+    MString shaderGroupName = depNodeFn.name() + MString("_shader_group");
+    m_shaderGroup = asr::ShaderGroupFactory::create(shaderGroupName.asChar());
+
+    // Add any adaptor shader we need, depending on the context.
+    switch(m_context)
+    {
+        case SurfaceNetworkContext:
+        {
+            MString layerName = depNodeFn.name() + MString("_outputToCi");
+            m_shaderGroup->add_shader("surface", "as_maya_assignToCi", layerName.asChar(), asr::ParamArray());
+        }
+        break;
+
+        default:
+            assert(false);
+            RENDERER_LOG_ERROR("Unknown shading network context.");
+        break;
+    }
+
+    MItDependencyGraph it(
+        m_object,
+        MFn::kInvalid,
+        MItDependencyGraph::kUpstream,
+        MItDependencyGraph::kDepthFirst,
+        MItDependencyGraph::kNodeLevel,
+        &status);
+
+    if(status == MS::kFailure)
+    {
+        RENDERER_LOG_WARNING(
+            "No shading nodes connected to shape %s",
+            depNodeFn.name().asChar());
+        return;
+    }
+
+    // iterate through the output connected shading engines
+    std::set<MString, MStringCompareLess> nodesVisited;
+    for(; it.isDone() != true; it.next())
+    {
+        MObject shadingNode = it.thisNode();
+        depNodeFn.setObject(shadingNode);
+
+        if(nodesVisited.count(depNodeFn.name()) == 0)
+        {
+            RENDERER_LOG_INFO("visiting shading node %s", depNodeFn.name().asChar());
+            nodesVisited.insert(depNodeFn.name());
+            // todo: create node exporter here...
+        }
+    }
+
+    std::reverse(m_nodeExporters.begin(), m_nodeExporters.end());
 }
 
 void ShadingNetworkExporter::flushEntity()

@@ -52,6 +52,24 @@ ShadingEngineExporter::ShadingEngineExporter(
 
 void ShadingEngineExporter::createExporters(const AppleseedSession::Services& services)
 {
+    MFnDependencyNode depNodeFn(m_object);
+
+    MStatus status;
+    MPlug plug = depNodeFn.findPlug("surfaceShader", &status);
+    if(plug.isConnected())
+    {
+        MPlugArray otherPlugs;
+        plug.connectedTo(otherPlugs, true, false, &status);
+
+        if(otherPlugs.length() == 1)
+        {
+            MObject otherNode = otherPlugs[0].node();
+            services.createShadingNetworkExporter(
+                SurfaceNetworkContext,
+                otherNode,
+                otherPlugs[0]);
+        }
+    }
 }
 
 void ShadingEngineExporter::createEntity(const AppleseedSession::Options& options)
@@ -71,30 +89,6 @@ void ShadingEngineExporter::createEntity(const AppleseedSession::Options& option
     params.insert("surface_shader", surfaceShaderName.asChar());
     m_material.reset(
         asr::OSLMaterialFactory().create(materialName.asChar(), params));
-
-    /*
-    MStatus status;
-    MPlug plug = depNodeFn.findPlug("surfaceShader", &status);
-    if(plug.isConnected())
-    {
-        MPlugArray otherPlugs;
-        plug.connectedTo(otherPlugs, true, false, &status);
-
-        if(otherPlugs.length() == 1)
-        {
-            MObject otherNode = otherPlugs[0].node();
-            m_surfaceExporter.reset(
-                new ShadingNetworkExporter(
-                    ShadingNetworkExporter::SurfaceContext,
-                    otherNode,
-                    otherPlugs[0],
-                    m_mainAssembly,
-                    m_sessionMode));
-
-            m_surfaceExporter->createEntity(options);
-        }
-    }
-    */
 }
 
 void ShadingEngineExporter::flushEntity()
