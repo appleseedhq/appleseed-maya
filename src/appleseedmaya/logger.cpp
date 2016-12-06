@@ -66,9 +66,7 @@ class LogTarget
         switch (category)
         {
             case asf::LogMessage::Debug:
-            #ifndef NDEBUG
                 MGlobal::displayInfo(MString("[Debug]") + MString(message));
-            #endif
             break;
 
             case asf::LogMessage::Info:
@@ -95,6 +93,12 @@ LogTarget gLogTarget;
 MStatus initialize()
 {
     asr::global_logger().add_target(&gLogTarget);
+
+#ifndef NDEBUG
+    // while debugging we want all output...
+    asr::global_logger().set_verbosity_level(asf::LogMessage::Debug);
+#endif
+
     return MS::kSuccess;
 }
 

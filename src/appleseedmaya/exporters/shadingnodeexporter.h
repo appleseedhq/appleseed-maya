@@ -55,11 +55,23 @@ class ShadingNodeExporter
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);
 
-  private:
+    virtual void createShader();
+
+  protected:
 
     ShadingNodeExporter(
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);
+
+    void exportParamValue(
+      const MPlug&              plug,
+      const OSLParamInfo&       paramInfo,
+      renderer::ParamArray&     shaderParams);
+
+    void exportArrayParamValue(
+      const MPlug&              plug,
+      const OSLParamInfo&       paramInfo,
+      renderer::ParamArray&     shaderParams);
 
     MObject                 m_object;
     renderer::ShaderGroup&  m_shaderGroup;

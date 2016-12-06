@@ -29,8 +29,12 @@
 // Interface header.
 #include "appleseedmaya/exporters/shadingnodeexporter.h"
 
+// Standard headers.
+#include <sstream>
+
 // Maya headers.
 #include <maya/MFnDependencyNode.h>
+#include <maya/MFnNumericAttribute.h>
 
 // appleseed.maya headers.
 #include "appleseedmaya/attributeutils.h"
@@ -67,4 +71,128 @@ ShadingNodeExporter::ShadingNodeExporter(
   : m_object(object)
   , m_shaderGroup(shaderGroup)
 {
+}
+
+void ShadingNodeExporter::createShader()
+{
+    MStatus status;
+    MFnDependencyNode depNodeFn(m_object);
+
+    const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+    assert(shaderInfo);
+
+    asr::ParamArray shaderParams;
+    for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
+    {
+        const OSLParamInfo& paramInfo = shaderInfo->paramInfo[i];
+
+        // Skip output attributes.
+        if(paramInfo.isOutput)
+            continue;
+
+        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
+        if(!status)
+        {
+            RENDERER_LOG_WARNING(
+                "Skipping unknown attribute %s of shading node %s",
+                paramInfo.mayaAttributeName.asChar(),
+                depNodeFn.typeName().asChar());
+            continue;
+        }
+
+        if(paramInfo.isArray)
+            exportArrayParamValue(plug, paramInfo, shaderParams);
+        else
+            exportParamValue(plug, paramInfo, shaderParams);
+    }
+
+    m_shaderGroup.add_shader(
+        shaderInfo->shaderType.asChar(),
+        shaderInfo->shaderName.asChar(),
+        depNodeFn.name().asChar(),
+        shaderParams);
+}
+
+void ShadingNodeExporter::exportParamValue(
+    const MPlug&        plug,
+    const OSLParamInfo& paramInfo,
+    asr::ParamArray&    shaderParams)
+{
+    RENDERER_LOG_DEBUG(
+        "Exporting shading node attr %s.",
+        paramInfo.mayaAttributeName.asChar());
+
+    std::stringstream ss;
+
+    if(strcmp(paramInfo.paramType.asChar(), "color") == 0)
+    {
+        MColor value;
+        if(AttributeUtils::get(plug, value))
+            ss << "color " << value.r << " " << value.g << " " << value.b;
+    }
+    else if(strcmp(paramInfo.paramType.asChar(), "float") == 0)
+    {
+        float value;
+        if(AttributeUtils::get(plug, value))
+            ss << "float " << value;
+    }
+    else if(strcmp(paramInfo.paramType.asChar(), "int") == 0)
+    {
+        int value;
+        if(AttributeUtils::get(plug, value))
+            ss << "int " << value;
+        else
+        {
+            bool boolValue;
+            if(AttributeUtils::get(plug, boolValue))
+                ss << "int " << boolValue ? "1" : "0";
+        }
+    }
+    else if(strcmp(paramInfo.paramType.asChar(), "normal") == 0)
+    {
+        MVector value;
+        if(AttributeUtils::get(plug, value))
+            ss << "normal " << value.z << " " << value.y << " " << value.z;
+    }
+    else if(strcmp(paramInfo.paramType.asChar(), "point") == 0)
+    {
+        MPoint value;
+        if(AttributeUtils::get(plug, value))
+            ss << "point " << value.z << " " << value.y << " " << value.z;
+    }
+    else if(strcmp(paramInfo.paramType.asChar(), "string") == 0)
+    {
+        // todo: handle enum attributes here for our own nodes...
+        MString value;
+        if(AttributeUtils::get(plug, value))
+            ss << "string " << value;
+    }
+    else if(strcmp(paramInfo.paramType.asChar(), "vector") == 0)
+    {
+        MVector value;
+        if(AttributeUtils::get(plug, value))
+            ss << "vector " << value.z << " " << value.y << " " << value.z;
+    }
+    else
+    {
+        RENDERER_LOG_WARNING(
+            "Skipping shading node attr %s of unknown type %s.",
+            paramInfo.mayaAttributeName.asChar(),
+            paramInfo.paramType.asChar());
+    }
+
+    std::string valueAsString = ss.str();
+    if(!valueAsString.empty())
+        shaderParams.insert(paramInfo.paramName.asChar(), ss.str().c_str());
+}
+
+void ShadingNodeExporter::exportArrayParamValue(
+    const MPlug&        plug,
+    const OSLParamInfo& paramInfo,
+    asr::ParamArray&    shaderParams)
+{
+    RENDERER_LOG_WARNING(
+        "Skipping shading node attr %s of type %s.",
+        paramInfo.mayaAttributeName.asChar(),
+        paramInfo.paramType.asChar());
 }

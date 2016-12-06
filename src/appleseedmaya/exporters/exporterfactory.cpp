@@ -158,9 +158,7 @@ ShadingNodeExporter* NodeExporterFactory::createShadingNodeExporter(
 {
     MFnDependencyNode depNodeFn(object);
     CreateShadingNodeExporterMapType::const_iterator it = gShadingNodeExporters.find(depNodeFn.typeName());
-
-    if(it == gShadingNodeExporters.end())
-        throw NoExporterForNode();
+    assert(it != gShadingNodeExporters.end());
 
     return it->second(object, shaderGroup);
 }

@@ -94,6 +94,12 @@ set (appleseed_maya_sources
     utils.h
     version.h.in
 )
+if (XGEN_FOUND)
+    set (appleseed_maya_sources
+        ${appleseed_maya_sources}
+        # xgen sources here
+    )
+endif ()
 
 if (WITH_PYTHON_BRIDGE)
     set (appleseed_maya_sources

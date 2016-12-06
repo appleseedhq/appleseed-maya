@@ -43,12 +43,6 @@
 namespace asr = renderer;
 namespace asf = foundation;
 
-// Constants.
-const char* MayaNodeNameKey         = "maya_node_name";
-const char* MayaClassificationKey   = "maya_classification";
-const char* MayaTypeIdKey           = "maya_type_id";
-const char* MayaAttributeNameKey    = "maya_attribute_name";
-
 OSLMetadataExtractor::OSLMetadataExtractor(const foundation::Dictionary& metadata)
     : m_metadata(metadata)
 {
@@ -103,8 +97,11 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
     {
         OSLMetadataExtractor metadata(paramInfo.dictionary("metadata"));
 
-        metadata.getValue(MayaAttributeNameKey, mayaAttributeName);
-        // TODO: get more metadata here...
+        metadata.getValue("label", label);
+        metadata.getValue("widget", widget);
+
+        metadata.getValue("maya_attribute_name", mayaAttributeName);
+        metadata.getValue("maya_attribute_type", mayaAttributeType);
     }
 }
 
@@ -139,9 +136,9 @@ OSLShaderInfo::OSLShaderInfo(const asr::ShaderQuery& q)
     shaderType = q.get_shader_type();
     OSLMetadataExtractor metadata(q.get_metadata());
 
-    metadata.getValue(MayaNodeNameKey, mayaName);
-    metadata.getValue(MayaClassificationKey, mayaClassification);
-    metadata.getValue<unsigned int>(MayaTypeIdKey, typeId);
+    metadata.getValue("maya_node_name", mayaName);
+    metadata.getValue("maya_classification", mayaClassification);
+    metadata.getValue<unsigned int>("maya_type_id", typeId);
 
     paramInfo.reserve(q.get_num_params());
     for(size_t i = 0, e = q.get_num_params(); i < e; ++i)
@@ -157,4 +154,19 @@ const OSLParamInfo *OSLShaderInfo::findParam(const MString& mayaAttrName) const
     }
 
     return 0;
+}
+
+const OSLParamInfo *OSLShaderInfo::findParam(const MPlug& plug) const
+{
+    MStatus status;
+    const MString attrName =
+        plug.partialName(
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,   // use long names.
+            &status);
+    return findParam(attrName);
 }

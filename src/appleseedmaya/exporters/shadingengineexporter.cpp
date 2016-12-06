@@ -60,15 +60,19 @@ void ShadingEngineExporter::createExporters(const AppleseedSession::Services& se
     {
         MPlugArray otherPlugs;
         plug.connectedTo(otherPlugs, true, false, &status);
-
         if(otherPlugs.length() == 1)
         {
             MObject otherNode = otherPlugs[0].node();
+            depNodeFn.setObject(otherNode);
             services.createShadingNetworkExporter(
                 SurfaceNetworkContext,
                 otherNode,
                 otherPlugs[0]);
         }
+    }
+    else if(plug.numConnectedChildren() != 0)
+    {
+        RENDERER_LOG_WARNING("Unsupported component connection to shading engine.");
     }
 }
 
