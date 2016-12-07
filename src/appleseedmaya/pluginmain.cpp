@@ -52,26 +52,6 @@
 // Must be last to avoid conflicts with symbols defined in X headers.
 #include "appleseedmaya/envlightnode.h"
 
-
-// Utility functions.
-namespace
-{
-
-MStatus executePythonCommand(const MString& cmd)
-{
-    return MGlobal::executePythonCommand(
-        cmd,
-#ifndef NDEBUG
-        true,   // show output in script editor in debug mode.
-#else
-        false,   // do not show output in script editor in release mode.
-#endif
-        false
-    );
-}
-
-} // unnamed
-
 APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
 {
     MFnPlugin fnPlugin(
@@ -124,22 +104,21 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         "appleseedMaya: failed to register render command");
 
     // Make sure that the modules we need can be imported...
-    status = executePythonCommand("import appleseed");
+    status = MGlobal::executePythonCommand("import appleseed", false, false);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: failed to import required python modules");
 
-    status = executePythonCommand("import appleseedMaya");
+    status = MGlobal::executePythonCommand("import appleseedMaya", false, false);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: failed to import required python modules");
 
-    status = executePythonCommand("import appleseedMaya.register; appleseedMaya.register.register()");
+    status = MGlobal::executePythonCommand("import appleseedMaya.register; appleseedMaya.register.register()", false, false);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: failed to initialize renderer");
 
-    MGlobal::displayInfo("appleseedMaya: Registering shading nodes...");
     status = ShadingNodeRegistry::registerShadingNodes(plugin);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
@@ -194,8 +173,7 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         "appleseedMaya: failed to initialize python bridge");
 #endif
 
-    MGlobal::displayInfo("appleseedMaya: Registration done!");
-
+    RENDERER_LOG_INFO("Registration done!");
     return status;
 }
 
@@ -266,7 +244,7 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to deregister appleseed translator");
 
-    status = MGlobal::executePythonCommand("import appleseedMaya.register; appleseedMaya.register.unregister()", true, false);
+    status = MGlobal::executePythonCommand("import appleseedMaya.register; appleseedMaya.register.unregister()", false, false);
     APPLESEED_MAYA_CHECK_MSTATUS_MSG(
         status,
         "appleseedMaya: failed to uninitialize render");
@@ -275,6 +253,8 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: failed to uninitialize logger");
+
+    RENDERER_LOG_INFO("Unregister done!");
 
     return status;
 }

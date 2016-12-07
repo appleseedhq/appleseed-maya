@@ -30,6 +30,7 @@
 #define APPLESEED_MAYA_ATTRIBUTE_UTILS_H
 
 // Maya headers.
+#include <maya/MAngle.h>
 #include <maya/MColor.h>
 #include <maya/MFnDependencyNode.h>
 #include <maya/MMatrix.h>
@@ -54,6 +55,7 @@ MStatus get(const MPlug& plug, T& value)
     return plug.getValue(value);
 }
 
+MStatus get(const MPlug& plug, MAngle& value);
 MStatus get(const MPlug& plug, MColor& value);
 MStatus get(const MPlug& plug, MPoint& value);
 MStatus get(const MPlug& plug, MVector& value);

@@ -26,24 +26,13 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXCEPTIONS_H
-#define APPLESEED_MAYA_EXCEPTIONS_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_FWD_H
+#define APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_FWD_H
 
-// Standard headers.
-#include <exception>
+// Boost headers.
+#include "boost/shared_ptr.hpp"
 
-struct AppleseedMayaException
-{
-};
+class ShadingNodeExporter;
+typedef boost::shared_ptr<ShadingNodeExporter> ShadingNodeExporterPtr;
 
-struct NoExporterForNode
-  : public AppleseedMayaException
-{
-};
-
-struct UnknownShadingNode
-  : public NoExporterForNode
-{
-};
-
-#endif  // !APPLESEED_MAYA_EXCEPTIONS_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_FWD_H

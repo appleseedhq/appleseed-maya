@@ -33,29 +33,14 @@
 #include <maya/MStatus.h>
 #include <maya/MString.h>
 
-
-//
-// Simple logging. For now a placeholder for something better.
-// Todo: check if we can reuse appleseed's logging code somehow.
-//
+// appleseed.renderer headers.
+#include "renderer/api/log.h"
 
 namespace Logger
 {
 
 MStatus initialize();
 MStatus uninitialize();
-
-void debug(const char *msg);
-void debug(const MString& msg);
-
-void info(const char *msg);
-void info(const MString& msg);
-
-void warning(const char *msg);
-void warning(const MString& msg);
-
-void error(const char *msg);
-void error(const MString& msg);
 
 } // namespace Logger
 

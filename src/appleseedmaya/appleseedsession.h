@@ -33,12 +33,15 @@
 #include<set>
 
 // Maya headers.
+#include <maya/MObject.h>
+#include <maya/MPlug.h>
 #include <maya/MStatus.h>
 #include <maya/MString.h>
 
 // appleseed.maya headers.
+#include "appleseedmaya/exporters/shadingengineexporterfwd.h"
+#include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
 #include "appleseedmaya/utils.h"
-
 
 struct MotionBlurTimes
 {
@@ -48,7 +51,6 @@ struct MotionBlurTimes
 
     std::set<float> m_allTimes;
 };
-
 
 namespace AppleseedSession
 {
@@ -71,6 +73,9 @@ struct Options
         , m_height(-1)
         , m_selectionOnly(false)
         , m_sequence(false)
+        , m_firstFrame(1)
+        , m_lastFrame(1)
+        , m_frameStep(1)
     {
     }
 
@@ -90,25 +95,42 @@ struct Options
     bool m_sequence;
     int m_firstFrame;
     int m_lastFrame;
+    int m_frameStep;
+};
+
+class Services
+  : public NonCopyable
+{
+  public:
+
+    virtual ~Services();
+
+    virtual ShadingEngineExporterPtr createShadingEngineExporter(const MObject& object) const = 0;
+
+    virtual ShadingNetworkExporterPtr createShadingNetworkExporter(
+        const ShadingNetworkContext   context,
+        const MObject&                object,
+        const MPlug&                  outputPlug) const = 0;
+
+  protected:
+
+    Services();
 };
 
 void beginProjectExport(
     const MString& fileName,
     const Options& options);
 
-void endProjectExport();
-
 void beginFinalRender(
     const Options& options);
-
-void endFinalRender();
 
 void beginProgressiveRender(
     const Options& options);
 
-void endProgressiveRender();
+void endSession();
 
 SessionMode sessionMode();
+
 const Options& options();
 
 } // namespace AppleseedSession.

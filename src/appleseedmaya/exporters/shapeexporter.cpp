@@ -32,7 +32,6 @@
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 
-
 namespace asf = foundation;
 namespace asr = renderer;
 
@@ -48,11 +47,6 @@ ShapeExporter::ShapeExporter(
 const asr::TransformSequence& ShapeExporter::transformSequence() const
 {
     return m_transformSequence;
-}
-
-bool ShapeExporter::supportsInstancing() const
-{
-    return true;
 }
 
 void ShapeExporter::instanceCreated() const

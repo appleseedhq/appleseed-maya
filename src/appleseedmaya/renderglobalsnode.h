@@ -34,6 +34,8 @@
 #include <maya/MPxNode.h>
 #include <maya/MTypeId.h>
 
+// Forward declarations.
+namespace renderer { class Project; }
 
 class RenderGlobalsNode
   : public MPxNode
@@ -46,6 +48,10 @@ class RenderGlobalsNode
     static MStatus initialize();
 
     virtual MStatus compute(const MPlug& plug, MDataBlock& dataBlock);
+
+    static void applyGlobalsToProject(
+      const MObject&      globals,
+      renderer::Project&  project);
 
   private:
     // Attributes (same options as appleseed.max).

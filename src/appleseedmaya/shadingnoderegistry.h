@@ -44,22 +44,20 @@
 #include "appleseedmaya/shadingnodemetadata.h"
 #include "appleseedmaya/utils.h"
 
-
 //
 // ShadingNodeRegistry.
 //
 
-class ShadingNodeRegistry
-  : NonCopyable
+namespace ShadingNodeRegistry
 {
-  public:
+    MStatus registerShadingNodes(MObject plugin);
+    MStatus unregisterShadingNodes(MObject plugin);
 
-    static MStatus registerShadingNodes(MObject plugin);
-    static MStatus unregisterShadingNodes(MObject plugin);
+    void getShaderNodeNames(MStringArray& nodeNames);
 
-    static void getShaderNodeNames(MStringArray& nodeNames);
+    const OSLShaderInfo *getShaderInfo(const MString& nodeName);
 
-    static const OSLShaderInfo *getShaderInfo(const MString& nodeName);
-};
+    bool isShaderSupported(const MString& nodeName);
+} // namespace ShadingNodeRegistry
 
 #endif  // !APPLESEED_MAYA_SHADING_NODE_REGISTRY_H

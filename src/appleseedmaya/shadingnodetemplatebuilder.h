@@ -39,10 +39,10 @@
 // Forward declarations.
 class OSLShaderInfo;
 
-
 //
 // ShadingNodeTemplateBuilder.
-// Builds a Mel template for a shading node from shaders metadata.
+//
+//  Builds a Mel template for a shading node from shaders metadata.
 //
 
 class ShadingNodeTemplateBuilder

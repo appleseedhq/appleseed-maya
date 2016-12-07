@@ -39,7 +39,6 @@
 // appleseed.maya headers.
 #include <appleseedmaya/shadingnoderegistry.h>
 
-
 ShadingNodeTemplateBuilder::ShadingNodeTemplateBuilder(const OSLShaderInfo& shaderInfo)
 {
     std::stringstream ss;

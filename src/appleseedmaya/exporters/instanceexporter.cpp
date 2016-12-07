@@ -51,11 +51,6 @@ InstanceExporter::InstanceExporter(
     master.instanceCreated();
 }
 
-bool InstanceExporter::supportsInstancing() const
-{
-    return false;
-}
-
 void InstanceExporter::flushEntity()
 {
     const MString assemblyName = m_masterShapeName + MString("_assembly");

@@ -37,76 +37,76 @@
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/exporterfactory.h"
-
-
 namespace asf = foundation;
 namespace asr = renderer;
 
-void ShadingEngineExporter::registerExporter()
-{
-    NodeExporterFactory::registerMPxNodeExporter("shadingEngine", &ShadingEngineExporter::create);
-}
-
-MPxNodeExporter *ShadingEngineExporter::create(
-    const MObject&                  object,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
-{
-    return new ShadingEngineExporter(object, project, sessionMode);
-}
-
 ShadingEngineExporter::ShadingEngineExporter(
     const MObject&                  object,
-    asr::Project&                   project,
+    asr::Assembly&                  mainAssembly,
     AppleseedSession::SessionMode   sessionMode)
-  : MPxNodeExporter(object, project, sessionMode)
+  : m_object(object)
+  , m_mainAssembly(mainAssembly)
+  , m_sessionMode(sessionMode)
 {
 }
 
-void ShadingEngineExporter::collectDependencyNodesToExport(MObjectArray& nodes)
+void ShadingEngineExporter::createExporters(const AppleseedSession::Services& services)
 {
-    MFnDependencyNode depNodeFn(node());
+    MFnDependencyNode depNodeFn(m_object);
 
     MStatus status;
     MPlug plug = depNodeFn.findPlug("surfaceShader", &status);
-
     if(plug.isConnected())
     {
         MPlugArray otherPlugs;
         plug.connectedTo(otherPlugs, true, false, &status);
-
         if(otherPlugs.length() == 1)
         {
             MObject otherNode = otherPlugs[0].node();
-            nodes.append(otherPlugs[0].node());
-
-            MFnDependencyNode otherDepNodeFn(otherNode);
-            MString shaderGroupName = otherDepNodeFn.name() + MString("_shader_group");
-            m_materialParams.insert(
-                "osl_surface",
-                shaderGroupName.asChar());
+            depNodeFn.setObject(otherNode);
+            services.createShadingNetworkExporter(
+                SurfaceNetworkContext,
+                otherNode,
+                otherPlugs[0]);
         }
+    }
+    else if(plug.numConnectedChildren() != 0)
+    {
+        RENDERER_LOG_WARNING("Unsupported component connection to shading engine.");
     }
 }
 
 void ShadingEngineExporter::createEntity(const AppleseedSession::Options& options)
 {
-    MString surfaceShaderName = appleseedName() + MString("_surface_shader");
+    MFnDependencyNode depNodeFn(m_object);
+    const MString appleseedName = depNodeFn.name();
+
+    MString surfaceShaderName = appleseedName + MString("_surface_shader");
+    asr::ParamArray params;
     m_surfaceShader.reset(
         asr::PhysicalSurfaceShaderFactory().create(
             surfaceShaderName.asChar(),
-            asr::ParamArray()));
+            params));
+    params.clear();
 
-    MString materialName = appleseedName() + MString("_material");
-    m_materialParams.insert("surface_shader", surfaceShaderName.asChar());
+    MString materialName = appleseedName + MString("_material");
+    params.insert("surface_shader", surfaceShaderName.asChar());
     m_material.reset(
-        asr::OSLMaterialFactory().create(materialName.asChar(), m_materialParams));
+        asr::OSLMaterialFactory().create(materialName.asChar(), params));
 }
 
 void ShadingEngineExporter::flushEntity()
 {
-    mainAssembly().materials().insert(m_material.release());
-    mainAssembly().surface_shaders().insert(m_surfaceShader.release());
+    /*
+    if(m_surfaceExporter)
+    {
+        m_material->get_parameters().insert(
+            "osl_surface",
+            m_surfaceExporter->shaderGroupName().asChar());
+    }
+    */
+
+    m_mainAssembly.materials().insert(m_material.release());
+    m_mainAssembly.surface_shaders().insert(m_surfaceShader.release());
 }
+

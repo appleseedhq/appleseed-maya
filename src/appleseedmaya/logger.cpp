@@ -32,57 +32,80 @@
 // Standard headers.
 #include <iostream>
 
+// Maya headers.
+#include <maya/MGlobal.h>
+
+// appleseed.foundation headers.
+#include "foundation/utility/log.h"
+#include "foundation/utility/string.h"
+
+namespace asf = foundation;
+namespace asr = renderer;
+
 namespace Logger
 {
+namespace
+{
+
+class LogTarget
+  : public asf::ILogTarget
+{
+  public:
+    virtual void release()
+    {
+        delete this;
+    }
+
+    virtual void write(
+        const asf::LogMessage::Category  category,
+        const char*                      file,
+        const size_t                     line,
+        const char*                      header,
+        const char*                      message)
+    {
+        switch (category)
+        {
+            case asf::LogMessage::Debug:
+                MGlobal::displayInfo(MString("[Debug]") + MString(message));
+            break;
+
+            case asf::LogMessage::Info:
+                MGlobal::displayInfo(message);
+            break;
+
+            case asf::LogMessage::Warning:
+                MGlobal::displayWarning(message);
+            break;
+
+            case asf::LogMessage::Error:
+            case asf::LogMessage::Fatal:
+            default:
+                MGlobal::displayError(message);
+            break;
+        }
+    }
+};
+
+LogTarget gLogTarget;
+
+} // unnamed namespace.
 
 MStatus initialize()
 {
+    asr::global_logger().add_target(&gLogTarget);
+
+#ifndef NDEBUG
+    // while debugging we want all output...
+    asr::global_logger().set_verbosity_level(asf::LogMessage::Debug);
+#endif
+
     return MS::kSuccess;
 }
 
 MStatus uninitialize()
 {
+    asr::global_logger().remove_target(&gLogTarget);
     return MS::kSuccess;
-}
-
-void debug(const char *msg)
-{
-    std::cout << "Debug: " << msg << std::endl;
-}
-
-void debug(const MString& msg)
-{
-    debug(msg.asChar());
-}
-
-void info(const char *msg)
-{
-    std::cout << "Info: " << msg << std::endl;
-}
-
-void info(const MString& msg)
-{
-    info(msg.asChar());
-}
-
-void warning(const char *msg)
-{
-    std::cout << "Warning: " << msg << std::endl;
-}
-
-void warning(const MString& msg)
-{
-    warning(msg.asChar());
-}
-
-void error(const char *msg)
-{
-    std::cout << "Error: " << msg << std::endl;
-}
-
-void error(const MString& msg)
-{
-    error(msg.asChar());
 }
 
 } // namespace Logger.

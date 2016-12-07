@@ -30,16 +30,21 @@
 #include "appleseedmaya/renderglobalsnode.h"
 
 // Maya headers.
+#include <maya/MFnDependencyNode.h>
 #include <maya/MFnMessageAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 
 // appleseed.renderer headers.
+#include "renderer/api/project.h"
 #include "renderer/api/utility.h"
 
 // appleseed.maya headers.
+#include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/typeids.h"
 
+namespace asr = renderer;
+namespace asf = foundation;
 
 const MString RenderGlobalsNode::nodeName("appleseedRenderGlobals");
 const MTypeId RenderGlobalsNode::id(RenderGlobalsNodeTypeId);
@@ -62,7 +67,7 @@ void* RenderGlobalsNode::creator()
 MStatus RenderGlobalsNode::initialize()
 {
     MFnNumericAttribute numAttrFn;
-	MFnMessageAttribute msgAttrFn;
+    MFnMessageAttribute msgAttrFn;
 
     MStatus status;
 
@@ -159,7 +164,7 @@ MStatus RenderGlobalsNode::initialize()
         "appleseedMaya: Failed to add render globals threads attribute");
 
     // Environment light connection.
-	m_envLightNode = msgAttrFn.create("envLight", "env", &status);
+    m_envLightNode = msgAttrFn.create("envLight", "env", &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: Failed to create render globals envLight attribute");
@@ -175,4 +180,76 @@ MStatus RenderGlobalsNode::initialize()
 MStatus RenderGlobalsNode::compute(const MPlug& plug, MDataBlock& dataBlock)
 {
     return MS::kSuccess;
+}
+
+void RenderGlobalsNode::applyGlobalsToProject(
+  const MObject&    globals,
+  asr::Project&     project)
+{
+    asr::ParamArray& finalParams = project.configurations().get_by_name("final")->get_parameters();
+    asr::ParamArray& iprParams   = project.configurations().get_by_name("interactive")->get_parameters();
+
+    MFnDependencyNode depNodeFn(globals);
+
+    int samples;
+    if(AttributeUtils::get(depNodeFn, "samples", samples))
+    {
+        finalParams.insert_path("uniform_pixel_renderer.samples", samples);
+
+        if (samples == 1)
+            finalParams.insert_path("uniform_pixel_renderer.force_antialiasing", true);
+    }
+
+    int passes;
+    if(AttributeUtils::get(depNodeFn, "passes", passes))
+    {
+        finalParams.insert_path("generic_frame_renderer.passes", passes);
+        finalParams.insert_path("shading_result_framebuffer", passes == 1 ? "ephemeral" : "permanent");
+    }
+
+    int tileSize;
+    if(AttributeUtils::get(depNodeFn, "tileSize", tileSize))
+    {
+        // TODO: add this.
+    }
+
+    int bounces = 0;
+    AttributeUtils::get(depNodeFn, "bounces", bounces);
+
+    bool gi;
+    if(AttributeUtils::get(depNodeFn, "gi", gi))
+    {
+        if (gi)
+        {
+            finalParams.insert_path("pt.max_path_length", bounces == 0 ? 0 : bounces + 1);
+            iprParams.insert_path("pt.max_path_length", bounces == 0 ? 0 : bounces + 1);
+        }
+        else
+        {
+            finalParams.insert_path("pt.max_path_length", 1);
+            iprParams.insert_path("pt.max_path_length", 1);
+        }
+    }
+
+    bool caustics;
+    if(AttributeUtils::get(depNodeFn, "caustics", caustics))
+    {
+        finalParams.insert_path("pt.enable_caustics", caustics);
+        iprParams.insert_path("pt.enable_caustics", caustics);
+    }
+
+    int threads;
+    if(AttributeUtils::get(depNodeFn, "threads", threads))
+    {
+        if (threads == 0)
+        {
+            finalParams.insert_path("rendering_threads", "auto");
+            iprParams.insert_path("rendering_threads", "auto");
+        }
+        else
+        {
+            finalParams.insert_path("rendering_threads", threads);
+            iprParams.insert_path("rendering_threads", threads);
+        }
+    }
 }

@@ -35,7 +35,6 @@
 // Forward declarations.
 class OSLShaderInfo;
 
-
 class ShadingNode
   : public MPxNode
 {

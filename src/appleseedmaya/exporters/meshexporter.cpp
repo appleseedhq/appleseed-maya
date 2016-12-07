@@ -30,7 +30,6 @@
 #include "appleseedmaya/exporters/meshexporter.h"
 
 // Standard headers.
-#include <iostream>
 #include <sstream>
 
 // Boost headers.
@@ -47,7 +46,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/exporterfactory.h"
-
+#include "appleseedmaya/logger.h"
 
 namespace bfs = boost::filesystem;
 namespace asf = foundation;
@@ -145,10 +144,9 @@ MeshExporter::MeshExporter(
 {
 }
 
+/*
 void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
 {
-    std::cout << "Collecting MPxNodes for dag node " << appleseedName() << std::endl;
-
     MObjectArray shadingEngineNodes;
 
     MStatus status;
@@ -163,7 +161,9 @@ void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
 
     if(status == MS::kFailure)
     {
-        std::cout << "No shading engines connected to shape " << appleseedName() << std::endl;
+        RENDERER_LOG_WARNING(
+            "No shading engines connected to shape %s",
+            appleseedName().asChar());
         return;
     }
 
@@ -175,14 +175,18 @@ void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
     {
         MObject shadingEngine = it.thisNode();
         MFnDependencyNode depNodeFn(shadingEngine);
-        std::cout << "Collected shading engine " << depNodeFn.name() << std::endl;
+
+        RENDERER_LOG_DEBUG(
+            "Collected shading engine %s",
+            depNodeFn.name().asChar());
         shadingEngineNodes.append(shadingEngine);
     }
 
     if(shadingEngineNodes.length() > 1)
     {
-        std::cout << "Per face assignments not supported yet." << std::endl;
-        std::cout << "Skipping material assignments" << std::endl;
+        RENDERER_LOG_ERROR(
+            "Mesh %s has per face material assignments.",
+            appleseedName().asChar());
         return;
     }
 
@@ -191,6 +195,7 @@ void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
     m_materialMappings.insert("default", materialName.asChar());
     nodes.append(shadingEngineNodes[0]);
 }
+*/
 
 void MeshExporter::createEntity(const AppleseedSession::Options& options)
 {
@@ -217,6 +222,7 @@ void MeshExporter::createEntity(const AppleseedSession::Options& options)
     // For now, set to false...
     m_exportUVs = false;
     m_exportNormals = false;
+    m_exportTangents = false;
 
     fillTopology();
 }
@@ -239,8 +245,16 @@ void MeshExporter::exportShapeMotionStep(float time)
         {
             if(!asr::MeshObjectWriter::write(*m_mesh, "mesh", p.string().c_str()))
             {
-                std::cout << "Couldn't export mesh file for object " << m_mesh->get_name() << std::endl;
+                RENDERER_LOG_ERROR(
+                    "Couldn't export mesh file for object %s.",
+                    m_mesh->get_name());
             }
+        }
+        else
+        {
+            RENDERER_LOG_INFO(
+                "Mesh file for object %s already exists.",
+                m_mesh->get_name());
         }
 
         m_fileNames.push_back(fileName);
@@ -284,13 +298,13 @@ void MeshExporter::flushEntity()
         objectName += ".mesh";
     }
 
-    std::cout << "Flushing mesh: " << m_mesh->get_name() << std::endl;
+    RENDERER_LOG_DEBUG("Flushing mesh object %s", m_mesh->get_name());
     if(m_objectAssembly.get())
         m_objectAssembly->objects().insert(m_mesh.releaseAs<asr::Object>());
     else
         mainAssembly().objects().insert(m_mesh.releaseAs<asr::Object>());
 
-    std::cout << "Flushing object instance: " << m_mesh->get_name() << std::endl;
+    RENDERER_LOG_DEBUG("Flushing object instance %s", m_mesh->get_name());
     createObjectInstance(objectName);
 }
 
@@ -310,12 +324,11 @@ void MeshExporter::fillTopology()
     MIntArray triangleVertices;
     meshFn.getTriangles(triangleCounts, triangleVertices);
 
-    const size_t numFaces = triangleCounts.length();
-    const size_t numTriangles = triangleVertices.length() / 3;
-    m_mesh->reserve_triangles(numTriangles);
+    // Triangle buffer.
+    std::vector<asr::Triangle> triangles;
 
     size_t vertexIndex = 0;
-    for(size_t faceIndex = 0; faceIndex < numFaces; ++faceIndex)
+    for(size_t faceIndex = 0; faceIndex < triangleCounts.length(); ++faceIndex)
     {
         const size_t numTrianglesPerFace = triangleCounts[faceIndex];
         for(int triangleIndex = 0; triangleIndex < numTrianglesPerFace; ++triangleIndex)
@@ -323,7 +336,8 @@ void MeshExporter::fillTopology()
             asr::Triangle triangle(
                 triangleVertices[vertexIndex],
                 triangleVertices[vertexIndex + 1],
-                triangleVertices[vertexIndex + 2]);
+                triangleVertices[vertexIndex + 2],
+                0);
 
             if(m_exportUVs)
             {
@@ -335,12 +349,23 @@ void MeshExporter::fillTopology()
                 // TODO: set normal indices here...
             }
 
+            if(m_exportTangents)
+            {
+                // TODO: set tangent indices here...
+            }
+
             // TODO: get face material index here...
 
+            triangles.push_back(triangle);
             m_mesh->push_triangle(triangle);
             vertexIndex += 3;
         }
     }
+
+    // Copy triangles to the mesh.
+    m_mesh->reserve_triangles(triangles.size());
+    for(size_t i = 0, e = triangles.size(); i < e; ++i)
+        m_mesh->push_triangle(triangles[i]);
 }
 
 void MeshExporter::exportGeometry()
@@ -365,6 +390,12 @@ void MeshExporter::exportGeometry()
     if(m_exportNormals)
     {
         // m_mesh->reserve_vertex_normals(meshFn.numNormals());
+        // ...
+    }
+
+    if(m_exportTangents)
+    {
+        // m_mesh->reserve_vertex_tangents(meshFn.numTangents());
         // ...
     }
 }

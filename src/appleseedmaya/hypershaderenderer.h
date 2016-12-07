@@ -32,7 +32,6 @@
 // Maya headers.
 #include <maya/MPxRenderer.h>
 
-
 class HypershadeRenderer
   : public MPxRenderer
 {

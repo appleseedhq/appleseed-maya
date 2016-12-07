@@ -117,6 +117,10 @@ add_definitions (-DREQUIRE_IOSTREAM)
 add_definitions (-DAPPLESEED_WITH_OIIO)
 add_definitions (-DAPPLESEED_WITH_OSL)
 
+if (XGEN_FOUND)
+    add_definitions (-DAPPLESEED_MAYA_WITH_XGEN)
+endif ()
+
 if (WITH_PYTHON_BRIDGE)
     add_definitions (-DAPPLESEED_MAYA_WITH_PYTHON_BRIDGE)
 endif ()

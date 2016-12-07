@@ -29,35 +29,57 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_H
 
+// Forward declaration header.
+#include "dagnodeexporterfwd.h"
+
 // Maya headers.
 #include <maya/MDagPath.h>
 #include <maya/MMatrix.h>
+#include <maya/MObject.h>
+#include <maya/MObjectArray.h>
+#include <maya/MString.h>
 
 // appleseed.foundation headers.
 #include "foundation/math/matrix.h"
 
 // appleseed.maya headers.
-#include "appleseedmaya/exporters/mpxnodeexporter.h"
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/utils.h"
 
 // Forward declarations.
+namespace renderer { class Assembly; }
+namespace renderer { class Project; }
+namespace renderer { class Scene; }
 class MotionBlurTimes;
 
-
 class DagNodeExporter
-  : public MPxNodeExporter
+  : public NonCopyable
 {
   public:
 
-    virtual MString appleseedName() const;
+    // Destructor.
+    virtual ~DagNodeExporter();
 
-    // Returns true if the entity created by this exporter can be motion blurred.
+    // Return the name of the entity in the appleseed project.
+    MString appleseedName() const;
+
+    // Return true if the entity created by this exporter can be motion blurred.
     virtual bool supportsMotionBlur() const;
+
+    // Create any extra exporter needed by this exporter (shading engines, ...).
+    virtual void createExporters(const AppleseedSession::Services& services);
+
+    // Create appleseed entities.
+    virtual void createEntity(const AppleseedSession::Options& options) = 0;
 
     // Motion blur.
     virtual void collectMotionBlurSteps(MotionBlurTimes& motionTimes) const;
     virtual void exportCameraMotionStep(float time);
     virtual void exportTransformMotionStep(float time);
     virtual void exportShapeMotionStep(float time);
+
+    // Flush entities to the renderer.
+    virtual void flushEntity() = 0;
 
   protected:
 
@@ -66,14 +88,34 @@ class DagNodeExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
+    // Return the Maya dependency node.
+    MObject node() const;
+
+    // Return the Maya dag path.
     const MDagPath& dagPath() const;
 
+    // Return the session mode.
+    AppleseedSession::SessionMode sessionMode() const;
+
+    // Return a reference to the appleseed project.
+    renderer::Project& project();
+
+    // Return a reference to the appleseed scene.
+    renderer::Scene& scene();
+
+    // Return a reference to the appleseed main assembly.
+    renderer::Assembly& mainAssembly();
+
+    // Convert a Maya matrix to an appleseed matrix.
     foundation::Matrix4d convert(const MMatrix& m) const;
 
   private:
-    MDagPath m_path;
-};
 
-typedef boost::shared_ptr<DagNodeExporter> DagNodeExporterPtr;
+    MDagPath                      m_path;
+    AppleseedSession::SessionMode m_sessionMode;
+    renderer::Project&            m_project;
+    renderer::Scene&              m_scene;
+    renderer::Assembly&           m_mainAssembly;
+};
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_H

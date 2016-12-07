@@ -34,6 +34,7 @@
 #include <vector>
 
 // Maya headers.
+#include <maya/MPlug.h>
 #include <maya/MString.h>
 
 // appleseed.foundation headers.
@@ -44,7 +45,6 @@
 
 // Forward declarations.
 namespace renderer { class ShaderQuery; }
-
 
 class OSLMetadataExtractor
   : NonCopyable
@@ -91,11 +91,12 @@ class OSLParamInfo
     int arrayLen;
 
     // Standard metadata info.
-
-    // More standard metadata options...
+    MString label;
+    MString widget;
 
     // appleseedMaya custom metadata.
     MString mayaAttributeName;
+    MString mayaAttributeType;
 };
 
 std::ostream& operator<<(std::ostream& os, const OSLParamInfo& paramInfo);
@@ -108,6 +109,7 @@ class OSLShaderInfo
     explicit OSLShaderInfo(const renderer::ShaderQuery& q);
 
     const OSLParamInfo *findParam(const MString& mayaAttrName) const;
+    const OSLParamInfo *findParam(const MPlug& plug) const;
 
     MString shaderName;
     MString shaderType;

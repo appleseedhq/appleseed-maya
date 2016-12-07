@@ -45,7 +45,6 @@
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 
-
 namespace asf = foundation;
 namespace asr = renderer;
 
@@ -132,15 +131,14 @@ void LightExporter::createEntity(const AppleseedSession::Options& options)
         lightParams.insert("intensity", colorName.asChar());
         lightParams.insert("intensity_multiplier", intensity);
 
-        // TODO: use MAngle to do the right thing and remove
-        // deg / rad conversions...
-        float coneAngle = asf::deg_to_rad(20.0f);
+        MAngle coneAngle(20.0f, MAngle::kDegrees);
         AttributeUtils::get(node(), "coneAngle", coneAngle);
-        lightParams.insert("inner_angle", asf::rad_to_deg(coneAngle));
+        lightParams.insert("inner_angle", coneAngle.asDegrees());
 
-        float penumbraAngle = asf::deg_to_rad(5.0f);
+        MAngle penumbraAngle(5.0f, MAngle::kDegrees);
         AttributeUtils::get(node(), "penumbraAngle", penumbraAngle);
-        lightParams.insert("outer_angle", asf::rad_to_deg(coneAngle + 2.0 * penumbraAngle));
+        const float outerAngle = coneAngle.asDegrees() + 2.0 * penumbraAngle.asDegrees();
+        lightParams.insert("outer_angle", outerAngle);
     }
 
     m_light = lightFactory->create(appleseedName().asChar(), lightParams);

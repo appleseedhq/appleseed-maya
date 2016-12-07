@@ -37,7 +37,6 @@
 class MFileObject;
 class MStatus;
 
-
 class AppleseedTranslator
   : public MPxFileTranslator
 {

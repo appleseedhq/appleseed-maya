@@ -1,26 +1,55 @@
 
 General:
 
-    ☐ Logging.
+    ✔ Logging. @done (27/11/2016, 23:02:01)
+    ☐ More error handling code.
+    ☐ Extension attributes.
+
+Nodes:
+
+    ☐ Environment nodes.
+
+Render Globals:
+
+    ☐ Lighting samples.
+    ☐ Diagnostic surface shaders.
 
 Project Export:
 
-    ☐ Export render globals.
+    ✔ Export render globals. @done (27/11/2016, 23:01:48)
     ☐ Camera export.
     ☐ Light export.
+    ☐ Area light export.
     ☐ Environment export.
     ☐ Mesh export.
     ☐ Shading network export.
+    ☐ Image planes.
+
+    ☐ Motion blur.
+
+Translator:
+
+    ☐ Export sequences.
 
 Rendering:
 
+    ☐ Connect render callbacks to render commands.
+    ☐ Renderview tile callback.
+
 Shading:
 
-    ☐ Custom shaders.
+    ☐ Area light shader.
+    ☐ Adaptor OSL shaders.
     ☐ Place2d node.
     ☐ Place3d node.
 
 User Interface:
 
-    ☐ Translator ui.
+    ✔ Translator ui. @done (27/11/2016, 23:04:10)
+    ☐ Swatch rendering.
+    ☐ Hypershade rendering.
     ☐ About dialog.
+
+Others:
+
+    ☐ Feed the llamas.

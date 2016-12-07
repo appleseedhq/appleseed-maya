@@ -26,24 +26,55 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXCEPTIONS_H
-#define APPLESEED_MAYA_EXCEPTIONS_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H
 
-// Standard headers.
-#include <exception>
+// Forward declaration header.
+#include "shadingnodeexporterfwd.h"
 
-struct AppleseedMayaException
+// Maya headers.
+#include <maya/MObject.h>
+#include <maya/MPlug.h>
+#include <maya/MString.h>
+
+// appleseed.maya headers.
+#include "appleseedmaya/shadingnoderegistry.h"
+#include "appleseedmaya/utils.h"
+
+// Forward declarations.
+namespace renderer { class ShaderGroup; }
+
+class ShadingNodeExporter
+  : public NonCopyable
 {
+  public:
+
+    static void registerExporters();
+
+    static ShadingNodeExporter *create(
+        const MObject&          object,
+        renderer::ShaderGroup&  shaderGroup);
+
+    virtual void createShader();
+
+  protected:
+
+    ShadingNodeExporter(
+        const MObject&          object,
+        renderer::ShaderGroup&  shaderGroup);
+
+    void exportParamValue(
+      const MPlug&              plug,
+      const OSLParamInfo&       paramInfo,
+      renderer::ParamArray&     shaderParams);
+
+    void exportArrayParamValue(
+      const MPlug&              plug,
+      const OSLParamInfo&       paramInfo,
+      renderer::ParamArray&     shaderParams);
+
+    MObject                 m_object;
+    renderer::ShaderGroup&  m_shaderGroup;
 };
 
-struct NoExporterForNode
-  : public AppleseedMayaException
-{
-};
-
-struct UnknownShadingNode
-  : public NoExporterForNode
-{
-};
-
-#endif  // !APPLESEED_MAYA_EXCEPTIONS_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H

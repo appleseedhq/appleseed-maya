@@ -5,7 +5,7 @@
 #
 # This software is released under the MIT license.
 #
-# Copyright (c) 2016 Haggi Krey, The appleseedhq Organization
+# Copyright (c) 2016 Esteban Tovagliari, The appleseedhq Organization
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -50,6 +50,7 @@ set (appleseed_maya_sources
     exporters/envlightexporter.h
     exporters/dagnodeexporter.cpp
     exporters/dagnodeexporter.h
+    exporters/dagnodeexporterfwd.h
     exporters/exporterfactory.cpp
     exporters/exporterfactory.h
     exporters/instanceexporter.cpp
@@ -58,12 +59,15 @@ set (appleseed_maya_sources
     exporters/lightexporter.h
     exporters/meshexporter.cpp
     exporters/meshexporter.h
-    exporters/mpxnodeexporter.cpp
-    exporters/mpxnodeexporter.h
     exporters/shadingengineexporter.cpp
     exporters/shadingengineexporter.h
+    exporters/shadingengineexporterfwd.h
     exporters/shadingnetworkexporter.cpp
     exporters/shadingnetworkexporter.h
+    exporters/shadingnetworkexporterfwd.h
+    exporters/shadingnodeexporter.cpp
+    exporters/shadingnodeexporter.h
+    exporters/shadingnodeexporterfwd.h
     exporters/shapeexporter.cpp
     exporters/shapeexporter.h
     logger.cpp
@@ -90,6 +94,12 @@ set (appleseed_maya_sources
     utils.h
     version.h.in
 )
+if (XGEN_FOUND)
+    set (appleseed_maya_sources
+        ${appleseed_maya_sources}
+        # xgen sources here
+    )
+endif ()
 
 if (WITH_PYTHON_BRIDGE)
     set (appleseed_maya_sources

@@ -29,55 +29,63 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
 
+// Forward declaration header.
+#include "shadingnetworkexporterfwd.h"
+
 // Standard headers.
 #include <set>
+#include <vector>
 
 // Maya headers.
+#include <maya/MObject.h>
 #include <maya/MPlug.h>
+#include <maya/MString.h>
 
 // appleseed.renderer headers.
 #include "renderer/api/shadergroup.h"
 
 // appleseed.maya headers.
-#include "appleseedmaya/exporters/mpxnodeexporter.h"
-#include "appleseedmaya/shadingnoderegistry.h"
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/exporters/shadingnodeexporterfwd.h"
 #include "appleseedmaya/utils.h"
 
+// Forward declarations.
+namespace renderer { class Assembly; }
 
 class ShadingNetworkExporter
-  : public MPxNodeExporter
+  : public NonCopyable
 {
   public:
 
-    static void registerExporter();
+    MString shaderGroupName() const;
 
-    static MPxNodeExporter *create(
-      const MObject&                object,
-      renderer::Project&            project,
-      AppleseedSession::SessionMode sessionMode);
+    // Create appleseed entities.
+    void createEntity(const AppleseedSession::Options& options);
 
-    virtual void createEntity(const AppleseedSession::Options& options);
-
-    virtual void flushEntity();
+    // Flush entities to the renderer.
+    void flushEntity();
 
   private:
+    friend class NodeExporterFactory;
 
     ShadingNetworkExporter(
+      const ShadingNetworkContext   context,
       const MObject&                object,
-      renderer::Project&            project,
+      const MPlug&                  outputPlug,
+      renderer::Assembly&           mainAssembly,
       AppleseedSession::SessionMode sessionMode);
 
-    void createShader(const MObject& node);
+    void exportShadingNetwork();
+    void createShaderNodeExporters(const MObject& node);
 
-    void processAttribute(
-      const MPlug&          plug,
-      const OSLParamInfo&   paramInfo,
-      renderer::ParamArray& shaderParams);
-
-    void addConnections(const MObject& node);
-
-    AppleseedEntityPtr<renderer::ShaderGroup> m_shaderGroup;
-    std::set<MString, MStringCompareLess>     m_shadersExported;
+    ShadingNetworkContext                                           m_context;
+    AppleseedSession::SessionMode                                   m_sessionMode;
+    MObject                                                         m_object;
+    MPlug                                                           m_outputPlug;
+    renderer::Assembly&                                             m_mainAssembly;
+    AppleseedEntityPtr<renderer::ShaderGroup>                       m_shaderGroup;
+    std::set<MString, MStringCompareLess>                           m_nodesCreated;
+    std::vector<ShadingNodeExporterPtr>                             m_nodeExporters;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H

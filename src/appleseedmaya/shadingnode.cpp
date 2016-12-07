@@ -36,7 +36,6 @@
 // appleseed.maya headers.
 #include <appleseedmaya/shadingnoderegistry.h>
 
-
 void *ShadingNode::creator()
 {
     return new ShadingNode();
@@ -54,6 +53,8 @@ ShadingNode::ShadingNode()
 
 void ShadingNode::postConstructor()
 {
+    setMPSafe(true);
+
     m_shaderInfo = ShadingNodeRegistry::getShaderInfo(typeName());
     assert(m_shaderInfo != 0);
 
@@ -78,6 +79,7 @@ void ShadingNode::postConstructor()
 
         if(p.paramType == "color")
         {
+            //	CHECK_MSTATUS( nAttr.setUsedAsColor( true ) );
         }
         else if(p.paramType == "float")
         {
@@ -110,6 +112,11 @@ void ShadingNode::postConstructor()
 
         if(p.isOutput)
         {
+            /*
+            CHECK_MSTATUS( nAttr.setHidden( false ) );
+            CHECK_MSTATUS( nAttr.setReadable( true ) );
+            CHECK_MSTATUS( nAttr.setWritable( false ) );
+            */
         }
         else
         {

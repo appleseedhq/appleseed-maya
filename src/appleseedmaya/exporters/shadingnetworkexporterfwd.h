@@ -26,24 +26,22 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXCEPTIONS_H
-#define APPLESEED_MAYA_EXCEPTIONS_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_FWD_H
+#define APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_FWD_H
 
-// Standard headers.
-#include <exception>
+// Boost headers.
+#include "boost/shared_ptr.hpp"
 
-struct AppleseedMayaException
+enum ShadingNetworkContext
 {
+    SurfaceNetworkContext = 0,
+    // DisplacementContext,
+    // LightAttenuationContext,
+    // ...
+    NumShadingNetworkContexts
 };
 
-struct NoExporterForNode
-  : public AppleseedMayaException
-{
-};
+class ShadingNetworkExporter;
+typedef boost::shared_ptr<ShadingNetworkExporter> ShadingNetworkExporterPtr;
 
-struct UnknownShadingNode
-  : public NoExporterForNode
-{
-};
-
-#endif  // !APPLESEED_MAYA_EXCEPTIONS_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_FWD_H
