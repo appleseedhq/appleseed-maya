@@ -26,29 +26,49 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXCEPTIONS_H
-#define APPLESEED_MAYA_EXCEPTIONS_H
+#ifndef APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
+#define APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
 
 // Standard headers.
-#include <exception>
+#include <cstddef>
 
-struct AppleseedMayaException
+// appleseed.renderer headers.
+#include "renderer/api/rendering.h"
+
+// Forward declarations.
+namespace foundation    { class Tile; }
+namespace renderer      { class Frame; }
+
+class RenderViewTileCallback
+  : public renderer::ITileCallback
 {
+  public:
+
+    virtual void release();
+
+    virtual void pre_render(
+        const size_t            x,
+        const size_t            y,
+        const size_t            width,
+        const size_t            height);
+
+    virtual void post_render(
+        const renderer::Frame*  frame);
+
+    virtual void post_render_tile(
+        const renderer::Frame*  frame,
+        const size_t            tile_x,
+        const size_t            tile_y);
 };
 
-struct AppleseedSessionExportError
-  : public AppleseedMayaException
+class RenderViewTileCallbackFactory
+  : public renderer::ITileCallbackFactory
 {
+  public:
+
+    virtual void release();
+
+    virtual renderer::ITileCallback* create();
 };
 
-struct NoExporterForNode
-  : public AppleseedMayaException
-{
-};
-
-struct UnknownShadingNode
-  : public NoExporterForNode
-{
-};
-
-#endif  // !APPLESEED_MAYA_EXCEPTIONS_H
+#endif  // !APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H

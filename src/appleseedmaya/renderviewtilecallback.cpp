@@ -26,29 +26,53 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXCEPTIONS_H
-#define APPLESEED_MAYA_EXCEPTIONS_H
+// Interface header.
+#include "renderviewtilecallback.h"
 
 // Standard headers.
-#include <exception>
+#include <cassert>
 
-struct AppleseedMayaException
+// appleseed.foundation headers.
+#include "foundation/image/canvasproperties.h"
+#include "foundation/image/image.h"
+#include "foundation/image/pixel.h"
+#include "foundation/image/tile.h"
+#include "foundation/math/scalar.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/frame.h"
+#include "renderer/api/log.h"
+
+void RenderViewTileCallback::release()
 {
-};
+    delete this;
+}
 
-struct AppleseedSessionExportError
-  : public AppleseedMayaException
+void RenderViewTileCallback::pre_render(
+    const size_t            x,
+    const size_t            y,
+    const size_t            width,
+    const size_t            height)
 {
-};
+}
 
-struct NoExporterForNode
-  : public AppleseedMayaException
+void RenderViewTileCallback::post_render(const renderer::Frame* frame)
 {
-};
+}
 
-struct UnknownShadingNode
-  : public NoExporterForNode
+void RenderViewTileCallback::post_render_tile(
+    const renderer::Frame*  frame,
+    const size_t            tile_x,
+    const size_t            tile_y)
 {
-};
+}
 
-#endif  // !APPLESEED_MAYA_EXCEPTIONS_H
+void RenderViewTileCallbackFactory::release()
+{
+    delete this;
+}
+
+renderer::ITileCallback* RenderViewTileCallbackFactory::create()
+{
+    return new RenderViewTileCallback();
+}

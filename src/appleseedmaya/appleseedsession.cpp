@@ -81,6 +81,7 @@
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/renderercontroller.h"
 #include "appleseedmaya/renderglobalsnode.h"
+#include "appleseedmaya/renderviewtilecallback.h"
 #include "appleseedmaya/utils.h"
 
 namespace bfs = boost::filesystem;
@@ -90,13 +91,8 @@ namespace asr = renderer;
 namespace AppleseedSession
 {
 
-Services::Services()
-{
-}
-
-Services::~Services()
-{
-}
+Services::Services() {}
+Services::~Services() {}
 
 } // namespace AppleseedSession.
 
@@ -106,7 +102,7 @@ namespace
 struct SessionImpl
 {
     class ServicesImpl
-    : public AppleseedSession::Services
+      : public AppleseedSession::Services
     {
       public:
         ServicesImpl(SessionImpl& self)
@@ -189,7 +185,8 @@ struct SessionImpl
         {
             if(!boost::filesystem::create_directory(geomPath))
             {
-                // todo: throw something here...
+                RENDERER_LOG_ERROR("Couldn't create geometry directory. Aborting");
+                throw AppleseedSessionExportError();
             }
         }
 
@@ -273,14 +270,26 @@ struct SessionImpl
         // update the frame.
         {
             asr::ParamArray params = m_project->get_frame()->get_parameters();
-            params.insert("camera", m_options.m_camera.asChar());
 
+            // Set the camera.
+            if(m_options.m_camera.length() != 0)
+            {
+                MStatus status;
+                MSelectionList selList;
+                status = selList.add(m_options.m_camera);
+                MDagPath camera;
+                status = selList.getDagPath(0, camera);
+                params.insert("camera", camera.fullPathName().asChar());
+            }
+
+            // Set the resolution.
             std::stringstream ss;
             ss << m_options.m_width << " " << m_options.m_height;
             params.insert("resolution", ss.str().c_str());
 
             // TODO: set crop window here...
 
+            // Replace the frame.
             m_project->set_frame(asr::FrameFactory().create("beauty", params));
         }
     }
@@ -374,9 +383,6 @@ struct SessionImpl
 
     void createExporters()
     {
-        RENDERER_LOG_DEBUG("Creating default material exporter");
-        createDefaultMaterialExporter();
-
         // Create exporters for all the dag nodes in the scene.
         RENDERER_LOG_DEBUG("Creating dag node exporters");
         MDagPath path;
@@ -431,18 +437,6 @@ struct SessionImpl
         }
     }
 
-    void createDefaultMaterialExporter()
-    {
-        MObject initialShadingGroup;
-        if(!getNodeMObject("initialShadingGroup", initialShadingGroup))
-        {
-            // todo: add workaround here for Maya 2016 when the hypershade is open.
-        }
-
-        if(!initialShadingGroup.isNull())
-            m_services.createShadingEngineExporter(initialShadingGroup);
-    }
-
     void convertObjectsToInstances()
     {
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
@@ -464,6 +458,36 @@ struct SessionImpl
                 */
             //}
         }
+    }
+
+    void finalRender()
+    {
+        /*
+        // Reset the renderer controller.
+        m_rendererController->set_status(asr::IRendererController::ContinueRendering);
+
+        // Create the master renderer.
+        asr::Configuration *cfg = m_project->configurations().get_by_name("final");
+        const asr::ParamArray &params = cfg->get_parameters();
+
+        RenderViewTileCallbackFactory tileCallbackFactory;
+        m_renderer.reset( new asr::MasterRenderer(*m_project, params, m_rendererController, &tileCallbackFactory));
+        */
+    }
+
+    void progressiveRender()
+    {
+        /*
+        // Reset the renderer controller.
+        m_rendererController->set_status(asr::IRendererController::ContinueRendering);
+
+        // Create the master renderer.
+        asr::Configuration *cfg = m_project->configurations().get_by_name("interactive");
+        const asr::ParamArray &params = cfg->get_parameters();
+
+        RenderViewTileCallbackFactory tileCallbackFactory;
+        m_renderer.reset( new asr::MasterRenderer(*m_project, params, m_rendererController, &tileCallbackFactory));
+        */
     }
 
     bool writeProject() const
@@ -567,9 +591,16 @@ void beginProjectExport(
 
             MGlobal::viewFrame(frame);
             fname = asf::get_numbered_string(fname, frame);
-            gGlobalSession.reset(new SessionImpl(fname.c_str(), options));
-            gGlobalSession->exportProject();
-            gGlobalSession->writeProject();
+            try
+            {
+                gGlobalSession.reset(new SessionImpl(fname.c_str(), options));
+                gGlobalSession->exportProject();
+                gGlobalSession->writeProject();
+            }
+            catch(const AppleseedMayaException& e)
+            {
+                return;
+            }
         }
 
         computation.endComputation();
@@ -582,22 +613,38 @@ void beginProjectExport(
     }
 }
 
-void beginFinalRender(
-    const Options& options)
+void beginFinalRender(const Options& options)
 {
     assert(gGlobalSession.get() == 0);
 
     g_savedTime = MAnimControl::currentTime();
-    gGlobalSession.reset(new SessionImpl(FinalRenderSession, options));
+
+    try
+    {
+        gGlobalSession.reset(new SessionImpl(FinalRenderSession, options));
+        gGlobalSession->finalRender();
+    }
+    catch(const AppleseedMayaException& e)
+    {
+        return;
+    }
 }
 
-void beginProgressiveRender(
-    const Options& options)
+void beginProgressiveRender(const Options& options)
 {
     assert(gGlobalSession.get() == 0);
 
     g_savedTime = MAnimControl::currentTime();
-    gGlobalSession.reset(new SessionImpl(ProgressiveRenderSession, options));
+
+    try
+    {
+        gGlobalSession.reset(new SessionImpl(ProgressiveRenderSession, options));
+        gGlobalSession->progressiveRender();
+    }
+    catch(const AppleseedMayaException& e)
+    {
+        return;
+    }
 }
 
 void endSession()

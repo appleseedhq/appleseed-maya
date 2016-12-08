@@ -97,7 +97,7 @@ void ShadingNetworkExporter::exportShadingNetwork()
         m_nodeExporters[i]->createShader();
 
     for(size_t i = 0, e = m_nodeExporters.size(); i < e; ++i)
-        m_nodeExporters[i]->exportConnections();
+        exportConnections(*m_nodeExporters[i]);
 
     switch(m_context)
     {
@@ -151,6 +151,46 @@ void ShadingNetworkExporter::exportShadingNetwork()
     }
 }
 
+void ShadingNetworkExporter::exportConnections(ShadingNodeExporter& dstNodeExporter)
+{
+    MStatus status;
+    MFnDependencyNode depNodeFn(dstNodeExporter.node());
+
+    const OSLShaderInfo& shaderInfo = dstNodeExporter.getShaderInfo();
+    for(int i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
+    {
+        const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
+
+        // Skip output attributes.
+        if(paramInfo.isOutput)
+            continue;
+
+        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
+        if(!status)
+        {
+            RENDERER_LOG_WARNING(
+                "Skipping unknown attribute %s of shading node %s",
+                paramInfo.mayaAttributeName.asChar(),
+                depNodeFn.typeName().asChar());
+            continue;
+        }
+
+        if(plug.isConnected())
+        {
+        }
+
+        if(plug.isCompound() && plug.numConnectedChildren() != 0)
+        {
+            // todo: implement this...
+        }
+
+        if(plug.isArray() && plug.numConnectedElements() != 0)
+        {
+            // todo: implement this...
+        }
+    }
+}
+
 void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
 {
     MStatus status;
@@ -199,7 +239,6 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
                 status = AttributeUtils::getPlugConnectedTo(plug, srcPlug);
                 if(status)
                     createShaderNodeExporters(srcPlug.node());
-                continue;
             }
 
             if(plug.isCompound() && plug.numConnectedChildren() != 0)
@@ -215,7 +254,6 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
                             createShaderNodeExporters(srcPlug.node());
                     }
                 }
-                continue;
             }
 
             if(plug.isArray() && plug.numConnectedElements() != 0)

@@ -91,14 +91,7 @@ MStatus AppleseedTranslator::writer(
         if(optNameValue.size() == 2)
         {
             if(optNameValue[0] == "activeCamera")
-            {
-                if(optNameValue[1] == "<Current>")
-                {
-                    // todo: fetch the active camera here...
-                }
-                else
-                    options.m_camera = optNameValue[1].c_str();
-            }
+                options.m_camera = optNameValue[1].c_str();
             else if(optNameValue[0] == "exportAnim")
                 options.m_sequence = (optNameValue[1] == "true");
             else if(optNameValue[0] == "startFrame")

@@ -73,22 +73,31 @@ ShadingNodeExporter::ShadingNodeExporter(
 {
 }
 
+MObject ShadingNodeExporter::node()
+{
+    return m_object;
+}
+
+const OSLShaderInfo&ShadingNodeExporter::getShaderInfo() const
+{
+    MFnDependencyNode depNodeFn(m_object);
+    const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+    assert(shaderInfo);
+
+    return *shaderInfo;
+}
+
 void ShadingNodeExporter::createShader()
 {
     MStatus status;
     MFnDependencyNode depNodeFn(m_object);
 
-    const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
-    assert(shaderInfo);
+    const OSLShaderInfo& shaderInfo = getShaderInfo();
 
     asr::ParamArray shaderParams;
-    for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
+    for(int i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
     {
-        const OSLParamInfo& paramInfo = shaderInfo->paramInfo[i];
-
-        // Skip output attributes.
-        if(paramInfo.isOutput)
-            continue;
+        const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
 
         MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
         if(!status)
@@ -104,6 +113,16 @@ void ShadingNodeExporter::createShader()
         if(plug.isConnected())
             continue;
 
+        // Create adapter shaders.
+        if(plug.isCompound() && plug.numConnectedChildren() != 0)
+        {
+            // todo: implement...
+        }
+
+        // Skip output attributes.
+        if(paramInfo.isOutput)
+            continue;
+
         if(paramInfo.isArray)
             exportArrayParamValue(plug, paramInfo, shaderParams);
         else
@@ -111,10 +130,10 @@ void ShadingNodeExporter::createShader()
     }
 
     m_shaderGroup.add_shader(
-        shaderInfo->shaderType.asChar(),
-        shaderInfo->shaderName.asChar(),
+        shaderInfo.shaderType.asChar(),
+        shaderInfo.shaderName.asChar(),
         depNodeFn.name().asChar(),
-                shaderParams);
+        shaderParams);
 }
 
 void ShadingNodeExporter::exportParamValue(
@@ -268,30 +287,3 @@ void ShadingNodeExporter::exportArrayParamValue(
     }
 }
 
-void ShadingNodeExporter::exportConnections()
-{
-    MStatus status;
-    MFnDependencyNode depNodeFn(m_object);
-
-    const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
-    assert(shaderInfo);
-
-    for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
-    {
-        const OSLParamInfo& paramInfo = shaderInfo->paramInfo[i];
-
-        // Skip input attributes.
-        if(!paramInfo.isOutput)
-            continue;
-
-        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
-        if(!status)
-        {
-            RENDERER_LOG_WARNING(
-                "Skipping unknown attribute %s of shading node %s",
-                paramInfo.mayaAttributeName.asChar(),
-                depNodeFn.typeName().asChar());
-            continue;
-        }
-    }
-}

@@ -80,6 +80,8 @@ set (appleseed_maya_sources
     renderercontroller.h
     renderglobalsnode.cpp
     renderglobalsnode.h
+    renderviewtilecallback.cpp
+    renderviewtilecallback.h
     shadingnode.cpp
     shadingnode.h
     shadingnodemetadata.cpp

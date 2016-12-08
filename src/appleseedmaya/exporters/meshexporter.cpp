@@ -226,7 +226,14 @@ void MeshExporter::exportShapeMotionStep(float time)
 
         MurmurHash meshHash;
         staticMeshObjectHash(*m_mesh, m_materialMappings, meshHash);
-        const std::string fileName = std::string("_geometry/") + meshHash.toString() + ".binarymesh";
+
+#define APPLESEED_MAYA_OBJ_MESH_EXPORT
+#ifdef APPLESEED_MAYA_OBJ_MESH_EXPORT
+        const char *extension = ".obj";
+#else
+        const char *extension = ".binarymesh";
+#endif
+        const std::string fileName = std::string("_geometry/") + meshHash.toString() + extension;
 
         bfs::path projectPath = project().search_paths().get_root_path();
         bfs::path p = projectPath / fileName;
@@ -326,76 +333,87 @@ void MeshExporter::createMaterialSlots()
 
 void MeshExporter::fillTopology()
 {
+    MStatus status;
+
     // Triangle buffer.
     std::vector<asr::Triangle> triangles;
 
-    MIntArray faceVtxIds;
+    MIntArray faceVertexIndices;
     MIntArray faceUVIndices;
-    MIntArray faceNormalIds;
-    MIntArray triVtxIds;
-    MPointArray triPoints;
+    MIntArray faceNormalIndices;
+    MIntArray triangleVertexIndices;
+    MPointArray trianglePoints;
 
     MItMeshPolygon faceIt(dagPath());
     for(; !faceIt.isDone(); faceIt.next())
     {
+        // Get the material index for this face.
         int materialIndex = 0;
         if (m_perFaceAssignments.length() != 0)
             materialIndex = m_perFaceAssignments[faceIt.index()];
 
+        // Collect normal and uv indices for this face.
         faceUVIndices.clear();
-        faceNormalIds.clear();
-        faceIt.getVertices(faceVtxIds);
+        faceNormalIndices.clear();
 
-        for(size_t vtxId = 0, vtxEd = faceVtxIds.length(); vtxId < vtxEd; ++vtxId)
+        faceIt.getVertices(faceVertexIndices);
+        for(size_t i = 0, e = faceVertexIndices.length(); i < e; ++i)
         {
             if(m_exportUVs)
             {
                 int uvIndex;
-                faceIt.getUVIndex(vtxId, uvIndex);
+                status = faceIt.getUVIndex(i, uvIndex);
                 faceUVIndices.append(uvIndex);
             }
 
             if(m_exportNormals)
-                faceNormalIds.append(faceIt.normalIndex(vtxId));
+            {
+                unsigned int normalIndex = faceIt.normalIndex(i, &status);
+                faceNormalIndices.append(normalIndex);
+            }
         }
 
+        // Match the triangle indices to the face indices.
         int numTris;
         faceIt.numTriangles(numTris);
-
-        for(size_t triId = 0; triId < numTris; ++triId)
+        for(size_t i = 0; i < numTris; ++i)
         {
-            triPoints.clear();
-            triVtxIds.clear();
-            faceIt.getTriangle(triId, triPoints, triVtxIds);
+            trianglePoints.clear();
+            triangleVertexIndices.clear();
+            faceIt.getTriangle(i, trianglePoints, triangleVertexIndices);
 
-            int faceRelIds[3];
-            for(size_t triVtxId = 0; triVtxId < 3; ++triVtxId)
+            int triangleVertexOffset[3] = {-1, -1, -1};
+            for(size_t j = 0, je = faceVertexIndices.length(); j < je; ++j)
             {
-                for(size_t faceVtxId = 0, faceVtxEd = faceVtxIds.length(); faceVtxId < faceVtxEd; ++faceVtxId)
-                {
-                    if(faceVtxIds[faceVtxId] == triVtxIds[triVtxId])
-                        faceRelIds[triVtxId] = faceVtxId;
-                }
+                if(faceVertexIndices[j] == triangleVertexIndices[0])
+                    triangleVertexOffset[0] = j;
+                else if(faceVertexIndices[j] == triangleVertexIndices[1])
+                    triangleVertexOffset[1] = j;
+                else if(faceVertexIndices[j] == triangleVertexIndices[2])
+                    triangleVertexOffset[2] = j;
             }
 
+            // Reverse the direction of the triangle.
+            std::swap(triangleVertexOffset[0], triangleVertexOffset[2]);
+
             asr::Triangle triangle(
-                faceVtxIds[faceRelIds[0]],
-                faceVtxIds[faceRelIds[1]],
-                faceVtxIds[faceRelIds[2]],
+                faceVertexIndices[triangleVertexOffset[0]],
+                faceVertexIndices[triangleVertexOffset[1]],
+                faceVertexIndices[triangleVertexOffset[2]],
                 materialIndex);
 
             if(m_exportUVs)
             {
-                triangle.m_a0 = faceUVIndices[faceRelIds[0]];
-                triangle.m_a1 = faceUVIndices[faceRelIds[1]];
-                triangle.m_a2 = faceUVIndices[faceRelIds[2]];
+                triangle.m_a0 = faceUVIndices[triangleVertexOffset[0]];
+                triangle.m_a1 = faceUVIndices[triangleVertexOffset[1]];
+                triangle.m_a2 = faceUVIndices[triangleVertexOffset[2]];
             }
 
             if(m_exportNormals)
             {
-                triangle.m_n0 = faceNormalIds[faceRelIds[0]];
-                triangle.m_n1 = faceNormalIds[faceRelIds[1]];
-                triangle.m_n2 = faceNormalIds[faceRelIds[2]];
+                triangle.m_n0 = faceNormalIndices[triangleVertexOffset[0]];
+                triangle.m_n1 = faceNormalIndices[triangleVertexOffset[1]];
+                triangle.m_n2 = faceNormalIndices[triangleVertexOffset[2]];
             }
 
             triangles.push_back(triangle);
@@ -433,12 +451,12 @@ void MeshExporter::exportGeometry()
     if(m_exportNormals)
     {
         m_mesh->reserve_vertex_normals(meshFn.numNormals());
-        MFloatVectorArray normals;
-        status = meshFn.getNormals(normals);
+        const float *p = meshFn.getRawNormals(&status);
+
         for(size_t i = 0, e = meshFn.numNormals(); i < e; ++i)
         {
-            m_mesh->push_vertex_normal(
-                asr::GVector3(normals[i].x, normals[i].y, normals[i].z));
+            asr::GVector3 n(*p++, *p++, *p++);
+            m_mesh->push_vertex_normal(asf::safe_normalize(n));
         }
     }
 }
