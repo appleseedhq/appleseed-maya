@@ -100,6 +100,10 @@ void ShadingNodeExporter::createShader()
             continue;
         }
 
+        // Skip connected attributes.
+        if(plug.isConnected())
+            continue;
+
         if(paramInfo.isArray)
             exportArrayParamValue(plug, paramInfo, shaderParams);
         else
@@ -110,7 +114,7 @@ void ShadingNodeExporter::createShader()
         shaderInfo->shaderType.asChar(),
         shaderInfo->shaderName.asChar(),
         depNodeFn.name().asChar(),
-        shaderParams);
+                shaderParams);
 }
 
 void ShadingNodeExporter::exportParamValue(
@@ -191,8 +195,103 @@ void ShadingNodeExporter::exportArrayParamValue(
     const OSLParamInfo& paramInfo,
     asr::ParamArray&    shaderParams)
 {
-    RENDERER_LOG_WARNING(
-        "Skipping shading node attr %s of type %s.",
-        paramInfo.mayaAttributeName.asChar(),
-        paramInfo.paramType.asChar());
+    RENDERER_LOG_DEBUG(
+        "Exporting shading node attr %s.",
+        paramInfo.mayaAttributeName.asChar());
+
+    MStatus status;
+    bool valid = true;
+
+    std::stringstream ss;
+
+    if(strncmp(paramInfo.paramType.asChar(), "int[", 4) == 0)
+    {
+        assert(plug.isCompound());
+
+        ss << "int[] ";
+        for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
+        {
+            MPlug childPlug = plug.child(i, &status);
+            if(status)
+            {
+                int value;
+                if(AttributeUtils::get(childPlug, value))
+                    ss << value << " ";
+                else
+                    valid = false;
+            }
+            else
+                valid = false;
+        }
+    }
+    else if(strncmp(paramInfo.paramType.asChar(), "float[", 5) == 0)
+    {
+        assert(plug.isCompound());
+
+        ss << "float[] ";
+        for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
+        {
+            MPlug childPlug = plug.child(i, &status);
+            if(status)
+            {
+                float value;
+                if(AttributeUtils::get(childPlug, value))
+                    ss << value << " ";
+                else
+                    valid = false;
+            }
+            else
+                valid = false;
+        }
+    }
+    else
+    {
+        RENDERER_LOG_WARNING(
+            "Skipping shading node attr %s of type %s.",
+            paramInfo.mayaAttributeName.asChar(),
+            paramInfo.paramType.asChar());
+        return;
+    }
+
+    if(valid)
+    {
+        std::string valueAsString = ss.str();
+        if(!valueAsString.empty())
+            shaderParams.insert(paramInfo.paramName.asChar(), ss.str().c_str());
+    }
+    else
+    {
+        RENDERER_LOG_WARNING(
+            "Error exporting shading node attr %s of type %s.",
+            paramInfo.mayaAttributeName.asChar(),
+            paramInfo.paramType.asChar());
+    }
+}
+
+void ShadingNodeExporter::exportConnections()
+{
+    MStatus status;
+    MFnDependencyNode depNodeFn(m_object);
+
+    const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+    assert(shaderInfo);
+
+    for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
+    {
+        const OSLParamInfo& paramInfo = shaderInfo->paramInfo[i];
+
+        // Skip input attributes.
+        if(!paramInfo.isOutput)
+            continue;
+
+        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
+        if(!status)
+        {
+            RENDERER_LOG_WARNING(
+                "Skipping unknown attribute %s of shading node %s",
+                paramInfo.mayaAttributeName.asChar(),
+                depNodeFn.typeName().asChar());
+            continue;
+        }
+    }
 }

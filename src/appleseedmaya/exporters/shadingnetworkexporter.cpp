@@ -65,6 +65,7 @@ ShadingNetworkExporter::ShadingNetworkExporter(
 
 MString ShadingNetworkExporter::shaderGroupName() const
 {
+    assert(m_shaderGroup.get());
     return m_shaderGroup->get_name();
 }
 
@@ -85,8 +86,6 @@ void ShadingNetworkExporter::flushEntity()
 
 void ShadingNetworkExporter::exportShadingNetwork()
 {
-    MStatus status;
-
     m_shaderGroup->clear();
     m_nodeExporters.clear();
     m_nodesCreated.clear();
@@ -96,6 +95,9 @@ void ShadingNetworkExporter::exportShadingNetwork()
 
     for(size_t i = 0, e = m_nodeExporters.size(); i < e; ++i)
         m_nodeExporters[i]->createShader();
+
+    for(size_t i = 0, e = m_nodeExporters.size(); i < e; ++i)
+        m_nodeExporters[i]->exportConnections();
 
     switch(m_context)
     {
@@ -193,9 +195,10 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
 
             if(plug.isConnected())
             {
-                MObject srcNode;
-                if(AttributeUtils::get(plug, srcNode))
-                    createShaderNodeExporters(srcNode);
+                MPlug srcPlug;
+                status = AttributeUtils::getPlugConnectedTo(plug, srcPlug);
+                if(status)
+                    createShaderNodeExporters(srcPlug.node());
                 continue;
             }
 
@@ -206,9 +209,10 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
                     MPlug childPlug = plug.child(i, &status);
                     if(status)
                     {
-                        MObject srcNode;
-                        if(AttributeUtils::get(childPlug, srcNode))
-                            createShaderNodeExporters(srcNode);
+                        MPlug srcPlug;
+                        status = AttributeUtils::getPlugConnectedTo(childPlug, srcPlug);
+                        if(status)
+                            createShaderNodeExporters(srcPlug.node());
                     }
                 }
                 continue;
@@ -221,9 +225,10 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
                     MPlug elementPlug = plug.elementByLogicalIndex(i, &status);
                     if(status)
                     {
-                        MObject srcNode;
-                        if(AttributeUtils::get(elementPlug, srcNode))
-                            createShaderNodeExporters(srcNode);
+                        MPlug srcPlug;
+                        status = AttributeUtils::getPlugConnectedTo(elementPlug, srcPlug);
+                        if(status)
+                            createShaderNodeExporters(srcPlug.node());
                     }
                 }
             }

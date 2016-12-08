@@ -55,7 +55,9 @@ class ShadingNodeExporter
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);
 
-    virtual void createShader();
+    void createShader();
+
+    void exportConnections();
 
   protected:
 

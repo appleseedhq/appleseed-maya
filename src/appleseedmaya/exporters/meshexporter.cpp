@@ -40,9 +40,12 @@
 // Maya headers.
 #include <maya/MFloatPointArray.h>
 #include <maya/MFnMesh.h>
-#include <maya/MIntArray.h>
 #include <maya/MItDependencyGraph.h>
 #include <maya/MItMeshPolygon.h>
+#include <maya/MPointArray.h>
+
+// appleseed.foundation headers.
+#include "foundation/utility/string.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/exporterfactory.h"
@@ -144,95 +147,83 @@ MeshExporter::MeshExporter(
 {
 }
 
-/*
-void MeshExporter::collectDependencyNodesToExport(MObjectArray& nodes)
+void MeshExporter::createExporters(const AppleseedSession::Services& services)
 {
-    MObjectArray shadingEngineNodes;
+    const int instanceNumber = dagPath().isInstanced() ? dagPath().instanceNumber() : 0;
 
-    MStatus status;
-    MObject obj = dagPath().node();
-    MItDependencyGraph it(
-        obj,
-        MFn::kShadingEngine,
-        MItDependencyGraph::kDownstream,
-        MItDependencyGraph::kBreadthFirst,
-        MItDependencyGraph::kNodeLevel,
-        &status);
+    MFnDependencyNode depNodeFn(dagPath().node());
+    MPlug plug = depNodeFn.findPlug("instObjGroups");
+    plug = plug.elementByLogicalIndex(instanceNumber);
 
-    if(status == MS::kFailure)
+    if(plug.isConnected())
+    {
+        MPlugArray connections;
+        plug.connectedTo(connections, false, true);
+        MObject shadingEngine = connections[0].node();
+        services.createShadingEngineExporter(shadingEngine);
+        depNodeFn.setObject(shadingEngine);
+        MString materialName = depNodeFn.name() + MString("_material");
+        m_materialMappings.insert("default", materialName.asChar());
+    }
+    else
+    {
+        MFnMesh fnMesh(dagPath().node());
+        MObjectArray shadingEngines;
+        fnMesh.getConnectedShaders(instanceNumber, shadingEngines, m_perFaceAssignments);
+
+        for(size_t i = 0, e = shadingEngines.length(); i < e; ++i)
+        {
+            services.createShadingEngineExporter(shadingEngines[i]);
+            depNodeFn.setObject(shadingEngines[i]);
+            MString materialName = depNodeFn.name() + MString("_material");
+
+            if(i == 0)
+                m_materialMappings.insert("default", materialName.asChar());
+            else
+            {
+                std::string slotName = asf::get_numbered_string("slot#", i);
+                m_materialMappings.insert(slotName.c_str(), materialName.asChar());
+            }
+        }
+    }
+
+    if(m_materialMappings.empty())
     {
         RENDERER_LOG_WARNING(
-            "No shading engines connected to shape %s",
+            "Found mesh %s with no materials.",
             appleseedName().asChar());
-        return;
     }
-
-    // we want to prune the iteration if the node is not a shading engine
-    it.enablePruningOnFilter();
-
-    // iterate through the output connected shading engines
-    for(; it.isDone() != true; it.next())
-    {
-        MObject shadingEngine = it.thisNode();
-        MFnDependencyNode depNodeFn(shadingEngine);
-
-        RENDERER_LOG_DEBUG(
-            "Collected shading engine %s",
-            depNodeFn.name().asChar());
-        shadingEngineNodes.append(shadingEngine);
-    }
-
-    if(shadingEngineNodes.length() > 1)
-    {
-        RENDERER_LOG_ERROR(
-            "Mesh %s has per face material assignments.",
-            appleseedName().asChar());
-        return;
-    }
-
-    MFnDependencyNode depNodeFn(shadingEngineNodes[0]);
-    MString materialName = depNodeFn.name() + MString("_material");
-    m_materialMappings.insert("default", materialName.asChar());
-    nodes.append(shadingEngineNodes[0]);
 }
-*/
 
 void MeshExporter::createEntity(const AppleseedSession::Options& options)
 {
-    asr::ParamArray params;
-    shapeAttributesToParams(params);
-    meshAttributesToParams(params);
+    shapeAttributesToParams(m_meshParams);
+    meshAttributesToParams(m_meshParams);
 
-    MString objectName = appleseedName();
-    m_mesh = asr::MeshObjectFactory::create(objectName.asChar(), params);
+    MFnMesh meshFn(dagPath());
+    m_exportUVs = meshFn.numUVs() != 0;
+    m_exportNormals = meshFn.numNormals() != 0;
+    m_shapeExportStep = 0;
 
-    // Create material slots.
-    if(!m_materialMappings.empty())
+    if(sessionMode() != AppleseedSession::ExportSession)
     {
-        m_mesh->reserve_material_slots(m_materialMappings.size());
-
-        asf::StringDictionary::const_iterator it(m_materialMappings.begin());
-        asf::StringDictionary::const_iterator e(m_materialMappings.end());
-        for(;it != e; ++it)
-            m_mesh->push_material_slot(it.key());
+        MString objectName = appleseedName();
+        m_mesh = asr::MeshObjectFactory::create(objectName.asChar(), m_meshParams);
+        createMaterialSlots();
+        fillTopology();
     }
-    else
-        m_mesh->push_material_slot("default");
-
-    // For now, set to false...
-    m_exportUVs = false;
-    m_exportNormals = false;
-    m_exportTangents = false;
-
-    fillTopology();
 }
 
 void MeshExporter::exportShapeMotionStep(float time)
 {
-    exportGeometry();
-
     if(sessionMode() == AppleseedSession::ExportSession)
     {
+        MString objectName = appleseedName();
+        m_mesh = asr::MeshObjectFactory::create(objectName.asChar(), m_meshParams);
+        createMaterialSlots();
+        fillTopology();
+        exportGeometry();
+
         MurmurHash meshHash;
         staticMeshObjectHash(*m_mesh, m_materialMappings, meshHash);
         const std::string fileName = std::string("_geometry/") + meshHash.toString() + ".binarymesh";
@@ -261,8 +252,13 @@ void MeshExporter::exportShapeMotionStep(float time)
     }
     else
     {
-        // Update motion step here...
+        if(m_shapeExportStep == 0)
+            exportGeometry();
+        else
+            exportMeshKey();
     }
+
+    m_shapeExportStep++;
 }
 
 void MeshExporter::flushEntity()
@@ -313,52 +309,96 @@ void MeshExporter::meshAttributesToParams(renderer::ParamArray& params)
     // TODO: implement this...
 }
 
+void MeshExporter::createMaterialSlots()
+{
+    // Create material slots.
+    if(!m_materialMappings.empty())
+    {
+        m_mesh->reserve_material_slots(m_materialMappings.size());
+        asf::StringDictionary::const_iterator it(m_materialMappings.begin());
+        asf::StringDictionary::const_iterator e(m_materialMappings.end());
+        for(;it != e; ++it)
+            m_mesh->push_material_slot(it.key());
+    }
+    else
+        m_mesh->push_material_slot("default");
+}
+
 void MeshExporter::fillTopology()
 {
-    MFnMesh meshFn(dagPath());
-
-    bool exportUVs = false;
-    bool exportNormals = false;
-
-    MIntArray triangleCounts;
-    MIntArray triangleVertices;
-    meshFn.getTriangles(triangleCounts, triangleVertices);
-
     // Triangle buffer.
     std::vector<asr::Triangle> triangles;
 
-    size_t vertexIndex = 0;
-    for(size_t faceIndex = 0; faceIndex < triangleCounts.length(); ++faceIndex)
+    MIntArray faceVtxIds;
+    MIntArray faceUVIndices;
+    MIntArray faceNormalIds;
+    MIntArray triVtxIds;
+    MPointArray triPoints;
+
+    MItMeshPolygon faceIt(dagPath());
+    for(; !faceIt.isDone(); faceIt.next())
     {
-        const size_t numTrianglesPerFace = triangleCounts[faceIndex];
-        for(int triangleIndex = 0; triangleIndex < numTrianglesPerFace; ++triangleIndex)
+        int materialIndex = 0;
+        if (m_perFaceAssignments.length() != 0)
+            materialIndex = m_perFaceAssignments[faceIt.index()];
+
+        faceUVIndices.clear();
+        faceNormalIds.clear();
+        faceIt.getVertices(faceVtxIds);
+
+        for(size_t vtxId = 0, vtxEd = faceVtxIds.length(); vtxId < vtxEd; ++vtxId)
         {
+            if(m_exportUVs)
+            {
+                int uvIndex;
+                faceIt.getUVIndex(vtxId, uvIndex);
+                faceUVIndices.append(uvIndex);
+            }
+
+            if(m_exportNormals)
+                faceNormalIds.append(faceIt.normalIndex(vtxId));
+        }
+
+        int numTris;
+        faceIt.numTriangles(numTris);
+
+        for(size_t triId = 0; triId < numTris; ++triId)
+        {
+            triPoints.clear();
+            triVtxIds.clear();
+            faceIt.getTriangle(triId, triPoints, triVtxIds);
+
+            int faceRelIds[3];
+            for(size_t triVtxId = 0; triVtxId < 3; ++triVtxId)
+            {
+                for(size_t faceVtxId = 0, faceVtxEd = faceVtxIds.length(); faceVtxId < faceVtxEd; ++faceVtxId)
+                {
+                    if(faceVtxIds[faceVtxId] == triVtxIds[triVtxId])
+                        faceRelIds[triVtxId] = faceVtxId;
+                }
+            }
+
             asr::Triangle triangle(
-                triangleVertices[vertexIndex],
-                triangleVertices[vertexIndex + 1],
-                triangleVertices[vertexIndex + 2],
-                0);
+                faceVtxIds[faceRelIds[0]],
+                faceVtxIds[faceRelIds[1]],
+                faceVtxIds[faceRelIds[2]],
+                materialIndex);
 
             if(m_exportUVs)
             {
-                // TODO: set UVs indices here...
+                triangle.m_a0 = faceUVIndices[faceRelIds[0]];
+                triangle.m_a1 = faceUVIndices[faceRelIds[1]];
+                triangle.m_a2 = faceUVIndices[faceRelIds[2]];
             }
 
             if(m_exportNormals)
             {
-                // TODO: set normal indices here...
+                triangle.m_n0 = faceNormalIds[faceRelIds[0]];
+                triangle.m_n1 = faceNormalIds[faceRelIds[1]];
+                triangle.m_n2 = faceNormalIds[faceRelIds[2]];
             }
-
-            if(m_exportTangents)
-            {
-                // TODO: set tangent indices here...
-            }
-
-            // TODO: get face material index here...
 
             triangles.push_back(triangle);
-            m_mesh->push_triangle(triangle);
-            vertexIndex += 3;
         }
     }
 
@@ -383,19 +423,61 @@ void MeshExporter::exportGeometry()
 
     if(m_exportUVs)
     {
-        // m_mesh->reserve_tex_coords(meshFn.numUVs());
-        // ...
+        m_mesh->reserve_tex_coords(meshFn.numUVs());
+        MFloatArray u, v;
+        status = meshFn.getUVs(u, v);
+        for(size_t i = 0, e = meshFn.numUVs(); i < e; ++i)
+            m_mesh->push_tex_coords(asr::GVector2(u[i], v[i]));
     }
 
     if(m_exportNormals)
     {
-        // m_mesh->reserve_vertex_normals(meshFn.numNormals());
-        // ...
+        m_mesh->reserve_vertex_normals(meshFn.numNormals());
+        MFloatVectorArray normals;
+        status = meshFn.getNormals(normals);
+        for(size_t i = 0, e = meshFn.numNormals(); i < e; ++i)
+        {
+            m_mesh->push_vertex_normal(
+                asr::GVector3(normals[i].x, normals[i].y, normals[i].z));
+        }
+    }
+}
+
+void MeshExporter::exportMeshKey()
+{
+
+    MStatus status;
+    MFnMesh meshFn(dagPath());
+
+    if(m_shapeExportStep == 1)
+    {
+        // todo: reserve motion steps here...
+        //m_mesh->set_motion_segment_count(x);
     }
 
-    if(m_exportTangents)
+    // Vertices.
     {
-        // m_mesh->reserve_vertex_tangents(meshFn.numTangents());
-        // ...
+        const float *p = meshFn.getRawPoints(&status);
+        for(size_t i = 0, e = meshFn.numVertices(); i < e; ++i)
+        {
+            m_mesh->set_vertex_pose(
+                i,
+                m_shapeExportStep - 1,
+                asr::GVector3(*p++, *p++, *p++));
+        }
+    }
+
+    if(m_exportNormals)
+    {
+        m_mesh->reserve_vertex_normals(meshFn.numNormals());
+        MFloatVectorArray normals;
+        status = meshFn.getNormals(normals);
+        for(size_t i = 0, e = meshFn.numNormals(); i < e; ++i)
+        {
+            m_mesh->set_vertex_normal_pose(
+                i,
+                m_shapeExportStep - 1,
+                asr::GVector3(normals[i].x, normals[i].y, normals[i].z));
+        }
     }
 }

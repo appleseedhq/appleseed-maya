@@ -41,6 +41,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
 #include "appleseedmaya/utils.h"
 
 // Forward declarations.
@@ -73,6 +74,7 @@ class ShadingEngineExporter
     renderer::Assembly&                             m_mainAssembly;
     AppleseedEntityPtr<renderer::Material>          m_material;
     AppleseedEntityPtr<renderer::SurfaceShader>     m_surfaceShader;
+    ShadingNetworkExporterPtr                       m_surfaceNetworkExporter;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H

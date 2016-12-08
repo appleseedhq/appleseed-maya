@@ -37,6 +37,9 @@
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/shadingnetworkexporter.h"
+
 namespace asf = foundation;
 namespace asr = renderer;
 
@@ -64,7 +67,7 @@ void ShadingEngineExporter::createExporters(const AppleseedSession::Services& se
         {
             MObject otherNode = otherPlugs[0].node();
             depNodeFn.setObject(otherNode);
-            services.createShadingNetworkExporter(
+            m_surfaceNetworkExporter = services.createShadingNetworkExporter(
                 SurfaceNetworkContext,
                 otherNode,
                 otherPlugs[0]);
@@ -97,14 +100,12 @@ void ShadingEngineExporter::createEntity(const AppleseedSession::Options& option
 
 void ShadingEngineExporter::flushEntity()
 {
-    /*
-    if(m_surfaceExporter)
+    if(m_surfaceNetworkExporter)
     {
         m_material->get_parameters().insert(
             "osl_surface",
-            m_surfaceExporter->shaderGroupName().asChar());
+            m_surfaceNetworkExporter->shaderGroupName().asChar());
     }
-    */
 
     m_mainAssembly.materials().insert(m_material.release());
     m_mainAssembly.surface_shaders().insert(m_surfaceShader.release());
