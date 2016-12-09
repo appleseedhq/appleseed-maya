@@ -177,16 +177,75 @@ void ShadingNetworkExporter::exportConnections(ShadingNodeExporter& dstNodeExpor
 
         if(plug.isConnected())
         {
+            MPlugArray inputConnections;
+            plug.connectedTo(inputConnections, true, false, &status);
+
+            if(status)
+            {
+                MPlug srcPlug = inputConnections[0];
+                MObject srcNode = srcPlug.node();
+                MFnDependencyNode srcDepNodeFn(srcNode);
+                const OSLShaderInfo *otherShaderInfo = ShadingNodeRegistry::getShaderInfo(srcDepNodeFn.typeName());
+
+                if(otherShaderInfo)
+                {
+                    if(srcPlug.isChild())
+                    {
+                        RENDERER_LOG_WARNING(
+                            "Skipping compound child connection to attribute %s of shading node %s",
+                            srcPlug.name().asChar(),
+                            srcDepNodeFn.typeName().asChar());
+                        continue;
+                    }
+
+                    if(srcPlug.isElement())
+                    {
+                        RENDERER_LOG_WARNING(
+                            "Skipping array element connection to attribute %s of shading node %s",
+                            srcPlug.name().asChar(),
+                            srcDepNodeFn.typeName().asChar());
+                        continue;
+                    }
+
+                    const OSLParamInfo *srcParamInfo = otherShaderInfo->findParam(srcPlug);
+                    if(srcParamInfo)
+                    {
+                        m_shaderGroup->add_connection(
+                            srcDepNodeFn.name().asChar(),
+                            srcParamInfo->paramName.asChar(),
+                            depNodeFn.name().asChar(),
+                            paramInfo.paramName.asChar());
+                    }
+                }
+                else
+                {
+                    RENDERER_LOG_WARNING(
+                        "Skipping connections to unsupported shading node %s",
+                        srcDepNodeFn.typeName().asChar());
+                }
+            }
+            else
+            {
+                // todo: warning here...
+            }
         }
 
         if(plug.isCompound() && plug.numConnectedChildren() != 0)
         {
             // todo: implement this...
+            RENDERER_LOG_WARNING(
+                "Skipping child compound connection to attribute %s of shading node %s",
+                paramInfo.mayaAttributeName.asChar(),
+                depNodeFn.typeName().asChar());
         }
 
         if(plug.isArray() && plug.numConnectedElements() != 0)
         {
             // todo: implement this...
+            RENDERER_LOG_WARNING(
+                "Skipping array element connection to attribute %s of shading node %s",
+                paramInfo.mayaAttributeName.asChar(),
+                depNodeFn.typeName().asChar());
         }
     }
 }

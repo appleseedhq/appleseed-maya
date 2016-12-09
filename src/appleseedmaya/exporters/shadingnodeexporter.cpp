@@ -99,6 +99,10 @@ void ShadingNodeExporter::createShader()
     {
         const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
 
+        // Skip params with shader global defaults.
+        if(!paramInfo.validDefault)
+            continue;
+
         MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
         if(!status)
         {

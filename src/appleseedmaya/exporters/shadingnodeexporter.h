@@ -82,7 +82,6 @@ class ShadingNodeExporter
 
     MObject                                         m_object;
     renderer::ShaderGroup&                          m_shaderGroup;
-    std::map<MString, MString, MStringCompareLess>  m_adapterShaders;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H
