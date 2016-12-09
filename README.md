@@ -1,4 +1,4 @@
-### Experimental [appleseed](http://appleseedhq.net/) [maya](http://www.autodesk.com/products/maya/overview) integration plugin
+## Experimental [appleseed](http://appleseedhq.net/) [maya](http://www.autodesk.com/products/maya/overview) integration plugin
 
 #### Setup:
 
@@ -7,10 +7,26 @@
     * export **MAYA_SCRIPT_PATH**=${BUILD_DIR}/appleseed-maya/scripts
     * export **PYTHONPATH**=$PYTHONPATH:${APPLESEED_DIR}/lib/python2.7:${BUILD_DIR}/scripts
     * export **XBMLANGPATH**=${BUILD_DIR}/icons
+    * export **APPLESEED_SEARCHPATH**=${APPLESEED_DIR}/sandbox/shaders/maya
 
 2. launch Maya & load plugin
 
-#### Current status for available nodes
+#### Planned features:
+
+- Appleseed project export.
+- Command line render.
+- Batch render.
+- Render to RenderView.
+- IPR.
+- Motion blur.
+- IBL.
+- Maya shading nodes support.
+- OSL shaders.
+- Scripted access to translated scenes.
+- Bitfrost.
+- XGen.
+
+#### Maya shading nodes status:
 
 List of Maya hypershade nodes and their status. Not all will be supported.
 
@@ -131,7 +147,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] fractal
 - [x] grid
 - [ ] mandelbrot
-- [ ] mountain 
+- [ ] mountain
 - [ ] movie
 - [ ] noise
 - [ ] ocean
@@ -170,12 +186,17 @@ Other Textures:
 
 - [ ] layered texture
 
+### Lookdevkit nodes
+
+- [ ] simplex noise
+
+
 ### Lights
 
 - [ ] ambient light
 - [ ] area light
-- [ ] directional light
-- [ ] point light
-- [ ] spot light
+- [x] directional light
+- [x] point light
+- [x] spot light
 - [ ] volume light
 
