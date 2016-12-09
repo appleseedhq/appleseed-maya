@@ -119,13 +119,13 @@ void LightExporter::createEntity(const AppleseedSession::Options& options)
         lightParams.insert("irradiance", colorName.asChar());
         lightParams.insert("irradiance_multiplier", intensity);
     }
-    if(depNodeFn.typeName() == "pointLight")
+    else if(depNodeFn.typeName() == "pointLight")
     {
         lightFactory = lightFactories.lookup("point_light");
         lightParams.insert("intensity", colorName.asChar());
         lightParams.insert("intensity_multiplier", intensity);
     }
-    else // spotLight
+    else if(depNodeFn.typeName() == "spotLight")
     {
         lightFactory = lightFactories.lookup("spot_light");
         lightParams.insert("intensity", colorName.asChar());
@@ -140,9 +140,15 @@ void LightExporter::createEntity(const AppleseedSession::Options& options)
         const float outerAngle = coneAngle.asDegrees() + 2.0 * penumbraAngle.asDegrees();
         lightParams.insert("outer_angle", outerAngle);
     }
+    else
+    {
+        RENDERER_LOG_WARNING(
+            "Unsupported light type %s found. Skipping",
+            depNodeFn.typeName().asChar());
+        return;
+    }
 
     m_light = lightFactory->create(appleseedName().asChar(), lightParams);
-
     asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
     asf::Matrix4d invM = convert(dagPath().inclusiveMatrixInverse());
     asf::Transformd xform(m, invM);
@@ -151,6 +157,9 @@ void LightExporter::createEntity(const AppleseedSession::Options& options)
 
 void LightExporter::flushEntity()
 {
-    mainAssembly().colors().insert(m_lightColor.release());
-    mainAssembly().lights().insert(m_light.release());
+    if(m_light.get())
+    {
+        mainAssembly().colors().insert(m_lightColor.release());
+        mainAssembly().lights().insert(m_light.release());
+    }
 }
