@@ -100,7 +100,9 @@ void CameraExporter::createEntity(const AppleseedSession::Options& options)
 
         // Maya's aperture is given in inches so convert to cm and then to meters.
         horizontalFilmAperture = horizontalFilmAperture * 2.54f * 0.01f;
-        verticalFilmAperture = verticalFilmAperture * 2.54f * 0.01f;
+        //verticalFilmAperture = verticalFilmAperture * 2.54f * 0.01f;
+        const float aspect = static_cast<float>(options.m_width) / options.m_height;
+        verticalFilmAperture = horizontalFilmAperture / aspect;
 
         std::stringstream ss;
         ss << horizontalFilmAperture << " " << verticalFilmAperture;
