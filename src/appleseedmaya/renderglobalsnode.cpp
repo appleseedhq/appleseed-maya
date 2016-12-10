@@ -43,7 +43,6 @@
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/typeids.h"
 
-
 namespace asr = renderer;
 namespace asf = foundation;
 
@@ -68,7 +67,7 @@ void* RenderGlobalsNode::creator()
 MStatus RenderGlobalsNode::initialize()
 {
     MFnNumericAttribute numAttrFn;
-	MFnMessageAttribute msgAttrFn;
+    MFnMessageAttribute msgAttrFn;
 
     MStatus status;
 
@@ -165,7 +164,7 @@ MStatus RenderGlobalsNode::initialize()
         "appleseedMaya: Failed to add render globals threads attribute");
 
     // Environment light connection.
-	m_envLightNode = msgAttrFn.create("envLight", "env", &status);
+    m_envLightNode = msgAttrFn.create("envLight", "env", &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: Failed to create render globals envLight attribute");
@@ -188,7 +187,7 @@ void RenderGlobalsNode::applyGlobalsToProject(
   asr::Project&     project)
 {
     asr::ParamArray& finalParams = project.configurations().get_by_name("final")->get_parameters();
-    asr::ParamArray& iprParams   = project.configurations().get_by_name("progressive")->get_parameters();
+    asr::ParamArray& iprParams   = project.configurations().get_by_name("interactive")->get_parameters();
 
     MFnDependencyNode depNodeFn(globals);
 

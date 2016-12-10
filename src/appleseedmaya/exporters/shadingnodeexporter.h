@@ -26,38 +26,62 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H
+
+// Forward declaration header.
+#include "shadingnodeexporterfwd.h"
 
 // Standard headers.
-#include<string>
+#include<map>
+
+// Maya headers.
+#include <maya/MObject.h>
+#include <maya/MPlug.h>
+#include <maya/MString.h>
 
 // appleseed.maya headers.
-#include "appleseedmaya/exporters/shapeexporter.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/scene.h"
+#include "appleseedmaya/shadingnoderegistry.h"
+#include "appleseedmaya/utils.h"
 
 // Forward declarations.
-namespace renderer { class Project; }
+namespace renderer { class ShaderGroup; }
 
-class InstanceExporter
-  : public ShapeExporter
+class ShadingNodeExporter
+  : public NonCopyable
 {
   public:
 
-    InstanceExporter(
-      const MDagPath&                     path,
-      AppleseedSession::SessionMode       sessionMode,
-      const ShapeExporter&                master,
-      renderer::Project&                  project,
-      const renderer::TransformSequence&  transformSequence);
+    static void registerExporters();
 
-    virtual void flushEntity();
+    static ShadingNodeExporter *create(
+        const MObject&          object,
+        renderer::ShaderGroup&  shaderGroup);
 
-  private:
+    MObject node();
 
-    MString m_masterShapeName;
+    const OSLShaderInfo& getShaderInfo() const;
+
+    void createShader();
+
+  protected:
+
+    ShadingNodeExporter(
+        const MObject&          object,
+        renderer::ShaderGroup&  shaderGroup);
+
+    void exportParamValue(
+      const MPlug&              plug,
+      const OSLParamInfo&       paramInfo,
+      renderer::ParamArray&     shaderParams);
+
+    void exportArrayParamValue(
+      const MPlug&              plug,
+      const OSLParamInfo&       paramInfo,
+      renderer::ParamArray&     shaderParams);
+
+    MObject                                         m_object;
+    renderer::ShaderGroup&                          m_shaderGroup;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H

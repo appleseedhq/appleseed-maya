@@ -35,7 +35,6 @@
 #include <maya/MString.h>
 #include <maya/MTypeId.h>
 
-
 class EnvLightNode
   : public MPxLocatorNode
 {

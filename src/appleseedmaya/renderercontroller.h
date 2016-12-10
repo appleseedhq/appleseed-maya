@@ -32,7 +32,6 @@
 // appleseed.renderer headers.
 #include "renderer/api/rendering.h"
 
-
 class RendererController
   : public renderer::DefaultRendererController
 {

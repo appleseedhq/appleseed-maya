@@ -39,7 +39,6 @@
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/envlightnode.h"
 
-
 namespace asf = foundation;
 namespace asr = renderer;
 

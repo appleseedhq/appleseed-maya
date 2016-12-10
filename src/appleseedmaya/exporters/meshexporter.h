@@ -33,8 +33,8 @@
 #include <string>
 #include <vector>
 
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/shapeexporter.h"
+// Maya headers.
+#include <maya/MIntArray.h>
 
 // appleseed.foundation headers.
 #include "renderer/api/material.h"
@@ -45,6 +45,8 @@
 #include "renderer/api/object.h"
 #include "renderer/api/scene.h"
 
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/shapeexporter.h"
 
 class MeshExporter
   : public ShapeExporter
@@ -58,7 +60,7 @@ class MeshExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
-    virtual void collectDependencyNodesToExport(MObjectArray& nodes);
+    virtual void createExporters(const AppleseedSession::Services& services);
 
     virtual void createEntity(const AppleseedSession::Options& options);
 
@@ -75,15 +77,19 @@ class MeshExporter
 
     void meshAttributesToParams(renderer::ParamArray& params);
 
+    void createMaterialSlots();
     void fillTopology();
     void exportGeometry();
+    void exportMeshKey();
 
     AppleseedEntityPtr<renderer::MeshObject>      m_mesh;
+    renderer::ParamArray                          m_meshParams;
     AppleseedEntityPtr<renderer::ObjectInstance>  m_objectInstace;
     bool                                          m_exportUVs;
     bool                                          m_exportNormals;
-    bool                                          m_exportTangents;
     std::vector<std::string>                      m_fileNames;
+    MIntArray                                     m_perFaceAssignments;
+    size_t                                        m_shapeExportStep;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H

@@ -42,7 +42,6 @@
 // Forward declarations.
 namespace renderer { class Project; }
 
-
 class LightExporter
   : public DagNodeExporter
 {

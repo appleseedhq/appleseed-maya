@@ -93,17 +93,6 @@ MStatus get(const MPlug& plug, MMatrix& value)
     return status;
 }
 
-MStatus get(const MPlug& plug, MObject& value)
-{
-    MPlug srcPlug;
-    MStatus status = getPlugConnectedTo(plug, srcPlug);
-
-    if(status)
-        value = srcPlug.node();
-
-    return status;
-}
-
 MStatus getPlugConnectedTo(const MPlug& dstPlug, MPlug& srcPlug)
 {
     if(!dstPlug.isConnected())

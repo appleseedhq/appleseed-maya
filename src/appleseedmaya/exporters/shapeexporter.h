@@ -29,6 +29,9 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
 
+// Standard headers.
+#include <vector>
+
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 #include "renderer/api/utility.h"
@@ -37,15 +40,12 @@
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 #include "appleseedmaya/murmurhash.h"
 
-
 class ShapeExporter
   : public DagNodeExporter
 {
   public:
 
     const renderer::TransformSequence& transformSequence() const;
-
-    virtual bool supportsInstancing() const;
 
     void instanceCreated() const;
 
@@ -61,6 +61,7 @@ class ShapeExporter
       AppleseedSession::SessionMode sessionMode);
 
     void shapeAttributesToParams(renderer::ParamArray& params);
+
     void visibilityAttributesToParams(renderer::ParamArray& params);
 
     void createObjectInstance(const MString& objectName);

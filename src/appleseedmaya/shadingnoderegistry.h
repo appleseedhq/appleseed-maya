@@ -53,6 +53,8 @@ namespace ShadingNodeRegistry
     MStatus registerShadingNodes(MObject plugin);
     MStatus unregisterShadingNodes(MObject plugin);
 
+    void getShaderNodeNames(MStringArray& nodeNames);
+
     const OSLShaderInfo *getShaderInfo(const MString& nodeName);
 
     bool isShaderSupported(const MString& nodeName);

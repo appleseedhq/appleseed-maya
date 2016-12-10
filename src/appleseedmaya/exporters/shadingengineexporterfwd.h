@@ -26,63 +26,13 @@
 // THE SOFTWARE.
 //
 
-// Interface header.
-#include "appleseedmaya/exporters/mpxnodeexporter.h"
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_FWD_H
+#define APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_FWD_H
 
-// Maya headers.
-#include <maya/MFnDependencyNode.h>
+// Boost headers.
+#include "boost/shared_ptr.hpp"
 
-// appleseed.renderer headers.
-#include "renderer/api/project.h"
-#include "renderer/api/scene.h"
+class ShadingEngineExporter;
+typedef boost::shared_ptr<ShadingEngineExporter> ShadingEngineExporterPtr;
 
-
-namespace asf = foundation;
-namespace asr = renderer;
-
-MPxNodeExporter::MPxNodeExporter(
-    const MObject&                  object,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
-  : m_object(object)
-  , m_sessionMode(sessionMode)
-  , m_project(project)
-  , m_scene(*project.get_scene())
-  , m_mainAssembly(*m_scene.assemblies().get_by_name("assembly"))
-{
-}
-
-MPxNodeExporter::~MPxNodeExporter()
-{
-}
-
-const MObject& MPxNodeExporter::node() const
-{
-    return m_object;
-}
-
-AppleseedSession::SessionMode MPxNodeExporter::sessionMode() const
-{
-    return m_sessionMode;
-}
-
-MString MPxNodeExporter::appleseedName() const
-{
-    MFnDependencyNode depNodeFn(m_object);
-    return depNodeFn.name();
-}
-
-asr::Project& MPxNodeExporter::project()
-{
-    return m_project;
-}
-
-asr::Scene& MPxNodeExporter::scene()
-{
-    return m_scene;
-}
-
-asr::Assembly& MPxNodeExporter::mainAssembly()
-{
-    return m_mainAssembly;
-}
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_FWD_H

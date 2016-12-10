@@ -55,10 +55,11 @@ class NonCopyable
     NonCopyable& operator=(const NonCopyable&);
 };
 
-
 //
-// Function object class for MString less-than comparison.
-// Used in maps as a compare predicate, to avoid MString <-> std::string copies.
+// MStringCompareLess
+//
+//  Function object class for MString less-than comparison.
+//  Used in maps as a compare predicate, to avoid MString <-> std::string copies.
 //
 
 struct MStringCompareLess
@@ -69,9 +70,10 @@ struct MStringCompareLess
     }
 };
 
-
 //
 // AppleseedEntityPtr.
+//
+//  Smart ptr that holds  an appleseed entity and keeps track of ownership.
 //
 
 template<class T>
@@ -157,7 +159,7 @@ class AppleseedEntityPtr
     bool    m_releaseObj;
 };
 
-
+// Insert an appleseed entity into a container with an unique name.
 template<class Container, class T>
 void insertEntityWithUniqueName(
     Container&              container,

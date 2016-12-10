@@ -26,79 +26,70 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_MPXNODEEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_MPXNODEEXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
+
+// Standard headers.
+#include <map>
 
 // Boost headers.
 #include "boost/shared_ptr.hpp"
 
 // Maya headers.
 #include <maya/MObject.h>
-#include <maya/MObjectArray.h>
+#include <maya/MPlug.h>
 #include <maya/MString.h>
+
+// appleseed.renderer headers.
+#include "renderer/api/shadergroup.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/exporters/shadingnodeexporter.h"
 #include "appleseedmaya/utils.h"
 
-// Fordward declarations.
+// Forward declarations.
 namespace renderer { class Assembly; }
-namespace renderer { class Project; }
-namespace renderer { class Scene; }
 
-
-//
-// Base class for Maya to appleseed exporters.
-//
-
-class MPxNodeExporter
-  : NonCopyable
+class ShadingNetworkExporter
+  : public NonCopyable
 {
   public:
 
-    // Destructor.
-    virtual ~MPxNodeExporter();
+    enum Context
+    {
+        SurfaceContext,
+        DisplacementContext,
+        LightAttenuation
+    };
 
-    // Return the name of the appleseed entity created by this exporter.
-    virtual MString appleseedName() const;
-
-    // Create appleseed entities.
-    virtual void createEntity(const AppleseedSession::Options& options) = 0;
-
-    // Flush entities to the renderer.
-    virtual void flushEntity() = 0;
-
-  protected:
-
-    // Constructor.
-    MPxNodeExporter(
+    ShadingNetworkExporter(
+      const Context                 context,
       const MObject&                object,
-      renderer::Project&            project,
+      const MPlug&                  plug,
+      renderer::Assembly&           mainAssembly,
       AppleseedSession::SessionMode sessionMode);
 
-    // Return the Maya dependency node.
-    const MObject& node() const;
+    MString shaderGroupName() const;
 
-    // Return the session mode.
-    AppleseedSession::SessionMode sessionMode() const;
+    // Create appleseed entities.
+    void createEntity(const AppleseedSession::Options& options);
 
-    // Return a reference to the appleseed project.
-    renderer::Project& project();
-
-    // Return a reference to the appleseed scene.
-    renderer::Scene& scene();
-
-    // Return a reference to the appleseed main assembly.
-    renderer::Assembly& mainAssembly();
+    // Flush entities to the renderer.
+    void flushEntity();
 
   private:
-    MObject                       m_object;
-    AppleseedSession::SessionMode m_sessionMode;
-    renderer::Project&            m_project;
-    renderer::Scene&              m_scene;
-    renderer::Assembly&           m_mainAssembly;
+
+    typedef std::map<MString, ShadingNodeExporterPtr, MStringCompareLess> NodeExporterMap;
+
+    Context                                     m_context;
+    AppleseedSession::SessionMode               m_sessionMode;
+    MObject                                     m_object;
+    renderer::Assembly&                         m_mainAssembly;
+    AppleseedEntityPtr<renderer::ShaderGroup>   m_shaderGroup;
+    NodeExporterMap                             m_nodeExporters;
 };
 
-typedef boost::shared_ptr<MPxNodeExporter> MPxNodeExporterPtr;
+typedef boost::shared_ptr<ShadingNetworkExporter> ShadingNetworkExporterPtr;
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_MPXNODEEXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H

@@ -39,34 +39,9 @@
 #include <maya/MSyntax.h>
 
 // appleseed.maya headers.
+#include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/logger.h"
-
-
-namespace
-{
-
-MObject getAppleseedGlobalsNode()
-{
-    /*
-    MObject obj;
-    MStatus stat;
-    MSelectionList list;
-
-    // Attempt to add the given name to the selection list,
-    // then get the corresponding dependency node handle.
-    if(!list.add(name) || !list.getDependNode(0, obj))
-        return MObject();
-
-    // Successful.
-    stat = MS::kSuccess;
-    return obj;
-    */
-    return MObject();
-}
-
-} // unnamed
-
 
 MString FinalRenderCommand::cmdName("appleseedRender");
 
@@ -90,20 +65,36 @@ MStatus FinalRenderCommand::doIt(const MArgList& args)
     std::cout << "Appleseed Render:\n";
     std::cout << "-----------------\n";
 
+    AppleseedSession::Options options;
+
     MStatus status;
     MArgDatabase argData(syntax(), args, &status);
 
-    int width = -1;
+    MString batchOptions;
+    if(argData.isFlagSet("-batch", &status))
+    {
+        status = argData.getFlagArgument("-batch", 0, batchOptions);
+        std::cout << "  batch = true" << std::endl;
+        std::cout << "  options = " << batchOptions << std::endl;
+    }
+
     if(argData.isFlagSet("-width", &status))
-        status = argData.getFlagArgument("-width", 0, width);
+    {
+        status = argData.getFlagArgument("-width", 0, options.m_width);
+        std::cout << "  width = " << options.m_width << std::endl;
+    }
 
-    int height = -1;
     if(argData.isFlagSet("-height", &status))
-        status = argData.getFlagArgument("-height", 0, height);
+    {
+        status = argData.getFlagArgument("-height", 0, options.m_height);
+        std::cout << "  height = " << options.m_height << std::endl;
+    }
 
-    MString cameraName;
     if(argData.isFlagSet("-camera", &status))
-        status = argData.getFlagArgument("-camera", 0, cameraName);
+    {
+        status = argData.getFlagArgument("-camera", 0, options.m_camera);
+        std::cout << "  camera = " << options.m_camera << std::endl;
+    }
 
     std::cout << std::endl;
     return MS::kSuccess;
@@ -131,24 +122,34 @@ MStatus ProgressiveRenderCommand::doIt(const MArgList& args)
     std::cout << "Appleseed IPR:\n";
     std::cout << "--------------\n";
 
+    AppleseedSession::Options options;
+
     MStatus status;
     MArgDatabase argData(syntax(), args, &status);
 
-    int width = -1;
     if(argData.isFlagSet("-width", &status))
-        status = argData.getFlagArgument("-width", 0, width);
+    {
+        status = argData.getFlagArgument("-width", 0, options.m_width);
+        std::cout << "  width = " << options.m_width << std::endl;
+    }
 
-    int height = -1;
     if(argData.isFlagSet("-height", &status))
-        status = argData.getFlagArgument("-height", 0, height);
+    {
+        status = argData.getFlagArgument("-height", 0, options.m_height);
+        std::cout << "  height = " << options.m_height << std::endl;
+    }
 
-    MString cameraName;
     if(argData.isFlagSet("-camera", &status))
-        status = argData.getFlagArgument("-camera", 0, cameraName);
+    {
+        status = argData.getFlagArgument("-camera", 0, options.m_camera);
+        std::cout << "  camera = " << options.m_camera << std::endl;
+    }
 
     MString action;
     if(argData.isFlagSet("-action", &status))
         status = argData.getFlagArgument("-action", 0, action);
+
+    std::cout << "  action = " << action << std::endl;
 
     if(action == "start")
     {
@@ -164,7 +165,10 @@ MStatus ProgressiveRenderCommand::doIt(const MArgList& args)
     }
     else if(action == "running")
     {
-        // ...
+        const int iprRunning =
+            AppleseedSession::sessionMode() == AppleseedSession::ProgressiveRenderSession;
+        setResult(iprRunning);
+        std::cout << "  result = " << iprRunning << std::endl;
     }
     else if(action == "pause")
     {

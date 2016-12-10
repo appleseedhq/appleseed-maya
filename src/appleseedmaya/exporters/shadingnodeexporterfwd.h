@@ -26,34 +26,13 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDER_COMMANDS_H
-#define APPLESEED_MAYA_RENDER_COMMANDS_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_FWD_H
+#define APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_FWD_H
 
-// Maya headers.
-#include <maya/MPxCommand.h>
+// Boost headers.
+#include "boost/shared_ptr.hpp"
 
-class FinalRenderCommand
-  : public MPxCommand
-{
-  public:
-    static MString cmdName;
+class ShadingNodeExporter;
+typedef boost::shared_ptr<ShadingNodeExporter> ShadingNodeExporterPtr;
 
-    static MSyntax syntaxCreator();
-    static void* creator();
-
-    virtual MStatus doIt(const MArgList& args);
-};
-
-class ProgressiveRenderCommand
-  : public MPxCommand
-{
-  public:
-    static MString cmdName;
-
-    static MSyntax syntaxCreator();
-    static void* creator();
-
-    virtual MStatus doIt(const MArgList& args);
-};
-
-#endif  // !APPLESEED_MAYA_RENDER_COMMAND_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_FWD_H

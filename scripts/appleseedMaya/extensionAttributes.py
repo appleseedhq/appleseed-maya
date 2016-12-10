@@ -32,7 +32,6 @@ import maya.cmds as mc
 # appleseedMaya imports.
 from logger import logger
 
-
 def addExtensionAttributes():
     # todo: implement this.
 

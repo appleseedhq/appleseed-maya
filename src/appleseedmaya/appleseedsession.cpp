@@ -34,6 +34,7 @@
 #include <vector>
 
 // Boost headers.
+#include "boost/array.hpp"
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/convenience.hpp"
 #include "boost/filesystem/operations.hpp"
@@ -42,6 +43,7 @@
 
 // Maya headers.
 #include <maya/MAnimControl.h>
+#include <maya/MComputation.h>
 #include <maya/MDagPath.h>
 #include <maya/MFnDagNode.h>
 #include <maya/MFnDependencyNode.h>
@@ -73,28 +75,95 @@
 #include "appleseedmaya/exceptions.h"
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/exporters/mpxnodeexporter.h"
+#include "appleseedmaya/exporters/shadingengineexporter.h"
+#include "appleseedmaya/exporters/shadingnetworkexporter.h"
 #include "appleseedmaya/exporters/shapeexporter.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/renderercontroller.h"
 #include "appleseedmaya/renderglobalsnode.h"
+#include "appleseedmaya/renderviewtilecallback.h"
 #include "appleseedmaya/utils.h"
 
 namespace bfs = boost::filesystem;
 namespace asf = foundation;
 namespace asr = renderer;
 
+namespace AppleseedSession
+{
+
+Services::Services() {}
+Services::~Services() {}
+
+} // namespace AppleseedSession.
+
 namespace
 {
 
 struct SessionImpl
 {
+    class ServicesImpl
+      : public AppleseedSession::Services
+    {
+      public:
+        ServicesImpl(SessionImpl& self)
+          : Services()
+          , m_self(self)
+        {
+        }
+
+        virtual ShadingEngineExporterPtr createShadingEngineExporter(const MObject& object) const
+        {
+            MFnDependencyNode depNodeFn(object);
+
+            ShadingEngineExporterMap::iterator it =
+                m_self.m_shadingEngineExporters.find(depNodeFn.name());
+
+            if(it != m_self.m_shadingEngineExporters.end())
+                return it->second;
+
+            ShadingEngineExporterPtr exporter(
+                NodeExporterFactory::createShadingEngineExporter(
+                    object,
+                    *m_self.mainAssembly(),
+                    m_self.m_sessionMode));
+            m_self.m_shadingEngineExporters[depNodeFn.name()] = exporter;
+            return exporter;
+        }
+
+        virtual ShadingNetworkExporterPtr createShadingNetworkExporter(
+            const ShadingNetworkContext   context,
+            const MObject&                object,
+            const MPlug&                  outputPlug) const
+        {
+            MFnDependencyNode depNodeFn(object);
+
+            ShadingNetworkExporterMap::iterator it =
+                m_self.m_shadingNetworkExporters[context].find(depNodeFn.name());
+
+            if(it != m_self.m_shadingNetworkExporters[context].end())
+                return it->second;
+
+            ShadingNetworkExporterPtr exporter(
+                NodeExporterFactory::createShadingNetworkExporter(
+                    context,
+                    object,
+                    outputPlug,
+                    *m_self.mainAssembly(),
+                    m_self.m_sessionMode));
+            m_self.m_shadingNetworkExporters[context][depNodeFn.name()] = exporter;
+            return exporter;
+        }
+
+        SessionImpl& m_self;
+    };
+
     // Constructor. (IPR or Batch)
     SessionImpl(
         AppleseedSession::SessionMode       mode,
         const AppleseedSession::Options&    options)
       : m_sessionMode(mode)
       , m_options(options)
+      , m_services(*this)
     {
         createProject();
     }
@@ -103,9 +172,10 @@ struct SessionImpl
     SessionImpl(
         const MString&                      fileName,
         const AppleseedSession::Options&    options)
-      : m_fileName(fileName)
-      , m_sessionMode(AppleseedSession::ExportSession)
+      : m_sessionMode(AppleseedSession::ExportSession)
       , m_options(options)
+      , m_services(*this)
+      , m_fileName(fileName)
     {
         m_projectPath = bfs::path(fileName.asChar()).parent_path();
 
@@ -115,7 +185,8 @@ struct SessionImpl
         {
             if(!boost::filesystem::create_directory(geomPath))
             {
-                // todo: throw something here...
+                RENDERER_LOG_ERROR("Couldn't create geometry directory. Aborting");
+                throw AppleseedSessionExportError();
             }
         }
 
@@ -191,22 +262,34 @@ struct SessionImpl
 
     void exportProject()
     {
-        MObject defaultRenderGlobalsNode = exportDefaultRenderGlobals();
-        MObject appleseedRenderGlobalsNode = exportAppleseedRenderGlobals();
+        exportDefaultRenderGlobals();
+        exportAppleseedRenderGlobals();
 
         exportScene();
 
         // update the frame.
         {
             asr::ParamArray params = m_project->get_frame()->get_parameters();
-            params.insert("camera", m_options.m_camera.asChar());
 
+            // Set the camera.
+            if(m_options.m_camera.length() != 0)
+            {
+                MStatus status;
+                MSelectionList selList;
+                status = selList.add(m_options.m_camera);
+                MDagPath camera;
+                status = selList.getDagPath(0, camera);
+                params.insert("camera", camera.fullPathName().asChar());
+            }
+
+            // Set the resolution.
             std::stringstream ss;
             ss << m_options.m_width << " " << m_options.m_height;
             params.insert("resolution", ss.str().c_str());
 
             // TODO: set crop window here...
 
+            // Replace the frame.
             m_project->set_frame(asr::FrameFactory().create("beauty", params));
         }
     }
@@ -215,19 +298,29 @@ struct SessionImpl
     {
         createExporters();
 
-        // Collect motion blur times.
+        RENDERER_LOG_DEBUG("Collecting motion blur times");
         MotionBlurTimes motionBlurTimes;
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->collectMotionBlurSteps(motionBlurTimes);
 
         // Create appleseed entities.
-        for(MPxExporterMap::const_iterator it = m_mpxExporters.begin(), e = m_mpxExporters.end(); it != e; ++it)
+        RENDERER_LOG_DEBUG("Creating shading network entities");
+        for(size_t i = 0; i < NumShadingNetworkContexts; ++i)
+        {
+            for(ShadingNetworkExporterMap::const_iterator it = m_shadingNetworkExporters[i].begin(), e = m_shadingNetworkExporters[i].end(); it != e; ++it)
+                it->second->createEntity(m_options);
+        }
+
+        RENDERER_LOG_DEBUG("Creating shading engine entities");
+        for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
             it->second->createEntity(m_options);
 
+        RENDERER_LOG_DEBUG("Creating dag entities");
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->createEntity(m_options);
 
         // For each time step...
+        RENDERER_LOG_DEBUG("Exporting motion steps");
         {
             for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             {
@@ -243,50 +336,39 @@ struct SessionImpl
         // Handle auto-instancing.
         if(m_sessionMode != AppleseedSession::ProgressiveRenderSession)
         {
-            for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
-            {
-                const ShapeExporter *shape = dynamic_cast<const ShapeExporter*>(it->second.get());
-
-                if(shape && shape->supportsInstancing())
-                {
-                    /*
-                    hash = exporter->hash();
-                    if(instanceMap.find(hash) != end())
-                    {
-                        DagNodeExporterPtr exporter(shape);
-                        // Create InstanceExporter(...)
-                        m_dagExporters[it->first] = instanceExporter;
-                    }
-                    else
-                        map[hash] = ShapeExporterPtr(exporter)
-                    */
-                }
-            }
+            RENDERER_LOG_DEBUG("Exporting objects to instances");
+            convertObjectsToInstances();
         }
 
         // Flush entities to the renderer.
-        for(MPxExporterMap::const_iterator it = m_mpxExporters.begin(), e = m_mpxExporters.end(); it != e; ++it)
+        RENDERER_LOG_DEBUG("Flushing shading network entities");
+        for(size_t i = 0; i < NumShadingNetworkContexts; ++i)
+        {
+            for(ShadingNetworkExporterMap::const_iterator it = m_shadingNetworkExporters[i].begin(), e = m_shadingNetworkExporters[i].end(); it != e; ++it)
+                it->second->flushEntity();
+        }
+
+        RENDERER_LOG_DEBUG("Flushing shading engines entities");
+        for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
             it->second->flushEntity();
 
+        RENDERER_LOG_DEBUG("Flushing dag entities");
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->flushEntity();
     }
 
-    MObject exportDefaultRenderGlobals()
+    void exportDefaultRenderGlobals()
     {
         RENDERER_LOG_DEBUG("Exporting default render globals");
 
         MObject defaultRenderGlobalsNode;
         if(getNodeMObject("defaultRenderGlobals", defaultRenderGlobalsNode))
         {
-            MFnDependencyNode defaultGlobalsDepFn(defaultRenderGlobalsNode);
-            // ...
+            // todo: export globals here...
         }
-
-        return defaultRenderGlobalsNode;
     }
 
-    MObject exportAppleseedRenderGlobals()
+    void exportAppleseedRenderGlobals()
     {
         RENDERER_LOG_DEBUG("Exporting appleseed render globals");
 
@@ -297,16 +379,11 @@ struct SessionImpl
                 appleseedRenderGlobalsNode,
                 *m_project);
         }
-
-        return appleseedRenderGlobalsNode;
     }
 
     void createExporters()
     {
-        RENDERER_LOG_DEBUG("Exporting default material");
-        exportDefaultMaterial();
-
-        // Create exporters for all dag nodes in the scene.
+        // Create exporters for all the dag nodes in the scene.
         RENDERER_LOG_DEBUG("Creating dag node exporters");
         MDagPath path;
         for(MItDag it(MItDag::kDepthFirst); !it.isDone(); it.next())
@@ -315,53 +392,15 @@ struct SessionImpl
             createDagNodeExporter(path);
         }
 
-        // Collect extra dependency nodes to export.
-        RENDERER_LOG_DEBUG("Collecting dependency nodes to export");
-        MObjectArray extraObjects;
+        // Create dag extra exporters.
+        RENDERER_LOG_DEBUG("Creating dag extra exporters");
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
-            it->second->collectDependencyNodesToExport(extraObjects);
+            it->second->createExporters(m_services);
 
-        for(int i = 0, e = extraObjects.length(); i < e; ++i)
-            createMPxNodeExporter(extraObjects[i]);
-    }
-
-    void exportDefaultMaterial()
-    {
-        MObject initialShadingGroup;
-        if(getNodeMObject("initialShadingGroup", initialShadingGroup))
-            createMPxNodeExporter(initialShadingGroup);
-    }
-
-    void createMPxNodeExporter(const MObject& object)
-    {
-        MFnDependencyNode depNodeFn(object);
-        if(m_mpxExporters.count(depNodeFn.name()) != 0)
-            return;
-
-        MPxNodeExporterPtr exporter;
-
-        try
-        {
-            exporter.reset(NodeExporterFactory::createMPxNodeExporter(
-                object,
-                *m_project,
-                m_sessionMode));
-        }
-        catch(const NoExporterForNode&)
-        {
-            RENDERER_LOG_WARNING(
-                "No mpx exporter found for node type %s",
-                depNodeFn.typeName().asChar());
-            return;
-        }
-
-        if(exporter)
-        {
-            m_mpxExporters[depNodeFn.name()] = exporter;
-            RENDERER_LOG_DEBUG(
-                "Created mpx exporter for node %s",
-                depNodeFn.name().asChar());
-        }
+        // Create shading engine extra exporters.
+        RENDERER_LOG_DEBUG("Creating shading engines extra exporters");
+        for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
+            it->second->createExporters(m_services);
     }
 
     void createDagNodeExporter(const MDagPath& path)
@@ -398,6 +437,59 @@ struct SessionImpl
         }
     }
 
+    void convertObjectsToInstances()
+    {
+        for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+        {
+            //const ShapeExporter *shape = dynamic_cast<const ShapeExporter*>(it->second.get());
+
+            //if(shape && shape->supportsInstancing())
+            //{
+                /*
+                hash = exporter->hash();
+                if(instanceMap.find(hash) != end())
+                {
+                    DagNodeExporterPtr exporter(shape);
+                    // Create InstanceExporter(...)
+                    m_dagExporters[it->first] = instanceExporter;
+                }
+                else
+                    map[hash] = ShapeExporterPtr(exporter)
+                */
+            //}
+        }
+    }
+
+    void finalRender()
+    {
+        /*
+        // Reset the renderer controller.
+        m_rendererController->set_status(asr::IRendererController::ContinueRendering);
+
+        // Create the master renderer.
+        asr::Configuration *cfg = m_project->configurations().get_by_name("final");
+        const asr::ParamArray &params = cfg->get_parameters();
+
+        RenderViewTileCallbackFactory tileCallbackFactory;
+        m_renderer.reset( new asr::MasterRenderer(*m_project, params, m_rendererController, &tileCallbackFactory));
+        */
+    }
+
+    void progressiveRender()
+    {
+        /*
+        // Reset the renderer controller.
+        m_rendererController->set_status(asr::IRendererController::ContinueRendering);
+
+        // Create the master renderer.
+        asr::Configuration *cfg = m_project->configurations().get_by_name("interactive");
+        const asr::ParamArray &params = cfg->get_parameters();
+
+        RenderViewTileCallbackFactory tileCallbackFactory;
+        m_renderer.reset( new asr::MasterRenderer(*m_project, params, m_rendererController, &tileCallbackFactory));
+        */
+    }
+
     bool writeProject() const
     {
         return asr::ProjectFileWriter::write(
@@ -405,6 +497,12 @@ struct SessionImpl
             m_fileName.asChar(),
             asr::ProjectFileWriter::OmitHandlingAssetFiles |
             asr::ProjectFileWriter::OmitWritingGeometryFiles);
+    }
+
+    asr::Assembly *mainAssembly()
+    {
+        asr::Scene *scene = m_project->get_scene();
+        return scene->assemblies().get_by_name("assembly");
     }
 
     MStatus getNodeMObject(const MString& nodeName, MObject& node)
@@ -415,14 +513,17 @@ struct SessionImpl
         if(selList.isEmpty())
             return MS::kFailure;
 
-        selList.getDependNode(0, node);
+        return selList.getDependNode(0, node);
     }
 
-    typedef std::map<MString, MPxNodeExporterPtr, MStringCompareLess> MPxExporterMap;
-    typedef std::map<MString, DagNodeExporterPtr, MStringCompareLess> DagExporterMap;
+    typedef std::map<MString, DagNodeExporterPtr, MStringCompareLess>           DagExporterMap;
+    typedef std::map<MString, ShadingEngineExporterPtr, MStringCompareLess>     ShadingEngineExporterMap;
+    typedef std::map<MString, ShadingNetworkExporterPtr, MStringCompareLess>    ShadingNetworkExporterMap;
+    typedef boost::array<ShadingNetworkExporterMap, NumShadingNetworkContexts>  ShadingNetworkExporterMapArray;
 
     AppleseedSession::SessionMode               m_sessionMode;
     AppleseedSession::Options                   m_options;
+    ServicesImpl                                m_services;
     MTime                                       m_savedTime;
 
     asf::auto_release_ptr<renderer::Project>    m_project;
@@ -430,21 +531,18 @@ struct SessionImpl
     MString                                     m_fileName;
     bfs::path                                   m_projectPath;
 
-    MPxExporterMap                              m_mpxExporters;
     DagExporterMap                              m_dagExporters;
+    ShadingEngineExporterMap                    m_shadingEngineExporters;
+    ShadingNetworkExporterMapArray              m_shadingNetworkExporters;
 
     boost::scoped_ptr<asr::MasterRenderer>      m_renderer;
     RendererController                          m_rendererController;
 };
 
-// Global session.
-boost::scoped_ptr<SessionImpl> gGlobalSession;
-
-// Plugin path.
-bfs::path gPluginPath;
-
-// Saved time.
-MTime gSavedTime;
+// Globals.
+bfs::path gPluginPath;                          // Plugin path.
+MTime g_savedTime;                              // Saved time.
+boost::scoped_ptr<SessionImpl> gGlobalSession;  // Global session.
 
 } // unnamed
 
@@ -469,54 +567,94 @@ void beginProjectExport(
 {
     assert(gGlobalSession.get() == 0);
 
-    gSavedTime = MAnimControl::currentTime();
+    g_savedTime = MAnimControl::currentTime();
 
-    // for each option...
-    gGlobalSession.reset(new SessionImpl(fileName, options));
-    gGlobalSession->exportProject();
-    gGlobalSession->writeProject();
+    if(options.m_sequence)
+    {
+        std::string fname = fileName.asChar();
+        if(fname.find('#') == std::string::npos)
+        {
+            RENDERER_LOG_ERROR("No frame placeholders in filename.");
+            return;
+        }
+
+        MComputation computation;
+        computation.beginComputation();
+
+        for(int frame = options.m_firstFrame; frame <= options.m_lastFrame; frame += options.m_frameStep)
+        {
+            if (computation.isInterruptRequested())
+            {
+                RENDERER_LOG_INFO("Project export aborted.");
+                break;
+            }
+
+            MGlobal::viewFrame(frame);
+            fname = asf::get_numbered_string(fname, frame);
+            try
+            {
+                gGlobalSession.reset(new SessionImpl(fname.c_str(), options));
+                gGlobalSession->exportProject();
+                gGlobalSession->writeProject();
+            }
+            catch(const AppleseedMayaException& e)
+            {
+                return;
+            }
+        }
+
+        computation.endComputation();
+    }
+    else
+    {
+        gGlobalSession.reset(new SessionImpl(fileName, options));
+        gGlobalSession->exportProject();
+        gGlobalSession->writeProject();
+    }
 }
 
-void endProjectExport()
-{
-    assert(gGlobalSession.get());
-
-    gGlobalSession.reset();
-    MAnimControl::setCurrentTime(gSavedTime);
-}
-
-void beginFinalRender(
-    const Options& options)
+void beginFinalRender(const Options& options)
 {
     assert(gGlobalSession.get() == 0);
 
-    gSavedTime = MAnimControl::currentTime();
-    gGlobalSession.reset(new SessionImpl(FinalRenderSession, options));
+    g_savedTime = MAnimControl::currentTime();
+
+    try
+    {
+        gGlobalSession.reset(new SessionImpl(FinalRenderSession, options));
+        gGlobalSession->finalRender();
+    }
+    catch(const AppleseedMayaException& e)
+    {
+        return;
+    }
 }
 
-void endFinalRender()
-{
-    assert(gGlobalSession.get());
-
-    gGlobalSession.reset();
-    MAnimControl::setCurrentTime(gSavedTime);
-}
-
-void beginProgressiveRender(
-    const Options& options)
+void beginProgressiveRender(const Options& options)
 {
     assert(gGlobalSession.get() == 0);
 
-    gSavedTime = MAnimControl::currentTime();
-    gGlobalSession.reset(new SessionImpl(ProgressiveRenderSession, options));
+    g_savedTime = MAnimControl::currentTime();
+
+    try
+    {
+        gGlobalSession.reset(new SessionImpl(ProgressiveRenderSession, options));
+        gGlobalSession->progressiveRender();
+    }
+    catch(const AppleseedMayaException& e)
+    {
+        return;
+    }
 }
 
-void endProgressiveRender()
+void endSession()
 {
     assert(gGlobalSession.get());
 
     gGlobalSession.reset();
-    MAnimControl::setCurrentTime(gSavedTime);
+
+    if(g_savedTime != MAnimControl::currentTime())
+        MGlobal::viewFrame(g_savedTime);
 }
 
 SessionMode sessionMode()

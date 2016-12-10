@@ -26,34 +26,49 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDER_COMMANDS_H
-#define APPLESEED_MAYA_RENDER_COMMANDS_H
+#ifndef APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
+#define APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
 
-// Maya headers.
-#include <maya/MPxCommand.h>
+// Standard headers.
+#include <cstddef>
 
-class FinalRenderCommand
-  : public MPxCommand
+// appleseed.renderer headers.
+#include "renderer/api/rendering.h"
+
+// Forward declarations.
+namespace foundation    { class Tile; }
+namespace renderer      { class Frame; }
+
+class RenderViewTileCallback
+  : public renderer::ITileCallback
 {
   public:
-    static MString cmdName;
 
-    static MSyntax syntaxCreator();
-    static void* creator();
+    virtual void release();
 
-    virtual MStatus doIt(const MArgList& args);
+    virtual void pre_render(
+        const size_t            x,
+        const size_t            y,
+        const size_t            width,
+        const size_t            height);
+
+    virtual void post_render(
+        const renderer::Frame*  frame);
+
+    virtual void post_render_tile(
+        const renderer::Frame*  frame,
+        const size_t            tile_x,
+        const size_t            tile_y);
 };
 
-class ProgressiveRenderCommand
-  : public MPxCommand
+class RenderViewTileCallbackFactory
+  : public renderer::ITileCallbackFactory
 {
   public:
-    static MString cmdName;
 
-    static MSyntax syntaxCreator();
-    static void* creator();
+    virtual void release();
 
-    virtual MStatus doIt(const MArgList& args);
+    virtual renderer::ITileCallback* create();
 };
 
-#endif  // !APPLESEED_MAYA_RENDER_COMMAND_H
+#endif  // !APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H

@@ -32,7 +32,6 @@
 // Maya headers.
 #include <maya/MImage.h>
 
-
 const MString SwatchRenderer::name("AppleseedRenderSwatch");
 const MString SwatchRenderer::fullName("swatch/AppleseedRenderSwatch");
 

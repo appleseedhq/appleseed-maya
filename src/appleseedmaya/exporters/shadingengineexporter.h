@@ -29,50 +29,52 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
 
+// Forward declaration header.
+#include "shadingengineexporterfwd.h"
+
 // Maya headers.
-#include <maya/MObjectArray.h>
+#include <maya/MObject.h>
 
 // appleseed.renderer headers.
 #include "renderer/api/material.h"
 #include "renderer/api/surfaceshader.h"
 
 // appleseed.maya headers.
-#include "appleseedmaya/exporters/mpxnodeexporter.h"
-#include "appleseedmaya/exporters/shadingnetworkexporter.h"
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
+#include "appleseedmaya/utils.h"
 
 // Forward declarations.
-namespace renderer { class Project; }
-
+namespace renderer { class Assembly; }
 
 class ShadingEngineExporter
-  : public MPxNodeExporter
+  : public NonCopyable
 {
   public:
 
-    static void registerExporter();
+    // Create any extra exporter needed by this exporter (shading engines, ...).
+    void createExporters(const AppleseedSession::Services& services);
 
-    static MPxNodeExporter *create(
-        const MObject&                object,
-        renderer::Project&            project,
-        AppleseedSession::SessionMode sessionMode);
+    // Create appleseed entities.
+    void createEntity(const AppleseedSession::Options& options);
 
-    virtual void createEntity(const AppleseedSession::Options& options);
-
-    virtual void flushEntity();
+    // Flush entities to the renderer.
+    void flushEntity();
 
   private:
+    friend class NodeExporterFactory;
 
     ShadingEngineExporter(
         const MObject&                object,
-        renderer::Project&            project,
+        renderer::Assembly&           mainAssembly,
         AppleseedSession::SessionMode sessionMode);
 
-    void createShadingNetworkExporters(const AppleseedSession::Options& options);
-
-    AppleseedEntityPtr<renderer::Material>        m_material;
-    AppleseedEntityPtr<renderer::SurfaceShader>   m_surfaceShader;
-
-    ShadingNetworkExporterPtr                     m_surfaceExporter;
+    AppleseedSession::SessionMode                   m_sessionMode;
+    MObject                                         m_object;
+    renderer::Assembly&                             m_mainAssembly;
+    AppleseedEntityPtr<renderer::Material>          m_material;
+    AppleseedEntityPtr<renderer::SurfaceShader>     m_surfaceShader;
+    ShadingNetworkExporterPtr                       m_surfaceNetworkExporter;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H

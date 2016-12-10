@@ -26,34 +26,22 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDER_COMMANDS_H
-#define APPLESEED_MAYA_RENDER_COMMANDS_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_FWD_H
+#define APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_FWD_H
 
-// Maya headers.
-#include <maya/MPxCommand.h>
+// Boost headers.
+#include "boost/shared_ptr.hpp"
 
-class FinalRenderCommand
-  : public MPxCommand
+enum ShadingNetworkContext
 {
-  public:
-    static MString cmdName;
-
-    static MSyntax syntaxCreator();
-    static void* creator();
-
-    virtual MStatus doIt(const MArgList& args);
+    SurfaceNetworkContext = 0,
+    // DisplacementContext,
+    // LightAttenuationContext,
+    // ...
+    NumShadingNetworkContexts
 };
 
-class ProgressiveRenderCommand
-  : public MPxCommand
-{
-  public:
-    static MString cmdName;
+class ShadingNetworkExporter;
+typedef boost::shared_ptr<ShadingNetworkExporter> ShadingNetworkExporterPtr;
 
-    static MSyntax syntaxCreator();
-    static void* creator();
-
-    virtual MStatus doIt(const MArgList& args);
-};
-
-#endif  // !APPLESEED_MAYA_RENDER_COMMAND_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_FWD_H

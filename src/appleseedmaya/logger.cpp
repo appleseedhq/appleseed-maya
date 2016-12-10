@@ -44,7 +44,6 @@ namespace asr = renderer;
 
 namespace Logger
 {
-
 namespace
 {
 
@@ -67,9 +66,7 @@ class LogTarget
         switch (category)
         {
             case asf::LogMessage::Debug:
-            #ifndef NDEBUG
-                std::cout << "[Debug] " << message << std::endl;
-            #endif
+                MGlobal::displayInfo(MString("[Debug]") + MString(message));
             break;
 
             case asf::LogMessage::Info:
@@ -91,11 +88,17 @@ class LogTarget
 
 LogTarget gLogTarget;
 
-}
+} // unnamed namespace.
 
 MStatus initialize()
 {
     asr::global_logger().add_target(&gLogTarget);
+
+#ifndef NDEBUG
+    // while debugging we want all output...
+    asr::global_logger().set_verbosity_level(asf::LogMessage::Debug);
+#endif
+
     return MS::kSuccess;
 }
 

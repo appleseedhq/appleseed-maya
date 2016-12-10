@@ -60,7 +60,6 @@ MStatus get(const MPlug& plug, MColor& value);
 MStatus get(const MPlug& plug, MPoint& value);
 MStatus get(const MPlug& plug, MVector& value);
 MStatus get(const MPlug& plug, MMatrix& value);
-MStatus get(const MPlug& plug, MObject& value);
 
 template<class T>
 MStatus get(const MFnDependencyNode& depNodeFn, const MString& attrName, T& value)

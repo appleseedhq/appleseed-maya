@@ -32,12 +32,12 @@
 // Standard headers.
 #include <exception>
 
-// Maya headers.
-#include <maya/MStatus.h>
-#include <maya/MString.h>
-
-
 struct AppleseedMayaException
+{
+};
+
+struct AppleseedSessionExportError
+  : public AppleseedMayaException
 {
 };
 

@@ -29,6 +29,9 @@
 // Interface header.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
+// appleseed.renderer headers.
+#include "renderer/api/project.h"
+#include "renderer/api/scene.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -37,12 +40,44 @@ DagNodeExporter::DagNodeExporter(
     const MDagPath&                 path,
     asr::Project&                   project,
     AppleseedSession::SessionMode   sessionMode)
-  : MPxNodeExporter(path.node(), project, sessionMode)
-  , m_path(path)
+  : m_path(path)
+  , m_sessionMode(sessionMode)
+  , m_project(project)
+  , m_scene(*project.get_scene())
+  , m_mainAssembly(*m_scene.assemblies().get_by_name("assembly"))
 {
 }
 
-void DagNodeExporter::collectDependencyNodesToExport(MObjectArray& nodes)
+DagNodeExporter::~DagNodeExporter()
+{
+}
+
+MObject DagNodeExporter::node() const
+{
+    return dagPath().node();
+}
+
+AppleseedSession::SessionMode DagNodeExporter::sessionMode() const
+{
+    return m_sessionMode;
+}
+
+asr::Project& DagNodeExporter::project()
+{
+    return m_project;
+}
+
+asr::Scene& DagNodeExporter::scene()
+{
+    return m_scene;
+}
+
+asr::Assembly& DagNodeExporter::mainAssembly()
+{
+    return m_mainAssembly;
+}
+
+void DagNodeExporter::createExporters(const AppleseedSession::Services& services)
 {
 }
 
