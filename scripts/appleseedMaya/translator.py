@@ -75,8 +75,12 @@ def appleseedTranslatorOptions(parent, action, initialSettings, resultCallback):
             label="Render camera")
         mc.menuItem(label='<Current>', divider=True)
         for camera in mc.ls(type='camera'):
-            if not mc.getAttr(camera + '.orthographic'):
-                mc.menuItem(label=camera)
+            if mc.getAttr(camera + '.orthographic'):
+                continue
+            if not mc.getAttr(camera + ".renderable"):
+                continue
+
+            mc.menuItem(label=camera)
 
         mc.separator(style="single")
 
