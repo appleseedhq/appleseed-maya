@@ -32,12 +32,16 @@
 // Maya headers.
 #include <maya/MFnDagNode.h>
 
+// appleseed.foundation headers.
+#include "foundation/math/scalar.h"
+
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/exporters/shadingnetworkexporter.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -68,10 +72,64 @@ bool AreaLightExporter::supportsMotionBlur() const
     return false;
 }
 
+void AreaLightExporter::createExporters(const AppleseedSession::Services& services)
+{
+    m_lightNetworkExporter = services.createShadingNetworkExporter(
+        AreaLightNetworkContext,
+        node(),
+        MPlug());
+}
+
 void AreaLightExporter::createEntity(const AppleseedSession::Options& options)
 {
+    MString objectName = appleseedName();
+
+    asr::ParamArray params;
+    params.insert("primitive", "grid");
+    params.insert("resolution_u", 1);
+    params.insert("resolution_v", 1);
+    params.insert("width", 2.0f);
+    params.insert("height", 2.0f);
+
+    if(sessionMode() == AppleseedSession::ExportSession)
+        m_lightMesh.reset(asr::MeshObjectFactory::create(objectName.asChar(), params));
+    else
+        m_lightMesh.reset(asr::create_primitive_mesh(objectName.asChar(), params));
+
+    MString materialName = objectName + MString("_area_light_material");
+    m_material.reset(asr::OSLMaterialFactory().create(materialName.asChar(), asr::ParamArray()));
+
+    asf::StringDictionary materialMappings;
+    materialMappings.insert("default", materialName.asChar());
+
+    asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
+
+    // Rotate x -90 degrees (or is it 90?) here.
+    m = m * asf::Matrix4d::make_rotation_x(asf::deg_to_rad(-90.0));
+
+    asf::Transformd xform(m, asf::inverse(m));
+
+    const MString objectInstanceName = appleseedName() + MString("_instance");
+    m_objectInstance.reset(
+        asr::ObjectInstanceFactory::create(
+            objectInstanceName.asChar(),
+            asr::ParamArray(),
+            objectName.asChar(),
+            xform,
+            materialMappings,
+            materialMappings));
 }
 
 void AreaLightExporter::flushEntity()
 {
+    if(m_lightNetworkExporter)
+    {
+        m_material->get_parameters().insert(
+            "osl_surface",
+            m_lightNetworkExporter->shaderGroupName().asChar());
+    }
+
+    mainAssembly().materials().insert(m_material.release());
+    mainAssembly().objects().insert(m_lightMesh.releaseAs<asr::Object>());
+    mainAssembly().object_instances().insert(m_objectInstance.release());
 }

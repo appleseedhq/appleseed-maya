@@ -76,6 +76,7 @@ CreateShadingNodeExporterMapType    gShadingNodeExporters;
 
 MStatus NodeExporterFactory::initialize(const MString& pluginPath)
 {
+    AreaLightExporter::registerExporter();
     CameraExporter::registerExporter();
     EnvLightExporter::registerExporter();
     LightExporter::registerExporter();

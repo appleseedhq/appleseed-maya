@@ -35,6 +35,7 @@
 enum ShadingNetworkContext
 {
     SurfaceNetworkContext = 0,
+    AreaLightNetworkContext,
     // DisplacementContext,
     // LightAttenuationContext,
     // ...

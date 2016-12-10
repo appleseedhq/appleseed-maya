@@ -32,8 +32,14 @@
 // Standard headers.
 #include<string>
 
+// appleseed.renderer headers.
+#include "renderer/api/material.h"
+#include "renderer/api/object.h"
+#include "renderer/api/scene.h"
+
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
+#include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
 
 // Forward declarations.
 namespace renderer { class Project; }
@@ -52,6 +58,8 @@ class AreaLightExporter
 
     bool supportsMotionBlur() const;
 
+    virtual void createExporters(const AppleseedSession::Services& services);
+
     virtual void createEntity(const AppleseedSession::Options& options);
 
     virtual void flushEntity();
@@ -62,6 +70,11 @@ class AreaLightExporter
       const MDagPath&               path,
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
+
+    AppleseedEntityPtr<renderer::MeshObject>        m_lightMesh;
+    AppleseedEntityPtr<renderer::ObjectInstance>    m_objectInstance;
+    AppleseedEntityPtr<renderer::Material>          m_material;
+    ShadingNetworkExporterPtr                       m_lightNetworkExporter;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_AREALIGHTEXPORTER_H

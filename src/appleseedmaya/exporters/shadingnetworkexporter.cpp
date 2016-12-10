@@ -144,6 +144,10 @@ void ShadingNetworkExporter::exportShadingNetwork()
         }
         break;
 
+        case AreaLightNetworkContext:
+            // Nothing to do here...
+        break;
+
         default:
             assert(false);
             RENDERER_LOG_ERROR("Unknown shading network context.");
