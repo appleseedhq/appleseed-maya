@@ -106,6 +106,7 @@ if(WIN32)
 endif(WIN32)
 
 find_path(MAYA_INCLUDE_DIR maya/MFn.h
+  HINTS ${MAYA_BASE_DIR}
   PATHS
     ENV MAYA_LOCATION
     ${MAYA_BASE_DIR}
@@ -116,6 +117,7 @@ find_path(MAYA_INCLUDE_DIR maya/MFn.h
 )
 
 find_path(MAYA_LIBRARY_DIR OpenMaya
+  HINTS ${MAYA_BASE_DIR}
   PATHS
     ENV MAYA_LOCATION
     ${MAYA_BASE_DIR}
@@ -128,12 +130,13 @@ find_path(MAYA_LIBRARY_DIR OpenMaya
 list(APPEND MAYA_INCLUDE_DIRS ${MAYA_INCLUDE_DIR})
 
 find_path(MAYA_DEVKIT_INC_DIR GL/glext.h
+  HINTS ${MAYA_BASE_DIR}
   PATHS
-    ENV MAYA_LOCATION
+    ENV_MAYA_LOCATION
     ${MAYA_BASE_DIR}
   PATH_SUFFIXES
     ../../devkit/plug-ins/
-    /devkit/plug-ins/
+    devkit/plug-ins
   DOC "Maya's devkit headers path"
 )
 
@@ -149,10 +152,11 @@ foreach(MAYA_LIB
   Foundation
   IMFbase
   tbb
-  cg
-  cgGL
+  Cg
+  CgGL
 )
   find_library(MAYA_${MAYA_LIB}_LIBRARY ${MAYA_LIB}
+    HINTS ${MAYA_BASE_DIR}
     PATHS
       ENV MAYA_LOCATION
       ${MAYA_BASE_DIR}
@@ -177,3 +181,4 @@ include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Maya DEFAULT_MSG
     ${MAYA_LIBRARIES}
     MAYA_INCLUDE_DIRS)
+
