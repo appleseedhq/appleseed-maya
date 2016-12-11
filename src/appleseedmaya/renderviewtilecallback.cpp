@@ -43,9 +43,18 @@
 #include "renderer/api/frame.h"
 #include "renderer/api/log.h"
 
+namespace asf = foundation;
+namespace asr = renderer;
+
+RenderViewTileCallback::RenderViewTileCallback()
+  : m_renderedPixels(0)
+{
+}
+
 void RenderViewTileCallback::release()
 {
-    delete this;
+    // We don't need to do anything here.
+    // The tile callback factory deletes this instance.
 }
 
 void RenderViewTileCallback::pre_render(
@@ -65,6 +74,26 @@ void RenderViewTileCallback::post_render_tile(
     const size_t            tile_x,
     const size_t            tile_y)
 {
+    const size_t totalPixels = frame->image().properties().m_pixel_count;
+
+    const asf::Tile& tile = frame->image().tile(tile_x, tile_y);
+    m_renderedPixels += tile.get_pixel_count();
+
+    // todo: log progress here...
+
+    // Reset progress when rendering is finished for multi-pass renders.
+    if( m_renderedPixels == totalPixels )
+        m_renderedPixels = 0;
+}
+
+RenderViewTileCallbackFactory::RenderViewTileCallbackFactory()
+{
+    m_callback = new RenderViewTileCallback();
+}
+
+RenderViewTileCallbackFactory::~RenderViewTileCallbackFactory()
+{
+    m_callback->release();
 }
 
 void RenderViewTileCallbackFactory::release()
@@ -74,5 +103,5 @@ void RenderViewTileCallbackFactory::release()
 
 renderer::ITileCallback* RenderViewTileCallbackFactory::create()
 {
-    return new RenderViewTileCallback();
+    return m_callback;
 }

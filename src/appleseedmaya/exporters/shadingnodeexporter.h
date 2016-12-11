@@ -62,7 +62,7 @@ class ShadingNodeExporter
 
     const OSLShaderInfo& getShaderInfo() const;
 
-    void createShader();
+    virtual void createShader();
 
   protected:
 
@@ -70,15 +70,19 @@ class ShadingNodeExporter
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);
 
+    void exportParamValues(
+        const OSLShaderInfo&     shaderInfo,
+        renderer::ParamArray&    shaderParams);
+
     void exportParamValue(
-      const MPlug&              plug,
-      const OSLParamInfo&       paramInfo,
-      renderer::ParamArray&     shaderParams);
+        const MPlug&              plug,
+        const OSLParamInfo&       paramInfo,
+        renderer::ParamArray&     shaderParams);
 
     void exportArrayParamValue(
-      const MPlug&              plug,
-      const OSLParamInfo&       paramInfo,
-      renderer::ParamArray&     shaderParams);
+        const MPlug&              plug,
+        const OSLParamInfo&       paramInfo,
+        renderer::ParamArray&     shaderParams);
 
     MObject                                         m_object;
     renderer::ShaderGroup&                          m_shaderGroup;

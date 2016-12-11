@@ -89,12 +89,26 @@ const OSLShaderInfo&ShadingNodeExporter::getShaderInfo() const
 
 void ShadingNodeExporter::createShader()
 {
-    MStatus status;
-    MFnDependencyNode depNodeFn(m_object);
-
     const OSLShaderInfo& shaderInfo = getShaderInfo();
 
     asr::ParamArray shaderParams;
+    exportParamValues(shaderInfo, shaderParams);
+
+    MFnDependencyNode depNodeFn(m_object);
+    m_shaderGroup.add_shader(
+        shaderInfo.shaderType.asChar(),
+        shaderInfo.shaderName.asChar(),
+        depNodeFn.name().asChar(),
+        shaderParams);
+}
+
+void ShadingNodeExporter::exportParamValues(
+    const OSLShaderInfo&    shaderInfo,
+    asr::ParamArray&        shaderParams)
+{
+    MStatus status;
+    MFnDependencyNode depNodeFn(m_object);
+
     for(int i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
@@ -132,12 +146,6 @@ void ShadingNodeExporter::createShader()
         else
             exportParamValue(plug, paramInfo, shaderParams);
     }
-
-    m_shaderGroup.add_shader(
-        shaderInfo.shaderType.asChar(),
-        shaderInfo.shaderName.asChar(),
-        depNodeFn.name().asChar(),
-        shaderParams);
 }
 
 void ShadingNodeExporter::exportParamValue(

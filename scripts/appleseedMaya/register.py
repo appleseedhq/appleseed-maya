@@ -152,7 +152,6 @@ def register():
     # Appleseed translator.
     createTranslatorMelProcedures()
 
-
     # Logos.
     if appleseedIconsPath():
         pm.renderer(
@@ -180,8 +179,24 @@ def register():
     # Menu
     createMenu()
 
+    # XGen
+    try:
+        import xgenseed
+        xgenseed.initialize()
+        logger.info("appleseedMaya: initialized xgenseed")
+    except Exception as e:
+        logger.info("appleseedMaya: could not initialize xgenseed. error = %s" % e)
+
 def unregister():
     logger.info("Unregistering appleseed renderer.")
+
+    # XGen
+    try:
+        import xgenseed
+        xgenseed.uninitialize()
+        logger.info("appleseedMaya: uninitialized xgenseed")
+    except Exception as e:
+        logger.info("appleseedMaya: could not uninitialize xgenseed. error = %s" % e)
 
     deleteMenu()
 

@@ -62,8 +62,6 @@ class ShapeExporter
 
     void shapeAttributesToParams(renderer::ParamArray& params);
 
-    void visibilityAttributesToParams(renderer::ParamArray& params);
-
     void createObjectInstance(const MString& objectName);
 
     renderer::TransformSequence                     m_transformSequence;

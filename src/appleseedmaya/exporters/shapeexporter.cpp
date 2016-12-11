@@ -96,11 +96,6 @@ void ShapeExporter::shapeAttributesToParams(renderer::ParamArray& params)
     // TODO: implement this...
 }
 
-void ShapeExporter::visibilityAttributesToParams(renderer::ParamArray& params)
-{
-    // TODO: implement this...
-}
-
 void ShapeExporter::createObjectInstance(const MString& objectName)
 {
     asr::Assembly *objectAssembly = &mainAssembly();

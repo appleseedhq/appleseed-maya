@@ -319,8 +319,8 @@ struct SessionImpl
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->createEntity(m_options);
 
-        // For each time step...
         RENDERER_LOG_DEBUG("Exporting motion steps");
+        // For each time step...
         {
             for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             {
@@ -336,7 +336,7 @@ struct SessionImpl
         // Handle auto-instancing.
         if(m_sessionMode != AppleseedSession::ProgressiveRenderSession)
         {
-            RENDERER_LOG_DEBUG("Exporting objects to instances");
+            RENDERER_LOG_DEBUG("Converting objects to instances");
             convertObjectsToInstances();
         }
 
@@ -383,15 +383,47 @@ struct SessionImpl
 
     void createExporters()
     {
-        // Create exporters for all the dag nodes in the scene.
-        RENDERER_LOG_DEBUG("Creating dag node exporters");
-        MDagPath path;
-        for(MItDag it(MItDag::kDepthFirst); !it.isDone(); it.next())
+        if(m_options.m_selectionOnly)
         {
-            it.getPath(path);
-            createDagNodeExporter(path);
+            // Create exporters for the selected nodes in the scene.
+            MStatus status;
+            MSelectionList sel;
+            status = MGlobal::getActiveSelectionList(sel);
+
+            MDagPath rootPath, path;
+            MItDag it(MItDag::kBreadthFirst);
+
+            for(int i = 0, e = sel.length(); i < e; ++i)
+            {
+                status = sel.getDagPath(i, rootPath);
+                if(status)
+                {
+                    for(it.reset(rootPath); !it.isDone(); it.next())
+                    {
+                        status = it.getPath(path);
+                        if(status)
+                            createDagNodeExporter(path);
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Create exporters for all the dag nodes in the scene.
+            RENDERER_LOG_DEBUG("Creating dag node exporters");
+            MDagPath path;
+            for(MItDag it(MItDag::kDepthFirst); !it.isDone(); it.next())
+            {
+                it.getPath(path);
+                createDagNodeExporter(path);
+            }
         }
 
+        createExtraExporters();
+    }
+
+    void createExtraExporters()
+    {
         // Create dag extra exporters.
         RENDERER_LOG_DEBUG("Creating dag extra exporters");
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
@@ -405,11 +437,17 @@ struct SessionImpl
 
     void createDagNodeExporter(const MDagPath& path)
     {
-        if(m_dagExporters.count(path.fullPathName()) != 0)
+        MFnDagNode dagNodeFn(path);
+
+        // Avoid warnings about missing exporter for transform nodes.
+        if(strcmp(dagNodeFn.typeName().asChar(), "transform"))
             return;
 
-        MFnDagNode dagNodeFn(path);
-        // todo: test here visibility flags, intermediate objects, .., ...?
+        if(!areObjectAndParentsRenderable(path))
+            return;
+
+        if(m_dagExporters.count(path.fullPathName()) != 0)
+            return;
 
         DagNodeExporterPtr exporter;
 
@@ -514,6 +552,49 @@ struct SessionImpl
             return MS::kFailure;
 
         return selList.getDependNode(0, node);
+    }
+
+    bool isObjectRenderable(const MDagPath& path) const
+    {
+        MFnDagNode dagNodeFn(path);
+
+        // Skip intermediate objects.
+        if(dagNodeFn.isIntermediateObject())
+            return false;
+
+        // Skip templated objects.
+        MStatus status;
+        MPlug plug = dagNodeFn.findPlug("template", false, &status);
+        if(status == MS::kSuccess && plug.asBool())
+            return false;
+
+        // Skip invisible objects.
+        plug = dagNodeFn.findPlug("visibility", &status);
+        if(status == MS::kSuccess && plug.asBool() == false)
+            return false;
+
+        return true;
+    }
+
+    bool areObjectAndParentsRenderable(const MDagPath& path) const
+    {
+        bool result = true;
+        MDagPath d(path);
+        while(true)
+        {
+            if(!isObjectRenderable(d))
+            {
+                result = false;
+                break;
+            }
+
+            if(d.length() <= 1)
+                break;
+
+            d.pop();
+        }
+
+        return result;
     }
 
     typedef std::map<MString, DagNodeExporterPtr, MStringCompareLess>           DagExporterMap;

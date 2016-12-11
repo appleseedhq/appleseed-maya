@@ -124,3 +124,8 @@ asf::Matrix4d DagNodeExporter::convert(const MMatrix& m) const
 
     return result;
 }
+
+void DagNodeExporter::visibilityAttributesToParams(asr::ParamArray& params)
+{
+    // TODO: implement this...
+}

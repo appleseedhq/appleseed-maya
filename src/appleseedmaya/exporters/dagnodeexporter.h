@@ -42,6 +42,9 @@
 // appleseed.foundation headers.
 #include "foundation/math/matrix.h"
 
+// appleseed.renderer headers.
+#include "renderer/api/utility.h"
+
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/utils.h"
@@ -108,6 +111,8 @@ class DagNodeExporter
 
     // Convert a Maya matrix to an appleseed matrix.
     foundation::Matrix4d convert(const MMatrix& m) const;
+
+    void visibilityAttributesToParams(renderer::ParamArray& params);
 
   private:
 

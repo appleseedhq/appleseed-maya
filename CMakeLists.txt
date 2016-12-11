@@ -143,3 +143,7 @@ endif ()
 #--------------------------------------------------------------------------------------------------
 
 add_subdirectory (src/appleseedmaya)
+
+if (XGEN_FOUND)
+    add_subdirectory (src/xgenseed)
+endif ()

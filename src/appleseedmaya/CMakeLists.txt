@@ -99,7 +99,8 @@ set (appleseed_maya_sources
 if (XGEN_FOUND)
     set (appleseed_maya_sources
         ${appleseed_maya_sources}
-        # xgen sources here
+        exporters/xgenexporter.cpp
+        exporters/xgenexporter.h
     )
 endif ()
 

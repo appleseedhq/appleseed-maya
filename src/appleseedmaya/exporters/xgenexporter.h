@@ -26,60 +26,53 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
-#define APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
+#ifndef APPLESEED_MAYA_EXPORTERS_XGENEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_XGENEXPORTER_H
 
 // Standard headers.
-#include <cstddef>
+#include<string>
 
 // appleseed.renderer headers.
-#include "renderer/api/rendering.h"
+#include "renderer/api/scene.h"
+#include "renderer/api/utility.h"
+
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/dagnodeexporter.h"
 
 // Forward declarations.
-namespace foundation    { class Tile; }
-namespace renderer      { class Frame; }
+namespace renderer { class Project; }
 
-class RenderViewTileCallback
-  : public renderer::ITileCallback
+class XGenExporter
+  : public DagNodeExporter
 {
   public:
 
-    RenderViewTileCallback();
+    static void registerExporter();
 
-    virtual void release();
+    static DagNodeExporter *create(
+      const MDagPath&               path,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
 
-    virtual void pre_render(
-        const size_t            x,
-        const size_t            y,
-        const size_t            width,
-        const size_t            height);
+    virtual void createExporters(const AppleseedSession::Services& services);
 
-    virtual void post_render(
-        const renderer::Frame*  frame);
+    virtual void createEntity(const AppleseedSession::Options& options);
 
-    virtual void post_render_tile(
-        const renderer::Frame*  frame,
-        const size_t            tile_x,
-        const size_t            tile_y);
+    virtual void exportTransformMotionStep(float time);
+
+    virtual void flushEntity();
 
   private:
-    size_t m_renderedPixels;
+
+    XGenExporter(
+      const MDagPath&               path,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
+
+    renderer::TransformSequence                     m_transformSequence;
+    AppleseedEntityPtr<renderer::Assembly>          m_assembly;
+    AppleseedEntityPtr<renderer::AssemblyInstance>  m_assemblyInstance;
+
 };
 
-class RenderViewTileCallbackFactory
-  : public renderer::ITileCallbackFactory
-{
-  public:
-
-    RenderViewTileCallbackFactory();
-    virtual ~RenderViewTileCallbackFactory();
-
-    virtual void release();
-
-    virtual renderer::ITileCallback* create();
-
-  private:
-    RenderViewTileCallback *m_callback;
-};
-
-#endif  // !APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_XGENEXPORTER_H
