@@ -39,7 +39,7 @@ from xgenm.ui.util.xgProgressBar import setProgressInfo
 
 # appleseedMaya imports.
 from logger import logger
-import xgenutil
+import xgenseedutil
 
 
 def addMethod(self, method):
@@ -55,7 +55,7 @@ def xgseedUI(selfid):
 
     logger.debug("xgenseed xgseedUI called")
 
-    self = xgenutil.castSelf(selfid)
+    self = xgenseedutil.castSelf(selfid)
 
     # Extend the RenderAPIRendererTab instance with some of our methods
     addMethod(self, xgseedRefresh)
@@ -77,7 +77,7 @@ def xgseedRefresh(selfid):
     if g_tabUIinitCalled == False:
         xgseedUI(selfid)
 
-    self = xgenutil.castSelf(selfid)
+    self = xgenseedutil.castSelf(selfid)
     vis = self.renderer.currentText()=="appleseed"
     self.appleseed_expand_settings.setVisible(vis)
 
