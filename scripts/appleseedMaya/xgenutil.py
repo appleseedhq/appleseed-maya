@@ -27,23 +27,14 @@
 #
 
 # Standard imports.
-import os
+import ctypes
+import types
 
-__g_appleseedIconsLocationInit = False
-__g_appleseedIconsLocation = None
-
-# It seems Maya cannot find the icons using relative paths,
-# even if XBMLANGPATH is set correctly.
-# Find our icon in XBMLANGPATH manually.
-
-def appleseedIconsPath():
-    global __g_appleseedIconsLocationInit
-    global __g_appleseedIconsLocation
-
-    if not __g_appleseedIconsLocationInit:
-        __g_appleseedIconsLocationInit = True
-        for iconPath in os.environ.get('XBMLANGPATH').split(os.pathsep):
-            if os.path.exists(os.path.join(iconPath, "appleseed.png")):
-                __g_appleseedIconsLocation = iconPath
-
-    return __g_appleseedIconsLocation
+def castSelf(selfid):
+    # Can't pass self as an object.
+    # It's cast to id(self) by the caller
+    # and we convert it back to a python object here
+    if isinstance(selfid,str):
+        return ctypes.cast(int(selfid), ctypes.py_object).value
+    else:
+        return selfid

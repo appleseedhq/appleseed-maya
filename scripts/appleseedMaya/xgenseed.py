@@ -31,10 +31,30 @@ import xgenm as xg
 
 # appleseedMaya imports.
 from logger import logger
+import xgenutil
 import xgenseedui
 
-def initialize():
-    pass
 
-def uninitialize():
-    pass
+# Export Init callback. Must fill in some arrays on self
+def xgseedArchiveExportInit( selfid ):
+    logger.debug("xgenseed archive export init.")
+
+    self = xgenutil.castSelf(selfid)
+    self.batch_plugins.append("appleseedMaya")
+
+# Export Info callback. Must fill in som arrays on self
+def xgseedArchiveExportInfo(selfid):
+    logger.debug("xgenseed archive export info.")
+
+    self = xgenutil.castSelf(selfid)
+    self.archiveDirs.append("appleseed")
+    self.archiveLODBeforeExt.append(".${FRAME}.appleseed")
+    self.archiveLODBeforeExt.append(".appleseed")
+
+# Main Export callback
+# Arguments are passed in self.invokeArgs
+def xgseedArchiveExport(selfid):
+    logger.debug("xgenseed archive export")
+
+    self = xgenutil.castSelf(selfid)
+    #exportArchive(self, self.invokeArgs[0], self.invokeArgs[1], self.invokeArgs[2], self.invokeArgs[3])

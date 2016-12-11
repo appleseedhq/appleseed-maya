@@ -181,8 +181,15 @@ def register():
 
     # XGen
     try:
-        import xgenseed
-        xgenseed.initialize()
+        import xgenm as xg
+
+        xg.registerCallback("RenderAPIRendererTabUIInit"   , "appleseedMaya.xgenseedui.xgseedUI" )
+        xg.registerCallback("RenderAPIRendererTabUIRefresh", "appleseedMaya.xgenseedui.xgseedRefresh" )
+        xg.registerCallback("PostDescriptionCreate"        , "appleseedMaya.xgenseedui.xgseedOnCreateDescription" )
+
+        xg.registerCallback("ArchiveExport"    , "appleseedMaya.xgenseed.xgseedArchiveExport")
+        xg.registerCallback("ArchiveExportInfo", "appleseedMaya.xgenseed.xgseedArchiveExportInfo")
+        xg.registerCallback("ArchiveExportInit", "appleseedMaya.xgenseed.xgseedArchiveExportInit")
         logger.info("appleseedMaya: initialized xgenseed")
     except Exception as e:
         logger.info("appleseedMaya: could not initialize xgenseed. error = %s" % e)
@@ -192,8 +199,15 @@ def unregister():
 
     # XGen
     try:
-        import xgenseed
-        xgenseed.uninitialize()
+        import xgenm as xg
+
+        xg.deregisterCallback("RenderAPIRendererTabUIInit"   , "appleseedMaya.xgenseedui.xgseedUI" )
+        xg.deregisterCallback("RenderAPIRendererTabUIRefresh", "appleseedMaya.xgenseedui.xgseedRefresh" )
+        xg.deregisterCallback("PostDescriptionCreate"        , "appleseedMaya.xgenseedui.xgseedOnCreateDescription" )
+
+        xg.deregisterCallback("ArchiveExport"    , "appleseedMaya.xgenseed.xgseedArchiveExport")
+        xg.deregisterCallback("ArchiveExportInfo", "appleseedMaya.xgenseed.xgseedArchiveExportInfo")
+        xg.deregisterCallback("ArchiveExportInit", "appleseedMaya.xgenseed.xgseedArchiveExportInit")
         logger.info("appleseedMaya: uninitialized xgenseed")
     except Exception as e:
         logger.info("appleseedMaya: could not uninitialize xgenseed. error = %s" % e)

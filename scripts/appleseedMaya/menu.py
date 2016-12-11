@@ -34,6 +34,7 @@ import maya.cmds as mc
 import maya.mel as mel
 
 # appleseedMaya imports.
+from logger import logger
 from util import appleseedIconsPath
 
 
@@ -57,8 +58,9 @@ def showAbout():
 __g_appleseedMenu = None
 
 def createMenu():
-    global __g_appleseedMenu
+    logger.debug("creating appleseed menu.")
 
+    global __g_appleseedMenu
     deleteMenu()
 
     gMainWindow = mel.eval('$temp1=$gMainWindow')
@@ -71,5 +73,6 @@ def deleteMenu():
 
     try:
         mc.deleteUI(__g_appleseedMenu)
+        logger.debug("deleted appleseed menu.")
     except:
         pass
