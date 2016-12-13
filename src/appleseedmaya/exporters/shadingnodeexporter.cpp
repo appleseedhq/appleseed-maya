@@ -167,9 +167,18 @@ void ShadingNodeExporter::exportParamValue(
     }
     else if(strcmp(paramInfo.paramType.asChar(), "float") == 0)
     {
-        float value;
-        if(AttributeUtils::get(plug, value))
-            ss << "float " << value;
+        if(strcmp(paramInfo.mayaAttributeType.asChar(), "angle") == 0)
+        {
+            MAngle value(0.0f, MAngle::kDegrees);
+            if(AttributeUtils::get(plug, value))
+                ss << "float " << value.asDegrees();
+        }
+        else
+        {
+            float value;
+            if(AttributeUtils::get(plug, value))
+                ss << "float " << value;
+        }
     }
     else if(strcmp(paramInfo.paramType.asChar(), "int") == 0)
     {
