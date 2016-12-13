@@ -130,7 +130,12 @@ def appleseedTranslatorOptions(parent, action, initialSettings, resultCallback):
             if om.MGlobal.mayaState() == om.MGlobal.kInteractive:
                 camera = om.MDagPath()
                 omui.M3dView.active3dView().getCamera(camera)
-                value = camera.partialPathName()
+
+                if mc.getAttr(camera.partialPathName() + ".renderable"):
+                    value = camera.partialPathName()
+                else:
+                    logger.warning("Active camera not renderable. Ignoring.")
+                    value = ""
             else:
                 logger.warning("Active camera specified for maya batch.")
                 value = ""
