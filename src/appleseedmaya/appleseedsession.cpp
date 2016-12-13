@@ -440,11 +440,11 @@ struct SessionImpl
         MFnDagNode dagNodeFn(path);
 
         // Avoid warnings about missing exporter for transform nodes.
-        if(strcmp(dagNodeFn.typeName().asChar(), "transform"))
+        if(strcmp(dagNodeFn.typeName().asChar(), "transform") == 0)
             return;
 
-        if(!areObjectAndParentsRenderable(path))
-            return;
+        //if(!areObjectAndParentsRenderable(path))
+        //    return;
 
         if(m_dagExporters.count(path.fullPathName()) != 0)
             return;
