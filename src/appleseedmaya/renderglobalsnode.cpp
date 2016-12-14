@@ -31,20 +31,25 @@
 
 // Maya headers.
 #include <maya/MFnDependencyNode.h>
+#include <maya/MFnEnumAttribute.h>
 #include <maya/MFnMessageAttribute.h>
 #include <maya/MFnNumericAttribute.h>
+
+// appleseed.foundation headers.
+#include "foundation/utility/api/specializedapiarrays.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/project.h"
 #include "renderer/api/utility.h"
+#include "renderer/api/surfaceshader.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/typeids.h"
 
-namespace asr = renderer;
 namespace asf = foundation;
+namespace asr = renderer;
 
 const MString RenderGlobalsNode::nodeName("appleseedRenderGlobals");
 const MTypeId RenderGlobalsNode::id(RenderGlobalsNodeTypeId);
@@ -58,6 +63,7 @@ MObject RenderGlobalsNode::m_bounces;
 MObject RenderGlobalsNode::m_backgroundEmitsLight;
 MObject RenderGlobalsNode::m_renderingThreads;
 MObject RenderGlobalsNode::m_envLightNode;
+MObject RenderGlobalsNode::m_diagnosticShader;
 
 void* RenderGlobalsNode::creator()
 {
@@ -174,6 +180,33 @@ MStatus RenderGlobalsNode::initialize()
         status,
         "appleseedMaya: Failed to add render globals envLight attribute");
 
+    // Diagnostic shader override.
+    MFnEnumAttribute enumAttrFn;
+    m_diagnosticShader = enumAttrFn.create("diagnostics", "diagnostics", 0, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals diagnostic shader attribute");
+
+    size_t menuIndex = 0;
+    enumAttrFn.addField("No Override", menuIndex++);
+    {
+        asr::SurfaceShaderFactoryRegistrar factoryRegistrar;
+        const asr::ISurfaceShaderFactory *factory = factoryRegistrar.lookup("diagnostic_surface_shader");
+        assert(factory);
+        asf::DictionaryArray metadata = factory->get_input_metadata();
+        const asf::Dictionary& items = metadata[0].dictionary("items");
+
+        asf::StringDictionary::const_iterator it(items.strings().begin());
+        asf::StringDictionary::const_iterator e(items.strings().end());
+        for(; it != e; ++it)
+            enumAttrFn.addField(it.key(), menuIndex++);
+    }
+
+    status = addAttribute(m_diagnosticShader);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals diagnostic shader attribute");
+
     return status;
 }
 
@@ -252,4 +285,19 @@ void RenderGlobalsNode::applyGlobalsToProject(
             iprParams.insert_path("rendering_threads", threads);
         }
     }
+
+    /*
+        string overrideMode = d->readable();
+        if( overrideMode == "no_override" )
+        {
+            // Remove diagnostic shader override.
+            m_project->configurations().get_by_name( "final" )->get_parameters().remove_path( "shading_engine.override_shading" );
+            m_project->configurations().get_by_name( "interactive" )->get_parameters().remove_path( "shading_engine.override_shading" );
+        }
+        else
+        {
+            m_project->configurations().get_by_name( "final" )->get_parameters().insert_path( optName.c_str(), overrideMode );
+            m_project->configurations().get_by_name( "interactive" )->get_parameters().insert_path( optName.c_str(), overrideMode );
+        }
+    */
 }

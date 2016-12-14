@@ -64,6 +64,7 @@ class RenderGlobalsNode
     static MObject m_backgroundEmitsLight;
     static MObject m_renderingThreads;
     static MObject m_envLightNode;
+    static MObject m_diagnosticShader;
 };
 
 #endif  // !APPLESEED_MAYA_RENDER_GLOBALS_NODE_H

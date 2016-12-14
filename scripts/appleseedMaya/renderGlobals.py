@@ -104,6 +104,12 @@ class AppleseedRenderGlobalsMainTab(object):
                             ui=pm.intFieldGrp(label="GI Bounces", numberOfFields = 1),
                             attrName="bounces")
 
+                        attr = pm.Attribute("appleseedRenderGlobals.diagnostics")
+                        menuItems = [(i, v) for i, v in enumerate(attr.getEnums().keys())]
+                        self.__addControl(
+                            ui=pm.attrEnumOptionMenuGrp(label="Diagnostic Shader Override", enumeratedItem=menuItems),
+                            attrName = "diagnostics")
+
                 with pm.frameLayout(label="Environment", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
                         with pm.rowLayout("appleseedRowLayout", nc=3):
