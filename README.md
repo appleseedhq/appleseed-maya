@@ -1,4 +1,4 @@
-## Experimental [appleseed](http://appleseedhq.net/) [maya](http://www.autodesk.com/products/maya/overview) integration plugin
+## Experimental [appleseed](http://appleseedhq.net/)-[maya](http://www.autodesk.com/products/maya/overview) integration plugin
 
 #### Setup
 
@@ -24,7 +24,7 @@
 - Maya shading nodes support
 - OSL shaders
 - Scripted access to translated scenes
-- Bitfrost
+- Bifrost
 - XGen
 
 #### Maya shading nodes status
