@@ -57,13 +57,20 @@ const MTypeId RenderGlobalsNode::id(RenderGlobalsNodeTypeId);
 MObject RenderGlobalsNode::m_pixelSamples;
 MObject RenderGlobalsNode::m_passes;
 MObject RenderGlobalsNode::m_tileSize;
+
+MStringArray RenderGlobalsNode::m_diagnosticShaderKeys;
+MObject RenderGlobalsNode::m_diagnosticShader;
+
 MObject RenderGlobalsNode::m_gi;
 MObject RenderGlobalsNode::m_caustics;
 MObject RenderGlobalsNode::m_bounces;
+MObject RenderGlobalsNode::m_lightSamples;
+MObject RenderGlobalsNode::m_envSamples;
+
 MObject RenderGlobalsNode::m_backgroundEmitsLight;
-MObject RenderGlobalsNode::m_renderingThreads;
 MObject RenderGlobalsNode::m_envLightNode;
-MObject RenderGlobalsNode::m_diagnosticShader;
+
+MObject RenderGlobalsNode::m_renderingThreads;
 
 void* RenderGlobalsNode::creator()
 {
@@ -113,6 +120,38 @@ MStatus RenderGlobalsNode::initialize()
         status,
         "appleseedMaya: Failed to add render globals tileSize attribute");
 
+    // Diagnostic shader override.
+    MFnEnumAttribute enumAttrFn;
+    m_diagnosticShader = enumAttrFn.create("diagnostics", "diagnostics", 0, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals diagnostic shader attribute");
+
+    {
+        size_t menuIndex = 0;
+        enumAttrFn.addField("No Override", menuIndex++);
+        m_diagnosticShaderKeys.append("no_override");
+
+        asr::SurfaceShaderFactoryRegistrar factoryRegistrar;
+        const asr::ISurfaceShaderFactory *factory = factoryRegistrar.lookup("diagnostic_surface_shader");
+        assert(factory);
+        asf::DictionaryArray metadata = factory->get_input_metadata();
+        const asf::Dictionary& items = metadata[0].dictionary("items");
+
+        asf::StringDictionary::const_iterator it(items.strings().begin());
+        asf::StringDictionary::const_iterator e(items.strings().end());
+        for(; it != e; ++it)
+        {
+            enumAttrFn.addField(it.key(), menuIndex++);
+            m_diagnosticShaderKeys.append(MString(it.value()));
+        }
+    }
+
+    status = addAttribute(m_diagnosticShader);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals diagnostic shader attribute");
+
     // GI.
     m_gi = numAttrFn.create("gi", "gi", MFnNumericData::kBoolean, true, &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
@@ -147,6 +186,28 @@ MStatus RenderGlobalsNode::initialize()
         status,
         "appleseedMaya: Failed to add render globals bounces attribute");
 
+    // Light Samples.
+    m_lightSamples = numAttrFn.create("lightSamples", "lightSamples", MFnNumericData::kFloat, 1.0f, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals lightSamples attribute");
+    numAttrFn.setMin(1.0f);
+    status = addAttribute(m_lightSamples);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals lightSamples attribute");
+
+    // Environment Samples.
+    m_envSamples = numAttrFn.create("envSamples", "envSamples", MFnNumericData::kFloat, 1.0f, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals envSamples attribute");
+    numAttrFn.setMin(1.0f);
+    status = addAttribute(m_envSamples);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals envSamples attribute");
+
     // Background emits light.
     m_backgroundEmitsLight = numAttrFn.create("bgLight", "bgLight", MFnNumericData::kBoolean, true, &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
@@ -179,33 +240,6 @@ MStatus RenderGlobalsNode::initialize()
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: Failed to add render globals envLight attribute");
-
-    // Diagnostic shader override.
-    MFnEnumAttribute enumAttrFn;
-    m_diagnosticShader = enumAttrFn.create("diagnostics", "diagnostics", 0, &status);
-    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
-        status,
-        "appleseedMaya: Failed to create render globals diagnostic shader attribute");
-
-    size_t menuIndex = 0;
-    enumAttrFn.addField("No Override", menuIndex++);
-    {
-        asr::SurfaceShaderFactoryRegistrar factoryRegistrar;
-        const asr::ISurfaceShaderFactory *factory = factoryRegistrar.lookup("diagnostic_surface_shader");
-        assert(factory);
-        asf::DictionaryArray metadata = factory->get_input_metadata();
-        const asf::Dictionary& items = metadata[0].dictionary("items");
-
-        asf::StringDictionary::const_iterator it(items.strings().begin());
-        asf::StringDictionary::const_iterator e(items.strings().end());
-        for(; it != e; ++it)
-            enumAttrFn.addField(it.key(), menuIndex++);
-    }
-
-    status = addAttribute(m_diagnosticShader);
-    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
-        status,
-        "appleseedMaya: Failed to add render globals diagnostic shader attribute");
 
     return status;
 }
@@ -240,10 +274,18 @@ void RenderGlobalsNode::applyGlobalsToProject(
         finalParams.insert_path("shading_result_framebuffer", passes == 1 ? "ephemeral" : "permanent");
     }
 
-    int tileSize;
-    if(AttributeUtils::get(depNodeFn, "tileSize", tileSize))
+    int diagnostic;
+    if(AttributeUtils::get(depNodeFn, "diagnostics", diagnostic))
     {
-        // TODO: add this.
+        if(diagnostic != 0)
+        {
+            finalParams.insert_path(
+                "shading_engine.override_shading.mode",
+                m_diagnosticShaderKeys[diagnostic]);
+            iprParams.insert_path(
+                "shading_engine.override_shading.mode",
+                m_diagnosticShaderKeys[diagnostic]);
+        }
     }
 
     int bounces = 0;
@@ -271,6 +313,20 @@ void RenderGlobalsNode::applyGlobalsToProject(
         iprParams.insert_path("pt.enable_caustics", caustics);
     }
 
+    float lightSamples;
+    if(AttributeUtils::get(depNodeFn, "lightSamples", lightSamples))
+    {
+        finalParams.insert_path("pt.dl_light_samples", lightSamples);
+        iprParams.insert_path("pt.dl_light_samples", lightSamples);
+    }
+
+    float envSamples;
+    if(AttributeUtils::get(depNodeFn, "envSamples", envSamples))
+    {
+        finalParams.insert_path("pt.ibl_env_samples", envSamples);
+        iprParams.insert_path("pt.ibl_env_samples", envSamples);
+    }
+
     int threads;
     if(AttributeUtils::get(depNodeFn, "threads", threads))
     {
@@ -285,19 +341,4 @@ void RenderGlobalsNode::applyGlobalsToProject(
             iprParams.insert_path("rendering_threads", threads);
         }
     }
-
-    /*
-        string overrideMode = d->readable();
-        if( overrideMode == "no_override" )
-        {
-            // Remove diagnostic shader override.
-            m_project->configurations().get_by_name( "final" )->get_parameters().remove_path( "shading_engine.override_shading" );
-            m_project->configurations().get_by_name( "interactive" )->get_parameters().remove_path( "shading_engine.override_shading" );
-        }
-        else
-        {
-            m_project->configurations().get_by_name( "final" )->get_parameters().insert_path( optName.c_str(), overrideMode );
-            m_project->configurations().get_by_name( "interactive" )->get_parameters().insert_path( optName.c_str(), overrideMode );
-        }
-    */
 }

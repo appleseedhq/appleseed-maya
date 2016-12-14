@@ -31,6 +31,7 @@
 
 // Maya headers.
 #include <maya/MObject.h>
+#include <maya/MStringArray.h>
 #include <maya/MPxNode.h>
 #include <maya/MTypeId.h>
 
@@ -54,17 +55,23 @@ class RenderGlobalsNode
       renderer::Project&  project);
 
   private:
-    // Attributes (same options as appleseed.max).
     static MObject m_pixelSamples;
     static MObject m_passes;
     static MObject m_tileSize;
+
+    static MObject      m_diagnosticShader;
+    static MStringArray m_diagnosticShaderKeys;
+
     static MObject m_gi;
     static MObject m_caustics;
     static MObject m_bounces;
-    static MObject m_backgroundEmitsLight;
-    static MObject m_renderingThreads;
+    static MObject m_lightSamples;
+    static MObject m_envSamples;
+
     static MObject m_envLightNode;
-    static MObject m_diagnosticShader;
+    static MObject m_backgroundEmitsLight;
+
+    static MObject m_renderingThreads;
 };
 
 #endif  // !APPLESEED_MAYA_RENDER_GLOBALS_NODE_H

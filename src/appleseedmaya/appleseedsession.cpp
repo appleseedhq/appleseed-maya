@@ -217,7 +217,7 @@ struct SessionImpl
         cfg_params->insert("frame_renderer", "progressive");
         cfg_params->insert("lighting_engine", "pt");
         cfg_params->insert("pixel_renderer", "uniform");
-        cfg_params->insert("sampling_mode", "rng");
+        cfg_params->insert("sampling_mode", "qmc");
         cfg_params->insert_path("progressive_frame_renderer.max_fps", "5");
 
         // Insert some config params needed by the final renderer.
@@ -229,7 +229,7 @@ struct SessionImpl
         cfg_params->insert("frame_renderer", "generic");
         cfg_params->insert("lighting_engine", "pt");
         cfg_params->insert("pixel_renderer", "uniform");
-        cfg_params->insert("sampling_mode", "rng");
+        cfg_params->insert("sampling_mode", "qmc");
         cfg_params->insert_path("uniform_pixel_renderer.samples", "16");
 
         // Create some basic project entities.
@@ -263,7 +263,7 @@ struct SessionImpl
     void exportProject()
     {
         exportDefaultRenderGlobals();
-        exportAppleseedRenderGlobals();
+        MObject globalsNode = exportAppleseedRenderGlobals();
 
         exportScene();
 
@@ -283,9 +283,21 @@ struct SessionImpl
             }
 
             // Set the resolution.
-            std::stringstream ss;
-            ss << m_options.m_width << " " << m_options.m_height;
-            params.insert("resolution", ss.str().c_str());
+            {
+                std::stringstream ss;
+                ss << m_options.m_width << " " << m_options.m_height;
+                params.insert("resolution", ss.str().c_str());
+            }
+
+            // Set the tile size.
+            MFnDependencyNode fnDepNode(globalsNode);
+            int tileSize;
+            if(AttributeUtils::get(fnDepNode, "tileSize", tileSize))
+            {
+                std::stringstream ss;
+                ss << tileSize << " " << tileSize;
+                params.insert("tile_size", ss.str().c_str());
+            }
 
             // TODO: set crop window here...
 
@@ -368,7 +380,7 @@ struct SessionImpl
         }
     }
 
-    void exportAppleseedRenderGlobals()
+    MObject exportAppleseedRenderGlobals()
     {
         RENDERER_LOG_DEBUG("Exporting appleseed render globals");
 
@@ -379,6 +391,8 @@ struct SessionImpl
                 appleseedRenderGlobalsNode,
                 *m_project);
         }
+
+        return appleseedRenderGlobalsNode;
     }
 
     void createExporters()

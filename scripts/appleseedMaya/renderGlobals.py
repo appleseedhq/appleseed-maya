@@ -91,6 +91,14 @@ class AppleseedRenderGlobalsMainTab(object):
                             ui=pm.intFieldGrp(label="Tile Size", numberOfFields = 1),
                             attrName="tileSize")
 
+                with pm.frameLayout(label="Shading", collapsable=True, collapse=False):
+                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
+                        attr = pm.Attribute("appleseedRenderGlobals.diagnostics")
+                        menuItems = [(i, v) for i, v in enumerate(attr.getEnums().keys())]
+                        self.__addControl(
+                            ui=pm.attrEnumOptionMenuGrp(label="Override Shaders", enumeratedItem=menuItems),
+                            attrName = "diagnostics")
+
                 with pm.frameLayout(label="Lighting", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
                         self.__addControl(
@@ -103,12 +111,12 @@ class AppleseedRenderGlobalsMainTab(object):
                         self.__addControl(
                             ui=pm.intFieldGrp(label="GI Bounces", numberOfFields = 1),
                             attrName="bounces")
-
-                        attr = pm.Attribute("appleseedRenderGlobals.diagnostics")
-                        menuItems = [(i, v) for i, v in enumerate(attr.getEnums().keys())]
                         self.__addControl(
-                            ui=pm.attrEnumOptionMenuGrp(label="Diagnostic Shader Override", enumeratedItem=menuItems),
-                            attrName = "diagnostics")
+                            ui=pm.floatFieldGrp(label="Light Samples", numberOfFields = 1),
+                            attrName="lightSamples")
+                        self.__addControl(
+                            ui=pm.floatFieldGrp(label="Environment Samples", numberOfFields = 1),
+                            attrName="envSamples")
 
                 with pm.frameLayout(label="Environment", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
