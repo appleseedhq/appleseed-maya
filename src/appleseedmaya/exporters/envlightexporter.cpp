@@ -44,7 +44,7 @@ namespace asr = renderer;
 
 void EnvLightExporter::registerExporter()
 {
-    NodeExporterFactory::registerDagNodeExporter(EnvLightNode::nodeName, &EnvLightExporter::create);
+    //NodeExporterFactory::registerDagNodeExporter(EnvLightNode::nodeName, &EnvLightExporter::create);
 }
 
 DagNodeExporter *EnvLightExporter::create(

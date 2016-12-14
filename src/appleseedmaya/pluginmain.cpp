@@ -50,7 +50,8 @@
 #endif
 
 // Must be last to avoid conflicts with symbols defined in X headers.
-#include "appleseedmaya/envlightnode.h"
+#include "appleseedmaya/physicalskylightnode.h"
+#include "appleseedmaya/skydomelightnode.h"
 
 APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
 {
@@ -77,12 +78,23 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         "appleseedMaya: failed to register render globals node");
 
     status = fnPlugin.registerNode(
-        EnvLightNode::nodeName,
-        EnvLightNode::id,
-        EnvLightNode::creator,
-        EnvLightNode::initialize,
+        PhysicalskyLightNode::nodeName,
+        PhysicalskyLightNode::id,
+        PhysicalskyLightNode::creator,
+        PhysicalskyLightNode::initialize,
         MPxNode::kLocatorNode,
-        &EnvLightNode::drawDbClassification);
+        &PhysicalskyLightNode::drawDbClassification);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to register env light locator");
+
+    status = fnPlugin.registerNode(
+        SkyDomeLightNode::nodeName,
+        SkyDomeLightNode::id,
+        SkyDomeLightNode::creator,
+        SkyDomeLightNode::initialize,
+        MPxNode::kLocatorNode,
+        &SkyDomeLightNode::drawDbClassification);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: failed to register env light locator");
@@ -229,7 +241,12 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to deregister render command");
 
-    status = fnPlugin.deregisterNode(EnvLightNode::id);
+    status = fnPlugin.deregisterNode(PhysicalskyLightNode::id);
+    APPLESEED_MAYA_CHECK_MSTATUS_MSG(
+        status,
+        "appleseedMaya: failed to deregister env light locator");
+
+    status = fnPlugin.deregisterNode(SkyDomeLightNode::id);
     APPLESEED_MAYA_CHECK_MSTATUS_MSG(
         status,
         "appleseedMaya: failed to deregister env light locator");

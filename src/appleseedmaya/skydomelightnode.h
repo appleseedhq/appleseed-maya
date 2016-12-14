@@ -26,22 +26,28 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_TYPEIDS_H
-#define APPLESEED_MAYA_TYPEIDS_H
+#ifndef APPLESEED_MAYA_SKY_DOME_LIGHT_NODE_H
+#define APPLESEED_MAYA_SKY_DOME_LIGHT_NODE_H
 
-//
-// Maya typeids assigned to appleseedhq.
-// Everytime a new appleseed Maya node is added, the enum should be updated.
-//
+// Maya headers.
+#include <maya/MObject.h>
+#include <maya/MString.h>
+#include <maya/MTypeId.h>
 
-enum AppleseedMayaTypeIds
+// appleseed.maya headers.
+#include "appleseedmaya/envlightnode.h"
+
+class SkyDomeLightNode
+  : public EnvLightNode
 {
-    FirstTypeId = 0x001279c0,
-    RenderGlobalsNodeTypeId = FirstTypeId,
-    SkyDomeLightNodeTypeId,
-    PhysicalSkyLightNodeTypeId,
+  public:
+    static const MString nodeName;
+    static const MTypeId id;
+    static const MString drawDbClassification;
+    static const MString drawRegistrantId;
 
-    LastTypeId =  0x00127a3f
+    static void* creator();
+    static MStatus initialize();
 };
 
-#endif  // !APPLESEED_MAYA_TYPEIDS_H
+#endif  // !APPLESEED_MAYA_SKY_DOME_LIGHT_NODE_H

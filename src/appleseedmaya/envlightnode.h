@@ -39,13 +39,6 @@ class EnvLightNode
   : public MPxLocatorNode
 {
   public:
-    static const MString nodeName;
-    static const MTypeId id;
-    static const MString drawDbClassification;
-    static const MString drawRegistrantId;
-
-    static void* creator();
-    static MStatus initialize();
 
     virtual MStatus compute(const MPlug& plug, MDataBlock& data);
 

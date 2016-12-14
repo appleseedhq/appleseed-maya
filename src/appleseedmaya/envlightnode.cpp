@@ -34,23 +34,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/config.h"
-#include "appleseedmaya/typeids.h"
 
-const MString EnvLightNode::nodeName("appleseedEnvLight");
-const MTypeId EnvLightNode::id(EnvLightNodeTypeId);
-const MString EnvLightNode::drawDbClassification("drawdb/geometry/appleseedEnvLight");
-const MString EnvLightNode::drawRegistrantId("appleseedMaya");
-
-void* EnvLightNode::creator()
-{
-    return new EnvLightNode();
-}
-
-MStatus EnvLightNode::initialize()
-{
-    MStatus status;
-    return status;
-}
 
 MStatus EnvLightNode::compute(const MPlug& plug, MDataBlock& dataBlock)
 {

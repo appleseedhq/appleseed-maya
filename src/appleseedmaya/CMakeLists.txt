@@ -74,6 +74,8 @@ set (appleseed_maya_sources
     logger.h
     murmurhash.cpp
     murmurhash.h
+    physicalskylightnode.h
+    physicalskylightnode.cpp
     pluginmain.cpp
     rendercommands.cpp
     rendercommands.h
@@ -90,8 +92,11 @@ set (appleseed_maya_sources
     shadingnoderegistry.h
     shadingnodetemplatebuilder.cpp
     shadingnodetemplatebuilder.h
+    skydomelightnode.cpp
+    skydomelightnode.h
     swatchrenderer.cpp
     swatchrenderer.h
+    typeids.h
     utils.cpp
     utils.h
     version.h.in

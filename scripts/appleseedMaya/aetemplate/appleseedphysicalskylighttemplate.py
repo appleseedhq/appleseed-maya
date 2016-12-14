@@ -33,10 +33,9 @@ import pymel.core as pm
 from appleseedMaya.logger import logger
 
 
-class AEappleseedEnvLightTemplate(pm.ui.AETemplate):
+class AEappleseedPhysicalSkyLightTemplate(pm.ui.AETemplate):
     def __init__(self, nodeName):
-        super(AEappleseedEnvLightTemplate, self).__init__(nodeName)
-        pm.mel.AEswatchDisplay(nodeName)
+        super(AEappleseedPhysicalSkyLightTemplate, self).__init__(nodeName)
         self.beginScrollLayout()
         self.buildBody(nodeName)
         self.addExtraControls("ExtraControls")
