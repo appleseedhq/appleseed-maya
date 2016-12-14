@@ -1,6 +1,6 @@
 ## Experimental [appleseed](http://appleseedhq.net/)-[maya](http://www.autodesk.com/products/maya/overview) integration plugin
 
-#### Setup
+### Setup
 
 1. Set environment variables:
 
@@ -12,7 +12,7 @@
 
 2. Launch Maya and load the plugin.
 
-#### Planned features
+### Planned features
 
 - appleseed project export
 - Command line render
@@ -27,11 +27,11 @@
 - Bifrost
 - XGen
 
-#### Maya shading nodes status
+### Maya shading nodes status
 
 List of Maya hypershade nodes and their status. Not all will be supported.
 
-### Utilities
+#### Utilities
 
 - [x] add double linear
 - [x] add matrix
@@ -97,11 +97,11 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] vector product
 - [x] weighted add matrix
 
-### Image Planes
+#### Image planes
 
 - [ ] image plane
 
-### Surface
+#### Surface
 
 - [ ] GLSL shader (**unsupported**)
 - [ ] shaderfx shader (**unsupported**)
@@ -123,7 +123,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] surface shader
 - [ ] use background
 
-### Volumetric
+#### Volumetric
 
 - [ ] env fog
 - [ ] fluid shape
@@ -132,13 +132,13 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] volume fog
 - [ ] volume shader
 
-### Displacement
+#### Displacement
 
 - [ ] displacement:
 - [ ] C muscle shader
 - [ ] displacement
 
-### 2D Textures
+#### 2D textures
 
 - [x] bulge
 - [x] checker
@@ -158,7 +158,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] substance output
 - [ ] water
 
-### 3D Textures
+#### 3D textures
 
 - [ ] brownian
 - [ ] cloud
@@ -175,7 +175,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] volume noise
 - [ ] wood
 
-### Env Textures
+#### Env textures
 
 - [ ] env ball
 - [ ] env chrome
@@ -187,12 +187,11 @@ Other Textures:
 
 - [ ] layered texture
 
-### Lookdevkit nodes
+#### Lookdevkit nodes
 
 - [ ] simplex noise
 
-
-### Lights
+#### Lights
 
 - [ ] ambient light
 - [ ] area light
