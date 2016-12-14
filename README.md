@@ -1,32 +1,33 @@
 ## Experimental [appleseed](http://appleseedhq.net/) [maya](http://www.autodesk.com/products/maya/overview) integration plugin
 
-#### Setup:
+#### Setup
 
-1. set env vars
-    * export **MAYA_PLUG_IN_PATH**=${BUILD_DIR}/src
-    * export **MAYA_SCRIPT_PATH**=${BUILD_DIR}/appleseed-maya/scripts
-    * export **PYTHONPATH**=$PYTHONPATH:${APPLESEED_DIR}/lib/python2.7:${BUILD_DIR}/scripts
-    * export **XBMLANGPATH**=${BUILD_DIR}/icons
-    * export **APPLESEED_SEARCHPATH**=${APPLESEED_DIR}/sandbox/shaders/maya
+1. Set environment variables:
 
-2. launch Maya & load plugin
+        export MAYA_PLUG_IN_PATH=${BUILD_DIR}/src
+        export MAYA_SCRIPT_PATH=${BUILD_DIR}/appleseed-maya/scripts
+        export PYTHONPATH=$PYTHONPATH:${APPLESEED_DIR}/lib/python2.7:${BUILD_DIR}/scripts
+        export XBMLANGPATH=${BUILD_DIR}/icons
+        export APPLESEED_SEARCHPATH=${APPLESEED_DIR}/sandbox/shaders/maya
 
-#### Planned features:
+2. Launch Maya and load the plugin.
 
-- Appleseed project export.
-- Command line render.
-- Batch render.
-- Render to RenderView.
-- IPR.
-- Motion blur.
-- IBL.
-- Maya shading nodes support.
-- OSL shaders.
-- Scripted access to translated scenes.
-- Bitfrost.
-- XGen.
+#### Planned features
 
-#### Maya shading nodes status:
+- appleseed project export
+- Command line render
+- Batch render
+- Render to RenderView
+- IPR
+- Motion blur
+- IBL
+- Maya shading nodes support
+- OSL shaders
+- Scripted access to translated scenes
+- Bitfrost
+- XGen
+
+#### Maya shading nodes status
 
 List of Maya hypershade nodes and their status. Not all will be supported.
 
@@ -199,4 +200,3 @@ Other Textures:
 - [x] point light
 - [x] spot light
 - [ ] volume light
-
