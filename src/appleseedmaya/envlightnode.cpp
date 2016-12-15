@@ -63,13 +63,8 @@ MBoundingBox EnvLightNode::boundingBox() const
 }
 
 EnvLightData::EnvLightData()
-  : MUserData (false) // don't delete after draw
+  : MUserData(false) // don't delete after draw
 {
-}
-
-MHWRender::MPxDrawOverride *EnvLightDrawOverride::creator(const MObject& obj)
-{
-    return new EnvLightDrawOverride(obj);
 }
 
 EnvLightDrawOverride::EnvLightDrawOverride(const MObject& obj)
@@ -90,21 +85,6 @@ MBoundingBox EnvLightDrawOverride::boundingBox(const MDagPath& objPath, const MD
         MPoint( size,  size,  size));
 
     return boundingBox;
-}
-
-MUserData *EnvLightDrawOverride::prepareForDraw(
-    const MDagPath&                 objPath,
-    const MDagPath&                 cameraPath,
-    const MHWRender::MFrameContext& frameContext,
-    MUserData*                      oldData)
-{
-    // Retrieve data cache (create if does not exist)
-    EnvLightData *data =dynamic_cast<EnvLightData*>(oldData);
-
-    if(!data)
-        data = new EnvLightData();
-
-    return data;
 }
 
 void EnvLightDrawOverride::draw(const MHWRender::MDrawContext& context, const MUserData *data)

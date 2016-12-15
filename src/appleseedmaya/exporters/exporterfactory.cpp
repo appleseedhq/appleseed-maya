@@ -81,7 +81,8 @@ MStatus NodeExporterFactory::initialize(const MString& pluginPath)
 {
     AreaLightExporter::registerExporter();
     CameraExporter::registerExporter();
-    EnvLightExporter::registerExporter();
+    PhysicalSkyLightExporter::registerExporter();
+    SkyDomeLightExporter::registerExporter();
     LightExporter::registerExporter();
     MeshExporter::registerExporter();
 #ifdef APPLESEED_MAYA_WITH_XGEN

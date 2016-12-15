@@ -37,23 +37,11 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/envlightnode.h"
+#include "appleseedmaya/physicalskylightnode.h"
+#include "appleseedmaya/skydomelightnode.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
-
-void EnvLightExporter::registerExporter()
-{
-    //NodeExporterFactory::registerDagNodeExporter(EnvLightNode::nodeName, &EnvLightExporter::create);
-}
-
-DagNodeExporter *EnvLightExporter::create(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
-{
-    return new EnvLightExporter(path, project, sessionMode);
-}
 
 EnvLightExporter::EnvLightExporter(
     const MDagPath&                 path,
@@ -63,14 +51,65 @@ EnvLightExporter::EnvLightExporter(
 {
 }
 
-void EnvLightExporter::createEntity(const AppleseedSession::Options& options)
-{
-}
-
 void EnvLightExporter::exportTransformMotionStep(float time)
 {
 }
 
 void EnvLightExporter::flushEntity()
+{
+}
+
+
+void PhysicalSkyLightExporter::registerExporter()
+{
+    NodeExporterFactory::registerDagNodeExporter(
+        PhysicalSkyLightNode::nodeName,
+        &PhysicalSkyLightExporter::create);
+}
+
+DagNodeExporter *PhysicalSkyLightExporter::create(
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+{
+    return new PhysicalSkyLightExporter(path, project, sessionMode);
+}
+
+PhysicalSkyLightExporter::PhysicalSkyLightExporter(
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+  : EnvLightExporter(path, project, sessionMode)
+{
+}
+
+void PhysicalSkyLightExporter::createEntity(const AppleseedSession::Options& options)
+{
+}
+
+void SkyDomeLightExporter::registerExporter()
+{
+    NodeExporterFactory::registerDagNodeExporter(
+        SkyDomeLightNode::nodeName,
+        &SkyDomeLightExporter::create);
+}
+
+DagNodeExporter *SkyDomeLightExporter::create(
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+{
+    return new SkyDomeLightExporter(path, project, sessionMode);
+}
+
+SkyDomeLightExporter::SkyDomeLightExporter(
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+  : EnvLightExporter(path, project, sessionMode)
+{
+}
+
+void SkyDomeLightExporter::createEntity(const AppleseedSession::Options& options)
 {
 }

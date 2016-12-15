@@ -40,19 +40,11 @@ class EnvLightExporter
 {
   public:
 
-    static void registerExporter();
-    static DagNodeExporter *create(
-      const MDagPath&               path,
-      renderer::Project&            project,
-      AppleseedSession::SessionMode sessionMode);
-
-    virtual void createEntity(const AppleseedSession::Options& options);
-
     virtual void exportTransformMotionStep(float time);
 
     virtual void flushEntity();
 
-  private:
+  protected:
 
     EnvLightExporter(
       const MDagPath&               path,
@@ -60,6 +52,50 @@ class EnvLightExporter
       AppleseedSession::SessionMode sessionMode);
 
     AppleseedEntityPtr<renderer::EnvironmentEDF> m_envLight;
+};
+
+class PhysicalSkyLightExporter
+  : public EnvLightExporter
+{
+  public:
+
+    static void registerExporter();
+
+    static DagNodeExporter *create(
+      const MDagPath&               path,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
+
+    virtual void createEntity(const AppleseedSession::Options& options);
+
+  private:
+
+    PhysicalSkyLightExporter(
+      const MDagPath&               path,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
+};
+
+class SkyDomeLightExporter
+  : public EnvLightExporter
+{
+  public:
+
+    static void registerExporter();
+
+    static DagNodeExporter *create(
+      const MDagPath&               path,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
+
+    virtual void createEntity(const AppleseedSession::Options& options);
+
+    private:
+
+      SkyDomeLightExporter(
+        const MDagPath&               path,
+        renderer::Project&            project,
+        AppleseedSession::SessionMode sessionMode);
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_ENV_LIGHTEXPORTER_H

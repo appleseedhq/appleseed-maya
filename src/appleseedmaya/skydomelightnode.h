@@ -50,4 +50,28 @@ class SkyDomeLightNode
     static MStatus initialize();
 };
 
+class SkyDomeLightData
+  : public EnvLightData
+{
+  public:
+
+    SkyDomeLightData();
+};
+
+class SkyDomeLightDrawOverride
+  : public EnvLightDrawOverride
+{
+  public:
+
+    static MHWRender::MPxDrawOverride *creator(const MObject& obj);
+
+    SkyDomeLightDrawOverride(const MObject& obj);
+
+    virtual MUserData *prepareForDraw(
+        const MDagPath&                 objPath,
+        const MDagPath&                 cameraPath,
+        const MHWRender::MFrameContext& frameContext,
+        MUserData*                      oldData);
+};
+
 #endif  // !APPLESEED_MAYA_SKY_DOME_LIGHT_NODE_H

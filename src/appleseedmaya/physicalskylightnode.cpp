@@ -38,17 +38,17 @@
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/typeids.h"
 
-const MString PhysicalskyLightNode::nodeName("appleseedPhysicalSkyLight");
-const MTypeId PhysicalskyLightNode::id(PhysicalSkyLightNodeTypeId);
-const MString PhysicalskyLightNode::drawDbClassification("drawdb/geometry/appleseedPhysicalSkyLight");
-const MString PhysicalskyLightNode::drawRegistrantId("appleseedPhysicalSkyLight");
+const MString PhysicalSkyLightNode::nodeName("appleseedPhysicalSkyLight");
+const MTypeId PhysicalSkyLightNode::id(PhysicalSkyLightNodeTypeId);
+const MString PhysicalSkyLightNode::drawDbClassification("drawdb/geometry/appleseedPhysicalSkyLight");
+const MString PhysicalSkyLightNode::drawRegistrantId("appleseedPhysicalSkyLight");
 
-void* PhysicalskyLightNode::creator()
+void* PhysicalSkyLightNode::creator()
 {
-    return new PhysicalskyLightNode();
+    return new PhysicalSkyLightNode();
 }
 
-MStatus PhysicalskyLightNode::initialize()
+MStatus PhysicalSkyLightNode::initialize()
 {
     MFnNumericAttribute numAttrFn;
     MFnMessageAttribute msgAttrFn;
@@ -182,4 +182,34 @@ MStatus PhysicalskyLightNode::initialize()
             .insert("help", "Ground albedo (reflection coefficient of the ground)"));
 
 */
+}
+
+PhysicalSkyLightData::PhysicalSkyLightData()
+  : EnvLightData()
+{
+}
+
+MHWRender::MPxDrawOverride *PhysicalSkyLightDrawOverride::creator(const MObject& obj)
+{
+    return new PhysicalSkyLightDrawOverride(obj);
+}
+
+PhysicalSkyLightDrawOverride::PhysicalSkyLightDrawOverride(const MObject& obj)
+  : EnvLightDrawOverride(obj)
+{
+}
+
+MUserData *PhysicalSkyLightDrawOverride::prepareForDraw(
+    const MDagPath&                 objPath,
+    const MDagPath&                 cameraPath,
+    const MHWRender::MFrameContext& frameContext,
+    MUserData*                      oldData)
+{
+    // Retrieve data cache (create if does not exist)
+    PhysicalSkyLightData *data =dynamic_cast<PhysicalSkyLightData*>(oldData);
+
+    if(!data)
+        data = new PhysicalSkyLightData();
+
+    return data;
 }

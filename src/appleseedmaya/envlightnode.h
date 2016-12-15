@@ -68,30 +68,25 @@ class EnvLightNode
 class EnvLightData
   : public MUserData
 {
-public:
+  protected:
 
     EnvLightData();
 };
 
-class EnvLightDrawOverride : public MHWRender::MPxDrawOverride
+class EnvLightDrawOverride
+  : public MHWRender::MPxDrawOverride
 {
-public:
-
-    static MHWRender::MPxDrawOverride *creator(const MObject& obj);
-
-    explicit EnvLightDrawOverride(const MObject& obj);
+  public:
 
     virtual MHWRender::DrawAPI supportedDrawAPIs() const;
 
     virtual MBoundingBox boundingBox(const MDagPath& objPath, const MDagPath& cameraPath) const;
 
-    virtual MUserData *prepareForDraw(
-        const MDagPath&                 objPath,
-        const MDagPath&                 cameraPath,
-        const MHWRender::MFrameContext& frameContext,
-        MUserData*                      oldData);
-
     static void draw(const MHWRender::MDrawContext& context, const MUserData *data);
+
+  protected:
+
+    explicit EnvLightDrawOverride(const MObject& obj);
 };
 
 #endif  // !APPLESEED_MAYA_ENV_LIGHT_NODE_H

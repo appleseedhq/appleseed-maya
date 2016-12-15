@@ -38,7 +38,7 @@
 // appleseed.maya headers.
 #include "appleseedmaya/envlightnode.h"
 
-class PhysicalskyLightNode
+class PhysicalSkyLightNode
   : public EnvLightNode
 {
   public:
@@ -49,6 +49,30 @@ class PhysicalskyLightNode
 
     static void* creator();
     static MStatus initialize();
+};
+
+class PhysicalSkyLightData
+  : public EnvLightData
+{
+  public:
+
+    PhysicalSkyLightData();
+};
+
+class PhysicalSkyLightDrawOverride
+  : public EnvLightDrawOverride
+{
+  public:
+
+    static MHWRender::MPxDrawOverride *creator(const MObject& obj);
+
+    PhysicalSkyLightDrawOverride(const MObject& obj);
+
+    virtual MUserData *prepareForDraw(
+        const MDagPath&                 objPath,
+        const MDagPath&                 cameraPath,
+        const MHWRender::MFrameContext& frameContext,
+        MUserData*                      oldData);
 };
 
 #endif  // !APPLESEED_MAYA_PHYSICAL_SKY_LIGHT_NODE_H

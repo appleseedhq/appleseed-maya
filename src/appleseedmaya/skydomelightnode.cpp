@@ -81,3 +81,33 @@ MStatus SkyDomeLightNode::initialize()
 
     return status;
 }
+
+SkyDomeLightData::SkyDomeLightData()
+  : EnvLightData()
+{
+}
+
+MHWRender::MPxDrawOverride *SkyDomeLightDrawOverride::creator(const MObject& obj)
+{
+    return new SkyDomeLightDrawOverride(obj);
+}
+
+SkyDomeLightDrawOverride::SkyDomeLightDrawOverride(const MObject& obj)
+  : EnvLightDrawOverride(obj)
+{
+}
+
+MUserData *SkyDomeLightDrawOverride::prepareForDraw(
+    const MDagPath&                 objPath,
+    const MDagPath&                 cameraPath,
+    const MHWRender::MFrameContext& frameContext,
+    MUserData*                      oldData)
+{
+    // Retrieve data cache (create if does not exist)
+    SkyDomeLightData *data =dynamic_cast<SkyDomeLightData*>(oldData);
+
+    if(!data)
+        data = new SkyDomeLightData();
+
+    return data;
+}
