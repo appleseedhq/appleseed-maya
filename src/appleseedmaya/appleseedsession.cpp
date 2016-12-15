@@ -30,7 +30,6 @@
 #include "appleseedmaya/appleseedsession.h"
 
 // Standard headers.
-#include <sstream>
 #include <vector>
 
 // Boost headers.
@@ -56,6 +55,7 @@
 // appleseed.foundation headers.
 #include "foundation/platform/timers.h"
 #include "foundation/utility/autoreleaseptr.h"
+#include "foundation/utility/iostreamop.h"
 #include "foundation/utility/log.h"
 #include "foundation/utility/searchpaths.h"
 #include "foundation/utility/stopwatch.h"
@@ -283,21 +283,13 @@ struct SessionImpl
             }
 
             // Set the resolution.
-            {
-                std::stringstream ss;
-                ss << m_options.m_width << " " << m_options.m_height;
-                params.insert("resolution", ss.str().c_str());
-            }
+            params.insert("resolution", asf::Vector2i(m_options.m_width, m_options.m_height));
 
             // Set the tile size.
             MFnDependencyNode fnDepNode(globalsNode);
             int tileSize;
             if(AttributeUtils::get(fnDepNode, "tileSize", tileSize))
-            {
-                std::stringstream ss;
-                ss << tileSize << " " << tileSize;
-                params.insert("tile_size", ss.str().c_str());
-            }
+                params.insert("tile_size", asf::Vector2i(tileSize));
 
             // TODO: set crop window here...
 
