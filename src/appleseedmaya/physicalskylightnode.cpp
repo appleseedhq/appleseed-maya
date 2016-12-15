@@ -30,6 +30,8 @@
 #include "appleseedmaya/physicalskylightnode.h"
 
 // Maya headers.
+#include <maya/MFnMessageAttribute.h>
+#include <maya/MFnNumericAttribute.h>
 #include <maya/MFnUnitAttribute.h>
 
 // appleseed.maya headers.
@@ -39,7 +41,7 @@
 const MString PhysicalskyLightNode::nodeName("appleseedPhysicalSkyLight");
 const MTypeId PhysicalskyLightNode::id(PhysicalSkyLightNodeTypeId);
 const MString PhysicalskyLightNode::drawDbClassification("drawdb/geometry/appleseedPhysicalSkyLight");
-const MString PhysicalskyLightNode::drawRegistrantId("appleseedMaya");
+const MString PhysicalskyLightNode::drawRegistrantId("appleseedPhysicalSkyLight");
 
 void* PhysicalskyLightNode::creator()
 {
@@ -48,7 +50,35 @@ void* PhysicalskyLightNode::creator()
 
 MStatus PhysicalskyLightNode::initialize()
 {
+    MFnNumericAttribute numAttrFn;
+    MFnMessageAttribute msgAttrFn;
+
     MStatus status;
+
+    // Render globals connection.
+    m_message = msgAttrFn.create("globalsMessage", "globalsMessage", &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create envLight message attribute");
+
+    status = addAttribute(m_message);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add envLight message attribute");
+
+    // Display size.
+    m_displaySize = numAttrFn.create("size", "sz", MFnNumericData::kFloat, 1.0f, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create envLight display size attribute");
+
+    numAttrFn.setMin(0.01f);
+    numAttrFn.setMax(100.0f);
+    status = addAttribute(m_displaySize);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add envLight display size attribute");
+
     return status;
 
 /*

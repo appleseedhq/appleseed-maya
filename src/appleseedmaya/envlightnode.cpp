@@ -30,11 +30,14 @@
 #include "appleseedmaya/envlightnode.h"
 
 // Maya headers.
-#include <maya/MFnUnitAttribute.h>
+#include <maya/MFnMessageAttribute.h>
+#include <maya/MFnNumericAttribute.h>
 
 // appleseed.maya headers.
 #include "appleseedmaya/config.h"
 
+MObject EnvLightNode::m_message;
+MObject EnvLightNode::m_displaySize;
 
 MStatus EnvLightNode::compute(const MPlug& plug, MDataBlock& dataBlock)
 {
@@ -57,4 +60,54 @@ bool EnvLightNode::isBounded() const
 MBoundingBox EnvLightNode::boundingBox() const
 {
     return MBoundingBox();
+}
+
+EnvLightData::EnvLightData()
+  : MUserData (false) // don't delete after draw
+{
+}
+
+MHWRender::MPxDrawOverride *EnvLightDrawOverride::creator(const MObject& obj)
+{
+    return new EnvLightDrawOverride(obj);
+}
+
+EnvLightDrawOverride::EnvLightDrawOverride(const MObject& obj)
+  : MHWRender::MPxDrawOverride(obj, EnvLightDrawOverride::draw)
+{
+}
+
+MHWRender::DrawAPI EnvLightDrawOverride::supportedDrawAPIs() const
+{
+    return MHWRender::kOpenGL;
+}
+
+MBoundingBox EnvLightDrawOverride::boundingBox(const MDagPath& objPath, const MDagPath& cameraPath) const
+{
+    float size = 1.0f;
+    MBoundingBox boundingBox(
+        MPoint(-size, -size, -size),
+        MPoint( size,  size,  size));
+
+    return boundingBox;
+}
+
+MUserData *EnvLightDrawOverride::prepareForDraw(
+    const MDagPath&                 objPath,
+    const MDagPath&                 cameraPath,
+    const MHWRender::MFrameContext& frameContext,
+    MUserData*                      oldData)
+{
+    // Retrieve data cache (create if does not exist)
+    EnvLightData *data =dynamic_cast<EnvLightData*>(oldData);
+
+    if(!data)
+        data = new EnvLightData();
+
+    return data;
+}
+
+void EnvLightDrawOverride::draw(const MHWRender::MDrawContext& context, const MUserData *data)
+{
+    // todo: implement this...
 }

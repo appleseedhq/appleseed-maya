@@ -88,6 +88,14 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to register env light locator");
 
+    status = MHWRender::MDrawRegistry::registerDrawOverrideCreator(
+        PhysicalskyLightNode::drawDbClassification,
+        PhysicalskyLightNode::drawRegistrantId,
+        EnvLightDrawOverride::creator);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to register env light locator");
+
     status = fnPlugin.registerNode(
         SkyDomeLightNode::nodeName,
         SkyDomeLightNode::id,
@@ -95,6 +103,14 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         SkyDomeLightNode::initialize,
         MPxNode::kLocatorNode,
         &SkyDomeLightNode::drawDbClassification);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to register env light locator");
+
+    status = MHWRender::MDrawRegistry::registerDrawOverrideCreator(
+        SkyDomeLightNode::drawDbClassification,
+        SkyDomeLightNode::drawRegistrantId,
+        EnvLightDrawOverride::creator);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: failed to register env light locator");
@@ -246,7 +262,21 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to deregister env light locator");
 
+    status = MHWRender::MDrawRegistry::deregisterDrawOverrideCreator(
+            PhysicalskyLightNode::drawDbClassification,
+            PhysicalskyLightNode::drawRegistrantId);
+    APPLESEED_MAYA_CHECK_MSTATUS_MSG(
+        status,
+        "appleseedMaya: failed to deregister env light locator");
+
     status = fnPlugin.deregisterNode(SkyDomeLightNode::id);
+    APPLESEED_MAYA_CHECK_MSTATUS_MSG(
+        status,
+        "appleseedMaya: failed to deregister env light locator");
+
+    status = MHWRender::MDrawRegistry::deregisterDrawOverrideCreator(
+            SkyDomeLightNode::drawDbClassification,
+            SkyDomeLightNode::drawRegistrantId);
     APPLESEED_MAYA_CHECK_MSTATUS_MSG(
         status,
         "appleseedMaya: failed to deregister env light locator");
