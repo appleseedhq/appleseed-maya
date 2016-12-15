@@ -259,7 +259,7 @@ void RenderGlobalsNode::applyGlobalsToProject(
     MFnDependencyNode depNodeFn(globals);
 
     int samples;
-    if(AttributeUtils::get(depNodeFn, "samples", samples))
+    if(AttributeUtils::get(MPlug(globals, m_pixelSamples), samples))
     {
         finalParams.insert_path("uniform_pixel_renderer.samples", samples);
 
@@ -268,14 +268,14 @@ void RenderGlobalsNode::applyGlobalsToProject(
     }
 
     int passes;
-    if(AttributeUtils::get(depNodeFn, "passes", passes))
+    if(AttributeUtils::get(MPlug(globals, m_passes), passes))
     {
         finalParams.insert_path("generic_frame_renderer.passes", passes);
         finalParams.insert_path("shading_result_framebuffer", passes == 1 ? "ephemeral" : "permanent");
     }
 
     int diagnostic;
-    if(AttributeUtils::get(depNodeFn, "diagnostics", diagnostic))
+    if(AttributeUtils::get(MPlug(globals, m_diagnosticShader), diagnostic))
     {
         if(diagnostic != 0)
         {
@@ -289,10 +289,10 @@ void RenderGlobalsNode::applyGlobalsToProject(
     }
 
     int bounces = 0;
-    AttributeUtils::get(depNodeFn, "bounces", bounces);
+    AttributeUtils::get(MPlug(globals, m_bounces), bounces);
 
     bool gi;
-    if(AttributeUtils::get(depNodeFn, "gi", gi))
+    if(AttributeUtils::get(MPlug(globals, m_gi), gi))
     {
         if (gi)
         {
@@ -307,28 +307,28 @@ void RenderGlobalsNode::applyGlobalsToProject(
     }
 
     bool caustics;
-    if(AttributeUtils::get(depNodeFn, "caustics", caustics))
+    if(AttributeUtils::get(MPlug(globals, m_caustics), caustics))
     {
         finalParams.insert_path("pt.enable_caustics", caustics);
         iprParams.insert_path("pt.enable_caustics", caustics);
     }
 
     float lightSamples;
-    if(AttributeUtils::get(depNodeFn, "lightSamples", lightSamples))
+    if(AttributeUtils::get(MPlug(globals, m_lightSamples), lightSamples))
     {
         finalParams.insert_path("pt.dl_light_samples", lightSamples);
         iprParams.insert_path("pt.dl_light_samples", lightSamples);
     }
 
     float envSamples;
-    if(AttributeUtils::get(depNodeFn, "envSamples", envSamples))
+    if(AttributeUtils::get(MPlug(globals, m_envSamples), envSamples))
     {
         finalParams.insert_path("pt.ibl_env_samples", envSamples);
         iprParams.insert_path("pt.ibl_env_samples", envSamples);
     }
 
     int threads;
-    if(AttributeUtils::get(depNodeFn, "threads", threads))
+    if(AttributeUtils::get(MPlug(globals, m_renderingThreads), threads))
     {
         if (threads == 0)
         {
