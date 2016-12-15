@@ -34,6 +34,8 @@ import maya.OpenMayaUI as omui
 
 # appleseedMaya imports.
 from logger import logger
+from appleseedMaya.renderGlobals import createGlobalNodes
+
 
 def appleseedTranslatorOptions(parent, action, initialSettings, resultCallback):
     defaults = {
@@ -43,6 +45,8 @@ def appleseedTranslatorOptions(parent, action, initialSettings, resultCallback):
         "endFrame"     : 100,
         "stepFrame"    : 1
     }
+
+    createGlobalNodes()
 
     if initialSettings:
         logger.debug("Parsing initial translator settings %s" % initialSettings)
