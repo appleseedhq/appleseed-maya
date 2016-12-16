@@ -435,8 +435,8 @@ void MeshExporter::exportGeometry()
     m_mesh->reserve_vertices(meshFn.numVertices());
     {
         const float *p = meshFn.getRawPoints(&status);
-        for(size_t i = 0, e = meshFn.numVertices(); i < e; ++i)
-            m_mesh->push_vertex(asr::GVector3(*p++, *p++, *p++));
+        for(size_t i = 0, e = meshFn.numVertices(); i < e; ++i, p += 3)
+            m_mesh->push_vertex(asr::GVector3(p[0], p[1], p[2]));
     }
 
     if(m_exportUVs)
@@ -453,9 +453,9 @@ void MeshExporter::exportGeometry()
         m_mesh->reserve_vertex_normals(meshFn.numNormals());
         const float *p = meshFn.getRawNormals(&status);
 
-        for(size_t i = 0, e = meshFn.numNormals(); i < e; ++i)
+        for(size_t i = 0, e = meshFn.numNormals(); i < e; ++i, p += 3)
         {
-            asr::GVector3 n(*p++, *p++, *p++);
+            asr::GVector3 n(p[0], p[1], p[2]);
             m_mesh->push_vertex_normal(asf::safe_normalize(n));
         }
     }
@@ -476,26 +476,27 @@ void MeshExporter::exportMeshKey()
     // Vertices.
     {
         const float *p = meshFn.getRawPoints(&status);
-        for(size_t i = 0, e = meshFn.numVertices(); i < e; ++i)
+        for(size_t i = 0, e = meshFn.numVertices(); i < e; ++i, p += 3)
         {
             m_mesh->set_vertex_pose(
                 i,
                 m_shapeExportStep - 1,
-                asr::GVector3(*p++, *p++, *p++));
+                asr::GVector3(p[0], p[1], p[2]));
         }
     }
 
     if(m_exportNormals)
     {
         m_mesh->reserve_vertex_normals(meshFn.numNormals());
-        MFloatVectorArray normals;
-        status = meshFn.getNormals(normals);
-        for(size_t i = 0, e = meshFn.numNormals(); i < e; ++i)
+        const float *p = meshFn.getRawNormals(&status);
+
+        for(size_t i = 0, e = meshFn.numNormals(); i < e; ++i, p += 3)
         {
+            asr::GVector3 n(p[0], p[1], p[2]);
             m_mesh->set_vertex_normal_pose(
                 i,
                 m_shapeExportStep - 1,
-                asr::GVector3(normals[i].x, normals[i].y, normals[i].z));
+                asf::safe_normalize(n));
         }
     }
 }
