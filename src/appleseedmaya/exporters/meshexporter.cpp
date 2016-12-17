@@ -227,7 +227,7 @@ void MeshExporter::exportShapeMotionStep(float time)
         MurmurHash meshHash;
         staticMeshObjectHash(*m_mesh, m_materialMappings, meshHash);
 
-#define APPLESEED_MAYA_OBJ_MESH_EXPORT
+//#define APPLESEED_MAYA_OBJ_MESH_EXPORT
 #ifdef APPLESEED_MAYA_OBJ_MESH_EXPORT
         const char *extension = ".obj";
 #else
