@@ -33,6 +33,7 @@ import fnmatch
 # Maya imports.
 import pymel.core as pm
 import maya.mel as mel
+import maya.OpenMaya as om
 
 # appleseedMaya imports.
 from aetemplate import appleseedAETemplateCallback
@@ -177,7 +178,8 @@ def register():
         logger.info("appleseedMaya: skipping logo registration. Logo not found")
 
     # Menu
-    createMenu()
+    if om.MGlobal.mayaState() == om.MGlobal.kInteractive:
+        createMenu()
 
     # XGen
     try:
@@ -212,7 +214,8 @@ def unregister():
     except Exception as e:
         logger.info("appleseedMaya: could not uninitialize xgenseed. error = %s" % e)
 
-    deleteMenu()
+    if om.MGlobal.mayaState() == om.MGlobal.kInteractive:
+        deleteMenu()
 
     pm.callbacks(clearCallbacks=True, owner="appleseed")
 
