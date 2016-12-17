@@ -88,13 +88,16 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to register env light locator");
 
-    status = MHWRender::MDrawRegistry::registerDrawOverrideCreator(
-        PhysicalSkyLightNode::drawDbClassification,
-        PhysicalSkyLightNode::drawRegistrantId,
-        PhysicalSkyLightDrawOverride::creator);
-    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
-        status,
-        "appleseedMaya: failed to register env light locator");
+    if(MGlobal::mayaState() == MGlobal::kInteractive)
+    {
+        status = MHWRender::MDrawRegistry::registerDrawOverrideCreator(
+            PhysicalSkyLightNode::drawDbClassification,
+            PhysicalSkyLightNode::drawRegistrantId,
+            PhysicalSkyLightDrawOverride::creator);
+        APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+            status,
+            "appleseedMaya: failed to register env light locator");
+    }
 
     status = fnPlugin.registerNode(
         SkyDomeLightNode::nodeName,
@@ -107,13 +110,16 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to register env light locator");
 
-    status = MHWRender::MDrawRegistry::registerDrawOverrideCreator(
-        SkyDomeLightNode::drawDbClassification,
-        SkyDomeLightNode::drawRegistrantId,
-        SkyDomeLightDrawOverride::creator);
-    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
-        status,
-        "appleseedMaya: failed to register env light locator");
+    if(MGlobal::mayaState() == MGlobal::kInteractive)
+    {
+        status = MHWRender::MDrawRegistry::registerDrawOverrideCreator(
+            SkyDomeLightNode::drawDbClassification,
+            SkyDomeLightNode::drawRegistrantId,
+            SkyDomeLightDrawOverride::creator);
+        APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+            status,
+            "appleseedMaya: failed to register env light locator");
+    }
 
     status = fnPlugin.registerCommand(
         FinalRenderCommand::cmdName,
@@ -262,24 +268,30 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to deregister env light locator");
 
-    status = MHWRender::MDrawRegistry::deregisterDrawOverrideCreator(
-            PhysicalSkyLightNode::drawDbClassification,
-            PhysicalSkyLightNode::drawRegistrantId);
-    APPLESEED_MAYA_CHECK_MSTATUS_MSG(
-        status,
-        "appleseedMaya: failed to deregister env light locator");
+    if(MGlobal::mayaState() == MGlobal::kInteractive)
+    {
+        status = MHWRender::MDrawRegistry::deregisterDrawOverrideCreator(
+                PhysicalSkyLightNode::drawDbClassification,
+                PhysicalSkyLightNode::drawRegistrantId);
+        APPLESEED_MAYA_CHECK_MSTATUS_MSG(
+            status,
+            "appleseedMaya: failed to deregister env light locator");
+    }
 
     status = fnPlugin.deregisterNode(SkyDomeLightNode::id);
     APPLESEED_MAYA_CHECK_MSTATUS_MSG(
         status,
         "appleseedMaya: failed to deregister env light locator");
 
-    status = MHWRender::MDrawRegistry::deregisterDrawOverrideCreator(
-            SkyDomeLightNode::drawDbClassification,
-            SkyDomeLightNode::drawRegistrantId);
-    APPLESEED_MAYA_CHECK_MSTATUS_MSG(
-        status,
-        "appleseedMaya: failed to deregister env light locator");
+    if(MGlobal::mayaState() == MGlobal::kInteractive)
+    {
+        status = MHWRender::MDrawRegistry::deregisterDrawOverrideCreator(
+                SkyDomeLightNode::drawDbClassification,
+                SkyDomeLightNode::drawRegistrantId);
+        APPLESEED_MAYA_CHECK_MSTATUS_MSG(
+            status,
+            "appleseedMaya: failed to deregister env light locator");
+    }
 
     status = fnPlugin.deregisterNode(RenderGlobalsNode::id);
     APPLESEED_MAYA_CHECK_MSTATUS_MSG(
