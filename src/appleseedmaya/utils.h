@@ -34,6 +34,7 @@
 #include <string>
 
 // Maya headers.
+#include <maya/MComputation.h>
 #include <maya/MString.h>
 
 // appleseed.foundation headers.
@@ -188,5 +189,31 @@ void insertEntityWithUniqueName(
         }
     }
 }
+
+//
+// ScopedComputation.
+//
+
+class ScopedComputation
+  : public NonCopyable
+{
+  public:
+    ScopedComputation()
+    {
+        m_computation.beginComputation();
+    }
+
+    ~ScopedComputation()
+    {
+        m_computation.endComputation();
+    }
+
+    bool isInterruptRequested()
+    {
+        return m_computation.isInterruptRequested();
+    }
+
+    MComputation m_computation;
+};
 
 #endif  // !APPLESEED_MAYA_UTILS_H
