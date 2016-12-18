@@ -26,34 +26,23 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
-#define APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
+#ifndef APPLESEED_MAYA_IDLE_JOB_QUEUE_H
+#define APPLESEED_MAYA_IDLE_JOB_QUEUE_H
 
-// Standard headers.
-#include <cstddef>
+// Boost headers.
+#include <boost/function.hpp>
 
-// appleseed.renderer headers.
-#include "renderer/api/rendering.h"
+// Maya headers.
+#include <maya/MStatus.h>
 
-// Forward declarations.
-namespace foundation    { class Tile; }
-namespace renderer      { class Frame; }
-
-
-class RenderViewTileCallbackFactory
-  : public renderer::ITileCallbackFactory
+namespace IdleJobQueue
 {
-  public:
 
-    RenderViewTileCallbackFactory();
-    virtual ~RenderViewTileCallbackFactory();
+MStatus initialize();
+MStatus uninitialize();
 
-    virtual void release();
+void pushJob(boost::function<void()> job);
 
-    virtual renderer::ITileCallback* create();
+} // IdleJobQueue
 
-    void renderViewStart(const renderer::Frame& frame);
-    void renderViewEnd();
-};
-
-#endif  // !APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
+#endif  // !APPLESEED_MAYA_IDLE_JOB_QUEUE_H

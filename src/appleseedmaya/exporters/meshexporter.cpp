@@ -136,6 +136,9 @@ DagNodeExporter *MeshExporter::create(
     asr::Project&                   project,
     AppleseedSession::SessionMode   sessionMode)
 {
+    if(areObjectAndParentsRenderable(path) == false)
+        return 0;
+
     return new MeshExporter(path, project, sessionMode);
 }
 

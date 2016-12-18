@@ -32,6 +32,14 @@
 // Standard headers.
 #include <cassert>
 
+// Boost headers.
+#include <boost/shared_array.hpp>
+#include <boost/thread/locks.hpp>
+#include <boost/thread/mutex.hpp>
+
+// Maya headers.
+#include <maya/MRenderView.h>
+
 // appleseed.foundation headers.
 #include "foundation/image/canvasproperties.h"
 #include "foundation/image/image.h"
@@ -43,57 +51,113 @@
 #include "renderer/api/frame.h"
 #include "renderer/api/log.h"
 
+// appleseed.maya headers.
+#include "appleseedmaya/idlejobqueue.h"
+#include "appleseedmaya/utils.h"
+
 namespace asf = foundation;
 namespace asr = renderer;
 
-RenderViewTileCallback::RenderViewTileCallback()
-  : m_renderedPixels(0)
+namespace
 {
-}
 
-void RenderViewTileCallback::release()
+class RenderViewTileCallback
+  : public renderer::ITileCallback
 {
-    // We don't need to do anything here.
-    // The tile callback factory deletes this instance.
-}
+  public:
+    virtual void release()
+    {
+        delete this;
+    }
 
-void RenderViewTileCallback::pre_render(
-    const size_t            x,
-    const size_t            y,
-    const size_t            width,
-    const size_t            height)
-{
-}
+    virtual void pre_render(
+        const size_t            x,
+        const size_t            y,
+        const size_t            width,
+        const size_t            height)
+    {
+    }
 
-void RenderViewTileCallback::post_render(const renderer::Frame* frame)
-{
-}
+    virtual void post_render(
+        const renderer::Frame*  frame)
+    {
+        const asf::CanvasProperties& frame_props = frame->image().properties();
 
-void RenderViewTileCallback::post_render_tile(
-    const renderer::Frame*  frame,
-    const size_t            tile_x,
-    const size_t            tile_y)
-{
-    const size_t totalPixels = frame->image().properties().m_pixel_count;
+        for( size_t ty = 0; ty < frame_props.m_tile_count_y; ++ty )
+            for( size_t tx = 0; tx < frame_props.m_tile_count_x; ++tx )
+                write_tile(frame, tx, ty);
+    }
 
-    const asf::Tile& tile = frame->image().tile(tile_x, tile_y);
-    m_renderedPixels += tile.get_pixel_count();
+    virtual void post_render_tile(
+        const renderer::Frame*  frame,
+        const size_t            tile_x,
+        const size_t            tile_y)
+    {
+        write_tile(frame, tile_x, tile_y);
+    }
 
-    // todo: log progress here...
+  private:
+    struct WriteTileToRenderView
+    {
+        WriteTileToRenderView(
+            int                             xmin,
+            int                             ymin,
+            int                             xmax,
+            int                             ymax,
+            boost::shared_array<RV_PIXEL>   pixels)
+        {
+            m_xmin = xmin;
+            m_ymin = ymin;
+            m_xmax = xmax;
+            m_ymax = ymax;
+            m_pixels = pixels;
+        }
 
-    // Reset progress when rendering is finished for multi-pass renders.
-    if( m_renderedPixels == totalPixels )
-        m_renderedPixels = 0;
-}
+        void operator()()
+        {
+            std::cout << "write tile to renderview!" << std::endl;
+            // todo:
+            // MRenderView::refresh(m_xmin, m_xmax, m_ymin, yMax);
+            // MRenderView::updatePixels(m_xmin, m_xmax, m_ymax, yMax, m_pixels.get(), true);
+        }
+
+        int                             m_xmin;
+        int                             m_ymin;
+        int                             m_xmax;
+        int                             m_ymax;
+        boost::shared_array<RV_PIXEL>   m_pixels;
+    };
+
+    void write_tile(
+        const renderer::Frame*  frame,
+        const size_t            tile_x,
+        const size_t            tile_y)
+    {
+        const asf::CanvasProperties& frameProps = frame->image().properties();
+
+        int xmin = tile_x * frameProps.m_tile_width;
+        int xmax = xmin + frameProps.m_tile_width;
+        int ymin = tile_y * frameProps.m_tile_height;
+        int ymax = ymin + frameProps.m_tile_height;
+
+        boost::shared_array<RV_PIXEL> pixels(new RV_PIXEL[(xmax - xmin) * (ymax - ymin)]);
+
+        // todo: copy pixels here...
+
+        WriteTileToRenderView w(xmin, ymin, xmax, xmax, pixels);
+        IdleJobQueue::pushJob(w);
+    }
+};
+
+} // unnamed.
 
 RenderViewTileCallbackFactory::RenderViewTileCallbackFactory()
 {
-    m_callback = new RenderViewTileCallback();
 }
 
 RenderViewTileCallbackFactory::~RenderViewTileCallbackFactory()
 {
-    m_callback->release();
+    renderViewEnd();
 }
 
 void RenderViewTileCallbackFactory::release()
@@ -103,5 +167,36 @@ void RenderViewTileCallbackFactory::release()
 
 renderer::ITileCallback* RenderViewTileCallbackFactory::create()
 {
-    return m_callback;
+    return new RenderViewTileCallback();
+}
+
+void RenderViewTileCallbackFactory::renderViewStart(const renderer::Frame& frame)
+{
+    const asf::CanvasProperties& frameProps = frame.image().properties();
+
+    if(frame.has_crop_window())
+    {
+        MRenderView::startRegionRender(
+            frameProps.m_canvas_width,
+            frameProps.m_canvas_height,
+            frame.get_crop_window().min.x,
+            frame.get_crop_window().max.x,
+            frame.get_crop_window().min.y,
+            frame.get_crop_window().max.y,
+            false,
+            true);
+    }
+    else
+    {
+        MRenderView::startRender(
+            frameProps.m_canvas_width,
+            frameProps.m_canvas_height,
+            false,
+            true);
+    }
+}
+
+void RenderViewTileCallbackFactory::renderViewEnd()
+{
+    MRenderView::endRender();
 }

@@ -69,9 +69,14 @@ enum SessionMode
 struct Options
 {
     Options()
-        : m_width(-1)
+        : m_selectionOnly(false)
+        , m_width(-1)
         , m_height(-1)
-        , m_selectionOnly(false)
+        , m_renderRegion(false)
+        , m_xmin(-1)
+        , m_ymin(-1)
+        , m_xmax(-1)
+        , m_ymax(-1)
         , m_sequence(false)
         , m_firstFrame(1)
         , m_lastFrame(1)
@@ -80,10 +85,16 @@ struct Options
     }
 
     // Common options.
-    int m_width;
-    int m_height;
     MString m_camera;
     bool m_selectionOnly;
+
+    int m_width;
+    int m_height;
+    bool m_renderRegion;
+    int m_xmin;
+    int m_ymin;
+    int m_xmax;
+    int m_ymax;
 
     // Final render options.
     // ...
@@ -117,15 +128,13 @@ class Services
     Services();
 };
 
-void beginProjectExport(
+MStatus projectExport(
     const MString& fileName,
     const Options& options);
 
-void beginFinalRender(
-    const Options& options);
-
-void beginProgressiveRender(
-    const Options& options);
+MStatus finalRender(
+    const Options&  options,
+    const bool      batch);
 
 void endSession();
 

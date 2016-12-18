@@ -34,12 +34,17 @@
 
 // Maya headers.
 #include <maya/MArgDatabase.h>
+#include <maya/MCommonRenderSettingsData.h>
+#include <maya/MFnDependencyNode.h>
 #include <maya/MGlobal.h>
+#include <maya/MRenderUtil.h>
+#include <maya/MRenderView.h>
 #include <maya/MSelectionList.h>
 #include <maya/MSyntax.h>
 
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/logger.h"
 
@@ -65,36 +70,75 @@ MStatus FinalRenderCommand::doIt(const MArgList& args)
     std::cout << "Appleseed Render:\n";
     std::cout << "-----------------\n";
 
+    // In case we were rendering.
+    AppleseedSession::endSession();
+
+    // Initialize options from the render globals.
     AppleseedSession::Options options;
+
+    MCommonRenderSettingsData renderSettings;
+    MRenderUtil::getCommonRenderSettings(renderSettings);
+
+    options.m_width = renderSettings.width;
+    options.m_height = renderSettings.height;
+
+    MObject globalsNode;
+    getDependencyNodeByName("defaultRenderGlobals", globalsNode);
+
+    MFnDependencyNode depNodeFn(globalsNode);
+    if(depNodeFn.findPlug("useRenderRegion").asBool())
+    {
+        options.m_renderRegion = true;
+        AttributeUtils::get(depNodeFn, "left" , options.m_xmin);
+        AttributeUtils::get(depNodeFn, "bot"  , options.m_ymin);
+        AttributeUtils::get(depNodeFn, "right", options.m_xmax);
+        AttributeUtils::get(depNodeFn, "top"  , options.m_ymax);
+    }
+
+    //options.m_selectionOnly = !renderSettings.renderAll;
+
+    bool isBatch = false;
 
     MStatus status;
     MArgDatabase argData(syntax(), args, &status);
-
-    MString batchOptions;
     if(argData.isFlagSet("-batch", &status))
     {
+        isBatch = true;
+        MString batchOptions;
         status = argData.getFlagArgument("-batch", 0, batchOptions);
         std::cout << "  batch = true" << std::endl;
         std::cout << "  options = " << batchOptions << std::endl;
+
+        options.m_sequence = renderSettings.isAnimated();
+        if(options.m_sequence)
+        {
+            options.m_firstFrame = static_cast<float>(renderSettings.frameStart.as(MTime::uiUnit()));
+            options.m_lastFrame = static_cast<float>(renderSettings.frameEnd.as(MTime::uiUnit()));
+            options.m_frameStep = renderSettings.frameBy;
+        }
+    }
+    else
+    {
+        if(argData.isFlagSet("-width", &status))
+        {
+            status = argData.getFlagArgument("-width", 0, options.m_width);
+            std::cout << "  width = " << options.m_width << std::endl;
+        }
+
+        if(argData.isFlagSet("-height", &status))
+        {
+            status = argData.getFlagArgument("-height", 0, options.m_height);
+            std::cout << "  height = " << options.m_height << std::endl;
+        }
+
+        if(argData.isFlagSet("-camera", &status))
+        {
+            status = argData.getFlagArgument("-camera", 0, options.m_camera);
+            std::cout << "  camera = " << options.m_camera << std::endl;
+        }
     }
 
-    if(argData.isFlagSet("-width", &status))
-    {
-        status = argData.getFlagArgument("-width", 0, options.m_width);
-        std::cout << "  width = " << options.m_width << std::endl;
-    }
-
-    if(argData.isFlagSet("-height", &status))
-    {
-        status = argData.getFlagArgument("-height", 0, options.m_height);
-        std::cout << "  height = " << options.m_height << std::endl;
-    }
-
-    if(argData.isFlagSet("-camera", &status))
-    {
-        status = argData.getFlagArgument("-camera", 0, options.m_camera);
-        std::cout << "  camera = " << options.m_camera << std::endl;
-    }
+    AppleseedSession::finalRender(options, isBatch);
 
     std::cout << std::endl;
     return MS::kSuccess;
@@ -119,8 +163,15 @@ void* ProgressiveRenderCommand::creator()
 
 MStatus ProgressiveRenderCommand::doIt(const MArgList& args)
 {
+    // Maybe we should check and fail instead of asserting?
+    //assert(MRenderView::doesRenderEditorExist());
+
+    /*
     std::cout << "Appleseed IPR:\n";
     std::cout << "--------------\n";
+
+    // In case we were rendering.
+    AppleseedSession::endSession();
 
     AppleseedSession::Options options;
 
@@ -189,5 +240,6 @@ MStatus ProgressiveRenderCommand::doIt(const MArgList& args)
     }
 
     std::cout << std::endl;
+    */
     return MS::kSuccess;
 }

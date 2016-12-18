@@ -33,8 +33,13 @@
 #include <cstring>
 #include <string>
 
+// Boost headers.
+#include <boost/function.hpp>
+
 // Maya headers.
 #include <maya/MComputation.h>
+#include <maya/MDagPath.h>
+#include <maya/MObject.h>
 #include <maya/MString.h>
 
 // appleseed.foundation headers.
@@ -215,5 +220,12 @@ class ScopedComputation
 
     MComputation m_computation;
 };
+
+// Execute a callback in Maya's main thread.
+MStatus executeInMainThread(boost::function<void()> f);
+
+MStatus getDependencyNodeByName(const MString& name, MObject& object);
+
+MStatus getDagPathByName(const MString& name, MDagPath& dag);
 
 #endif  // !APPLESEED_MAYA_UTILS_H

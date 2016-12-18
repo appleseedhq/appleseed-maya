@@ -114,6 +114,9 @@ class DagNodeExporter
 
     void visibilityAttributesToParams(renderer::ParamArray& params);
 
+    static bool isObjectRenderable(const MDagPath& path);
+    static bool areObjectAndParentsRenderable(const MDagPath& path);
+
   private:
 
     MDagPath                      m_path;

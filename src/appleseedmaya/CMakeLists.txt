@@ -70,6 +70,8 @@ set (appleseed_maya_sources
     exporters/shadingnodeexporterfwd.h
     exporters/shapeexporter.cpp
     exporters/shapeexporter.h
+    idlejobqueue.cpp
+    idlejobqueue.h
     logger.cpp
     logger.h
     murmurhash.cpp

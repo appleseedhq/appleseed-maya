@@ -125,9 +125,7 @@ MStatus AppleseedTranslator::writer(
     options.m_height = renderSettings.height;
 
     // Export the scene.
-    AppleseedSession::beginProjectExport(file.fullName(), options);
-    AppleseedSession::endSession();
-    return MS::kSuccess;
+    return AppleseedSession::projectExport(file.fullName(), options);
 }
 
 bool AppleseedTranslator::haveWriteMethod() const

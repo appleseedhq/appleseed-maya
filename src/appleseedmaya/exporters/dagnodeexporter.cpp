@@ -29,9 +29,15 @@
 // Interface header.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
+// Maya headers.
+#include <maya/MFnDagNode.h>
+
 // appleseed.renderer headers.
 #include "renderer/api/project.h"
 #include "renderer/api/scene.h"
+
+// appleseed.maya headers.
+#include "appleseedmaya/attributeutils.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -128,4 +134,48 @@ asf::Matrix4d DagNodeExporter::convert(const MMatrix& m) const
 void DagNodeExporter::visibilityAttributesToParams(asr::ParamArray& params)
 {
     // TODO: implement this...
+}
+
+bool DagNodeExporter::isObjectRenderable(const MDagPath& path)
+{
+    MFnDagNode dagNodeFn(path);
+
+    // Skip intermediate objects.
+    if(dagNodeFn.isIntermediateObject())
+        return false;
+
+    // Skip templated objects.
+    MStatus status;
+    MPlug plug = dagNodeFn.findPlug("template", false, &status);
+    if(status == MS::kSuccess && plug.asBool())
+        return false;
+
+    // Skip invisible objects.
+    plug = dagNodeFn.findPlug("visibility", &status);
+    if(status == MS::kSuccess && plug.asBool() == false)
+        return false;
+
+    plug = dagNodeFn.findPlug("overrideVisibility", &status);
+    if(status == MS::kSuccess && plug.asBool() == false)
+        return false;
+
+    return true;
+}
+
+bool DagNodeExporter::areObjectAndParentsRenderable(const MDagPath& path)
+{
+    MDagPath d(path);
+
+    while(true)
+    {
+        if(isObjectRenderable(d) == false)
+            return false;
+
+        if(d.length() <= 1)
+            break;
+
+        d.pop();
+    }
+
+    return true;
 }

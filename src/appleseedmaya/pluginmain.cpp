@@ -36,6 +36,7 @@
 #include "appleseedmaya/appleseedtranslator.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/idlejobqueue.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/rendercommands.h"
 #include "appleseedmaya/renderglobalsnode.h"
@@ -207,6 +208,8 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         "appleseedMaya: failed to initialize python bridge");
 #endif
 
+    IdleJobQueue::initialize();
+
     RENDERER_LOG_INFO("Registration done!");
     return status;
 }
@@ -215,6 +218,8 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
 {
     MFnPlugin fnPlugin(plugin);
     MStatus status;
+
+    IdleJobQueue::uninitialize();
 
     status = AppleseedSession::uninitialize();
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(

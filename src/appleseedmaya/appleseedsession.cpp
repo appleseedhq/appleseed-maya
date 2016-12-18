@@ -39,6 +39,7 @@
 #include "boost/filesystem/operations.hpp"
 #include "boost/shared_ptr.hpp"
 #include "boost/scoped_ptr.hpp"
+#include "boost/thread/thread.hpp"
 
 // Maya headers.
 #include <maya/MAnimControl.h>
@@ -78,6 +79,7 @@
 #include "appleseedmaya/exporters/shadingengineexporter.h"
 #include "appleseedmaya/exporters/shadingnetworkexporter.h"
 #include "appleseedmaya/exporters/shapeexporter.h"
+#include "appleseedmaya/idlejobqueue.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/renderercontroller.h"
 #include "appleseedmaya/renderglobalsnode.h"
@@ -100,6 +102,7 @@ namespace
 {
 
 struct SessionImpl
+  : NonCopyable
 {
     class ServicesImpl
       : public AppleseedSession::Services
@@ -197,9 +200,10 @@ struct SessionImpl
         m_project->search_paths().set_root_path(m_projectPath.string().c_str());
     }
 
-    // Non-copyable
-    SessionImpl(const SessionImpl&);
-    SessionImpl& operator=(const SessionImpl&);
+    ~SessionImpl()
+    {
+        abortRender();
+    }
 
     void createProject()
     {
@@ -274,13 +278,25 @@ struct SessionImpl
             // Set the camera.
             if(m_options.m_camera.length() != 0)
             {
-                MStatus status;
-                MSelectionList selList;
-                status = selList.add(m_options.m_camera);
                 MDagPath camera;
-                status = selList.getDagPath(0, camera);
-                params.insert("camera", camera.fullPathName().asChar());
+                MStatus status = getDagPathByName(m_options.m_camera, camera);
+
+                // If the camera name is a transform name, move to the camera.
+                status = camera.extendToShape();
+
+                MFnDagNode fnDagNode(camera);
+                if(fnDagNode.typeName() == "camera")
+                {
+                    RENDERER_LOG_DEBUG(
+                        "Setting active camera to %s",
+                        camera.fullPathName().asChar());
+                    params.insert("camera", camera.fullPathName().asChar());
+                }
+                else
+                    RENDERER_LOG_WARNING("Wrong camera!");
             }
+            else
+                RENDERER_LOG_WARNING("No active camera");
 
             // Set the resolution.
             params.insert("resolution", asf::Vector2i(m_options.m_width, m_options.m_height));
@@ -291,10 +307,17 @@ struct SessionImpl
             if(AttributeUtils::get(fnDepNode, "tileSize", tileSize))
                 params.insert("tile_size", asf::Vector2i(tileSize));
 
-            // TODO: set crop window here...
-
             // Replace the frame.
             m_project->set_frame(asr::FrameFactory().create("beauty", params));
+
+            // Set the crop window.
+            if(m_options.m_renderRegion)
+            {
+                m_project->get_frame()->set_crop_window(
+                    asf::AABB2u(
+                        asf::Vector2u(m_options.m_xmin, m_options.m_ymin),
+                        asf::Vector2u(m_options.m_xmax, m_options.m_ymax)));
+            }
         }
     }
 
@@ -366,7 +389,7 @@ struct SessionImpl
         RENDERER_LOG_DEBUG("Exporting default render globals");
 
         MObject defaultRenderGlobalsNode;
-        if(getNodeMObject("defaultRenderGlobals", defaultRenderGlobalsNode))
+        if(getDependencyNodeByName("defaultRenderGlobals", defaultRenderGlobalsNode))
         {
             // todo: export globals here...
         }
@@ -377,7 +400,7 @@ struct SessionImpl
         RENDERER_LOG_DEBUG("Exporting appleseed render globals");
 
         MObject appleseedRenderGlobalsNode;
-        if(getNodeMObject("appleseedRenderGlobals", appleseedRenderGlobalsNode))
+        if(getDependencyNodeByName("appleseedRenderGlobals", appleseedRenderGlobalsNode))
         {
             RenderGlobalsNode::applyGlobalsToProject(
                 appleseedRenderGlobalsNode,
@@ -443,16 +466,13 @@ struct SessionImpl
 
     void createDagNodeExporter(const MDagPath& path)
     {
+        if(m_dagExporters.count(path.fullPathName()) != 0)
+            return;
+
         MFnDagNode dagNodeFn(path);
 
         // Avoid warnings about missing exporter for transform nodes.
         if(strcmp(dagNodeFn.typeName().asChar(), "transform") == 0)
-            return;
-
-        //if(!areObjectAndParentsRenderable(path))
-        //    return;
-
-        if(m_dagExporters.count(path.fullPathName()) != 0)
             return;
 
         DagNodeExporterPtr exporter;
@@ -506,17 +526,50 @@ struct SessionImpl
 
     void finalRender()
     {
-        /*
+        assert(MGlobal::mayaState() == MGlobal::kInteractive);
+
         // Reset the renderer controller.
-        m_rendererController->set_status(asr::IRendererController::ContinueRendering);
+        m_rendererController.set_status(asr::IRendererController::ContinueRendering);
 
         // Create the master renderer.
         asr::Configuration *cfg = m_project->configurations().get_by_name("final");
-        const asr::ParamArray &params = cfg->get_parameters();
+        const asr::ParamArray& params = cfg->get_parameters();
 
-        RenderViewTileCallbackFactory tileCallbackFactory;
-        m_renderer.reset( new asr::MasterRenderer(*m_project, params, m_rendererController, &tileCallbackFactory));
-        */
+        m_tileCallbackFactory.reset(
+            new RenderViewTileCallbackFactory());
+        m_tileCallbackFactory->renderViewStart(*m_project->get_frame());
+
+        m_renderer.reset(
+            new asr::MasterRenderer(
+                *m_project,
+                params,
+                &m_rendererController,
+                static_cast<asr::ITileCallbackFactory*>(m_tileCallbackFactory.get())));
+
+        // Non blocking mode.
+        boost::thread thread(&SessionImpl::renderFunc, this);
+        m_renderThread.swap(thread);
+    }
+
+    void batchRender()
+    {
+        // Reset the renderer controller.
+        m_rendererController.set_status(asr::IRendererController::ContinueRendering);
+
+        // Create the master renderer.
+        asr::Configuration *cfg = m_project->configurations().get_by_name("final");
+        const asr::ParamArray& params = cfg->get_parameters();
+
+        m_renderer.reset(
+            new asr::MasterRenderer(
+                *m_project,
+                params,
+                &m_rendererController,
+                static_cast<asr::ITileCallbackFactory*>(0)));
+
+        // todo: render here (blocking)...
+        // todo: save frame here...
+        AppleseedSession::endSession();
     }
 
     void progressiveRender()
@@ -534,6 +587,19 @@ struct SessionImpl
         */
     }
 
+    void renderFunc()
+    {
+        m_renderer->render();
+        IdleJobQueue::pushJob(&AppleseedSession::endSession);
+    }
+
+    void abortRender()
+    {
+        m_rendererController.set_status(asr::IRendererController::AbortRendering);
+        if(m_renderThread.joinable())
+            m_renderThread.join();
+    }
+
     bool writeProject() const
     {
         return asr::ProjectFileWriter::write(
@@ -549,81 +615,30 @@ struct SessionImpl
         return scene->assemblies().get_by_name("assembly");
     }
 
-    MStatus getNodeMObject(const MString& nodeName, MObject& node)
-    {
-        MSelectionList selList;
-        selList.add(nodeName);
-
-        if(selList.isEmpty())
-            return MS::kFailure;
-
-        return selList.getDependNode(0, node);
-    }
-
-    bool isObjectRenderable(const MDagPath& path) const
-    {
-        MFnDagNode dagNodeFn(path);
-
-        // Skip intermediate objects.
-        if(dagNodeFn.isIntermediateObject())
-            return false;
-
-        // Skip templated objects.
-        MStatus status;
-        MPlug plug = dagNodeFn.findPlug("template", false, &status);
-        if(status == MS::kSuccess && plug.asBool())
-            return false;
-
-        // Skip invisible objects.
-        plug = dagNodeFn.findPlug("visibility", &status);
-        if(status == MS::kSuccess && plug.asBool() == false)
-            return false;
-
-        return true;
-    }
-
-    bool areObjectAndParentsRenderable(const MDagPath& path) const
-    {
-        bool result = true;
-        MDagPath d(path);
-        while(true)
-        {
-            if(!isObjectRenderable(d))
-            {
-                result = false;
-                break;
-            }
-
-            if(d.length() <= 1)
-                break;
-
-            d.pop();
-        }
-
-        return result;
-    }
-
     typedef std::map<MString, DagNodeExporterPtr, MStringCompareLess>           DagExporterMap;
     typedef std::map<MString, ShadingEngineExporterPtr, MStringCompareLess>     ShadingEngineExporterMap;
     typedef std::map<MString, ShadingNetworkExporterPtr, MStringCompareLess>    ShadingNetworkExporterMap;
     typedef boost::array<ShadingNetworkExporterMap, NumShadingNetworkContexts>  ShadingNetworkExporterMapArray;
 
-    AppleseedSession::SessionMode               m_sessionMode;
-    AppleseedSession::Options                   m_options;
-    ServicesImpl                                m_services;
-    MTime                                       m_savedTime;
+    AppleseedSession::SessionMode                           m_sessionMode;
+    AppleseedSession::Options                               m_options;
+    ServicesImpl                                            m_services;
+    MTime                                                   m_savedTime;
 
-    asf::auto_release_ptr<renderer::Project>    m_project;
+    asf::auto_release_ptr<renderer::Project>                m_project;
 
-    MString                                     m_fileName;
-    bfs::path                                   m_projectPath;
+    MString                                                 m_fileName;
+    bfs::path                                               m_projectPath;
 
-    DagExporterMap                              m_dagExporters;
-    ShadingEngineExporterMap                    m_shadingEngineExporters;
-    ShadingNetworkExporterMapArray              m_shadingNetworkExporters;
+    DagExporterMap                                          m_dagExporters;
+    ShadingEngineExporterMap                                m_shadingEngineExporters;
+    ShadingNetworkExporterMapArray                          m_shadingNetworkExporters;
 
-    boost::scoped_ptr<asr::MasterRenderer>      m_renderer;
-    RendererController                          m_rendererController;
+    boost::scoped_ptr<asr::MasterRenderer>                  m_renderer;
+    RendererController                                      m_rendererController;
+    asf::auto_release_ptr<RenderViewTileCallbackFactory>    m_tileCallbackFactory;
+
+    boost::thread                                           m_renderThread;
 };
 
 // Globals.
@@ -648,7 +663,7 @@ MStatus uninitialize()
     return MS::kSuccess;
 }
 
-void beginProjectExport(
+MStatus projectExport(
     const MString& fileName,
     const Options& options)
 {
@@ -656,24 +671,25 @@ void beginProjectExport(
 
     g_savedTime = MAnimControl::currentTime();
 
+    ScopedComputation computation;
+
     if(options.m_sequence)
     {
         std::string fname = fileName.asChar();
         if(fname.find('#') == std::string::npos)
         {
             RENDERER_LOG_ERROR("No frame placeholders in filename.");
-            return;
+            endSession();
+            return MS::kFailure;
         }
-
-        MComputation computation;
-        computation.beginComputation();
 
         for(int frame = options.m_firstFrame; frame <= options.m_lastFrame; frame += options.m_frameStep)
         {
             if (computation.isInterruptRequested())
             {
                 RENDERER_LOG_INFO("Project export aborted.");
-                break;
+                endSession();
+                return MS::kFailure;
             }
 
             MGlobal::viewFrame(frame);
@@ -686,11 +702,10 @@ void beginProjectExport(
             }
             catch(const AppleseedMayaException& e)
             {
-                return;
+                endSession();
+                return MS::kFailure;
             }
         }
-
-        computation.endComputation();
     }
     else
     {
@@ -698,9 +713,12 @@ void beginProjectExport(
         gGlobalSession->exportProject();
         gGlobalSession->writeProject();
     }
+
+    endSession();
+    return MS::kSuccess;
 }
 
-void beginFinalRender(const Options& options)
+MStatus finalRender(const Options& options, const bool batch)
 {
     assert(gGlobalSession.get() == 0);
 
@@ -709,39 +727,30 @@ void beginFinalRender(const Options& options)
     try
     {
         gGlobalSession.reset(new SessionImpl(FinalRenderSession, options));
-        gGlobalSession->finalRender();
+        gGlobalSession->exportProject();
+
+        if(batch)
+            gGlobalSession->batchRender();
+        else
+            gGlobalSession->finalRender();
     }
     catch(const AppleseedMayaException& e)
     {
-        return;
+        return MS::kFailure;
     }
-}
 
-void beginProgressiveRender(const Options& options)
-{
-    assert(gGlobalSession.get() == 0);
-
-    g_savedTime = MAnimControl::currentTime();
-
-    try
-    {
-        gGlobalSession.reset(new SessionImpl(ProgressiveRenderSession, options));
-        gGlobalSession->progressiveRender();
-    }
-    catch(const AppleseedMayaException& e)
-    {
-        return;
-    }
+    return MS::kSuccess;
 }
 
 void endSession()
 {
-    assert(gGlobalSession.get());
+    if(gGlobalSession.get())
+    {
+        gGlobalSession.reset();
 
-    gGlobalSession.reset();
-
-    if(g_savedTime != MAnimControl::currentTime())
-        MGlobal::viewFrame(g_savedTime);
+        if(g_savedTime != MAnimControl::currentTime())
+            MGlobal::viewFrame(g_savedTime);
+    }
 }
 
 SessionMode sessionMode()

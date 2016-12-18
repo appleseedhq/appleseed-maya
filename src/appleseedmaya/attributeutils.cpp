@@ -103,7 +103,12 @@ MStatus getPlugConnectedTo(const MPlug& dstPlug, MPlug& srcPlug)
     dstPlug.connectedTo(inputConnections, true, false, &status);
 
     if(status)
+    {
+        if(inputConnections.length() == 0)
+            return MS::kFailure;
+
         srcPlug = inputConnections[0];
+    }
 
     return status;
 }
