@@ -41,6 +41,9 @@ namespace IdleJobQueue
 MStatus initialize();
 MStatus uninitialize();
 
+void start();
+void stop();
+
 void pushJob(boost::function<void()> job);
 
 } // IdleJobQueue

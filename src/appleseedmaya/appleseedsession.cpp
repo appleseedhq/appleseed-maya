@@ -101,6 +101,15 @@ Services::~Services() {}
 namespace
 {
 
+struct ScopedEndSession
+{
+    ~ScopedEndSession()
+    {
+        AppleseedSession::endSession();
+    }
+};
+
+
 struct SessionImpl
   : NonCopyable
 {
@@ -528,6 +537,8 @@ struct SessionImpl
     {
         assert(MGlobal::mayaState() == MGlobal::kInteractive);
 
+        IdleJobQueue::start();
+
         // Reset the renderer controller.
         m_rendererController.set_status(asr::IRendererController::ContinueRendering);
 
@@ -553,6 +564,8 @@ struct SessionImpl
 
     void batchRender()
     {
+        ScopedEndSession session;
+
         // Reset the renderer controller.
         m_rendererController.set_status(asr::IRendererController::ContinueRendering);
 
@@ -569,7 +582,6 @@ struct SessionImpl
 
         // todo: render here (blocking)...
         // todo: save frame here...
-        AppleseedSession::endSession();
     }
 
     void progressiveRender()
@@ -602,9 +614,14 @@ struct SessionImpl
 
     bool writeProject() const
     {
+        return writeProject(m_fileName.asChar());
+    }
+
+    bool writeProject(const char *filename) const
+    {
         return asr::ProjectFileWriter::write(
             *m_project,
-            m_fileName.asChar(),
+            filename,
             asr::ProjectFileWriter::OmitHandlingAssetFiles |
             asr::ProjectFileWriter::OmitWritingGeometryFiles);
     }
@@ -669,9 +686,10 @@ MStatus projectExport(
 {
     assert(gGlobalSession.get() == 0);
 
-    g_savedTime = MAnimControl::currentTime();
-
+    ScopedEndSession session;
     ScopedComputation computation;
+
+    g_savedTime = MAnimControl::currentTime();
 
     if(options.m_sequence)
     {
@@ -679,7 +697,6 @@ MStatus projectExport(
         if(fname.find('#') == std::string::npos)
         {
             RENDERER_LOG_ERROR("No frame placeholders in filename.");
-            endSession();
             return MS::kFailure;
         }
 
@@ -688,7 +705,6 @@ MStatus projectExport(
             if (computation.isInterruptRequested())
             {
                 RENDERER_LOG_INFO("Project export aborted.");
-                endSession();
                 return MS::kFailure;
             }
 
@@ -702,7 +718,6 @@ MStatus projectExport(
             }
             catch(const AppleseedMayaException& e)
             {
-                endSession();
                 return MS::kFailure;
             }
         }
@@ -714,7 +729,6 @@ MStatus projectExport(
         gGlobalSession->writeProject();
     }
 
-    endSession();
     return MS::kSuccess;
 }
 
@@ -750,6 +764,8 @@ void endSession()
 
         if(g_savedTime != MAnimControl::currentTime())
             MGlobal::viewFrame(g_savedTime);
+
+        IdleJobQueue::stop();
     }
 }
 

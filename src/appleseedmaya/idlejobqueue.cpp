@@ -29,22 +29,81 @@
 // Interface header.
 #include "appleseedmaya/idlejobqueue.h"
 
+// tbb headers.
+#include "tbb/concurrent_queue.h"
+
+// Maya headers.
+#include <maya/MEventMessage.h>
+#include <maya/MString.h>
+
+// appleseed.maya headers.
+#include "appleseedmaya/logger.h"
+
+namespace
+{
+
+tbb::concurrent_queue<boost::function<void()> > g_jobQueue;
+MCallbackId g_callbackId;
+
+static void idleCallback(void *clientData)
+{
+    boost::function<void()> job;
+    while(g_jobQueue.try_pop(job))
+        job();
+}
+
+} // unnamed.
+
 namespace IdleJobQueue
 {
 
 MStatus initialize()
 {
+    g_callbackId = 0;
+    RENDERER_LOG_INFO("Initialized idle job queue");
     return MS::kSuccess;
 }
 
 MStatus uninitialize()
 {
+    stop();
+    RENDERER_LOG_INFO("Uninitialized idle job queue");
     return MS::kSuccess;
+}
+
+void start()
+{
+    if(g_callbackId == 0)
+    {
+        RENDERER_LOG_DEBUG("Started idle job queue");
+
+        MStatus status;
+        g_callbackId = MEventMessage::addEventCallback(
+            "idle",
+            &idleCallback,
+            reinterpret_cast<void*>(0),
+            &status);
+    }
+}
+
+void stop()
+{
+    if(g_callbackId != 0)
+    {
+        RENDERER_LOG_DEBUG("Stoped idle job queue");
+
+        MEventMessage::removeCallback(g_callbackId);
+        g_callbackId = 0;
+        idleCallback(0);
+    }
 }
 
 void pushJob(boost::function<void ()> job)
 {
-    // todo: implement...
+    assert(job);
+    assert(g_callbackId != 0);
+
+    g_jobQueue.push(job);
 }
 
 } // IdleJobQueue

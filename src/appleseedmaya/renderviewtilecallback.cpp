@@ -116,9 +116,8 @@ class RenderViewTileCallback
         void operator()()
         {
             std::cout << "write tile to renderview!" << std::endl;
-            // todo:
-            // MRenderView::refresh(m_xmin, m_xmax, m_ymin, yMax);
-            // MRenderView::updatePixels(m_xmin, m_xmax, m_ymax, yMax, m_pixels.get(), true);
+            MRenderView::updatePixels(m_xmin, m_xmax, m_ymin, m_ymax, m_pixels.get(), true);
+            MRenderView::refresh(m_xmin, m_xmax, m_ymin, m_ymax);
         }
 
         int                             m_xmin;
@@ -135,16 +134,37 @@ class RenderViewTileCallback
     {
         const asf::CanvasProperties& frameProps = frame->image().properties();
 
-        int xmin = tile_x * frameProps.m_tile_width;
-        int xmax = xmin + frameProps.m_tile_width;
-        int ymin = tile_y * frameProps.m_tile_height;
-        int ymax = ymin + frameProps.m_tile_height;
+        const foundation::Tile& tile = frame->image().tile(tile_x, tile_y);
+        assert(tile.get_pixel_format() == foundation::PixelFormatFloat);
+        assert(tile.get_channel_count() == 4);
 
-        boost::shared_array<RV_PIXEL> pixels(new RV_PIXEL[(xmax - xmin) * (ymax - ymin)]);
+        const size_t tileWidth = tile.get_width();
+        const size_t tileHeight = tile.get_height();
 
-        // todo: copy pixels here...
+        boost::shared_array<RV_PIXEL> pixels(new RV_PIXEL[tileWidth * tileHeight]);
+        RV_PIXEL *p = pixels.get();
 
-        WriteTileToRenderView w(xmin, ymin, xmax, xmax, pixels);
+        for (size_t y = 0; y < tileHeight; y++)
+        {
+            for (size_t x = 0; x < tileWidth; x++)
+            {
+                const float* source = reinterpret_cast<const float*>(tile.pixel(x, tileHeight - y - 1));
+                p->r = source[0];
+                p->g = source[1];
+                p->b = source[2];
+                p->a = source[3];
+                ++p;
+            }
+        }
+
+        const size_t x = tile_x * frameProps.m_tile_width;
+        const size_t y = tile_y * frameProps.m_tile_height;
+        int xmin = static_cast<unsigned int>(x);
+        int xmax = static_cast<unsigned int>(x + tileWidth - 1);
+        int ymin = static_cast<unsigned int>(frameProps.m_canvas_height - y - tileHeight);
+        int ymax = static_cast<unsigned int>(frameProps.m_canvas_height - y - 1);
+
+        WriteTileToRenderView w(xmin, ymin, xmax, ymax, pixels);
         IdleJobQueue::pushJob(w);
     }
 };
