@@ -221,9 +221,6 @@ class ScopedComputation
     MComputation m_computation;
 };
 
-// Execute a callback in Maya's main thread.
-MStatus executeInMainThread(boost::function<void()> f);
-
 MStatus getDependencyNodeByName(const MString& name, MObject& object);
 
 MStatus getDagPathByName(const MString& name, MDagPath& dag);
