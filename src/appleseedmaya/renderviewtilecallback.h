@@ -53,7 +53,10 @@ class RenderViewTileCallbackFactory
     virtual renderer::ITileCallback* create();
 
     void renderViewStart(const renderer::Frame& frame);
-    void renderViewEnd();
+
+  private:
+    int m_width;
+    int m_height;
 };
 
 #endif  // !APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H

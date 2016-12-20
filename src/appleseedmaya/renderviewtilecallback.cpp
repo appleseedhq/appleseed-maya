@@ -65,6 +65,14 @@ class RenderViewTileCallback
   : public renderer::ITileCallback
 {
   public:
+    RenderViewTileCallback(int width, int height)
+      : m_width(width)
+      , m_height(height)
+    {
+        assert(m_width > 0);
+        assert(m_height > 0);
+    }
+
     virtual void release()
     {
         delete this;
@@ -76,6 +84,13 @@ class RenderViewTileCallback
         const size_t            width,
         const size_t            height)
     {
+        int xmin = static_cast<int>(x);
+        int xmax = static_cast<int>(x + width - 1);
+        int ymin = static_cast<int>(m_height - y - height);
+        int ymax = static_cast<int>(m_height - y - 1);
+
+        HighlightTile h(xmin, ymin, xmax, ymax);
+        IdleJobQueue::pushJob(h);
     }
 
     virtual void post_render(
@@ -97,6 +112,31 @@ class RenderViewTileCallback
     }
 
   private:
+    struct HighlightTile
+    {
+        HighlightTile(
+            int                             xmin,
+            int                             ymin,
+            int                             xmax,
+            int                             ymax)
+        {
+            m_xmin = xmin;
+            m_ymin = ymin;
+            m_xmax = xmax;
+            m_ymax = ymax;
+        }
+
+        void operator()()
+        {
+            // todo: implement this...
+        }
+
+        int                             m_xmin;
+        int                             m_ymin;
+        int                             m_xmax;
+        int                             m_ymax;
+    };
+
     struct WriteTileToRenderView
     {
         WriteTileToRenderView(
@@ -144,6 +184,7 @@ class RenderViewTileCallback
         boost::shared_array<RV_PIXEL> pixels(new RV_PIXEL[tileWidth * tileHeight]);
         RV_PIXEL *p = pixels.get();
 
+        // Copy and flip the tile verticaly (Maya's renderview is y up).
         for (size_t y = 0; y < tileHeight; y++)
         {
             for (size_t x = 0; x < tileWidth; x++)
@@ -159,25 +200,30 @@ class RenderViewTileCallback
 
         const size_t x = tile_x * frameProps.m_tile_width;
         const size_t y = tile_y * frameProps.m_tile_height;
-        int xmin = static_cast<unsigned int>(x);
-        int xmax = static_cast<unsigned int>(x + tileWidth - 1);
-        int ymin = static_cast<unsigned int>(frameProps.m_canvas_height - y - tileHeight);
-        int ymax = static_cast<unsigned int>(frameProps.m_canvas_height - y - 1);
+        int xmin = static_cast<int>(x);
+        int xmax = static_cast<int>(x + tileWidth - 1);
+        int ymin = static_cast<int>(m_height - y - tileHeight);
+        int ymax = static_cast<int>(m_height - y - 1);
 
         WriteTileToRenderView w(xmin, ymin, xmax, ymax, pixels);
         IdleJobQueue::pushJob(w);
     }
+
+    int m_width;
+    int m_height;
 };
 
 } // unnamed.
 
 RenderViewTileCallbackFactory::RenderViewTileCallbackFactory()
+  : m_width(-1)
+  , m_height(-1)
 {
 }
 
 RenderViewTileCallbackFactory::~RenderViewTileCallbackFactory()
 {
-    renderViewEnd();
+    MRenderView::endRender();
 }
 
 void RenderViewTileCallbackFactory::release()
@@ -187,18 +233,21 @@ void RenderViewTileCallbackFactory::release()
 
 renderer::ITileCallback* RenderViewTileCallbackFactory::create()
 {
-    return new RenderViewTileCallback();
+    return new RenderViewTileCallback(m_width, m_height);
 }
 
 void RenderViewTileCallbackFactory::renderViewStart(const renderer::Frame& frame)
 {
     const asf::CanvasProperties& frameProps = frame.image().properties();
 
+    m_width = frameProps.m_canvas_width;
+    m_height = frameProps.m_canvas_height;
+
     if(frame.has_crop_window())
     {
         MRenderView::startRegionRender(
-            frameProps.m_canvas_width,
-            frameProps.m_canvas_height,
+            m_width,
+            m_height,
             frame.get_crop_window().min.x,
             frame.get_crop_window().max.x,
             frame.get_crop_window().min.y,
@@ -209,14 +258,9 @@ void RenderViewTileCallbackFactory::renderViewStart(const renderer::Frame& frame
     else
     {
         MRenderView::startRender(
-            frameProps.m_canvas_width,
-            frameProps.m_canvas_height,
+            m_width,
+            m_height,
             false,
             true);
     }
-}
-
-void RenderViewTileCallbackFactory::renderViewEnd()
-{
-    MRenderView::endRender();
 }
