@@ -32,6 +32,7 @@
 // Maya headers.
 #include <maya/MFileObject.h>
 #include <maya/MFnDagNode.h>
+#include <maya/MGlobal.h>
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
@@ -73,9 +74,69 @@ void XGenExporter::createEntity(const AppleseedSession::Options& options)
 {
     const MString assemblyName = appleseedName() + MString("_assembly");
     asr::ParamArray params;
-    // todo: collect xgen info here...
+
+    // Ported from XGen's sample mtoa extension code.
+    // todo: cleanup all the string manipulation code.
+
+    // Get strings based on the current scene name.
+    MString currentScene;
+    MGlobal::executeCommand("file -q -sn", currentScene);
+
+    MFileObject fo;
+    fo.setRawFullName(currentScene);
+
+    // Path to the directory containing the scene.
+    MString scenePath = fo.resolvedPath();
+
+    // Filename of the scene with the extension.
+    MString sceneFile = fo.resolvedName();
+
+    // Filename of the scene without the extension.
+    MString sceneName(sceneFile.asChar(), sceneFile.length() - 3);
+
+    params.insert("scene_path", scenePath.asChar());
+    params.insert("scene_file", sceneFile.asChar());
+    params.insert("scene_name", sceneName.asChar());
+
+    // Get Description and Palette from the dag paths.
+    // The current dag path points to the desciption.
+    // We get the parent to get the palette name.
+    MDagPath palettePath = dagPath();
+    palettePath.pop();
+    palettePath.pop();
+    MString paletteName(palettePath.fullPathName().asChar() + 1);
+
+    MDagPath descriptionPath = dagPath();
+    descriptionPath.pop();
+
+    MString descriptionName(
+        descriptionPath.fullPathName().asChar() + paletteName.length() + 2);
+
+    asf::Dictionary patches;
+    for(unsigned int i = 0, e = descriptionPath.childCount(); i < e; ++i)
+    {
+        MDagPath childDagPath;
+        MDagPath::getAPathTo(descriptionPath.child(i), childDagPath);
+
+        // Ignore the first child. It should be the description shape
+        if(i == 0)
+            continue;
+
+        MString patchName(
+            childDagPath.fullPathName().asChar() + descriptionName.length() + paletteName.length() + 3);
+
+        // Check that the description matches.
+        if(asf::ends_with(patchName.asChar(), descriptionName.asChar()))
+        {
+            patches.insert(
+                asf::to_string(i).c_str(),
+                patchName.asChar());
+        }
+    }
+
+    params.insert("patches", patches);
     m_assembly.reset(
-        asr::AssemblyFactory().create(assemblyName.asChar(), asr::ParamArray()));
+        asr::AssemblyFactory().create(assemblyName.asChar(), params));
 }
 
 void XGenExporter::exportTransformMotionStep(float time)
@@ -88,6 +149,8 @@ void XGenExporter::exportTransformMotionStep(float time)
 
 void XGenExporter::flushEntity()
 {
+    mainAssembly().assemblies().insert(m_assembly.release());
+
     const MString assemblyInstanceName = appleseedName() + MString("_assembly_instance");
     asr::ParamArray params;
     visibilityAttributesToParams(params);
