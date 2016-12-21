@@ -44,6 +44,7 @@
 #include "appleseedmaya/exporters/envlightexporter.h"
 #include "appleseedmaya/exporters/lightexporter.h"
 #include "appleseedmaya/exporters/meshexporter.h"
+#include "appleseedmaya/exporters/rampexporter.h"
 #include "appleseedmaya/exporters/shadingengineexporter.h"
 #include "appleseedmaya/exporters/shadingnetworkexporter.h"
 #include "appleseedmaya/exporters/shadingnodeexporter.h"
@@ -89,6 +90,8 @@ MStatus NodeExporterFactory::initialize(const MString& pluginPath)
     XGenExporter::registerExporter();
 #endif
     ShadingNodeExporter::registerExporters();
+    RampExporter::registerExporter();
+
     return MS::kSuccess;
 }
 
@@ -166,7 +169,9 @@ ShadingNodeExporter* NodeExporterFactory::createShadingNodeExporter(
 {
     MFnDependencyNode depNodeFn(object);
     CreateShadingNodeExporterMapType::const_iterator it = gShadingNodeExporters.find(depNodeFn.typeName());
-    assert(it != gShadingNodeExporters.end());
+
+    if(it == gShadingNodeExporters.end())
+        throw NoExporterForNode();
 
     return it->second(object, shaderGroup);
 }

@@ -59,6 +59,8 @@ set (appleseed_maya_sources
     exporters/lightexporter.h
     exporters/meshexporter.cpp
     exporters/meshexporter.h
+    exporters/rampexporter.cpp
+    exporters/rampexporter.h
     exporters/shadingengineexporter.cpp
     exporters/shadingengineexporter.h
     exporters/shadingengineexporterfwd.h
