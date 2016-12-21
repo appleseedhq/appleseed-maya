@@ -92,7 +92,7 @@ void ShadingNodeExporter::createShader()
     const OSLShaderInfo& shaderInfo = getShaderInfo();
 
     asr::ParamArray shaderParams;
-    exportParamValues(shaderInfo, shaderParams);
+    exportShaderParameters(shaderInfo, shaderParams);
 
     MFnDependencyNode depNodeFn(m_object);
     m_shaderGroup.add_shader(
@@ -102,7 +102,7 @@ void ShadingNodeExporter::createShader()
         shaderParams);
 }
 
-void ShadingNodeExporter::exportParamValues(
+void ShadingNodeExporter::exportShaderParameters(
     const OSLShaderInfo&    shaderInfo,
     asr::ParamArray&        shaderParams)
 {
@@ -112,11 +112,6 @@ void ShadingNodeExporter::exportParamValues(
     for(int i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
-
-        // Skip params with shader global defaults.
-        if(!paramInfo.validDefault)
-            continue;
-
         MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
         if(!status)
         {
@@ -127,28 +122,40 @@ void ShadingNodeExporter::exportParamValues(
             continue;
         }
 
-        // Skip connected attributes.
-        if(plug.isConnected())
-            continue;
-
-        // Create adapter shaders.
-        if(plug.isCompound() && plug.numConnectedChildren() != 0)
-        {
-            // todo: implement...
-        }
-
-        // Skip output attributes.
-        if(paramInfo.isOutput)
-            continue;
-
-        if(paramInfo.isArray)
-            exportArrayParamValue(plug, paramInfo, shaderParams);
-        else
-            exportParamValue(plug, paramInfo, shaderParams);
+        exportParameterValue(plug, paramInfo, shaderParams);
     }
 }
 
-void ShadingNodeExporter::exportParamValue(
+void ShadingNodeExporter::exportParameterValue(
+    const MPlug&              plug,
+    const OSLParamInfo&       paramInfo,
+    renderer::ParamArray&     shaderParams)
+{
+    // Skip params with shader global defaults.
+    if(!paramInfo.validDefault)
+        return;
+
+    // Skip connected attributes.
+    if(plug.isConnected())
+        return;
+
+    // Create adapter shaders.
+    if(plug.isCompound() && plug.numConnectedChildren() != 0)
+    {
+        // todo: implement...
+    }
+
+    // Skip output attributes.
+    if(paramInfo.isOutput)
+        return;
+
+    if(paramInfo.isArray)
+        exportArrayValue(plug, paramInfo, shaderParams);
+    else
+        exportValue(plug, paramInfo, shaderParams);
+}
+
+void ShadingNodeExporter::exportValue(
     const MPlug&        plug,
     const OSLParamInfo& paramInfo,
     asr::ParamArray&    shaderParams)
@@ -227,10 +234,10 @@ void ShadingNodeExporter::exportParamValue(
 
     std::string valueAsString = ss.str();
     if(!valueAsString.empty())
-        shaderParams.insert(paramInfo.paramName.asChar(), ss.str().c_str());
+        shaderParams.insert(paramInfo.paramName.asChar(), valueAsString.c_str());
 }
 
-void ShadingNodeExporter::exportArrayParamValue(
+void ShadingNodeExporter::exportArrayValue(
     const MPlug&        plug,
     const OSLParamInfo& paramInfo,
     asr::ParamArray&    shaderParams)
@@ -297,7 +304,7 @@ void ShadingNodeExporter::exportArrayParamValue(
     {
         std::string valueAsString = ss.str();
         if(!valueAsString.empty())
-            shaderParams.insert(paramInfo.paramName.asChar(), ss.str().c_str());
+            shaderParams.insert(paramInfo.paramName.asChar(), valueAsString.c_str());
     }
     else
     {

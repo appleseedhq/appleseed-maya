@@ -85,8 +85,9 @@ class ShadingNetworkExporter
     MPlug                                                           m_outputPlug;
     renderer::Assembly&                                             m_mainAssembly;
     AppleseedEntityPtr<renderer::ShaderGroup>                       m_shaderGroup;
-    std::set<MString, MStringCompareLess>                           m_nodesCreated;
     std::vector<ShadingNodeExporterPtr>                             m_nodeExporters;
+    std::set<MString, MStringCompareLess>                           m_nodesCreated;
+    std::map<MString, ShadingNodeExporter*, MStringCompareLess>     m_namesToExporters;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H

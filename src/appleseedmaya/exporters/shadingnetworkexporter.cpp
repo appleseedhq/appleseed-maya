@@ -88,7 +88,7 @@ void ShadingNetworkExporter::exportShadingNetwork()
 {
     m_shaderGroup->clear();
     m_nodeExporters.clear();
-    m_nodesCreated.clear();
+    m_namesToExporters.clear();
 
     createShaderNodeExporters(m_object);
     std::reverse(m_nodeExporters.begin(), m_nodeExporters.end());
@@ -152,6 +152,95 @@ void ShadingNetworkExporter::exportShadingNetwork()
             assert(false);
             RENDERER_LOG_ERROR("Unknown shading network context.");
         break;
+    }
+}
+
+void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
+{
+    MStatus status;
+    MFnDependencyNode depNodeFn(node);
+
+    if(m_namesToExporters.count(depNodeFn.name()) != 0)
+    {
+        RENDERER_LOG_DEBUG(
+            "Skipping already exported shading node %s.",
+            depNodeFn.name().asChar());
+        return;
+    }
+
+    const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+    if(shaderInfo)
+    {
+        ShadingNodeExporterPtr exporter(
+            NodeExporterFactory::createShadingNodeExporter(
+                node,
+                *m_shaderGroup));
+        m_nodeExporters.push_back(exporter);
+        m_namesToExporters[depNodeFn.name()] = exporter.get();
+        RENDERER_LOG_DEBUG("Created shading node exporter for node %s", depNodeFn.name().asChar());
+
+        for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
+        {
+            const OSLParamInfo& paramInfo = shaderInfo->paramInfo[i];
+
+            // Skip output attributes.
+            if(paramInfo.isOutput)
+                continue;
+
+            MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
+            if(!status)
+            {
+                RENDERER_LOG_WARNING(
+                    "Skipping unknown attribute %s of shading node %s",
+                    paramInfo.mayaAttributeName.asChar(),
+                    depNodeFn.typeName().asChar());
+                continue;
+            }
+
+            if(plug.isConnected())
+            {
+                MPlug srcPlug;
+                status = AttributeUtils::getPlugConnectedTo(plug, srcPlug);
+                if(status)
+                    createShaderNodeExporters(srcPlug.node());
+            }
+
+            if(plug.isCompound() && plug.numConnectedChildren() != 0)
+            {
+                for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
+                {
+                    MPlug childPlug = plug.child(i, &status);
+                    if(status)
+                    {
+                        MPlug srcPlug;
+                        status = AttributeUtils::getPlugConnectedTo(childPlug, srcPlug);
+                        if(status)
+                            createShaderNodeExporters(srcPlug.node());
+                    }
+                }
+            }
+
+            if(plug.isArray() && plug.numConnectedElements() != 0)
+            {
+                for(size_t i = 0, e = plug.numElements(); i < e; ++i)
+                {
+                    MPlug elementPlug = plug.elementByLogicalIndex(i, &status);
+                    if(status)
+                    {
+                        MPlug srcPlug;
+                        status = AttributeUtils::getPlugConnectedTo(elementPlug, srcPlug);
+                        if(status)
+                            createShaderNodeExporters(srcPlug.node());
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        RENDERER_LOG_WARNING(
+            "Found unsupported shading node %s while exporting network",
+            depNodeFn.typeName().asChar());
     }
 }
 
@@ -251,94 +340,5 @@ void ShadingNetworkExporter::exportConnections(ShadingNodeExporter& dstNodeExpor
                 paramInfo.mayaAttributeName.asChar(),
                 depNodeFn.typeName().asChar());
         }
-    }
-}
-
-void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
-{
-    MStatus status;
-    MFnDependencyNode depNodeFn(node);
-
-    if(m_nodesCreated.count(depNodeFn.name()) != 0)
-    {
-        RENDERER_LOG_DEBUG(
-            "Skipping already exported shading node %s.",
-            depNodeFn.name().asChar());
-        return;
-    }
-
-    const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
-    if(shaderInfo)
-    {
-        ShadingNodeExporterPtr exporter(
-            NodeExporterFactory::createShadingNodeExporter(
-                node,
-                *m_shaderGroup));
-        m_nodeExporters.push_back(exporter);
-        m_nodesCreated.insert(depNodeFn.name());
-        RENDERER_LOG_DEBUG("Created shading node exporter for node %s", depNodeFn.name().asChar());
-
-        for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
-        {
-            const OSLParamInfo& paramInfo = shaderInfo->paramInfo[i];
-
-            // Skip output attributes.
-            if(paramInfo.isOutput)
-                continue;
-
-            MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
-            if(!status)
-            {
-                RENDERER_LOG_WARNING(
-                    "Skipping unknown attribute %s of shading node %s",
-                    paramInfo.mayaAttributeName.asChar(),
-                    depNodeFn.typeName().asChar());
-                continue;
-            }
-
-            if(plug.isConnected())
-            {
-                MPlug srcPlug;
-                status = AttributeUtils::getPlugConnectedTo(plug, srcPlug);
-                if(status)
-                    createShaderNodeExporters(srcPlug.node());
-            }
-
-            if(plug.isCompound() && plug.numConnectedChildren() != 0)
-            {
-                for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
-                {
-                    MPlug childPlug = plug.child(i, &status);
-                    if(status)
-                    {
-                        MPlug srcPlug;
-                        status = AttributeUtils::getPlugConnectedTo(childPlug, srcPlug);
-                        if(status)
-                            createShaderNodeExporters(srcPlug.node());
-                    }
-                }
-            }
-
-            if(plug.isArray() && plug.numConnectedElements() != 0)
-            {
-                for(size_t i = 0, e = plug.numElements(); i < e; ++i)
-                {
-                    MPlug elementPlug = plug.elementByLogicalIndex(i, &status);
-                    if(status)
-                    {
-                        MPlug srcPlug;
-                        status = AttributeUtils::getPlugConnectedTo(elementPlug, srcPlug);
-                        if(status)
-                            createShaderNodeExporters(srcPlug.node());
-                    }
-                }
-            }
-        }
-    }
-    else
-    {
-        RENDERER_LOG_WARNING(
-            "Found unsupported shading node %s while exporting network",
-            depNodeFn.typeName().asChar());
     }
 }

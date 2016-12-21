@@ -64,22 +64,27 @@ class ShadingNodeExporter
 
     virtual void createShader();
 
+    virtual void exportShaderParameters(
+        const OSLShaderInfo&     shaderInfo,
+        renderer::ParamArray&    shaderParams);
+
+    virtual void exportParameterValue(
+        const MPlug&              plug,
+        const OSLParamInfo&       paramInfo,
+        renderer::ParamArray&     shaderParams);
+
   protected:
 
     ShadingNodeExporter(
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);
 
-    void exportParamValues(
-        const OSLShaderInfo&     shaderInfo,
-        renderer::ParamArray&    shaderParams);
-
-    void exportParamValue(
+    void exportValue(
         const MPlug&              plug,
         const OSLParamInfo&       paramInfo,
         renderer::ParamArray&     shaderParams);
 
-    void exportArrayParamValue(
+    void exportArrayValue(
         const MPlug&              plug,
         const OSLParamInfo&       paramInfo,
         renderer::ParamArray&     shaderParams);
