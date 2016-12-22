@@ -47,7 +47,7 @@ class RendererController
         return m_status;
     }
 
-    void set_status( Status status )
+    void set_status(Status status)
     {
         m_status = status;
     }
