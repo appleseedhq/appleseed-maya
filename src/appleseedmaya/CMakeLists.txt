@@ -42,6 +42,7 @@ set (appleseed_maya_sources
     config.h
     envlightnode.cpp
     envlightnode.h
+    exceptions.h
     exporters/arealightexporter.cpp
     exporters/arealightexporter.h
     exporters/cameraexporter.cpp
