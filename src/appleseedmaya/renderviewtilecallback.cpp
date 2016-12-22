@@ -34,8 +34,6 @@
 
 // Boost headers.
 #include <boost/shared_array.hpp>
-#include <boost/thread/locks.hpp>
-#include <boost/thread/mutex.hpp>
 
 // Maya headers.
 #include <maya/MRenderView.h>
@@ -61,6 +59,8 @@ namespace asr = renderer;
 namespace
 {
 
+const int MaxHighlightSize = 8;
+
 class RenderViewTileCallback
   : public renderer::ITileCallback
 {
@@ -71,6 +71,10 @@ class RenderViewTileCallback
     {
         assert(m_width > 0);
         assert(m_height > 0);
+
+        for(int i = 0; i < MaxHighlightSize; ++i)
+            m_highlightPixels[i].r = m_highlightPixels[i].g = m_highlightPixels[i].b = m_highlightPixels[i].a = 1.0f;
+
     }
 
     virtual void release()
@@ -89,7 +93,11 @@ class RenderViewTileCallback
         int ymin = static_cast<int>(m_height - y - height);
         int ymax = static_cast<int>(m_height - y - 1);
 
-        HighlightTile h(xmin, ymin, xmax, ymax);
+        int halfWidth  = (xmax - xmin) / 2;
+        int halfHeight = (ymax - ymin) / 2;
+        int lineSize = std::min(std::min(halfWidth, halfHeight), MaxHighlightSize);
+
+        HighlightTile h(xmin, ymin, xmax, ymax, lineSize, m_highlightPixels);
         IdleJobQueue::pushJob(h);
     }
 
@@ -115,26 +123,52 @@ class RenderViewTileCallback
     struct HighlightTile
     {
         HighlightTile(
-            int                             xmin,
-            int                             ymin,
-            int                             xmax,
-            int                             ymax)
+            int                 xmin,
+            int                 ymin,
+            int                 xmax,
+            int                 ymax,
+            int                 lineSize,
+            RV_PIXEL            *highlightPixels)
         {
             m_xmin = xmin;
             m_ymin = ymin;
             m_xmax = xmax;
             m_ymax = ymax;
+            m_lineSize = lineSize;
+            m_pixels = highlightPixels;
         }
 
         void operator()()
         {
-            // todo: implement this...
+            draw_hline(m_xmin, m_xmin + m_lineSize, m_ymin, m_pixels);
+            draw_hline(m_xmax - m_lineSize, m_xmax, m_ymin, m_pixels);
+            draw_hline(m_xmin, m_xmin + m_lineSize, m_ymax, m_pixels);
+            draw_hline(m_xmax - m_lineSize, m_xmax, m_ymax, m_pixels);
+
+            draw_vline(m_xmin, m_ymin, m_ymin + m_lineSize, m_pixels);
+            draw_vline(m_xmin, m_ymax - m_lineSize, m_ymax, m_pixels);
+            draw_vline(m_xmax, m_ymin, m_ymin + m_lineSize, m_pixels);
+            draw_vline(m_xmax, m_ymax - m_lineSize, m_ymax, m_pixels);
         }
 
-        int                             m_xmin;
-        int                             m_ymin;
-        int                             m_xmax;
-        int                             m_ymax;
+        void draw_hline(int x0, int x1, int y, RV_PIXEL *pixels) const
+        {
+            MRenderView::updatePixels(x0, x1, y, y, pixels, true);
+            MRenderView::refresh(x0, x1, y, y);
+        }
+
+        void draw_vline(int x, int y0, int y1, RV_PIXEL *pixels) const
+        {
+            MRenderView::updatePixels(x, x, y0, y1, pixels, true);
+            MRenderView::refresh(x, x, y0, y1);
+        }
+
+        int         m_xmin;
+        int         m_ymin;
+        int         m_xmax;
+        int         m_ymax;
+        int         m_lineSize;
+        RV_PIXEL*   m_pixels;
     };
 
     struct WriteTileToRenderView
@@ -155,7 +189,6 @@ class RenderViewTileCallback
 
         void operator()()
         {
-            std::cout << "write tile to renderview!" << std::endl;
             MRenderView::updatePixels(m_xmin, m_xmax, m_ymin, m_ymax, m_pixels.get(), true);
             MRenderView::refresh(m_xmin, m_xmax, m_ymin, m_ymax);
         }
@@ -209,8 +242,9 @@ class RenderViewTileCallback
         IdleJobQueue::pushJob(w);
     }
 
-    int m_width;
-    int m_height;
+    RV_PIXEL            m_highlightPixels[MaxHighlightSize];
+    int                 m_width;
+    int                 m_height;
 };
 
 } // unnamed.
