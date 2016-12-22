@@ -136,7 +136,7 @@ DagNodeExporter *MeshExporter::create(
     asr::Project&                   project,
     AppleseedSession::SessionMode   sessionMode)
 {
-    if(areObjectAndParentsRenderable(path) == false)
+    if (areObjectAndParentsRenderable(path) == false)
         return 0;
 
     return new MeshExporter(path, project, sessionMode);
@@ -152,7 +152,7 @@ MeshExporter::MeshExporter(
 
 MeshExporter::~MeshExporter()
 {
-    if(sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
     {
         // todo: cleanup here.
     }
@@ -166,7 +166,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
     MPlug plug = depNodeFn.findPlug("instObjGroups");
     plug = plug.elementByLogicalIndex(instanceNumber);
 
-    if(plug.isConnected())
+    if (plug.isConnected())
     {
         MPlugArray connections;
         plug.connectedTo(connections, false, true);
@@ -188,7 +188,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
             depNodeFn.setObject(shadingEngines[i]);
             MString materialName = depNodeFn.name() + MString("_material");
 
-            if(i == 0)
+            if (i == 0)
                 m_materialMappings.insert("default", materialName.asChar());
             else
             {
@@ -198,7 +198,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
         }
     }
 
-    if(m_materialMappings.empty())
+    if (m_materialMappings.empty())
     {
         RENDERER_LOG_WARNING(
             "Found mesh %s with no materials.",
@@ -216,7 +216,7 @@ void MeshExporter::createEntity(const AppleseedSession::Options& options)
     m_exportNormals = meshFn.numNormals() != 0;
     m_shapeExportStep = 0;
 
-    if(sessionMode() != AppleseedSession::ExportSession)
+    if (sessionMode() != AppleseedSession::ExportSession)
     {
         MString objectName = appleseedName();
         m_mesh = asr::MeshObjectFactory::create(objectName.asChar(), m_meshParams);
@@ -227,7 +227,7 @@ void MeshExporter::createEntity(const AppleseedSession::Options& options)
 
 void MeshExporter::exportShapeMotionStep(float time)
 {
-    if(sessionMode() == AppleseedSession::ExportSession)
+    if (sessionMode() == AppleseedSession::ExportSession)
     {
         MString objectName = appleseedName();
         m_mesh = asr::MeshObjectFactory::create(objectName.asChar(), m_meshParams);
@@ -250,9 +250,9 @@ void MeshExporter::exportShapeMotionStep(float time)
         bfs::path p = projectPath / fileName;
 
         // Write a geom file for the object if needed.
-        if(!bfs::exists(p))
+        if (!bfs::exists(p))
         {
-            if(!asr::MeshObjectWriter::write(*m_mesh, "mesh", p.string().c_str()))
+            if (!asr::MeshObjectWriter::write(*m_mesh, "mesh", p.string().c_str()))
             {
                 RENDERER_LOG_ERROR(
                     "Couldn't export mesh file for object %s.",
@@ -270,7 +270,7 @@ void MeshExporter::exportShapeMotionStep(float time)
     }
     else
     {
-        if(m_shapeExportStep == 0)
+        if (m_shapeExportStep == 0)
             exportGeometry();
         else
             exportMeshKey();
@@ -285,14 +285,14 @@ void MeshExporter::flushEntity()
 
     MString objectName = appleseedName();
 
-    if(sessionMode() == AppleseedSession::ExportSession)
+    if (sessionMode() == AppleseedSession::ExportSession)
     {
         assert(!m_fileNames.empty());
 
         // Replace our MeshObject by one referencing the exported meshes.
         asr::ParamArray params = m_mesh->get_parameters();
 
-        if(m_fileNames.size() == 1)
+        if (m_fileNames.size() == 1)
             params.insert("filename", m_fileNames[0].c_str());
         else
         {
@@ -313,7 +313,7 @@ void MeshExporter::flushEntity()
     }
 
     RENDERER_LOG_DEBUG("Flushing mesh object %s", m_mesh->get_name());
-    if(m_objectAssembly.get())
+    if (m_objectAssembly.get())
         m_objectAssembly->objects().insert(m_mesh.releaseAs<asr::Object>());
     else
         mainAssembly().objects().insert(m_mesh.releaseAs<asr::Object>());
@@ -330,7 +330,7 @@ void MeshExporter::meshAttributesToParams(renderer::ParamArray& params)
 void MeshExporter::createMaterialSlots()
 {
     // Create material slots.
-    if(!m_materialMappings.empty())
+    if (!m_materialMappings.empty())
     {
         m_mesh->reserve_material_slots(m_materialMappings.size());
         asf::StringDictionary::const_iterator it(m_materialMappings.begin());
@@ -370,14 +370,14 @@ void MeshExporter::fillTopology()
         faceIt.getVertices(faceVertexIndices);
         for(size_t i = 0, e = faceVertexIndices.length(); i < e; ++i)
         {
-            if(m_exportUVs)
+            if (m_exportUVs)
             {
                 int uvIndex;
                 status = faceIt.getUVIndex(i, uvIndex);
                 faceUVIndices.append(uvIndex);
             }
 
-            if(m_exportNormals)
+            if (m_exportNormals)
             {
                 unsigned int normalIndex = faceIt.normalIndex(i, &status);
                 faceNormalIndices.append(normalIndex);
@@ -396,11 +396,11 @@ void MeshExporter::fillTopology()
             int triangleVertexOffset[3] = {-1, -1, -1};
             for(size_t j = 0, je = faceVertexIndices.length(); j < je; ++j)
             {
-                if(faceVertexIndices[j] == triangleVertexIndices[0])
+                if (faceVertexIndices[j] == triangleVertexIndices[0])
                     triangleVertexOffset[0] = j;
-                else if(faceVertexIndices[j] == triangleVertexIndices[1])
+                else if (faceVertexIndices[j] == triangleVertexIndices[1])
                     triangleVertexOffset[1] = j;
-                else if(faceVertexIndices[j] == triangleVertexIndices[2])
+                else if (faceVertexIndices[j] == triangleVertexIndices[2])
                     triangleVertexOffset[2] = j;
             }
 
@@ -413,14 +413,14 @@ void MeshExporter::fillTopology()
                 faceVertexIndices[triangleVertexOffset[2]],
                 materialIndex);
 
-            if(m_exportUVs)
+            if (m_exportUVs)
             {
                 triangle.m_a0 = faceUVIndices[triangleVertexOffset[0]];
                 triangle.m_a1 = faceUVIndices[triangleVertexOffset[1]];
                 triangle.m_a2 = faceUVIndices[triangleVertexOffset[2]];
             }
 
-            if(m_exportNormals)
+            if (m_exportNormals)
             {
                 triangle.m_n0 = faceNormalIndices[triangleVertexOffset[0]];
                 triangle.m_n1 = faceNormalIndices[triangleVertexOffset[1]];
@@ -450,7 +450,7 @@ void MeshExporter::exportGeometry()
             m_mesh->push_vertex(asr::GVector3(p[0], p[1], p[2]));
     }
 
-    if(m_exportUVs)
+    if (m_exportUVs)
     {
         m_mesh->reserve_tex_coords(meshFn.numUVs());
         MFloatArray u, v;
@@ -459,7 +459,7 @@ void MeshExporter::exportGeometry()
             m_mesh->push_tex_coords(asr::GVector2(u[i], v[i]));
     }
 
-    if(m_exportNormals)
+    if (m_exportNormals)
     {
         m_mesh->reserve_vertex_normals(meshFn.numNormals());
         const float *p = meshFn.getRawNormals(&status);
@@ -478,7 +478,7 @@ void MeshExporter::exportMeshKey()
     MStatus status;
     MFnMesh meshFn(dagPath());
 
-    if(m_shapeExportStep == 1)
+    if (m_shapeExportStep == 1)
     {
         // todo: reserve motion steps here...
         //m_mesh->set_motion_segment_count(x);
@@ -496,7 +496,7 @@ void MeshExporter::exportMeshKey()
         }
     }
 
-    if(m_exportNormals)
+    if (m_exportNormals)
     {
         m_mesh->reserve_vertex_normals(meshFn.numNormals());
         const float *p = meshFn.getRawNormals(&status);

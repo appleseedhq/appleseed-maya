@@ -88,7 +88,7 @@ void RampExporter::exportParameterValue(
     MFnDependencyNode depNodeFn(node());
     MStatus status;
 
-    if(paramInfo.paramName == "in_position")
+    if (paramInfo.paramName == "in_position")
     {
         MPlug plug = depNodeFn.findPlug("colorEntryList", &status);
 
@@ -115,10 +115,10 @@ void RampExporter::exportParameterValue(
         AttributeUtils::get(plug, rampType);
 
         // Check if the type is four corner.
-        if(rampType == 7)
+        if (rampType == 7)
         {
             // Fill with black if we have less than 4 elements.
-            while(rampColors.size() < 4)
+            while (rampColors.size() < 4)
                 rampColors.push_back(RampEntry(1.0f, MColor(0.0f, 0.0f, 0.0f)));
         }
         else
@@ -141,7 +141,7 @@ void RampExporter::exportParameterValue(
         shaderParams.insert("in_position", ssp.str().c_str());
         shaderParams.insert("in_color"   , ssc.str().c_str());
     }
-    else if(paramInfo.paramName == "in_color")
+    else if (paramInfo.paramName == "in_color")
     {
         // We save the colors at the same time we save the positions.
     }

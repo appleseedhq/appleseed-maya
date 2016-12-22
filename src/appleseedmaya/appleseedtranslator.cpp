@@ -88,17 +88,17 @@ MStatus AppleseedTranslator::writer(
             "=",
             optNameValue);
 
-        if(optNameValue.size() == 2)
+        if (optNameValue.size() == 2)
         {
-            if(optNameValue[0] == "activeCamera")
+            if (optNameValue[0] == "activeCamera")
                 options.m_camera = optNameValue[1].c_str();
-            else if(optNameValue[0] == "exportAnim")
+            else if (optNameValue[0] == "exportAnim")
                 options.m_sequence = (optNameValue[1] == "true");
-            else if(optNameValue[0] == "startFrame")
+            else if (optNameValue[0] == "startFrame")
                 options.m_firstFrame = atoi(optNameValue[1].c_str());
-            else if(optNameValue[0] == "endFrame")
+            else if (optNameValue[0] == "endFrame")
                 options.m_lastFrame = atoi(optNameValue[1].c_str());
-            else if(optNameValue[0] == "stepFrame")
+            else if (optNameValue[0] == "stepFrame")
                 options.m_frameStep = atoi(optNameValue[1].c_str());
             else
             {
@@ -113,9 +113,9 @@ MStatus AppleseedTranslator::writer(
         }
     }
 
-    if(MPxFileTranslator::kExportAccessMode == mode)
+    if (MPxFileTranslator::kExportAccessMode == mode)
         options.m_selectionOnly = false;
-    else if(MPxFileTranslator::kExportActiveAccessMode == mode)
+    else if (MPxFileTranslator::kExportActiveAccessMode == mode)
         options.m_selectionOnly = true;
 
     // Get width and height from render globals.

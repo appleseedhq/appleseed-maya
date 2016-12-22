@@ -106,7 +106,7 @@ MUserData *SkyDomeLightDrawOverride::prepareForDraw(
     // Retrieve data cache (create if does not exist)
     SkyDomeLightData *data =dynamic_cast<SkyDomeLightData*>(oldData);
 
-    if(!data)
+    if (!data)
         data = new SkyDomeLightData();
 
     return data;

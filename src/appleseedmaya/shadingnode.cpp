@@ -77,40 +77,40 @@ void ShadingNode::postConstructor()
 
         MObject attr;
 
-        if(p.paramType == "color")
+        if (p.paramType == "color")
         {
             //	CHECK_MSTATUS( nAttr.setUsedAsColor( true ) );
         }
-        else if(p.paramType == "float")
+        else if (p.paramType == "float")
         {
         }
-        else if(p.paramType == "float[2]")
+        else if (p.paramType == "float[2]")
         {
         }
-        else if(p.paramType == "int")
+        else if (p.paramType == "int")
         {
         }
-        else if(p.paramType == "normal")
+        else if (p.paramType == "normal")
         {
         }
-        else if(p.paramType == "point")
+        else if (p.paramType == "point")
         {
         }
-        else if(p.paramType == "pointer")
+        else if (p.paramType == "pointer")
         {
             // closures.
         }
-        else if(p.paramType == "vector")
+        else if (p.paramType == "vector")
         {
         }
-        else if(p.paramType == "string")
+        else if (p.paramType == "string")
         {
         }
 
-        if(attr.isNull())
+        if (attr.isNull())
             continue;
 
-        if(p.isOutput)
+        if (p.isOutput)
         {
             /*
             CHECK_MSTATUS( nAttr.setHidden( false ) );
@@ -138,7 +138,7 @@ void ShadingNode::postConstructor()
 
         MObject attr;
 
-        if(isClosure)
+        if (isClosure)
         {
             // ...
             continue;
@@ -148,17 +148,17 @@ void ShadingNode::postConstructor()
         const bool validDefault = pinfo.get<bool>("validdefault");
         const bool isOutput = pinfo.get<bool>("isoutput");
 
-        if(type == "float")
+        if (type == "float")
         {
             attr = nAttr.create(name.c_str(), name.c_str(), MFnNumericData::kFloat, 0.0);
 
-            if(validDefault)
+            if (validDefault)
             {
                 const double defaultValue = pinfo.get<double>("default");
                 nAttr.setDefault(defaultValue);
             }
 
-            if(isOutput)
+            if (isOutput)
             {
 
             }
@@ -174,7 +174,7 @@ void ShadingNode::postConstructor()
             // warning: unhandled type...
         }
 
-        if(!attr.isNull())
+        if (!attr.isNull())
             depNode.addAttribute(attr);
     }
     */

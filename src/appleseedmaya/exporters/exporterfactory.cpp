@@ -121,7 +121,7 @@ DagNodeExporter* NodeExporterFactory::createDagNodeExporter(
     MFnDagNode dagNodeFn(path);
     CreateDagExporterMapType::const_iterator it = gDagNodeExporters.find(dagNodeFn.typeName());
 
-    if(it == gDagNodeExporters.end())
+    if (it == gDagNodeExporters.end())
         throw NoExporterForNode();
 
     return it->second(path, project, sessionMode);
@@ -170,7 +170,7 @@ ShadingNodeExporter* NodeExporterFactory::createShadingNodeExporter(
     MFnDependencyNode depNodeFn(object);
     CreateShadingNodeExporterMapType::const_iterator it = gShadingNodeExporters.find(depNodeFn.typeName());
 
-    if(it == gShadingNodeExporters.end())
+    if (it == gShadingNodeExporters.end())
         throw NoExporterForNode();
 
     return it->second(object, shaderGroup);

@@ -48,7 +48,7 @@ MCallbackId g_callbackId;
 static void idleCallback(void *clientData)
 {
     boost::function<void()> job;
-    while(g_jobQueue.try_pop(job))
+    while (g_jobQueue.try_pop(job))
         job();
 }
 
@@ -73,7 +73,7 @@ MStatus uninitialize()
 
 void start()
 {
-    if(g_callbackId == 0)
+    if (g_callbackId == 0)
     {
         RENDERER_LOG_DEBUG("Started idle job queue");
 
@@ -88,7 +88,7 @@ void start()
 
 void stop()
 {
-    if(g_callbackId != 0)
+    if (g_callbackId != 0)
     {
         RENDERER_LOG_DEBUG("Stoped idle job queue");
 

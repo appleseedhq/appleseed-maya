@@ -46,7 +46,7 @@ MStatus getDependencyNodeByName(const MString& name, MObject& node)
     MSelectionList selList;
     selList.add(name);
 
-    if(selList.isEmpty())
+    if (selList.isEmpty())
         return MS::kFailure;
 
     return selList.getDependNode(0, node);
@@ -57,7 +57,7 @@ MStatus getDagPathByName(const MString& name, MDagPath& dag)
     MSelectionList selList;
     selList.add(name);
 
-    if(selList.isEmpty())
+    if (selList.isEmpty())
         return MS::kFailure;
 
     return selList.getDagPath(0, dag);

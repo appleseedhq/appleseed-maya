@@ -86,7 +86,7 @@ MStatus FinalRenderCommand::doIt(const MArgList& args)
     getDependencyNodeByName("defaultRenderGlobals", globalsNode);
 
     MFnDependencyNode depNodeFn(globalsNode);
-    if(depNodeFn.findPlug("useRenderRegion").asBool())
+    if (depNodeFn.findPlug("useRenderRegion").asBool())
     {
         options.m_renderRegion = true;
         AttributeUtils::get(depNodeFn, "left" , options.m_xmin);
@@ -101,7 +101,7 @@ MStatus FinalRenderCommand::doIt(const MArgList& args)
 
     MStatus status;
     MArgDatabase argData(syntax(), args, &status);
-    if(argData.isFlagSet("-batch", &status))
+    if (argData.isFlagSet("-batch", &status))
     {
         isBatch = true;
         MString batchOptions;
@@ -110,7 +110,7 @@ MStatus FinalRenderCommand::doIt(const MArgList& args)
         std::cout << "  options = " << batchOptions << std::endl;
 
         options.m_sequence = renderSettings.isAnimated();
-        if(options.m_sequence)
+        if (options.m_sequence)
         {
             options.m_firstFrame = static_cast<float>(renderSettings.frameStart.as(MTime::uiUnit()));
             options.m_lastFrame = static_cast<float>(renderSettings.frameEnd.as(MTime::uiUnit()));
@@ -119,19 +119,19 @@ MStatus FinalRenderCommand::doIt(const MArgList& args)
     }
     else
     {
-        if(argData.isFlagSet("-width", &status))
+        if (argData.isFlagSet("-width", &status))
         {
             status = argData.getFlagArgument("-width", 0, options.m_width);
             std::cout << "  width = " << options.m_width << std::endl;
         }
 
-        if(argData.isFlagSet("-height", &status))
+        if (argData.isFlagSet("-height", &status))
         {
             status = argData.getFlagArgument("-height", 0, options.m_height);
             std::cout << "  height = " << options.m_height << std::endl;
         }
 
-        if(argData.isFlagSet("-camera", &status))
+        if (argData.isFlagSet("-camera", &status))
         {
             status = argData.getFlagArgument("-camera", 0, options.m_camera);
             std::cout << "  camera = " << options.m_camera << std::endl;
@@ -178,58 +178,58 @@ MStatus ProgressiveRenderCommand::doIt(const MArgList& args)
     MStatus status;
     MArgDatabase argData(syntax(), args, &status);
 
-    if(argData.isFlagSet("-width", &status))
+    if (argData.isFlagSet("-width", &status))
     {
         status = argData.getFlagArgument("-width", 0, options.m_width);
         std::cout << "  width = " << options.m_width << std::endl;
     }
 
-    if(argData.isFlagSet("-height", &status))
+    if (argData.isFlagSet("-height", &status))
     {
         status = argData.getFlagArgument("-height", 0, options.m_height);
         std::cout << "  height = " << options.m_height << std::endl;
     }
 
-    if(argData.isFlagSet("-camera", &status))
+    if (argData.isFlagSet("-camera", &status))
     {
         status = argData.getFlagArgument("-camera", 0, options.m_camera);
         std::cout << "  camera = " << options.m_camera << std::endl;
     }
 
     MString action;
-    if(argData.isFlagSet("-action", &status))
+    if (argData.isFlagSet("-action", &status))
         status = argData.getFlagArgument("-action", 0, action);
 
     std::cout << "  action = " << action << std::endl;
 
-    if(action == "start")
+    if (action == "start")
     {
         // ...
     }
-    else if(action == "stop")
+    else if (action == "stop")
     {
         // ...
     }
-    else if(action == "refresh")
+    else if (action == "refresh")
     {
         // ...
     }
-    else if(action == "running")
+    else if (action == "running")
     {
         const int iprRunning =
             AppleseedSession::sessionMode() == AppleseedSession::ProgressiveRenderSession;
         setResult(iprRunning);
         std::cout << "  result = " << iprRunning << std::endl;
     }
-    else if(action == "pause")
+    else if (action == "pause")
     {
         // ...
     }
-    else if(action == "region")
+    else if (action == "region")
     {
         // ...
     }
-    else if(action.length() == 0)
+    else if (action.length() == 0)
     {
         // default action here
     }

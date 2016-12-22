@@ -139,7 +139,7 @@ class ScopedComputation
 
     void thowIfInterruptRequested()
     {
-        if(m_computation.isInterruptRequested())
+        if (m_computation.isInterruptRequested())
             throw AbortRequested();
     }
 
@@ -168,7 +168,7 @@ struct SessionImpl
             ShadingEngineExporterMap::iterator it =
                 m_self.m_shadingEngineExporters.find(depNodeFn.name());
 
-            if(it != m_self.m_shadingEngineExporters.end())
+            if (it != m_self.m_shadingEngineExporters.end())
                 return it->second;
 
             ShadingEngineExporterPtr exporter(
@@ -190,7 +190,7 @@ struct SessionImpl
             ShadingNetworkExporterMap::iterator it =
                 m_self.m_shadingNetworkExporters[context].find(depNodeFn.name());
 
-            if(it != m_self.m_shadingNetworkExporters[context].end())
+            if (it != m_self.m_shadingNetworkExporters[context].end())
                 return it->second;
 
             ShadingNetworkExporterPtr exporter(
@@ -235,9 +235,9 @@ struct SessionImpl
 
         // Create a dir to store the geom files if it does not exist yet.
         boost::filesystem::path geomPath = m_projectPath / "_geometry";
-        if(!boost::filesystem::exists(geomPath))
+        if (!boost::filesystem::exists(geomPath))
         {
-            if(!boost::filesystem::create_directory(geomPath))
+            if (!boost::filesystem::create_directory(geomPath))
             {
                 RENDERER_LOG_ERROR("Couldn't create geometry directory. Aborting");
                 throw AppleseedSessionExportError();
@@ -327,7 +327,7 @@ struct SessionImpl
             asr::ParamArray params = m_project->get_frame()->get_parameters();
 
             // Set the camera.
-            if(m_options.m_camera.length() != 0)
+            if (m_options.m_camera.length() != 0)
             {
                 MDagPath camera;
                 MStatus status = getDagPathByName(m_options.m_camera, camera);
@@ -336,7 +336,7 @@ struct SessionImpl
                 status = camera.extendToShape();
 
                 MFnDagNode fnDagNode(camera);
-                if(fnDagNode.typeName() == "camera")
+                if (fnDagNode.typeName() == "camera")
                 {
                     RENDERER_LOG_DEBUG(
                         "Setting active camera to %s",
@@ -355,14 +355,14 @@ struct SessionImpl
             // Set the tile size.
             MFnDependencyNode fnDepNode(globalsNode);
             int tileSize;
-            if(AttributeUtils::get(fnDepNode, "tileSize", tileSize))
+            if (AttributeUtils::get(fnDepNode, "tileSize", tileSize))
                 params.insert("tile_size", asf::Vector2i(tileSize));
 
             // Replace the frame.
             m_project->set_frame(asr::FrameFactory().create("beauty", params));
 
             // Set the crop window.
-            if(m_options.m_renderRegion)
+            if (m_options.m_renderRegion)
             {
                 m_project->get_frame()->set_crop_window(
                     asf::AABB2u(
@@ -406,7 +406,7 @@ struct SessionImpl
         {
             for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             {
-                if(it->second->supportsMotionBlur())
+                if (it->second->supportsMotionBlur())
                 {
                     it->second->exportCameraMotionStep(0.0f);
                     it->second->exportTransformMotionStep(0.0f);
@@ -418,7 +418,7 @@ struct SessionImpl
         }
 
         // Handle auto-instancing.
-        if(m_sessionMode != AppleseedSession::ProgressiveRenderSession)
+        if (m_sessionMode != AppleseedSession::ProgressiveRenderSession)
         {
             RENDERER_LOG_DEBUG("Converting objects to instances");
             convertObjectsToInstances();
@@ -450,7 +450,7 @@ struct SessionImpl
         RENDERER_LOG_DEBUG("Exporting default render globals");
 
         MObject defaultRenderGlobalsNode;
-        if(getDependencyNodeByName("defaultRenderGlobals", defaultRenderGlobalsNode))
+        if (getDependencyNodeByName("defaultRenderGlobals", defaultRenderGlobalsNode))
         {
             // todo: export globals here...
         }
@@ -461,7 +461,7 @@ struct SessionImpl
         RENDERER_LOG_DEBUG("Exporting appleseed render globals");
 
         MObject appleseedRenderGlobalsNode;
-        if(getDependencyNodeByName("appleseedRenderGlobals", appleseedRenderGlobalsNode))
+        if (getDependencyNodeByName("appleseedRenderGlobals", appleseedRenderGlobalsNode))
         {
             RenderGlobalsNode::applyGlobalsToProject(
                 appleseedRenderGlobalsNode,
@@ -473,7 +473,7 @@ struct SessionImpl
 
     void createExporters()
     {
-        if(m_options.m_selectionOnly)
+        if (m_options.m_selectionOnly)
         {
             // Create exporters for the selected nodes in the scene.
             MStatus status;
@@ -486,12 +486,12 @@ struct SessionImpl
             for(int i = 0, e = sel.length(); i < e; ++i)
             {
                 status = sel.getDagPath(i, rootPath);
-                if(status)
+                if (status)
                 {
                     for(it.reset(rootPath); !it.isDone(); it.next())
                     {
                         status = it.getPath(path);
-                        if(status)
+                        if (status)
                             createDagNodeExporter(path);
                     }
                 }
@@ -531,13 +531,13 @@ struct SessionImpl
     {
         checkUserAborted();
 
-        if(m_dagExporters.count(path.fullPathName()) != 0)
+        if (m_dagExporters.count(path.fullPathName()) != 0)
             return;
 
         MFnDagNode dagNodeFn(path);
 
         // Avoid warnings about missing exporter for transform nodes.
-        if(strcmp(dagNodeFn.typeName().asChar(), "transform") == 0)
+        if (strcmp(dagNodeFn.typeName().asChar(), "transform") == 0)
             return;
 
         DagNodeExporterPtr exporter;
@@ -549,7 +549,7 @@ struct SessionImpl
                 *m_project,
                 m_sessionMode));
         }
-        catch(const NoExporterForNode&)
+        catch (const NoExporterForNode&)
         {
             RENDERER_LOG_WARNING(
                 "No dag exporter found for node type %s",
@@ -557,7 +557,7 @@ struct SessionImpl
             return;
         }
 
-        if(exporter)
+        if (exporter)
         {
             m_dagExporters[path.fullPathName()] = exporter;
             RENDERER_LOG_DEBUG(
@@ -572,11 +572,11 @@ struct SessionImpl
         {
             //const ShapeExporter *shape = dynamic_cast<const ShapeExporter*>(it->second.get());
 
-            //if(shape && shape->supportsInstancing())
+            //if (shape && shape->supportsInstancing())
             //{
                 /*
                 hash = exporter->hash();
-                if(instanceMap.find(hash) != end())
+                if (instanceMap.find(hash) != end())
                 {
                     DagNodeExporterPtr exporter(shape);
                     // Create InstanceExporter(...)
@@ -665,7 +665,7 @@ struct SessionImpl
     void abortRender()
     {
         m_rendererController.set_status(asr::IRendererController::AbortRendering);
-        if(m_renderThread.joinable())
+        if (m_renderThread.joinable())
             m_renderThread.join();
     }
 
@@ -691,7 +691,7 @@ struct SessionImpl
 
     void checkUserAborted() const
     {
-        if(m_computation)
+        if (m_computation)
             m_computation->thowIfInterruptRequested();
     }
 
@@ -755,10 +755,10 @@ MStatus projectExport(
 
     g_savedTime = MAnimControl::currentTime();
 
-    if(options.m_sequence)
+    if (options.m_sequence)
     {
         std::string fname = fileName.asChar();
-        if(fname.find('#') == std::string::npos)
+        if (fname.find('#') == std::string::npos)
         {
             RENDERER_LOG_ERROR("No frame placeholders in filename.");
             return MS::kFailure;
@@ -780,12 +780,12 @@ MStatus projectExport(
                 g_globalSession->exportProject();
                 g_globalSession->writeProject();
             }
-            catch(const AbortRequested&)
+            catch (const AbortRequested&)
             {
                 RENDERER_LOG_INFO("Project export aborted.");
                 return MS::kSuccess;
             }
-            catch(const AppleseedMayaException&)
+            catch (const AppleseedMayaException&)
             {
                 return MS::kFailure;
             }
@@ -799,12 +799,12 @@ MStatus projectExport(
             g_globalSession->exportProject();
             g_globalSession->writeProject();
         }
-        catch(const AbortRequested&)
+        catch (const AbortRequested&)
         {
             RENDERER_LOG_INFO("Project export aborted.");
             return MS::kSuccess;
         }
-        catch(const AppleseedMayaException&)
+        catch (const AppleseedMayaException&)
         {
             return MS::kFailure;
         }
@@ -826,20 +826,20 @@ MStatus finalRender(const Options& options, const bool batch)
         g_globalSession.reset(new SessionImpl(FinalRenderSession, options, &computation));
         g_globalSession->exportProject();
 
-        if(computation.isInterruptRequested())
+        if (computation.isInterruptRequested())
             return MS::kSuccess;
 
-        if(batch)
+        if (batch)
             g_globalSession->batchRender();
         else
             g_globalSession->finalRender();
     }
-    catch(const AbortRequested&)
+    catch (const AbortRequested&)
     {
         RENDERER_LOG_INFO("Render aborted.");
         return MS::kSuccess;
     }
-    catch(const AppleseedMayaException&)
+    catch (const AppleseedMayaException&)
     {
         return MS::kFailure;
     }
@@ -849,11 +849,11 @@ MStatus finalRender(const Options& options, const bool batch)
 
 void endSession()
 {
-    if(g_globalSession.get())
+    if (g_globalSession.get())
     {
         g_globalSession.reset();
 
-        if(g_savedTime != MAnimControl::currentTime())
+        if (g_savedTime != MAnimControl::currentTime())
             MGlobal::viewFrame(g_savedTime);
 
         IdleJobQueue::stop();
@@ -862,7 +862,7 @@ void endSession()
 
 SessionMode sessionMode()
 {
-    if(g_globalSession.get() == 0)
+    if (g_globalSession.get() == 0)
         return NoSession;
 
     return g_globalSession->m_sessionMode;

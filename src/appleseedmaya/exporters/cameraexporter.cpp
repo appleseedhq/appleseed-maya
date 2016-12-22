@@ -54,7 +54,7 @@ DagNodeExporter *CameraExporter::create(
     asr::Project&                   project,
     AppleseedSession::SessionMode   sessionMode)
 {
-    if(isRenderable(path))
+    if (isRenderable(path))
         return new CameraExporter(path, project, sessionMode);
 
     return 0;
@@ -70,7 +70,7 @@ CameraExporter::CameraExporter(
 
 CameraExporter::~CameraExporter()
 {
-    if(sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
     {
         // todo: cleanup here.
     }
@@ -85,7 +85,7 @@ void CameraExporter::createEntity(const AppleseedSession::Options& options)
     const asr::ICameraFactory *cameraFactory = 0;
     asr::ParamArray cameraParams;
 
-    if(camera.isOrtho())
+    if (camera.isOrtho())
     {
         cameraFactory = cameraFactories.lookup("orthographic_camera");
         // TODO: fetch ortho camera params here.
@@ -94,7 +94,7 @@ void CameraExporter::createEntity(const AppleseedSession::Options& options)
     {
         const bool dofEnabled = false;
 
-        if(dofEnabled)
+        if (dofEnabled)
             cameraFactory = cameraFactories.lookup("thin_lens_camera");
         else
             cameraFactory = cameraFactories.lookup("pinhole_camera");
@@ -121,7 +121,7 @@ void CameraExporter::createEntity(const AppleseedSession::Options& options)
         float focalLength = plug.asFloat();
         cameraParams.insert("focal_length", focalLength * 0.001f);
 
-        if(dofEnabled)
+        if (dofEnabled)
         {
             // TODO: extract dof params here...
         }
@@ -150,7 +150,7 @@ bool CameraExporter::isRenderable(const MDagPath& path)
     MStatus status;
     MPlug p = node.findPlug("renderable", &status);
 
-    if(status == MS::kSuccess)
+    if (status == MS::kSuccess)
     {
         bool result = true;
         p.getValue(result);

@@ -59,7 +59,7 @@ class OSLMetadataExtractor
     template <typename T>
     bool getValue(const char *key, T& value) const
     {
-        if(exists(key))
+        if (exists(key))
         {
             const foundation::Dictionary& dict = m_metadata.dictionary(key);
             value = dict.get<T>("value");

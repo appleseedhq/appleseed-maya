@@ -113,7 +113,7 @@ void ShadingNodeExporter::exportShaderParameters(
     {
         const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
         MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
-        if(!status)
+        if (!status)
         {
             RENDERER_LOG_WARNING(
                 "Skipping unknown attribute %s of shading node %s",
@@ -132,24 +132,24 @@ void ShadingNodeExporter::exportParameterValue(
     renderer::ParamArray&     shaderParams)
 {
     // Skip params with shader global defaults.
-    if(!paramInfo.validDefault)
+    if (!paramInfo.validDefault)
         return;
 
     // Skip connected attributes.
-    if(plug.isConnected())
+    if (plug.isConnected())
         return;
 
     // Create adapter shaders.
-    if(plug.isCompound() && plug.numConnectedChildren() != 0)
+    if (plug.isCompound() && plug.numConnectedChildren() != 0)
     {
         // todo: implement...
     }
 
     // Skip output attributes.
-    if(paramInfo.isOutput)
+    if (paramInfo.isOutput)
         return;
 
-    if(paramInfo.isArray)
+    if (paramInfo.isArray)
         exportArrayValue(plug, paramInfo, shaderParams);
     else
         exportValue(plug, paramInfo, shaderParams);
@@ -166,62 +166,62 @@ void ShadingNodeExporter::exportValue(
 
     std::stringstream ss;
 
-    if(strcmp(paramInfo.paramType.asChar(), "color") == 0)
+    if (strcmp(paramInfo.paramType.asChar(), "color") == 0)
     {
         MColor value;
-        if(AttributeUtils::get(plug, value))
+        if (AttributeUtils::get(plug, value))
             ss << "color " << value.r << " " << value.g << " " << value.b;
     }
-    else if(strcmp(paramInfo.paramType.asChar(), "float") == 0)
+    else if (strcmp(paramInfo.paramType.asChar(), "float") == 0)
     {
-        if(strcmp(paramInfo.mayaAttributeType.asChar(), "angle") == 0)
+        if (strcmp(paramInfo.mayaAttributeType.asChar(), "angle") == 0)
         {
             MAngle value(0.0f, MAngle::kDegrees);
-            if(AttributeUtils::get(plug, value))
+            if (AttributeUtils::get(plug, value))
                 ss << "float " << value.asDegrees();
         }
         else
         {
             float value;
-            if(AttributeUtils::get(plug, value))
+            if (AttributeUtils::get(plug, value))
                 ss << "float " << value;
         }
     }
-    else if(strcmp(paramInfo.paramType.asChar(), "int") == 0)
+    else if (strcmp(paramInfo.paramType.asChar(), "int") == 0)
     {
         int value;
-        if(AttributeUtils::get(plug, value))
+        if (AttributeUtils::get(plug, value))
             ss << "int " << value;
         else
         {
             bool boolValue;
-            if(AttributeUtils::get(plug, boolValue))
+            if (AttributeUtils::get(plug, boolValue))
                 ss << "int " << boolValue ? "1" : "0";
         }
     }
-    else if(strcmp(paramInfo.paramType.asChar(), "normal") == 0)
+    else if (strcmp(paramInfo.paramType.asChar(), "normal") == 0)
     {
         MVector value;
-        if(AttributeUtils::get(plug, value))
+        if (AttributeUtils::get(plug, value))
             ss << "normal " << value.z << " " << value.y << " " << value.z;
     }
-    else if(strcmp(paramInfo.paramType.asChar(), "point") == 0)
+    else if (strcmp(paramInfo.paramType.asChar(), "point") == 0)
     {
         MPoint value;
-        if(AttributeUtils::get(plug, value))
+        if (AttributeUtils::get(plug, value))
             ss << "point " << value.z << " " << value.y << " " << value.z;
     }
-    else if(strcmp(paramInfo.paramType.asChar(), "string") == 0)
+    else if (strcmp(paramInfo.paramType.asChar(), "string") == 0)
     {
         // todo: handle enum attributes here for our own nodes...
         MString value;
-        if(AttributeUtils::get(plug, value))
+        if (AttributeUtils::get(plug, value))
             ss << "string " << value;
     }
-    else if(strcmp(paramInfo.paramType.asChar(), "vector") == 0)
+    else if (strcmp(paramInfo.paramType.asChar(), "vector") == 0)
     {
         MVector value;
-        if(AttributeUtils::get(plug, value))
+        if (AttributeUtils::get(plug, value))
             ss << "vector " << value.z << " " << value.y << " " << value.z;
     }
     else
@@ -233,7 +233,7 @@ void ShadingNodeExporter::exportValue(
     }
 
     std::string valueAsString = ss.str();
-    if(!valueAsString.empty())
+    if (!valueAsString.empty())
         shaderParams.insert(paramInfo.paramName.asChar(), valueAsString.c_str());
 }
 
@@ -251,7 +251,7 @@ void ShadingNodeExporter::exportArrayValue(
 
     std::stringstream ss;
 
-    if(strncmp(paramInfo.paramType.asChar(), "int[", 4) == 0)
+    if (strncmp(paramInfo.paramType.asChar(), "int[", 4) == 0)
     {
         assert(plug.isCompound());
 
@@ -259,10 +259,10 @@ void ShadingNodeExporter::exportArrayValue(
         for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
         {
             MPlug childPlug = plug.child(i, &status);
-            if(status)
+            if (status)
             {
                 int value;
-                if(AttributeUtils::get(childPlug, value))
+                if (AttributeUtils::get(childPlug, value))
                     ss << value << " ";
                 else
                     valid = false;
@@ -271,7 +271,7 @@ void ShadingNodeExporter::exportArrayValue(
                 valid = false;
         }
     }
-    else if(strncmp(paramInfo.paramType.asChar(), "float[", 5) == 0)
+    else if (strncmp(paramInfo.paramType.asChar(), "float[", 5) == 0)
     {
         assert(plug.isCompound());
 
@@ -279,10 +279,10 @@ void ShadingNodeExporter::exportArrayValue(
         for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
         {
             MPlug childPlug = plug.child(i, &status);
-            if(status)
+            if (status)
             {
                 float value;
-                if(AttributeUtils::get(childPlug, value))
+                if (AttributeUtils::get(childPlug, value))
                     ss << value << " ";
                 else
                     valid = false;
@@ -300,10 +300,10 @@ void ShadingNodeExporter::exportArrayValue(
         return;
     }
 
-    if(valid)
+    if (valid)
     {
         std::string valueAsString = ss.str();
-        if(!valueAsString.empty())
+        if (!valueAsString.empty())
             shaderParams.insert(paramInfo.paramName.asChar(), valueAsString.c_str());
     }
     else

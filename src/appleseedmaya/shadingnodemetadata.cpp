@@ -55,7 +55,7 @@ bool OSLMetadataExtractor::exists(const char *key) const
 
 bool OSLMetadataExtractor::getValue(const char *key, MString& value)
 {
-    if(exists(key))
+    if (exists(key))
     {
         const foundation::Dictionary& dict = m_metadata.dictionary(key);
         value = dict.get("value");
@@ -74,7 +74,7 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
     paramType = paramInfo.get("type");
     validDefault = paramInfo.get<bool>("validdefault");
 
-    if(validDefault)
+    if (validDefault)
     {
         //TODO: get default_value here.
     }
@@ -83,17 +83,17 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
     isClosure = paramInfo.get<bool>("isclosure");
     isStruct = paramInfo.get<bool>("isstruct");
 
-    if(isStruct)
+    if (isStruct)
         structName = paramInfo.get("structname");
 
     isArray = paramInfo.get<bool>("isarray");
 
-    if(isArray)
+    if (isArray)
         arrayLen = paramInfo.get<int>("arraylen");
     else
         arrayLen = -1;
 
-    if(paramInfo.dictionaries().exist("metadata"))
+    if (paramInfo.dictionaries().exist("metadata"))
     {
         OSLMetadataExtractor metadata(paramInfo.dictionary("metadata"));
 
@@ -114,10 +114,10 @@ std::ostream& operator<<(std::ostream& os, const OSLParamInfo& paramInfo)
     os << "  valid default  : " << paramInfo.validDefault << "\n";
     os << "  closure        : " << paramInfo.isClosure << "\n";
 
-    if(paramInfo.isStruct)
+    if (paramInfo.isStruct)
         os << "  struct name    : " << paramInfo.structName << "\n";
 
-    if(paramInfo.isArray)
+    if (paramInfo.isArray)
         os << "  array len      : " << paramInfo.arrayLen << "\n";
 
     os << std::endl;
@@ -149,7 +149,7 @@ const OSLParamInfo *OSLShaderInfo::findParam(const MString& mayaAttrName) const
 {
     for(size_t i = 0, e = paramInfo.size(); i < e; ++i)
     {
-        if(paramInfo[i].mayaAttributeName == mayaAttrName)
+        if (paramInfo[i].mayaAttributeName == mayaAttrName)
             return &paramInfo[i];
     }
 

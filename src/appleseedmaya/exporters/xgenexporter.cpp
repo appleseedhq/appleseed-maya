@@ -67,7 +67,7 @@ XGenExporter::XGenExporter(
 
 XGenExporter::~XGenExporter()
 {
-    if(sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
     {
         // todo: cleanup here.
     }
@@ -127,14 +127,14 @@ void XGenExporter::createEntity(const AppleseedSession::Options& options)
         MDagPath::getAPathTo(descriptionPath.child(i), childDagPath);
 
         // Ignore the first child. It should be the description shape
-        if(i == 0)
+        if (i == 0)
             continue;
 
         MString patchName(
             childDagPath.fullPathName().asChar() + descriptionName.length() + paletteName.length() + 3);
 
         // Check that the description matches.
-        if(asf::ends_with(patchName.asChar(), descriptionName.asChar()))
+        if (asf::ends_with(patchName.asChar(), descriptionName.asChar()))
         {
             patches.insert(
                 asf::to_string(i).c_str(),

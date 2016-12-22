@@ -73,7 +73,7 @@ LightExporter::LightExporter(
 
 LightExporter::~LightExporter()
 {
-    if(sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
     {
         // todo: cleanup here.
     }
@@ -94,7 +94,7 @@ void LightExporter::createEntity(const AppleseedSession::Options& options)
 
     MStatus status;
     MPlug plug = depNodeFn.findPlug("intensity", &status);
-    if(plug.isConnected())
+    if (plug.isConnected())
     {
         // todo: add warning here...
     }
@@ -103,7 +103,7 @@ void LightExporter::createEntity(const AppleseedSession::Options& options)
     AttributeUtils::get(plug, intensity);
 
     plug = depNodeFn.findPlug("color", &status);
-    if(plug.isConnected())
+    if (plug.isConnected())
     {
         // todo: add warning here...
     }
@@ -121,19 +121,19 @@ void LightExporter::createEntity(const AppleseedSession::Options& options)
             asr::ColorEntityFactory::create(colorName.asChar(), params, values));
     }
 
-    if(depNodeFn.typeName() == "directionalLight")
+    if (depNodeFn.typeName() == "directionalLight")
     {
         lightFactory = lightFactories.lookup("directional_light");
         lightParams.insert("irradiance", colorName.asChar());
         lightParams.insert("irradiance_multiplier", intensity);
     }
-    else if(depNodeFn.typeName() == "pointLight")
+    else if (depNodeFn.typeName() == "pointLight")
     {
         lightFactory = lightFactories.lookup("point_light");
         lightParams.insert("intensity", colorName.asChar());
         lightParams.insert("intensity_multiplier", intensity);
     }
-    else if(depNodeFn.typeName() == "spotLight")
+    else if (depNodeFn.typeName() == "spotLight")
     {
         lightFactory = lightFactories.lookup("spot_light");
         lightParams.insert("intensity", colorName.asChar());
@@ -165,7 +165,7 @@ void LightExporter::createEntity(const AppleseedSession::Options& options)
 
 void LightExporter::flushEntity()
 {
-    if(m_light.get())
+    if (m_light.get())
     {
         mainAssembly().colors().insert(m_lightColor.release());
         mainAssembly().lights().insert(m_light.release());

@@ -69,7 +69,7 @@ AreaLightExporter::AreaLightExporter(
 
 AreaLightExporter::~AreaLightExporter()
 {
-    if(sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
     {
         // todo: cleanup here.
     }
@@ -99,7 +99,7 @@ void AreaLightExporter::createEntity(const AppleseedSession::Options& options)
     params.insert("width", 2.0f);
     params.insert("height", 2.0f);
 
-    if(sessionMode() == AppleseedSession::ExportSession)
+    if (sessionMode() == AppleseedSession::ExportSession)
         m_lightMesh.reset(asr::MeshObjectFactory::create(objectName.asChar(), params));
     else
         m_lightMesh.reset(asr::create_primitive_mesh(objectName.asChar(), params));
@@ -130,7 +130,7 @@ void AreaLightExporter::createEntity(const AppleseedSession::Options& options)
 
 void AreaLightExporter::flushEntity()
 {
-    if(m_lightNetworkExporter)
+    if (m_lightNetworkExporter)
     {
         m_material->get_parameters().insert(
             "osl_surface",

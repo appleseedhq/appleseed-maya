@@ -53,7 +53,7 @@
 #define APPLESEED_MAYA_CHECK_MSTATUS_MSG(stat, msg) \
 {\
     MStatus s_ = (stat);\
-    if(s_ != MStatus::kSuccess) \
+    if (s_ != MStatus::kSuccess) \
     {\
         MGlobal::displayError(MString(msg));\
     }\
@@ -63,7 +63,7 @@
 #define APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(stat, msg) \
 {\
     MStatus s_ = (stat);\
-    if(s_ != MStatus::kSuccess)\
+    if (s_ != MStatus::kSuccess)\
     {\
         MGlobal::displayError(MString(msg));\
         return s_;\
@@ -74,7 +74,7 @@
 #define APPLESEED_MAYA_RET_MSTATUS_ERROR_MSG(stat, msg) \
 {\
     MStatus s_ = (stat);\
-    if(s_ != MStatus::kSuccess)\
+    if (s_ != MStatus::kSuccess)\
     {\
         MGlobal::displayError(MString(msg));\
     }\
@@ -85,7 +85,7 @@
 #define APPLESEED_MAYA_ENFORCE_RET_FAILURE_MSG(cond, msg) \
 {\
     bool cond_ = (cond);\
-    if(!cond_)\
+    if (!cond_)\
     {\
         MGlobal::displayError(MString(msg));\
         return MStatus::kFailure;\

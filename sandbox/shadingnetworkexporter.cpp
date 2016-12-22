@@ -86,7 +86,7 @@ void ShadingNetworkExporter::createEntity(const AppleseedSession::Options& optio
         MItDependencyGraph::kNodeLevel,
         &status);
 
-    if(status == MS::kFailure)
+    if (status == MS::kFailure)
     {
         RENDERER_LOG_WARNING(
             "No nodes connected to shading node %s",
@@ -100,7 +100,7 @@ void ShadingNetworkExporter::createEntity(const AppleseedSession::Options& optio
     for(; it.isDone() != true; it.next())
     {
         depNodeFn.setObject(it.thisNode());
-        if(m_nodeExporters.count(depNodeFn.name()) == 0)
+        if (m_nodeExporters.count(depNodeFn.name()) == 0)
         {
             //RENDERER_LOG_INFO("Visiting node %s", depNodeFn.name().asChar());
 
@@ -112,7 +112,7 @@ void ShadingNetworkExporter::createEntity(const AppleseedSession::Options& optio
                     depNodeFn.object(),
                     *m_shaderGroup));
             }
-            catch(const NoExporterForNode&)
+            catch (const NoExporterForNode&)
             {
                 networkHasUnknownNodes = true;
                 RENDERER_LOG_WARNING(
@@ -120,7 +120,7 @@ void ShadingNetworkExporter::createEntity(const AppleseedSession::Options& optio
                     depNodeFn.typeName().asChar());
             }
 
-            if(exporter)
+            if (exporter)
             {
                 m_nodeExporters[depNodeFn.name()] = exporter;
                 RENDERER_LOG_DEBUG(

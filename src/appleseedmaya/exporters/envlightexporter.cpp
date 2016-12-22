@@ -53,7 +53,7 @@ EnvLightExporter::EnvLightExporter(
 
 EnvLightExporter::~EnvLightExporter()
 {
-    if(sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
     {
         // todo: cleanup here.
     }

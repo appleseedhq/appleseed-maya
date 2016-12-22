@@ -79,7 +79,7 @@ MStatus PythonBridge::initialize(const MString& pluginPath)
         // Init the current project global (to None).
         gAppleseedMayaNamespace["currentProject"] = bpy::object();
     }
-    catch(const bpy::error_already_set&)
+    catch (const bpy::error_already_set&)
     {
         PyErr_Print();
     }

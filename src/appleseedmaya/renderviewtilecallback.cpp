@@ -146,7 +146,7 @@ class RenderViewTileCallback
 
         void operator()()
         {
-            if(m_computation.isInterruptRequested())
+            if (m_computation.isInterruptRequested())
             {
                 m_rendererController.set_status(RendererController::AbortRendering);
                 return;
@@ -207,7 +207,7 @@ class RenderViewTileCallback
 
         void operator()()
         {
-            if(m_computation.isInterruptRequested())
+            if (m_computation.isInterruptRequested())
             {
                 m_rendererController.set_status(RendererController::AbortRendering);
                 return;
@@ -309,7 +309,7 @@ void RenderViewTileCallbackFactory::renderViewStart(const renderer::Frame& frame
     m_width = frameProps.m_canvas_width;
     m_height = frameProps.m_canvas_height;
 
-    if(frame.has_crop_window())
+    if (frame.has_crop_window())
     {
         MRenderView::startRegionRender(
             m_width,

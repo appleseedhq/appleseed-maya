@@ -38,16 +38,16 @@ namespace
 template<class T>
 MStatus get3(const MPlug& plug, T& x, T& y, T& z)
 {
-    if(!plug.isCompound())
+    if (!plug.isCompound())
         return MS::kFailure;
 
-    if(plug.numChildren() != 3)
+    if (plug.numChildren() != 3)
         return MS::kFailure;
 
     MStatus status;
-    if(status) status = plug.child(0).getValue(x);
-    if(status) status = plug.child(1).getValue(y);
-    if(status) status = plug.child(2).getValue(z);
+    if (status) status = plug.child(0).getValue(x);
+    if (status) status = plug.child(1).getValue(y);
+    if (status) status = plug.child(2).getValue(z);
     return status;
 }
 
@@ -85,7 +85,7 @@ MStatus get(const MPlug& plug, MMatrix& value)
     MObject matrixObject;
     MStatus status = plug.getValue(matrixObject);
 
-    if(!status)
+    if (!status)
         return status;
 
     MFnMatrixData matrixDataFn(matrixObject);
@@ -95,16 +95,16 @@ MStatus get(const MPlug& plug, MMatrix& value)
 
 MStatus getPlugConnectedTo(const MPlug& dstPlug, MPlug& srcPlug)
 {
-    if(!dstPlug.isConnected())
+    if (!dstPlug.isConnected())
         return MS::kFailure;
 
     MStatus status;
     MPlugArray inputConnections;
     dstPlug.connectedTo(inputConnections, true, false, &status);
 
-    if(status)
+    if (status)
     {
-        if(inputConnections.length() == 0)
+        if (inputConnections.length() == 0)
             return MS::kFailure;
 
         srcPlug = inputConnections[0];
@@ -117,7 +117,7 @@ bool hasConnections(const MPlug& plug, bool input)
 {
     MStatus status;
 
-    if(!plug.isConnected(&status))
+    if (!plug.isConnected(&status))
         return false;
 
     MPlugArray connections;
@@ -127,7 +127,7 @@ bool hasConnections(const MPlug& plug, bool input)
         input ? false : true,
         &status);
 
-    if(status)
+    if (status)
         return connections.length() != 0;
 
     return false;
@@ -137,25 +137,25 @@ bool anyChildPlugConnected(const MPlug& plug, bool input)
 {
     MStatus status;
 
-    if(!plug.isCompound(&status))
+    if (!plug.isCompound(&status))
         return false;
 
-    if(!status)
+    if (!status)
         return false;
 
     int numChildren = plug.numChildren(&status);
 
-    if(!status)
+    if (!status)
         return false;
 
     for(int i = 0, e = plug.numChildren(); i < e; ++i)
     {
         MPlug c = plug.child(i, &status);
 
-        if(!status)
+        if (!status)
             continue;
 
-        if(hasConnections(c, input))
+        if (hasConnections(c, input))
             return true;
     }
 

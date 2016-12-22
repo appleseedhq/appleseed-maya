@@ -208,7 +208,7 @@ MUserData *PhysicalSkyLightDrawOverride::prepareForDraw(
     // Retrieve data cache (create if does not exist)
     PhysicalSkyLightData *data =dynamic_cast<PhysicalSkyLightData*>(oldData);
 
-    if(!data)
+    if (!data)
         data = new PhysicalSkyLightData();
 
     return data;

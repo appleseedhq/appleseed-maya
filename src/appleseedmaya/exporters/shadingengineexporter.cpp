@@ -55,7 +55,7 @@ ShadingEngineExporter::ShadingEngineExporter(
 
 ShadingEngineExporter::~ShadingEngineExporter()
 {
-    if(m_sessionMode == AppleseedSession::ProgressiveRenderSession)
+    if (m_sessionMode == AppleseedSession::ProgressiveRenderSession)
     {
         // todo: cleanup here.
     }
@@ -67,11 +67,11 @@ void ShadingEngineExporter::createExporters(const AppleseedSession::Services& se
 
     MStatus status;
     MPlug plug = depNodeFn.findPlug("surfaceShader", &status);
-    if(plug.isConnected())
+    if (plug.isConnected())
     {
         MPlugArray otherPlugs;
         plug.connectedTo(otherPlugs, true, false, &status);
-        if(otherPlugs.length() == 1)
+        if (otherPlugs.length() == 1)
         {
             MObject otherNode = otherPlugs[0].node();
             depNodeFn.setObject(otherNode);
@@ -81,7 +81,7 @@ void ShadingEngineExporter::createExporters(const AppleseedSession::Services& se
                 otherPlugs[0]);
         }
     }
-    else if(plug.numConnectedChildren() != 0)
+    else if (plug.numConnectedChildren() != 0)
     {
         RENDERER_LOG_WARNING("Unsupported component connection to shading engine.");
     }
@@ -108,7 +108,7 @@ void ShadingEngineExporter::createEntity(const AppleseedSession::Options& option
 
 void ShadingEngineExporter::flushEntity()
 {
-    if(m_surfaceNetworkExporter)
+    if (m_surfaceNetworkExporter)
     {
         m_material->get_parameters().insert(
             "osl_surface",
