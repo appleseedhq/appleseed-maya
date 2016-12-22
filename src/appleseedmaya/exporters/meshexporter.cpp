@@ -150,6 +150,14 @@ MeshExporter::MeshExporter(
 {
 }
 
+MeshExporter::~MeshExporter()
+{
+    if(sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    {
+        // todo: cleanup here.
+    }
+}
+
 void MeshExporter::createExporters(const AppleseedSession::Services& services)
 {
     const int instanceNumber = dagPath().isInstanced() ? dagPath().instanceNumber() : 0;

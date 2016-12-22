@@ -53,6 +53,14 @@ ShadingEngineExporter::ShadingEngineExporter(
 {
 }
 
+ShadingEngineExporter::~ShadingEngineExporter()
+{
+    if(m_sessionMode == AppleseedSession::ProgressiveRenderSession)
+    {
+        // todo: cleanup here.
+    }
+}
+
 void ShadingEngineExporter::createExporters(const AppleseedSession::Services& services)
 {
     MFnDependencyNode depNodeFn(m_object);

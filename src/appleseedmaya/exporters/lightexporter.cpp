@@ -71,6 +71,14 @@ LightExporter::LightExporter(
 {
 }
 
+LightExporter::~LightExporter()
+{
+    if(sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    {
+        // todo: cleanup here.
+    }
+}
+
 bool LightExporter::supportsMotionBlur() const
 {
     return false;

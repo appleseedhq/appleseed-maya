@@ -51,6 +51,14 @@ EnvLightExporter::EnvLightExporter(
 {
 }
 
+EnvLightExporter::~EnvLightExporter()
+{
+    if(sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    {
+        // todo: cleanup here.
+    }
+}
+
 void EnvLightExporter::exportTransformMotionStep(float time)
 {
 }

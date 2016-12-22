@@ -57,6 +57,8 @@ class ShadingNetworkExporter
 {
   public:
 
+    ~ShadingNetworkExporter();
+
     MString shaderGroupName() const;
 
     // Create appleseed entities.

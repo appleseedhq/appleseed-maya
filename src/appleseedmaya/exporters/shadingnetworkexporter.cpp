@@ -63,6 +63,14 @@ ShadingNetworkExporter::ShadingNetworkExporter(
 {
 }
 
+ShadingNetworkExporter::~ShadingNetworkExporter()
+{
+    if(m_sessionMode == AppleseedSession::ProgressiveRenderSession)
+    {
+        // todo: cleanup here.
+    }
+}
+
 MString ShadingNetworkExporter::shaderGroupName() const
 {
     assert(m_shaderGroup.get());

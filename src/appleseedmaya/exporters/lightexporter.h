@@ -54,6 +54,8 @@ class LightExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
+    ~LightExporter();
+
     bool supportsMotionBlur() const;
 
     virtual void createEntity(const AppleseedSession::Options& options);

@@ -52,6 +52,8 @@ class ShadingEngineExporter
 {
   public:
 
+    ~ShadingEngineExporter();
+
     // Create any extra exporter needed by this exporter (shading engines, ...).
     void createExporters(const AppleseedSession::Services& services);
 

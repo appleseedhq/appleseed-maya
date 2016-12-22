@@ -68,6 +68,14 @@ CameraExporter::CameraExporter(
 {
 }
 
+CameraExporter::~CameraExporter()
+{
+    if(sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    {
+        // todo: cleanup here.
+    }
+}
+
 void CameraExporter::createEntity(const AppleseedSession::Options& options)
 {
     MStatus status;

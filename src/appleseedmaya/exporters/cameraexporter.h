@@ -47,6 +47,8 @@ class CameraExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
+    ~CameraExporter();
+
     virtual void createEntity(const AppleseedSession::Options& options);
 
     virtual void exportCameraMotionStep(float time);

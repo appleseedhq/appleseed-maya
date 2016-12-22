@@ -40,6 +40,8 @@ class EnvLightExporter
 {
   public:
 
+    ~EnvLightExporter();
+
     virtual void exportTransformMotionStep(float time);
 
     virtual void flushEntity();

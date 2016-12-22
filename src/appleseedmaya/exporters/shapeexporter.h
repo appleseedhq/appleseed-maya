@@ -45,6 +45,8 @@ class ShapeExporter
 {
   public:
 
+    ~ShapeExporter();
+
     const renderer::TransformSequence& transformSequence() const;
 
     void instanceCreated() const;

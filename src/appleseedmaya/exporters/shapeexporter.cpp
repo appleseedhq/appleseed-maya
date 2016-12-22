@@ -44,6 +44,14 @@ ShapeExporter::ShapeExporter(
 {
 }
 
+ShapeExporter::~ShapeExporter()
+{
+    if(sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    {
+        // todo: cleanup here.
+    }
+}
+
 const asr::TransformSequence& ShapeExporter::transformSequence() const
 {
     return m_transformSequence;

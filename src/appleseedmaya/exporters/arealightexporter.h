@@ -56,6 +56,8 @@ class AreaLightExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
+    ~AreaLightExporter();
+
     bool supportsMotionBlur() const;
 
     virtual void createExporters(const AppleseedSession::Services& services);

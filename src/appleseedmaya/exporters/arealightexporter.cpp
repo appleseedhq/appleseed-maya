@@ -67,6 +67,14 @@ AreaLightExporter::AreaLightExporter(
 {
 }
 
+AreaLightExporter::~AreaLightExporter()
+{
+    if(sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    {
+        // todo: cleanup here.
+    }
+}
+
 bool AreaLightExporter::supportsMotionBlur() const
 {
     return false;

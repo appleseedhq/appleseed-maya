@@ -54,6 +54,8 @@ class XGenExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
+    ~XGenExporter();
+
     virtual void createExporters(const AppleseedSession::Services& services);
 
     virtual void createEntity(const AppleseedSession::Options& options);

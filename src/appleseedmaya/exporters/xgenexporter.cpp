@@ -65,6 +65,14 @@ XGenExporter::XGenExporter(
 {
 }
 
+XGenExporter::~XGenExporter()
+{
+    if(sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    {
+        // todo: cleanup here.
+    }
+}
+
 void XGenExporter::createExporters(const AppleseedSession::Services& services)
 {
     // todo: implement this.
