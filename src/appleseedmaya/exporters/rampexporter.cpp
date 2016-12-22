@@ -110,8 +110,6 @@ void RampExporter::exportParameterValue(
             rampColors.push_back(RampEntry(p, c));
         }
 
-        std::sort(rampColors.begin(), rampColors.end());
-
         std::stringstream ssp;
         ssp << "float[] ";
 
