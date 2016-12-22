@@ -97,7 +97,7 @@ void RampExporter::exportParameterValue(
 
         for(size_t i = 0, e = plug.numElements(); i < e; ++i)
         {
-            MPlug entry = plug.elementByLogicalIndex(i);
+            MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
             MPlug color = entry.child(1);
 
@@ -110,7 +110,22 @@ void RampExporter::exportParameterValue(
             rampColors.push_back(RampEntry(p, c));
         }
 
-        std::sort(rampColors.begin(), rampColors.end());
+        plug = depNodeFn.findPlug("type", &status);
+        int rampType;
+        AttributeUtils::get(plug, rampType);
+
+        // Check if the type is four corner.
+        if(rampType == 7)
+        {
+            // Fill with black if we have less than 4 elements.
+            while(rampColors.size() < 4)
+                rampColors.push_back(RampEntry(1.0f, MColor(0.0f, 0.0f, 0.0f)));
+        }
+        else
+        {
+            // Sort the ramp entries.
+            std::sort(rampColors.begin(), rampColors.end());
+        }
 
         std::stringstream ssp;
         ssp << "float[] ";
@@ -128,7 +143,7 @@ void RampExporter::exportParameterValue(
     }
     else if(paramInfo.paramName == "in_color")
     {
-        // skip.
+        // We save the colors at the same time we save the positions.
     }
     else
     {
