@@ -195,32 +195,6 @@ void insertEntityWithUniqueName(
     }
 }
 
-//
-// ScopedComputation.
-//
-
-class ScopedComputation
-  : public NonCopyable
-{
-  public:
-    ScopedComputation()
-    {
-        m_computation.beginComputation();
-    }
-
-    ~ScopedComputation()
-    {
-        m_computation.endComputation();
-    }
-
-    bool isInterruptRequested()
-    {
-        return m_computation.isInterruptRequested();
-    }
-
-    MComputation m_computation;
-};
-
 MStatus getDependencyNodeByName(const MString& name, MObject& object);
 
 MStatus getDagPathByName(const MString& name, MDagPath& dag);

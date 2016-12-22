@@ -32,8 +32,14 @@
 // Standard headers.
 #include <cstddef>
 
+// Maya headers.
+#include <maya/MComputation.h>
+
 // appleseed.renderer headers.
 #include "renderer/api/rendering.h"
+
+// appleseed.maya headers.
+#include "appleseedmaya/renderercontroller.h"
 
 // Forward declarations.
 namespace foundation    { class Tile; }
@@ -45,7 +51,10 @@ class RenderViewTileCallbackFactory
 {
   public:
 
-    RenderViewTileCallbackFactory();
+    RenderViewTileCallbackFactory(
+        RendererController& rendererController,
+        MComputation&       computation);
+
     virtual ~RenderViewTileCallbackFactory();
 
     virtual void release();
@@ -55,8 +64,10 @@ class RenderViewTileCallbackFactory
     void renderViewStart(const renderer::Frame& frame);
 
   private:
-    int m_width;
-    int m_height;
+    RendererController& m_rendererController;
+    MComputation&       m_computation;
+    int                 m_width;
+    int                 m_height;
 };
 
 #endif  // !APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H

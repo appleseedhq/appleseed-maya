@@ -65,9 +65,11 @@ class RenderViewTileCallback
   : public renderer::ITileCallback
 {
   public:
-    RenderViewTileCallback(int width, int height)
+    RenderViewTileCallback(int width, int height, RendererController& rendererController, MComputation& computation)
       : m_width(width)
       , m_height(height)
+      , m_rendererController(rendererController)
+      , m_computation(computation)
     {
         assert(m_width > 0);
         assert(m_height > 0);
@@ -97,7 +99,7 @@ class RenderViewTileCallback
         int halfHeight = (ymax - ymin) / 2;
         int lineSize = std::min(std::min(halfWidth, halfHeight), MaxHighlightSize);
 
-        HighlightTile h(xmin, ymin, xmax, ymax, lineSize, m_highlightPixels);
+        HighlightTile h(xmin, ymin, xmax, ymax, lineSize, m_highlightPixels, m_rendererController, m_computation);
         IdleJobQueue::pushJob(h);
     }
 
@@ -128,18 +130,28 @@ class RenderViewTileCallback
             int                 xmax,
             int                 ymax,
             int                 lineSize,
-            RV_PIXEL            *highlightPixels)
+            RV_PIXEL*           highlightPixels,
+            RendererController& rendererController,
+            MComputation&       computation)
+          : m_xmin(xmin)
+          , m_ymin(ymin)
+          , m_xmax(xmax)
+          , m_ymax(ymax)
+          , m_lineSize(lineSize)
+          , m_pixels(highlightPixels)
+          , m_rendererController(rendererController)
+          , m_computation(computation)
         {
-            m_xmin = xmin;
-            m_ymin = ymin;
-            m_xmax = xmax;
-            m_ymax = ymax;
-            m_lineSize = lineSize;
-            m_pixels = highlightPixels;
         }
 
         void operator()()
         {
+            if(m_computation.isInterruptRequested())
+            {
+                m_rendererController.set_status(RendererController::AbortRendering);
+                return;
+            }
+
             draw_hline(m_xmin, m_xmin + m_lineSize, m_ymin, m_pixels);
             draw_hline(m_xmax - m_lineSize, m_xmax, m_ymin, m_pixels);
             draw_hline(m_xmin, m_xmin + m_lineSize, m_ymax, m_pixels);
@@ -163,12 +175,14 @@ class RenderViewTileCallback
             MRenderView::refresh(x, x, y0, y1);
         }
 
-        int         m_xmin;
-        int         m_ymin;
-        int         m_xmax;
-        int         m_ymax;
-        int         m_lineSize;
-        RV_PIXEL*   m_pixels;
+        int                 m_xmin;
+        int                 m_ymin;
+        int                 m_xmax;
+        int                 m_ymax;
+        int                 m_lineSize;
+        RV_PIXEL*           m_pixels;
+        RendererController& m_rendererController;
+        MComputation&       m_computation;
     };
 
     struct WriteTileToRenderView
@@ -178,17 +192,27 @@ class RenderViewTileCallback
             int                             ymin,
             int                             xmax,
             int                             ymax,
-            boost::shared_array<RV_PIXEL>   pixels)
+            boost::shared_array<RV_PIXEL>   pixels,
+            RendererController&             rendererController,
+            MComputation&                   computation)
+          : m_xmin(xmin)
+          , m_ymin(ymin)
+          , m_xmax(xmax)
+          , m_ymax(ymax)
+          , m_pixels(pixels)
+          , m_rendererController(rendererController)
+          , m_computation(computation)
         {
-            m_xmin = xmin;
-            m_ymin = ymin;
-            m_xmax = xmax;
-            m_ymax = ymax;
-            m_pixels = pixels;
         }
 
         void operator()()
         {
+            if(m_computation.isInterruptRequested())
+            {
+                m_rendererController.set_status(RendererController::AbortRendering);
+                return;
+            }
+
             MRenderView::updatePixels(m_xmin, m_xmax, m_ymin, m_ymax, m_pixels.get(), true);
             MRenderView::refresh(m_xmin, m_xmax, m_ymin, m_ymax);
         }
@@ -198,6 +222,8 @@ class RenderViewTileCallback
         int                             m_xmax;
         int                             m_ymax;
         boost::shared_array<RV_PIXEL>   m_pixels;
+        RendererController&             m_rendererController;
+        MComputation&                   m_computation;
     };
 
     void write_tile(
@@ -238,19 +264,25 @@ class RenderViewTileCallback
         int ymin = static_cast<int>(m_height - y - tileHeight);
         int ymax = static_cast<int>(m_height - y - 1);
 
-        WriteTileToRenderView w(xmin, ymin, xmax, ymax, pixels);
+        WriteTileToRenderView w(xmin, ymin, xmax, ymax, pixels, m_rendererController, m_computation);
         IdleJobQueue::pushJob(w);
     }
 
     RV_PIXEL            m_highlightPixels[MaxHighlightSize];
     int                 m_width;
     int                 m_height;
+    RendererController& m_rendererController;
+    MComputation&       m_computation;
 };
 
 } // unnamed.
 
-RenderViewTileCallbackFactory::RenderViewTileCallbackFactory()
-  : m_width(-1)
+RenderViewTileCallbackFactory::RenderViewTileCallbackFactory(
+    RendererController&  rendererController,
+    MComputation&        computation)
+  : m_rendererController(rendererController)
+  , m_computation(computation)
+  , m_width(-1)
   , m_height(-1)
 {
 }
@@ -267,7 +299,7 @@ void RenderViewTileCallbackFactory::release()
 
 renderer::ITileCallback* RenderViewTileCallbackFactory::create()
 {
-    return new RenderViewTileCallback(m_width, m_height);
+    return new RenderViewTileCallback(m_width, m_height, m_rendererController, m_computation);
 }
 
 void RenderViewTileCallbackFactory::renderViewStart(const renderer::Frame& frame)

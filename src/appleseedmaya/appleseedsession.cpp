@@ -109,6 +109,44 @@ struct ScopedEndSession
     }
 };
 
+struct AbortRequested
+{
+};
+
+class ScopedComputation
+  : public NonCopyable
+{
+  public:
+    ScopedComputation()
+    {
+        m_computation.beginComputation();
+    }
+
+    ~ScopedComputation()
+    {
+        m_computation.endComputation();
+    }
+
+    MComputation& computation()
+    {
+        return m_computation;
+    }
+
+    bool isInterruptRequested()
+    {
+        return m_computation.isInterruptRequested();
+    }
+
+    void thowIfInterruptRequested()
+    {
+        if(m_computation.isInterruptRequested())
+            throw AbortRequested();
+    }
+
+    static MComputation m_computation;
+};
+
+MComputation ScopedComputation::m_computation;
 
 struct SessionImpl
   : NonCopyable
@@ -172,10 +210,12 @@ struct SessionImpl
     // Constructor. (IPR or Batch)
     SessionImpl(
         AppleseedSession::SessionMode       mode,
-        const AppleseedSession::Options&    options)
+        const AppleseedSession::Options&    options,
+        ScopedComputation*                  computation)
       : m_sessionMode(mode)
       , m_options(options)
       , m_services(*this)
+      , m_computation(computation)
     {
         createProject();
     }
@@ -183,10 +223,12 @@ struct SessionImpl
     // Constructor. (Scene export)
     SessionImpl(
         const MString&                      fileName,
-        const AppleseedSession::Options&    options)
+        const AppleseedSession::Options&    options,
+        ScopedComputation*                  computation)
       : m_sessionMode(AppleseedSession::ExportSession)
       , m_options(options)
       , m_services(*this)
+      , m_computation(computation)
       , m_fileName(fileName)
     {
         m_projectPath = bfs::path(fileName.asChar()).parent_path();
@@ -339,6 +381,8 @@ struct SessionImpl
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->collectMotionBlurSteps(motionBlurTimes);
 
+        checkUserAborted();
+
         // Create appleseed entities.
         RENDERER_LOG_DEBUG("Creating shading network entities");
         for(size_t i = 0; i < NumShadingNetworkContexts; ++i)
@@ -350,6 +394,8 @@ struct SessionImpl
         RENDERER_LOG_DEBUG("Creating shading engine entities");
         for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
             it->second->createEntity(m_options);
+
+        checkUserAborted();
 
         RENDERER_LOG_DEBUG("Creating dag entities");
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
@@ -366,6 +412,8 @@ struct SessionImpl
                     it->second->exportTransformMotionStep(0.0f);
                     it->second->exportShapeMotionStep(0.0f);
                 }
+
+                checkUserAborted();
             }
         }
 
@@ -384,9 +432,13 @@ struct SessionImpl
                 it->second->flushEntity();
         }
 
+        checkUserAborted();
+
         RENDERER_LOG_DEBUG("Flushing shading engines entities");
         for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
             it->second->flushEntity();
+
+        checkUserAborted();
 
         RENDERER_LOG_DEBUG("Flushing dag entities");
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
@@ -467,6 +519,8 @@ struct SessionImpl
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             it->second->createExporters(m_services);
 
+        checkUserAborted();
+
         // Create shading engine extra exporters.
         RENDERER_LOG_DEBUG("Creating shading engines extra exporters");
         for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
@@ -475,6 +529,8 @@ struct SessionImpl
 
     void createDagNodeExporter(const MDagPath& path)
     {
+        checkUserAborted();
+
         if(m_dagExporters.count(path.fullPathName()) != 0)
             return;
 
@@ -536,6 +592,7 @@ struct SessionImpl
     void finalRender()
     {
         assert(MGlobal::mayaState() == MGlobal::kInteractive);
+        assert(m_computation);
 
         IdleJobQueue::start();
 
@@ -547,7 +604,7 @@ struct SessionImpl
         const asr::ParamArray& params = cfg->get_parameters();
 
         m_tileCallbackFactory.reset(
-            new RenderViewTileCallbackFactory());
+            new RenderViewTileCallbackFactory(m_rendererController, m_computation->computation()));
         m_tileCallbackFactory->renderViewStart(*m_project->get_frame());
 
         m_renderer.reset(
@@ -632,6 +689,12 @@ struct SessionImpl
         return scene->assemblies().get_by_name("assembly");
     }
 
+    void checkUserAborted() const
+    {
+        if(m_computation)
+            m_computation->thowIfInterruptRequested();
+    }
+
     typedef std::map<MString, DagNodeExporterPtr, MStringCompareLess>           DagExporterMap;
     typedef std::map<MString, ShadingEngineExporterPtr, MStringCompareLess>     ShadingEngineExporterMap;
     typedef std::map<MString, ShadingNetworkExporterPtr, MStringCompareLess>    ShadingNetworkExporterMap;
@@ -639,6 +702,7 @@ struct SessionImpl
 
     AppleseedSession::SessionMode                           m_sessionMode;
     AppleseedSession::Options                               m_options;
+    ScopedComputation*                                      m_computation;
     ServicesImpl                                            m_services;
     MTime                                                   m_savedTime;
 
@@ -659,9 +723,9 @@ struct SessionImpl
 };
 
 // Globals.
-bfs::path gPluginPath;                          // Plugin path.
-MTime g_savedTime;                              // Saved time.
-boost::scoped_ptr<SessionImpl> gGlobalSession;  // Global session.
+bfs::path                       g_pluginPath;    // Plugin path.
+MTime                           g_savedTime;     // Saved time.
+boost::scoped_ptr<SessionImpl>  g_globalSession; // Global session.
 
 } // unnamed
 
@@ -670,13 +734,13 @@ namespace AppleseedSession
 
 MStatus initialize(const MString& pluginPath)
 {
-    gPluginPath = pluginPath.asChar();
+    g_pluginPath = pluginPath.asChar();
     return MS::kSuccess;
 }
 
 MStatus uninitialize()
 {
-    gGlobalSession.reset();
+    g_globalSession.reset();
     return MS::kSuccess;
 }
 
@@ -684,7 +748,7 @@ MStatus projectExport(
     const MString& fileName,
     const Options& options)
 {
-    assert(gGlobalSession.get() == 0);
+    assert(g_globalSession.get() == 0);
 
     ScopedEndSession session;
     ScopedComputation computation;
@@ -705,18 +769,23 @@ MStatus projectExport(
             if (computation.isInterruptRequested())
             {
                 RENDERER_LOG_INFO("Project export aborted.");
-                return MS::kFailure;
+                return MS::kSuccess;
             }
 
             MGlobal::viewFrame(frame);
             fname = asf::get_numbered_string(fname, frame);
             try
             {
-                gGlobalSession.reset(new SessionImpl(fname.c_str(), options));
-                gGlobalSession->exportProject();
-                gGlobalSession->writeProject();
+                g_globalSession.reset(new SessionImpl(fname.c_str(), options, &computation));
+                g_globalSession->exportProject();
+                g_globalSession->writeProject();
             }
-            catch(const AppleseedMayaException& e)
+            catch(const AbortRequested&)
+            {
+                RENDERER_LOG_INFO("Project export aborted.");
+                return MS::kSuccess;
+            }
+            catch(const AppleseedMayaException&)
             {
                 return MS::kFailure;
             }
@@ -724,9 +793,21 @@ MStatus projectExport(
     }
     else
     {
-        gGlobalSession.reset(new SessionImpl(fileName, options));
-        gGlobalSession->exportProject();
-        gGlobalSession->writeProject();
+        try
+        {
+            g_globalSession.reset(new SessionImpl(fileName, options, &computation));
+            g_globalSession->exportProject();
+            g_globalSession->writeProject();
+        }
+        catch(const AbortRequested&)
+        {
+            RENDERER_LOG_INFO("Project export aborted.");
+            return MS::kSuccess;
+        }
+        catch(const AppleseedMayaException&)
+        {
+            return MS::kFailure;
+        }
     }
 
     return MS::kSuccess;
@@ -734,21 +815,31 @@ MStatus projectExport(
 
 MStatus finalRender(const Options& options, const bool batch)
 {
-    assert(gGlobalSession.get() == 0);
+    assert(g_globalSession.get() == 0);
+
+    ScopedComputation computation;
 
     g_savedTime = MAnimControl::currentTime();
 
     try
     {
-        gGlobalSession.reset(new SessionImpl(FinalRenderSession, options));
-        gGlobalSession->exportProject();
+        g_globalSession.reset(new SessionImpl(FinalRenderSession, options, &computation));
+        g_globalSession->exportProject();
+
+        if(computation.isInterruptRequested())
+            return MS::kSuccess;
 
         if(batch)
-            gGlobalSession->batchRender();
+            g_globalSession->batchRender();
         else
-            gGlobalSession->finalRender();
+            g_globalSession->finalRender();
     }
-    catch(const AppleseedMayaException& e)
+    catch(const AbortRequested&)
+    {
+        RENDERER_LOG_INFO("Render aborted.");
+        return MS::kSuccess;
+    }
+    catch(const AppleseedMayaException&)
     {
         return MS::kFailure;
     }
@@ -758,9 +849,9 @@ MStatus finalRender(const Options& options, const bool batch)
 
 void endSession()
 {
-    if(gGlobalSession.get())
+    if(g_globalSession.get())
     {
-        gGlobalSession.reset();
+        g_globalSession.reset();
 
         if(g_savedTime != MAnimControl::currentTime())
             MGlobal::viewFrame(g_savedTime);
@@ -771,17 +862,17 @@ void endSession()
 
 SessionMode sessionMode()
 {
-    if(gGlobalSession.get() == 0)
+    if(g_globalSession.get() == 0)
         return NoSession;
 
-    return gGlobalSession->m_sessionMode;
+    return g_globalSession->m_sessionMode;
 }
 
 const Options& options()
 {
-    assert(gGlobalSession.get());
+    assert(g_globalSession.get());
 
-    return gGlobalSession->m_options;
+    return g_globalSession->m_options;
 }
 
 } // namespace AppleseedSession.
