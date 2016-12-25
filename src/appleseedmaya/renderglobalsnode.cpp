@@ -64,6 +64,7 @@ MObject RenderGlobalsNode::m_diagnosticShader;
 MObject RenderGlobalsNode::m_gi;
 MObject RenderGlobalsNode::m_caustics;
 MObject RenderGlobalsNode::m_bounces;
+MObject RenderGlobalsNode::m_maxRayIntensity;
 MObject RenderGlobalsNode::m_lightSamples;
 MObject RenderGlobalsNode::m_envSamples;
 
@@ -185,6 +186,17 @@ MStatus RenderGlobalsNode::initialize()
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: Failed to add render globals bounces attribute");
+
+    // Max Ray Intensity.
+    m_maxRayIntensity = numAttrFn.create("maxRayIntensity", "maxRayIntensity", MFnNumericData::kFloat, 0.0f, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals maxRayIntensity attribute");
+    numAttrFn.setMin(0.0f);
+    status = addAttribute(m_maxRayIntensity);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals maxRayIntensity attribute");
 
     // Light Samples.
     m_lightSamples = numAttrFn.create("lightSamples", "lightSamples", MFnNumericData::kFloat, 1.0f, &status);
@@ -312,6 +324,22 @@ void RenderGlobalsNode::applyGlobalsToProject(
         finalParams.insert_path("pt.enable_caustics", caustics);
         iprParams.insert_path("pt.enable_caustics", caustics);
     }
+
+    float maxRayIntensity;
+    if (AttributeUtils::get(MPlug(globals, m_maxRayIntensity), maxRayIntensity))
+    {
+        if (maxRayIntensity == 0.0f)
+        {
+            finalParams.remove_path("pt.max_ray_intensity");
+            iprParams.remove_path("pt.max_ray_intensity");
+        }
+        else
+        {
+            finalParams.insert_path("pt.max_ray_intensity", maxRayIntensity);
+            iprParams.insert_path("pt.max_ray_intensity", maxRayIntensity);
+        }
+    }
+
 
     float lightSamples;
     if (AttributeUtils::get(MPlug(globals, m_lightSamples), lightSamples))

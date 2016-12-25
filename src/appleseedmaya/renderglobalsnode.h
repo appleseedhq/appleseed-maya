@@ -65,6 +65,7 @@ class RenderGlobalsNode
     static MObject m_gi;
     static MObject m_caustics;
     static MObject m_bounces;
+    static MObject m_maxRayIntensity;
     static MObject m_lightSamples;
     static MObject m_envSamples;
 

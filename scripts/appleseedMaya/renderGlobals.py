@@ -111,6 +111,11 @@ class AppleseedRenderGlobalsMainTab(object):
                         self.__addControl(
                             ui=pm.intFieldGrp(label="GI Bounces", numberOfFields = 1),
                             attrName="bounces")
+
+                        self.__addControl(
+                            ui=pm.floatFieldGrp(label="Max Ray Intensity", numberOfFields = 1),
+                            attrName="maxRayIntensity")
+
                         self.__addControl(
                             ui=pm.floatFieldGrp(label="Light Samples", numberOfFields = 1),
                             attrName="lightSamples")
