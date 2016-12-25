@@ -52,6 +52,6 @@ def appleseedIconsPath():
     return __g_appleseedIconsLocation
 
 def createLocator(locatorType):
-    xform = mc.createNode("transform", name=locatorType + "1")
-    shapeName = xform.replace(locatorType, locatorType + "Shape")
-    mc.createNode(locatorType, name=shapeName, parent=xform)
+    xformName = mc.createNode("transform", name=locatorType + "1")
+    shapeName = xformName.replace(locatorType, locatorType + "Shape")
+    return (xformName, mc.createNode(locatorType, name=shapeName, parent=xformName))
