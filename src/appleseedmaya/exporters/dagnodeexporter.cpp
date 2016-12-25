@@ -133,7 +133,33 @@ asf::Matrix4d DagNodeExporter::convert(const MMatrix& m) const
 
 void DagNodeExporter::visibilityAttributesToParams(asr::ParamArray& params)
 {
-    // TODO: implement this...
+    asf::Dictionary visFlags;
+
+    bool flag = true;
+    if(AttributeUtils::get(node(), "as_visibility_camera", flag))
+        visFlags.insert("camera", flag);
+
+    flag = true;
+    if (AttributeUtils::get(node(), "as_visibility_light", flag))
+        visFlags.insert("light", flag);
+
+    flag = true;
+    if (AttributeUtils::get(node(), "as_visibility_shadow", flag))
+        visFlags.insert("shadow", flag);
+
+    flag = true;
+    if (AttributeUtils::get(node(), "as_visibility_diffuse", flag))
+        visFlags.insert("diffuse", flag);
+
+    flag = true;
+    if (AttributeUtils::get(node(), "as_visibility_specular", flag))
+        visFlags.insert("specular", flag);
+
+    flag = true;
+    if (AttributeUtils::get(node(), "as_visibility_glossy", flag))
+        visFlags.insert("glossy", flag);
+
+    params.insert("visibility", visFlags);
 }
 
 bool DagNodeExporter::isObjectRenderable(const MDagPath& path)

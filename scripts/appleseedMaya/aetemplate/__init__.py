@@ -35,7 +35,7 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
     def __init__(self, nodeName):
         super(AEappleseedNodeTemplate, self).__init__(nodeName)
         self.buildBody(nodeName)
-        logger.debug("Built custom appleseed AETemplate.")
+        logger.debug('Built custom appleseed AETemplate.')
 
     def addControl(self, control, label=None, **kwargs):
         pm.ui.AETemplate.addControl(self, control, label=label, **kwargs)
@@ -43,12 +43,36 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
     def beginLayout(self, name, collapse=True):
         pm.ui.AETemplate.beginLayout(self, name, collapse=collapse)
 
+    def __buildVisibilitySection(self):
+        self.beginLayout('Visibility' ,collapse=1)
+        self.addControl('as_visibility_camera'  , label='Camera')
+        self.addControl('as_visibility_light'   , label='Light')
+        self.addControl('as_visibility_shadow'  , label='Shadow')
+        self.addControl('as_visibility_diffuse' , label='Diffuse')
+        self.addControl('as_visibility_specular', label='Specular')
+        self.addControl('as_visibility_glossy'  , label='Glossy')
+        self.endLayout()
+
     def buildBody(self, nodeName):
         self.thisNode = pm.PyNode(nodeName)
 
-        if self.thisNode.type() == "mesh":
-            self.beginLayout("Appleseed" ,collapse=1)
-            self.addControl("as_medium_priority", label="Medium Priority")
+        if self.thisNode.type() == 'areaLight':
+            self.beginLayout('Appleseed' ,collapse=1)
+            self.__buildVisibilitySection()
+            self.endLayout()
+
+        if self.thisNode.type() == 'camera':
+            self.beginLayout('Appleseed' ,collapse=1)
+            self.endLayout()
+
+        if self.thisNode.type() == 'mesh':
+            self.beginLayout('Appleseed' ,collapse=1)
+            self.__buildVisibilitySection()
+            self.addControl('as_medium_priority', label='Medium Priority')
+            self.endLayout()
+
+        if self.thisNode.type() == 'shadingEngine':
+            self.beginLayout('Appleseed' ,collapse=1)
             self.endLayout()
 
 def appleseedAETemplateCallback(nodeName):

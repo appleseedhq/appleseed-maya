@@ -48,6 +48,7 @@
 #include "foundation/utility/string.h"
 
 // appleseed.maya headers.
+#include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/logger.h"
 
@@ -324,7 +325,9 @@ void MeshExporter::flushEntity()
 
 void MeshExporter::meshAttributesToParams(renderer::ParamArray& params)
 {
-    // TODO: implement this...
+    int mediumPriority = 0;
+    if (AttributeUtils::get(node(), "as_medium_priority", mediumPriority))
+        params.insert("medium_priority", mediumPriority);
 }
 
 void MeshExporter::createMaterialSlots()

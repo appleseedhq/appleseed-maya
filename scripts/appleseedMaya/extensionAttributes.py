@@ -32,18 +32,66 @@ import maya.cmds as mc
 # appleseedMaya imports.
 from logger import logger
 
+def __addVisibilityFlagsAttributes(nodeType):
+    mc.addExtension(
+        nodeType=nodeType,
+        longName='as_visibility_camera',
+        attributeType='bool',
+        defaultValue=True,
+        category='appleseedMaya')
+    mc.addExtension(
+        nodeType=nodeType,
+        longName='as_visibility_light',
+        attributeType='bool',
+        defaultValue=True,
+        category='appleseedMaya')
+    mc.addExtension(
+        nodeType=nodeType,
+        longName='as_visibility_shadow',
+        attributeType='bool',
+        defaultValue=True,
+        category='appleseedMaya')
+    mc.addExtension(
+        nodeType=nodeType,
+        longName='as_visibility_diffuse',
+        attributeType='bool',
+        defaultValue=True,
+        category='appleseedMaya')
+    mc.addExtension(
+        nodeType=nodeType,
+        longName='as_visibility_specular',
+        attributeType='bool',
+        defaultValue=True,
+        category='appleseedMaya')
+    mc.addExtension(
+        nodeType=nodeType,
+        longName='as_visibility_glossy',
+        attributeType='bool',
+        defaultValue=True,
+        category='appleseedMaya')
+
+def __addShapeAttributes(nodeType):
+    pass
+
+
 def addExtensionAttributes():
     # todo: implement this.
 
     # Camera extension attributes.
     # ...
+    logger.debug('Added camera extension attributes.')
 
     # Light extension attributes.
     # ...
+    logger.debug('Added light extension attributes.')
 
-    # ...
+    # Area light extension attributes.
+    __addVisibilityFlagsAttributes('areaLight')
+    logger.debug('Added areaLight extension attributes.')
 
     # Mesh extension attributes.
+    __addVisibilityFlagsAttributes('mesh')
+    __addShapeAttributes('mesh')
     mc.addExtension(
         nodeType='mesh',
         longName='as_medium_priority',
@@ -51,6 +99,7 @@ def addExtensionAttributes():
         defaultValue=0,
         minValue=0,
         category='appleseedMaya')
-    logger.debug("Added mesh extension attributes.")
+    logger.debug('Added mesh extension attributes.')
 
-    # ...
+    # Shading engine extension attributes
+    logger.debug('Added shadingEngine extension attributes.')

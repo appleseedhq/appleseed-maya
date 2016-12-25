@@ -114,14 +114,15 @@ void AreaLightExporter::createEntity(const AppleseedSession::Options& options)
 
     // Rotate x -90 degrees (or is it 90?) here.
     m = m * asf::Matrix4d::make_rotation_x(asf::deg_to_rad(-90.0));
-
     asf::Transformd xform(m, asf::inverse(m));
 
     const MString objectInstanceName = appleseedName() + MString("_instance");
+    params.clear();
+    visibilityAttributesToParams(params);
     m_objectInstance.reset(
         asr::ObjectInstanceFactory::create(
             objectInstanceName.asChar(),
-            asr::ParamArray(),
+            params,
             objectName.asChar(),
             xform,
             materialMappings,
