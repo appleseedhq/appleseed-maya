@@ -35,7 +35,7 @@ import maya.mel as mel
 
 # appleseedMaya imports.
 from logger import logger
-from util import appleseedIconsPath
+from util import appleseedIconsPath, createLocator
 
 
 def showAbout():
@@ -57,6 +57,12 @@ def showAbout():
 
 __g_appleseedMenu = None
 
+def createSkyDomeLight():
+    createLocator('appleseedSkyDomeLight')
+
+def createPhysicalLight():
+    createLocator('appleseedPhysicalSkyLight')
+
 def createMenu():
     logger.debug("creating appleseed menu.")
 
@@ -66,7 +72,19 @@ def createMenu():
     gMainWindow = mel.eval('$temp1=$gMainWindow')
     __g_appleseedMenu = mc.menu('appleseedMenu', parent=gMainWindow, label='Appleseed', tearOff=True)
 
-    mc.menuItem(label='About', parent='appleseedMenu', command='import appleseedMaya.menu\nappleseedMaya.menu.showAbout()')
+    mc.menuItem(
+        label='Create Sky Dome Light',
+        parent='appleseedMenu',
+        command='import appleseedMaya.menu\nappleseedMaya.menu.createSkyDomeLight()')
+    mc.menuItem(
+        label='Create Physical Sky Light',
+        parent='appleseedMenu',
+        command='import appleseedMaya.menu\nappleseedMaya.menu.createPhysicalLight()')
+    mc.menuItem(divider=True)
+    mc.menuItem(
+        label='About',
+        parent='appleseedMenu',
+        command='import appleseedMaya.menu\nappleseedMaya.menu.showAbout()')
 
 def deleteMenu():
     global __g_appleseedMenu

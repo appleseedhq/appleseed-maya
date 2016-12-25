@@ -34,6 +34,7 @@
 #include <maya/MDrawRegistry.h>
 #include <maya/MHWGeometryUtilities.h>
 #include <maya/MObject.h>
+#include <maya/MPointArray.h>
 #include <maya/MPxDrawOverride.h>
 #include <maya/MPxLocatorNode.h>
 #include <maya/MString.h>
@@ -59,7 +60,9 @@ class EnvLightNode
 
   protected:
 
-    static MStatus initialize();
+    static void initialize();
+
+    float displaySize() const;
 
     static MObject m_message;
     static MObject m_displaySize;

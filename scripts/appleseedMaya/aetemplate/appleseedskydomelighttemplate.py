@@ -48,5 +48,6 @@ class AEappleseedSkyDomeLightTemplate(pm.ui.AETemplate):
         pm.ui.AETemplate.beginLayout(self, name, collapse=collapse)
 
     def buildBody(self, nodeName):
-        # todo: implement this...
-        pass
+        self.beginLayout('Display' ,collapse=1)
+        self.addControl('size', label='Size')
+        self.endLayout()

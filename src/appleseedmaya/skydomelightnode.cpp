@@ -35,6 +35,7 @@
 #include <maya/MFnUnitAttribute.h>
 
 // appleseed.maya headers.
+#include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/typeids.h"
 
@@ -50,6 +51,8 @@ void* SkyDomeLightNode::creator()
 
 MStatus SkyDomeLightNode::initialize()
 {
+    EnvLightNode::initialize();
+
     MFnNumericAttribute numAttrFn;
     MFnMessageAttribute msgAttrFn;
 
@@ -107,7 +110,12 @@ MUserData *SkyDomeLightDrawOverride::prepareForDraw(
     SkyDomeLightData *data =dynamic_cast<SkyDomeLightData*>(oldData);
 
     if (!data)
+    {
+        float size = 1.0f;
+        AttributeUtils::get(objPath.node(), "size", size);
+
         data = new SkyDomeLightData();
+    }
 
     return data;
 }

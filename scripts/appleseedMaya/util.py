@@ -29,6 +29,9 @@
 # Standard imports.
 import os
 
+# Maya imports.
+import maya.cmds as mc
+
 __g_appleseedIconsLocationInit = False
 __g_appleseedIconsLocation = None
 
@@ -47,3 +50,8 @@ def appleseedIconsPath():
                 __g_appleseedIconsLocation = iconPath
 
     return __g_appleseedIconsLocation
+
+def createLocator(locatorType):
+    xform = mc.createNode("transform", name=locatorType + "1")
+    shapeName = xform.replace(locatorType, locatorType + "Shape")
+    mc.createNode(locatorType, name=shapeName, parent=xform)
