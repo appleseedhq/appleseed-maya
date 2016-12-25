@@ -57,7 +57,8 @@ ShadingEngineExporter::~ShadingEngineExporter()
 {
     if (m_sessionMode == AppleseedSession::ProgressiveRenderSession)
     {
-        // todo: cleanup here.
+        m_mainAssembly.materials().remove(m_material.get());
+        m_mainAssembly.surface_shaders().remove(m_surfaceShader.get());
     }
 }
 

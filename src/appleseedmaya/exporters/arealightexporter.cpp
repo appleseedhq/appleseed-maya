@@ -71,7 +71,9 @@ AreaLightExporter::~AreaLightExporter()
 {
     if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
     {
-        // todo: cleanup here.
+        mainAssembly().materials().remove(m_material.get());
+        mainAssembly().objects().remove(m_lightMesh.get());
+        mainAssembly().object_instances().remove(m_objectInstance.get());
     }
 }
 

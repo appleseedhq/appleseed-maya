@@ -86,7 +86,6 @@ class MeshExporter
 
     AppleseedEntityPtr<renderer::MeshObject>      m_mesh;
     renderer::ParamArray                          m_meshParams;
-    AppleseedEntityPtr<renderer::ObjectInstance>  m_objectInstace;
     bool                                          m_exportUVs;
     bool                                          m_exportNormals;
     std::vector<std::string>                      m_fileNames;

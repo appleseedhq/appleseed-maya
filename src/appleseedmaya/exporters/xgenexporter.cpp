@@ -69,7 +69,8 @@ XGenExporter::~XGenExporter()
 {
     if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
     {
-        // todo: cleanup here.
+        mainAssembly().assemblies().remove(m_assembly.get());
+        mainAssembly().assembly_instances().remove(m_assemblyInstance.get());
     }
 }
 

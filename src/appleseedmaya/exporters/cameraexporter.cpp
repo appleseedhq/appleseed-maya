@@ -71,9 +71,7 @@ CameraExporter::CameraExporter(
 CameraExporter::~CameraExporter()
 {
     if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
-    {
-        // todo: cleanup here.
-    }
+        scene().cameras().remove(m_camera.get());
 }
 
 void CameraExporter::createEntity(const AppleseedSession::Options& options)

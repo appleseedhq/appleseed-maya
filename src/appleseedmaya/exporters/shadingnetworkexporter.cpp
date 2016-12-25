@@ -66,9 +66,7 @@ ShadingNetworkExporter::ShadingNetworkExporter(
 ShadingNetworkExporter::~ShadingNetworkExporter()
 {
     if (m_sessionMode == AppleseedSession::ProgressiveRenderSession)
-    {
-        // todo: cleanup here.
-    }
+        m_mainAssembly.shader_groups().remove(m_shaderGroup.get());
 }
 
 MString ShadingNetworkExporter::shaderGroupName() const

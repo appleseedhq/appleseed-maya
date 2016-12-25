@@ -75,7 +75,8 @@ LightExporter::~LightExporter()
 {
     if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
     {
-        // todo: cleanup here.
+        mainAssembly().colors().remove(m_lightColor.get());
+        mainAssembly().lights().remove(m_light.get());
     }
 }
 

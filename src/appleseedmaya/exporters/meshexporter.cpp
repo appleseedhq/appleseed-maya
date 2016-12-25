@@ -155,7 +155,8 @@ MeshExporter::~MeshExporter()
 {
     if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
     {
-        // todo: cleanup here.
+        if (m_objectAssembly.get() == 0)
+            mainAssembly().objects().remove(m_mesh.get());
     }
 }
 

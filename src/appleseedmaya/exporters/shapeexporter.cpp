@@ -48,7 +48,13 @@ ShapeExporter::~ShapeExporter()
 {
     if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
     {
-        // todo: cleanup here.
+        if (m_objectAssembly.get() == 0)
+        {
+            mainAssembly().assemblies().remove(m_objectAssembly.get());
+            mainAssembly().assembly_instances().remove(m_objectAssemblyInstance.get());
+        }
+        else
+            mainAssembly().object_instances().remove(m_objectInstance.get());
     }
 }
 
