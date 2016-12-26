@@ -60,6 +60,8 @@ set (appleseed_maya_sources
     exporters/lightexporter.h
     exporters/meshexporter.cpp
     exporters/meshexporter.h
+    exporters/place3dtextureexporter.cpp
+    exporters/place3dtextureexporter.h
     exporters/rampexporter.cpp
     exporters/rampexporter.h
     exporters/shadingengineexporter.cpp
