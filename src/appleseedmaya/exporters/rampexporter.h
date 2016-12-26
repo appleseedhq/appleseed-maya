@@ -44,9 +44,9 @@ class RampExporter
         renderer::ShaderGroup&  shaderGroup);
 
     virtual void exportParameterValue(
-        const MPlug&              plug,
-        const OSLParamInfo&       paramInfo,
-        renderer::ParamArray&     shaderParams);
+        const MPlug&            plug,
+        const OSLParamInfo&     paramInfo,
+        renderer::ParamArray&   shaderParams) const;
 
   private:
     RampExporter(

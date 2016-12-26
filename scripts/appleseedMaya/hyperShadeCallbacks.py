@@ -86,7 +86,7 @@ def createRenderNode(nodeType=None, postCommand=None):
     return ""
 
 def createRenderNodeCallback(postCommand, nodeType):
-    logger.debug("createRenderNodeCallback called!")
+    #logger.debug("createRenderNodeCallback called!")
 
     for c in pm.getClassification(nodeType):
         if 'appleseed' in c.lower():

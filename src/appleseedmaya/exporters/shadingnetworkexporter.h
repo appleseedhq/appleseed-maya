@@ -33,7 +33,6 @@
 #include "shadingnetworkexporterfwd.h"
 
 // Standard headers.
-#include <set>
 #include <vector>
 
 // Maya headers.
@@ -81,6 +80,8 @@ class ShadingNetworkExporter
     void exportConnections(ShadingNodeExporter& dstNodeExporter);
     void createShaderNodeExporters(const MObject& node);
 
+    ShadingNodeExporter *findExporterForNode(const MObject& node);
+
     ShadingNetworkContext                                           m_context;
     AppleseedSession::SessionMode                                   m_sessionMode;
     MObject                                                         m_object;
@@ -88,7 +89,6 @@ class ShadingNetworkExporter
     renderer::Assembly&                                             m_mainAssembly;
     AppleseedEntityPtr<renderer::ShaderGroup>                       m_shaderGroup;
     std::vector<ShadingNodeExporterPtr>                             m_nodeExporters;
-    std::set<MString, MStringCompareLess>                           m_nodesCreated;
     std::map<MString, ShadingNodeExporter*, MStringCompareLess>     m_namesToExporters;
 };
 

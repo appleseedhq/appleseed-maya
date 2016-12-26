@@ -67,7 +67,7 @@ Place3dTextureExporter::Place3dTextureExporter(
 
 void Place3dTextureExporter::exportShaderParameters(
     const OSLShaderInfo&     shaderInfo,
-    renderer::ParamArray&    shaderParams)
+    renderer::ParamArray&    shaderParams) const
 {
     // Save the place3dTexture matrix.
     MStatus status;
@@ -85,4 +85,35 @@ void Place3dTextureExporter::exportShaderParameters(
     ShadingNodeExporter::exportShaderParameters(
         shaderInfo,
         shaderParams);
+}
+
+bool Place3dTextureExporter::layerAndParamNameFromPlug(
+    const MPlug&             plug,
+    MString&                 layerName,
+    MString&                 paramName) const
+{
+    if (plug.isElement())
+    {
+        MStatus status;
+        MPlug parentPlug = plug.array(&status);
+        const MString parentPlugName =
+            parentPlug.partialName(
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,   // use long names.
+                &status);
+
+        if (parentPlugName == "worldInverseMatrix")
+        {
+            MFnDependencyNode depNodeFn(node());
+            layerName = depNodeFn.name();
+            paramName = "out_worldInverseMatrix";
+            return true;
+        }
+    }
+
+    return ShadingNodeExporter::layerAndParamNameFromPlug(plug, layerName, paramName);
 }

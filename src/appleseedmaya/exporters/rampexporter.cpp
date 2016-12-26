@@ -90,7 +90,7 @@ RampExporter::RampExporter(
 void RampExporter::exportParameterValue(
     const MPlug&        plug,
     const OSLParamInfo& paramInfo,
-    asr::ParamArray&    shaderParams)
+    asr::ParamArray&    shaderParams) const
 {
     MFnDependencyNode depNodeFn(node());
     MStatus status;

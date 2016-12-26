@@ -230,7 +230,7 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
             {
                 for(size_t i = 0, e = plug.numElements(); i < e; ++i)
                 {
-                    MPlug elementPlug = plug.elementByLogicalIndex(i, &status);
+                    MPlug elementPlug = plug.elementByPhysicalIndex(i, &status);
                     if (status)
                     {
                         MPlug srcPlug;
@@ -274,58 +274,32 @@ void ShadingNetworkExporter::exportConnections(ShadingNodeExporter& dstNodeExpor
             continue;
         }
 
+        MPlugArray inputConnections;
+
         if (plug.isConnected())
         {
-            MPlugArray inputConnections;
             plug.connectedTo(inputConnections, true, false, &status);
+            MPlug srcPlug = inputConnections[0];
+            ShadingNodeExporter *srcNodeExporter = findExporterForNode(srcPlug.node());
 
-            if (status)
+            if (!srcNodeExporter)
             {
-                MPlug srcPlug = inputConnections[0];
-                MObject srcNode = srcPlug.node();
-                MFnDependencyNode srcDepNodeFn(srcNode);
-                const OSLShaderInfo *otherShaderInfo = ShadingNodeRegistry::getShaderInfo(srcDepNodeFn.typeName());
-
-                if (otherShaderInfo)
-                {
-                    if (srcPlug.isChild())
-                    {
-                        RENDERER_LOG_WARNING(
-                            "Skipping compound child connection to attribute %s of shading node %s",
-                            srcPlug.name().asChar(),
-                            srcDepNodeFn.typeName().asChar());
-                        continue;
-                    }
-
-                    if (srcPlug.isElement())
-                    {
-                        RENDERER_LOG_WARNING(
-                            "Skipping array element connection to attribute %s of shading node %s",
-                            srcPlug.name().asChar(),
-                            srcDepNodeFn.typeName().asChar());
-                        continue;
-                    }
-
-                    const OSLParamInfo *srcParamInfo = otherShaderInfo->findParam(srcPlug);
-                    if (srcParamInfo)
-                    {
-                        m_shaderGroup->add_connection(
-                            srcDepNodeFn.name().asChar(),
-                            srcParamInfo->paramName.asChar(),
-                            depNodeFn.name().asChar(),
-                            paramInfo.paramName.asChar());
-                    }
-                }
-                else
-                {
-                    RENDERER_LOG_WARNING(
-                        "Skipping connections to unsupported shading node %s",
-                        srcDepNodeFn.typeName().asChar());
-                }
+                MFnDependencyNode srcDepNodeFn(srcPlug.node());
+                RENDERER_LOG_WARNING(
+                    "Skipping connections to unsupported shading node %s",
+                    srcDepNodeFn.typeName().asChar());
+                continue;
             }
-            else
+
+            MString srcLayerName;
+            MString srcParam;
+            if (srcNodeExporter->layerAndParamNameFromPlug(srcPlug, srcLayerName, srcParam))
             {
-                // todo: warning here...
+                m_shaderGroup->add_connection(
+                    srcLayerName.asChar(),
+                    srcParam.asChar(),
+                    depNodeFn.name().asChar(),
+                    paramInfo.paramName.asChar());
             }
         }
 
@@ -347,4 +321,16 @@ void ShadingNetworkExporter::exportConnections(ShadingNodeExporter& dstNodeExpor
                 depNodeFn.typeName().asChar());
         }
     }
+}
+
+ShadingNodeExporter *ShadingNetworkExporter::findExporterForNode(const MObject& node)
+{
+    MFnDependencyNode depNodeFn(node);
+    std::map<MString, ShadingNodeExporter*, MStringCompareLess>::iterator it;
+    it = m_namesToExporters.find(depNodeFn.name());
+
+    if (it != m_namesToExporters.end())
+        return it->second;
+
+    return 0;
 }

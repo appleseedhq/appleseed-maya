@@ -59,21 +59,21 @@ void ShadingNodeExporter::registerExporters()
 }
 
 ShadingNodeExporter *ShadingNodeExporter::create(
-    const MObject&      object,
-    asr::ShaderGroup&   shaderGroup)
+    const MObject&          object,
+    asr::ShaderGroup&       shaderGroup)
 {
     return new ShadingNodeExporter(object, shaderGroup);
 }
 
 ShadingNodeExporter::ShadingNodeExporter(
-    const MObject&      object,
-    asr::ShaderGroup&   shaderGroup)
+    const MObject&          object,
+    asr::ShaderGroup&       shaderGroup)
   : m_object(object)
   , m_shaderGroup(shaderGroup)
 {
 }
 
-MObject ShadingNodeExporter::node()
+MObject ShadingNodeExporter::node() const
 {
     return m_object;
 }
@@ -91,6 +91,15 @@ void ShadingNodeExporter::createShader()
 {
     const OSLShaderInfo& shaderInfo = getShaderInfo();
 
+    // Create input adaptor shaders here.
+    for (int i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
+    {
+        const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
+
+        if (paramInfo.isOutput)
+            continue;
+    }
+
     asr::ParamArray shaderParams;
     exportShaderParameters(shaderInfo, shaderParams);
 
@@ -100,11 +109,20 @@ void ShadingNodeExporter::createShader()
         shaderInfo.shaderName.asChar(),
         depNodeFn.name().asChar(),
         shaderParams);
+
+    // Create output adaptor shaders here.
+    for (int i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
+    {
+        const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
+
+        if (!paramInfo.isOutput)
+            continue;
+    }
 }
 
 void ShadingNodeExporter::exportShaderParameters(
     const OSLShaderInfo&    shaderInfo,
-    asr::ParamArray&        shaderParams)
+    asr::ParamArray&        shaderParams) const
 {
     MStatus status;
     MFnDependencyNode depNodeFn(m_object);
@@ -127,9 +145,9 @@ void ShadingNodeExporter::exportShaderParameters(
 }
 
 void ShadingNodeExporter::exportParameterValue(
-    const MPlug&              plug,
-    const OSLParamInfo&       paramInfo,
-    renderer::ParamArray&     shaderParams)
+    const MPlug&            plug,
+    const OSLParamInfo&     paramInfo,
+    renderer::ParamArray&   shaderParams) const
 {
     // Skip params with shader global defaults.
     if (!paramInfo.validDefault)
@@ -156,9 +174,9 @@ void ShadingNodeExporter::exportParameterValue(
 }
 
 void ShadingNodeExporter::exportValue(
-    const MPlug&        plug,
-    const OSLParamInfo& paramInfo,
-    asr::ParamArray&    shaderParams)
+    const MPlug&            plug,
+    const OSLParamInfo&     paramInfo,
+    asr::ParamArray&        shaderParams) const
 {
     RENDERER_LOG_DEBUG(
         "Exporting shading node attr %s.",
@@ -249,9 +267,9 @@ void ShadingNodeExporter::exportValue(
 }
 
 void ShadingNodeExporter::exportArrayValue(
-    const MPlug&        plug,
-    const OSLParamInfo& paramInfo,
-    asr::ParamArray&    shaderParams)
+    const MPlug&            plug,
+    const OSLParamInfo&     paramInfo,
+    asr::ParamArray&        shaderParams) const
 {
     RENDERER_LOG_DEBUG(
         "Exporting shading node attr %s.",
@@ -326,3 +344,37 @@ void ShadingNodeExporter::exportArrayValue(
     }
 }
 
+bool ShadingNodeExporter::layerAndParamNameFromPlug(
+    const MPlug&             plug,
+    MString&                 layerName,
+    MString&                 paramName) const
+{
+    MFnDependencyNode depNodeFn(node());
+
+    if (plug.isChild())
+    {
+        RENDERER_LOG_WARNING(
+            "Skipping compound child connection to attribute %s of shading node %s",
+            plug.name().asChar(),
+            depNodeFn.typeName().asChar());
+        return false;
+    }
+
+    if (plug.isElement())
+    {
+        RENDERER_LOG_WARNING(
+            "Skipping array element connection to attribute %s of shading node %s",
+            plug.name().asChar(),
+            depNodeFn.typeName().asChar());
+        return false;
+    }
+
+    if (const OSLParamInfo *paramInfo = getShaderInfo().findParam(plug))
+    {
+        layerName = depNodeFn.name();
+        paramName = paramInfo->paramName;
+        return true;
+    }
+
+    return false;
+}
