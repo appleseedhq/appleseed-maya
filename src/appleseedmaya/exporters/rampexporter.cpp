@@ -80,6 +80,13 @@ ShadingNodeExporter *RampExporter::create(
     return new RampExporter(object, shaderGroup);
 }
 
+RampExporter::RampExporter(
+    const MObject&      object,
+    asr::ShaderGroup&   shaderGroup)
+  : ShadingNodeExporter(object, shaderGroup)
+{
+}
+
 void RampExporter::exportParameterValue(
     const MPlug&        plug,
     const OSLParamInfo& paramInfo,
@@ -152,11 +159,4 @@ void RampExporter::exportParameterValue(
             paramInfo,
             shaderParams);
     }
-}
-
-RampExporter::RampExporter(
-    const MObject&      object,
-    asr::ShaderGroup&   shaderGroup)
-  : ShadingNodeExporter(object, shaderGroup)
-{
 }
