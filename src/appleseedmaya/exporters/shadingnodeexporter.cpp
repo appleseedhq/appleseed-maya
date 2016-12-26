@@ -34,6 +34,7 @@
 
 // Maya headers.
 #include <maya/MFnDependencyNode.h>
+#include <maya/MFnEnumAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 
 // appleseed.maya headers.
@@ -89,21 +90,36 @@ const OSLShaderInfo&ShadingNodeExporter::getShaderInfo() const
 
 void ShadingNodeExporter::createShader()
 {
+    MStatus status;
+    MFnDependencyNode depNodeFn(m_object);
+
     const OSLShaderInfo& shaderInfo = getShaderInfo();
 
-    // Create input adaptor shaders here.
+    // Create input adaptor shaders.
     for (int i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
 
         if (paramInfo.isOutput)
             continue;
+
+        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
+        if (!status)
+            continue;
+
+        if (plug.isCompound() && plug.numConnectedChildren() != 0)
+        {
+            // createAdaptorShader();
+        }
+        else if (plug.isArray() && plug.numConnectedElements() != 0)
+        {
+            // createAdaptorShader();
+        }
     }
 
     asr::ParamArray shaderParams;
     exportShaderParameters(shaderInfo, shaderParams);
 
-    MFnDependencyNode depNodeFn(m_object);
     m_shaderGroup.add_shader(
         shaderInfo.shaderType.asChar(),
         shaderInfo.shaderName.asChar(),
@@ -117,6 +133,19 @@ void ShadingNodeExporter::createShader()
 
         if (!paramInfo.isOutput)
             continue;
+
+        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
+        if (!status)
+            continue;
+
+        if (plug.isCompound() && plug.numConnectedChildren() != 0)
+        {
+            // createAdaptorShader();
+        }
+        else if (plug.isArray() && plug.numConnectedElements() != 0)
+        {
+            // createAdaptorShader();
+        }
     }
 }
 
@@ -242,10 +271,20 @@ void ShadingNodeExporter::exportValue(
     }
     else if (strcmp(paramInfo.paramType.asChar(), "string") == 0)
     {
-        // todo: handle enum attributes here for our own nodes...
-        MString value;
-        if (AttributeUtils::get(plug, value))
+        if (strcmp(paramInfo.widget.asChar(), "popup") == 0)
+        {
+            MObject attr = plug.attribute();
+            MFnEnumAttribute fnEnumAttr(attr);
+            int intValue = plug.asInt();
+            MString value = fnEnumAttr.fieldName(intValue);
             ss << "string " << value;
+        }
+        else
+        {
+            MString value;
+            if (AttributeUtils::get(plug, value))
+                ss << "string " << value;
+        }
     }
     else if (strcmp(paramInfo.paramType.asChar(), "vector") == 0)
     {
@@ -377,4 +416,14 @@ bool ShadingNodeExporter::layerAndParamNameFromPlug(
     }
 
     return false;
+}
+
+void ShadingNodeExporter::exportInputAdaptorConnections()
+{
+    // todo: implement...
+}
+
+void ShadingNodeExporter::exportOutputAdaptorConnections()
+{
+    // todo: implement...
 }

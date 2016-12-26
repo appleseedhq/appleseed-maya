@@ -58,6 +58,7 @@ class ShadingNetworkExporter
 
     ~ShadingNetworkExporter();
 
+    // Return the name of the appleseed shader group created by this exporter.
     MString shaderGroupName() const;
 
     // Create appleseed entities.

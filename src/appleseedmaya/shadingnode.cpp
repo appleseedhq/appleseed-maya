@@ -31,10 +31,14 @@
 
 // Maya headers.
 #include <maya/MFnDependencyNode.h>
+#include <maya/MFnEnumAttribute.h>
+#include <maya/MFnMatrixAttribute.h>
 #include <maya/MFnNumericAttribute.h>
+#include <maya/MFnTypedAttribute.h>
 
 // appleseed.maya headers.
-#include <appleseedmaya/shadingnoderegistry.h>
+#include "appleseedmaya/logger.h"
+#include "appleseedmaya/shadingnoderegistry.h"
 
 void *ShadingNode::creator()
 {
@@ -51,8 +55,57 @@ ShadingNode::ShadingNode()
 {
 }
 
+namespace
+{
+
+void makeInput(MFnAttribute& attr)
+{
+    attr.setKeyable(true);
+    attr.setStorable(true);
+    attr.setReadable(true);
+    attr.setWritable(true);
+}
+
+void makeOutput(MFnAttribute& attr)
+{
+    attr.setKeyable(false);
+    attr.setStorable(false);
+    attr.setReadable(true);
+    attr.setWritable(false);
+}
+
+MObject createPointAttribute(
+    MFnNumericAttribute&    numAttrFn,
+    const OSLParamInfo&     p)
+{
+    MObject attr = numAttrFn.createPoint(
+        p.mayaAttributeName,
+        p.mayaAttributeShortName);
+
+    if (!p.isOutput && p.validDefault)
+    {
+        // todo: set default here...
+    }
+
+    return attr;
+}
+
+void initializeAttribute(MFnAttribute& attr, const OSLParamInfo& p)
+{
+    if (p.label.length() != 0)
+        attr.setNiceNameOverride(p.label);
+
+    if (p.isOutput)
+        makeOutput(attr);
+    else
+        makeInput(attr);
+}
+
+}
+
 void ShadingNode::postConstructor()
 {
+    MPxNode::postConstructor();
     setMPSafe(true);
 
     m_shaderInfo = ShadingNodeRegistry::getShaderInfo(typeName());
@@ -61,121 +114,147 @@ void ShadingNode::postConstructor()
     MObject thisNode = thisMObject();
     MFnDependencyNode depNodeFn(thisNode);
 
-    // Create the output attributes.
-    MFnNumericAttribute numAttrFn;
-
-    MObject outColor = numAttrFn.createColor("outColor", "oc");
-    numAttrFn.setKeyable(false);
-    numAttrFn.setStorable(false);
-    numAttrFn.setReadable(true);
-    numAttrFn.setWritable(false);
-    depNodeFn.addAttribute(outColor, MFnDependencyNode::kLocalDynamicAttr);
-
     for(size_t i = 0, e = m_shaderInfo->paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& p = m_shaderInfo->paramInfo[i];
 
         MObject attr;
 
-        if (p.paramType == "color")
+        if (strcmp(p.paramType.asChar(), "color") == 0)
         {
-            //	CHECK_MSTATUS( nAttr.setUsedAsColor( true ) );
-        }
-        else if (p.paramType == "float")
-        {
-        }
-        else if (p.paramType == "float[2]")
-        {
-        }
-        else if (p.paramType == "int")
-        {
-        }
-        else if (p.paramType == "normal")
-        {
-        }
-        else if (p.paramType == "point")
-        {
-        }
-        else if (p.paramType == "pointer")
-        {
-            // closures.
-        }
-        else if (p.paramType == "vector")
-        {
-        }
-        else if (p.paramType == "string")
-        {
-        }
+            MFnNumericAttribute numAttrFn;
+            attr = numAttrFn.createColor(
+                p.mayaAttributeName,
+                p.mayaAttributeShortName);
 
-        if (attr.isNull())
-            continue;
+            numAttrFn.setUsedAsColor(true);
 
-        if (p.isOutput)
-        {
-            /*
-            CHECK_MSTATUS( nAttr.setHidden( false ) );
-            CHECK_MSTATUS( nAttr.setReadable( true ) );
-            CHECK_MSTATUS( nAttr.setWritable( false ) );
-            */
-        }
-        else
-        {
-        }
-
-        depNodeFn.addAttribute(outColor, MFnDependencyNode::kLocalDynamicAttr);
-    }
-
-    /*
-    MFnNumericAttribute nAttr;
-    // more FnAttribute types here...
-
-    for(size_t i = 0, e = it->second.paramInfo.size(); i < e; ++i)
-    {
-        const asf::Dictionary& pinfo = it->second.paramInfo[i];
-
-        const std::string name = pinfo.get("name");
-        const bool isClosure = pinfo.get<bool>("isclosure");
-
-        MObject attr;
-
-        if (isClosure)
-        {
-            // ...
-            continue;
-        }
-
-        const std::string type = pinfo.get("type");
-        const bool validDefault = pinfo.get<bool>("validdefault");
-        const bool isOutput = pinfo.get<bool>("isoutput");
-
-        if (type == "float")
-        {
-            attr = nAttr.create(name.c_str(), name.c_str(), MFnNumericData::kFloat, 0.0);
-
-            if (validDefault)
+            if (!p.isOutput && p.validDefault)
             {
-                const double defaultValue = pinfo.get<double>("default");
-                nAttr.setDefault(defaultValue);
+                // todo: set default here...
             }
 
-            if (isOutput)
-            {
+            initializeAttribute(numAttrFn, p);
+        }
+        else if (strcmp(p.paramType.asChar(), "float") == 0)
+        {
+            MFnNumericAttribute numAttrFn;
+            attr = numAttrFn.create(
+                p.mayaAttributeName,
+                p.mayaAttributeShortName,
+                MFnNumericData::kFloat);
 
+            if (!p.isOutput && p.validDefault)
+            {
+                // todo: set default here...
+            }
+
+            initializeAttribute(numAttrFn, p);
+        }
+        else if (strcmp(p.paramType.asChar(), "float[2]") == 0)
+        {
+            MFnNumericAttribute numAttrFn;
+            // We assume that float[2] are uvs.
+            MObject child1 = numAttrFn.create("uCoord", "u", MFnNumericData::kFloat);
+            MObject child2 = numAttrFn.create("vCoord", "v", MFnNumericData::kFloat);
+            attr = numAttrFn.create(
+                p.mayaAttributeName,
+                p.mayaAttributeShortName,
+                child1,
+                child2);
+        }
+        else if (strcmp(p.paramType.asChar(), "int") == 0)
+        {
+            // Check to see if we need to create an int, bool or enum
+            if (strcmp(p.widget.asChar(), "mapper") == 0)
+            {
+                MFnEnumAttribute enumAttrFn;
+            }
+            if (strcmp(p.widget.asChar(), "checkbox") == 0)
+            {
+                MFnNumericAttribute numAttrFn;
             }
             else
             {
-                nAttr.setStorable(true);
-                nAttr.setKeyable(true);
+                MFnNumericAttribute numAttrFn;
             }
         }
-        // more types here...
+        else if (strcmp(p.paramType.asChar(), "matrix") == 0)
+        {
+            MFnMatrixAttribute matrixAttrFn;
+            attr = matrixAttrFn.create(
+                p.mayaAttributeName,
+                p.mayaAttributeShortName,
+                MFnMatrixAttribute::kFloat);
+
+            initializeAttribute(matrixAttrFn, p);
+        }
+        else if (strcmp(p.paramType.asChar(), "normal") == 0)
+        {
+            MFnNumericAttribute numAttrFn;
+            attr = createPointAttribute(numAttrFn, p);
+            initializeAttribute(numAttrFn, p);
+        }
+        else if (strcmp(p.paramType.asChar(), "point") == 0)
+        {
+            MFnNumericAttribute numAttrFn;
+            attr = createPointAttribute(numAttrFn, p);
+            initializeAttribute(numAttrFn, p);
+        }
+        else if (strcmp(p.paramType.asChar(), "pointer") == 0) // closure color
+        {
+            MFnNumericAttribute numAttrFn;
+            attr = numAttrFn.createColor(
+                p.mayaAttributeName,
+                p.mayaAttributeShortName);
+
+            if (!p.isOutput && p.validDefault)
+            {
+                // todo: set default here...
+            }
+
+            initializeAttribute(numAttrFn, p);
+        }
+        else if (strcmp(p.paramType.asChar(), "vector") == 0)
+        {
+            MFnNumericAttribute numAttrFn;
+            attr = createPointAttribute(numAttrFn, p);
+            initializeAttribute(numAttrFn, p);
+        }
+        else if (strcmp(p.paramType.asChar(), "string") == 0)
+        {
+            // Check to see if we need to create a string or an enum
+            if (strcmp(p.widget.asChar(), "popup") == 0)
+            {
+                MFnEnumAttribute enumAttrFn;
+                // todo: create enum attribute here...
+            }
+            else
+            {
+                MFnTypedAttribute typedAttrFn;
+                attr = typedAttrFn.create(
+                    p.mayaAttributeName,
+                    p.mayaAttributeShortName,
+                    MFnData::kString);
+
+                if (!p.isOutput && p.validDefault)
+                {
+                    // todo: set default here...
+                }
+
+                initializeAttribute(typedAttrFn, p);
+            }
+        }
         else
         {
-            // warning: unhandled type...
+            RENDERER_LOG_WARNING(
+                "Ignoring param %s of shader %s",
+                p.paramName.asChar(),
+                m_shaderInfo->shaderName.asChar());
+            continue;
         }
 
         if (!attr.isNull())
-            depNode.addAttribute(attr);
+            depNodeFn.addAttribute(attr, MFnDependencyNode::kLocalDynamicAttr);
     }
-    */
 }

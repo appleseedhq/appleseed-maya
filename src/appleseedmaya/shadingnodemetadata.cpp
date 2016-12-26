@@ -70,13 +70,14 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
 {
     paramName = paramInfo.get("name");
     mayaAttributeName = paramName;
+    mayaAttributeShortName = paramName;
 
     paramType = paramInfo.get("type");
     validDefault = paramInfo.get<bool>("validdefault");
 
     if (validDefault)
     {
-        //TODO: get default_value here.
+        //todo: get default_value here.
     }
 
     isOutput = paramInfo.get<bool>("isoutput");
@@ -101,6 +102,7 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
         metadata.getValue("widget", widget);
 
         metadata.getValue("maya_attribute_name", mayaAttributeName);
+        metadata.getValue("maya_attribute_short_name", mayaAttributeShortName);
         metadata.getValue("maya_attribute_type", mayaAttributeType);
     }
 }

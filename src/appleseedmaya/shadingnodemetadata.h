@@ -96,6 +96,7 @@ class OSLParamInfo
 
     // appleseedMaya custom metadata.
     MString mayaAttributeName;
+    MString mayaAttributeShortName;
     MString mayaAttributeType;
 };
 

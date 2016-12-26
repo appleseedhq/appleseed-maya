@@ -54,7 +54,7 @@ class ShadingEngineExporter
 
     ~ShadingEngineExporter();
 
-    // Create any extra exporter needed by this exporter (shading engines, ...).
+    // Create any extra exporter needed by this exporter (shading networks, ...).
     void createExporters(const AppleseedSession::Services& services);
 
     // Create appleseed entities.

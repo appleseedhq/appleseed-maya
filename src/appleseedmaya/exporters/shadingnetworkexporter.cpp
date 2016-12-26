@@ -92,11 +92,14 @@ void ShadingNetworkExporter::flushEntity()
 
 void ShadingNetworkExporter::exportShadingNetwork()
 {
+    // Clear all in case we are doing IPR.
     m_shaderGroup->clear();
     m_nodeExporters.clear();
     m_namesToExporters.clear();
 
     createShaderNodeExporters(m_object);
+
+    // Sort the exporters in depth first order.
     std::reverse(m_nodeExporters.begin(), m_nodeExporters.end());
 
     for(size_t i = 0, e = m_nodeExporters.size(); i < e; ++i)
@@ -105,6 +108,7 @@ void ShadingNetworkExporter::exportShadingNetwork()
     for(size_t i = 0, e = m_nodeExporters.size(); i < e; ++i)
         exportConnections(*m_nodeExporters[i]);
 
+    // Add any extra shader and or connections, depending on the context.
     switch(m_context)
     {
         case SurfaceNetworkContext:
@@ -185,6 +189,7 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
         m_namesToExporters[depNodeFn.name()] = exporter.get();
         RENDERER_LOG_DEBUG("Created shading node exporter for node %s", depNodeFn.name().asChar());
 
+        // Look for nodes connected to the shader and create exporters for them.
         for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
         {
             const OSLParamInfo& paramInfo = shaderInfo->paramInfo[i];
@@ -211,6 +216,7 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
                     createShaderNodeExporters(srcPlug.node());
             }
 
+            // Look for nodes connected to child or elements plugs of this plug.
             if (plug.isCompound() && plug.numConnectedChildren() != 0)
             {
                 for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
@@ -225,8 +231,7 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
                     }
                 }
             }
-
-            if (plug.isArray() && plug.numConnectedElements() != 0)
+            else if (plug.isArray() && plug.numConnectedElements() != 0)
             {
                 for(size_t i = 0, e = plug.numElements(); i < e; ++i)
                 {
@@ -252,6 +257,8 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
 
 void ShadingNetworkExporter::exportConnections(ShadingNodeExporter& dstNodeExporter)
 {
+    dstNodeExporter.exportInputAdaptorConnections();
+
     MStatus status;
     MFnDependencyNode depNodeFn(dstNodeExporter.node());
 
@@ -311,8 +318,7 @@ void ShadingNetworkExporter::exportConnections(ShadingNodeExporter& dstNodeExpor
                 paramInfo.mayaAttributeName.asChar(),
                 depNodeFn.typeName().asChar());
         }
-
-        if (plug.isArray() && plug.numConnectedElements() != 0)
+        else if (plug.isArray() && plug.numConnectedElements() != 0)
         {
             // todo: implement this...
             RENDERER_LOG_WARNING(
@@ -321,6 +327,8 @@ void ShadingNetworkExporter::exportConnections(ShadingNodeExporter& dstNodeExpor
                 depNodeFn.typeName().asChar());
         }
     }
+
+    dstNodeExporter.exportOutputAdaptorConnections();
 }
 
 ShadingNodeExporter *ShadingNetworkExporter::findExporterForNode(const MObject& node)

@@ -78,6 +78,9 @@ class ShadingNodeExporter
         MString&                 layerName,
         MString&                 paramName) const;
 
+    void exportInputAdaptorConnections();
+    void exportOutputAdaptorConnections();
+
   protected:
 
     ShadingNodeExporter(
