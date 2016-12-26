@@ -199,6 +199,17 @@ void ShadingNodeExporter::exportValue(
                 ss << "int " << boolValue ? "1" : "0";
         }
     }
+    else if (strcmp(paramInfo.paramType.asChar(), "matrix") == 0)
+    {
+        MMatrix matrixValue;
+        if (AttributeUtils::get(plug, matrixValue))
+        {
+            ss << "matrix ";
+            for(int i = 0; i < 4; ++i)
+                for(int j = 0; j < 4; ++j)
+                    ss << matrixValue[j][i] << " ";
+        }
+    }
     else if (strcmp(paramInfo.paramType.asChar(), "normal") == 0)
     {
         MVector value;
@@ -251,27 +262,7 @@ void ShadingNodeExporter::exportArrayValue(
 
     std::stringstream ss;
 
-    if (strncmp(paramInfo.paramType.asChar(), "int[", 4) == 0)
-    {
-        assert(plug.isCompound());
-
-        ss << "int[] ";
-        for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
-        {
-            MPlug childPlug = plug.child(i, &status);
-            if (status)
-            {
-                int value;
-                if (AttributeUtils::get(childPlug, value))
-                    ss << value << " ";
-                else
-                    valid = false;
-            }
-            else
-                valid = false;
-        }
-    }
-    else if (strncmp(paramInfo.paramType.asChar(), "float[", 5) == 0)
+    if (strncmp(paramInfo.paramType.asChar(), "float[", 5) == 0)
     {
         assert(plug.isCompound());
 
@@ -282,6 +273,26 @@ void ShadingNodeExporter::exportArrayValue(
             if (status)
             {
                 float value;
+                if (AttributeUtils::get(childPlug, value))
+                    ss << value << " ";
+                else
+                    valid = false;
+            }
+            else
+                valid = false;
+        }
+    }
+    else if (strncmp(paramInfo.paramType.asChar(), "int[", 4) == 0)
+    {
+        assert(plug.isCompound());
+
+        ss << "int[] ";
+        for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
+        {
+            MPlug childPlug = plug.child(i, &status);
+            if (status)
+            {
+                int value;
                 if (AttributeUtils::get(childPlug, value))
                     ss << value << " ";
                 else
