@@ -163,6 +163,7 @@ bool doRegisterShader(
                 "Registering MPxNode for OSL shader %s.",
                 shaderInfo.shaderName.asChar());
 
+            ShadingNode::setCurrentShaderInfo(&shaderInfo);
             MStatus status = pluginFn.registerNode(
                 shaderInfo.mayaName,
                 MTypeId(shaderInfo.typeId),

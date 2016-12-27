@@ -39,14 +39,16 @@ class ShadingNode
   : public MPxNode
 {
   public:
+
+    // Set the shader info of the current shader being registered.
+    static void setCurrentShaderInfo(const OSLShaderInfo *shaderInfo);
+
     static void *creator();
     static MStatus initialize();
 
     ShadingNode();
 
     virtual void postConstructor();
-
-    const OSLShaderInfo *m_shaderInfo;
 };
 
 #endif  // !APPLESEED_MAYA_SHADING_NODE_H

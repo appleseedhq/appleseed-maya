@@ -213,15 +213,15 @@ void ShadingNodeExporter::exportValue(
 
     std::stringstream ss;
 
-    if (strcmp(paramInfo.paramType.asChar(), "color") == 0)
+    if (paramInfo.paramType == "color")
     {
         MColor value;
         if (AttributeUtils::get(plug, value))
             ss << "color " << value.r << " " << value.g << " " << value.b;
     }
-    else if (strcmp(paramInfo.paramType.asChar(), "float") == 0)
+    else if (paramInfo.paramType == "float")
     {
-        if (strcmp(paramInfo.mayaAttributeType.asChar(), "angle") == 0)
+        if (paramInfo.mayaAttributeType == "angle")
         {
             MAngle value(0.0f, MAngle::kDegrees);
             if (AttributeUtils::get(plug, value))
@@ -234,7 +234,7 @@ void ShadingNodeExporter::exportValue(
                 ss << "float " << value;
         }
     }
-    else if (strcmp(paramInfo.paramType.asChar(), "int") == 0)
+    else if (paramInfo.paramType == "int")
     {
         int value;
         if (AttributeUtils::get(plug, value))
@@ -246,7 +246,7 @@ void ShadingNodeExporter::exportValue(
                 ss << "int " << boolValue ? "1" : "0";
         }
     }
-    else if (strcmp(paramInfo.paramType.asChar(), "matrix") == 0)
+    else if (paramInfo.paramType == "matrix")
     {
         MMatrix matrixValue;
         if (AttributeUtils::get(plug, matrixValue))
@@ -257,21 +257,21 @@ void ShadingNodeExporter::exportValue(
                     ss << matrixValue[i][j] << " ";
         }
     }
-    else if (strcmp(paramInfo.paramType.asChar(), "normal") == 0)
+    else if (paramInfo.paramType == "normal")
     {
         MVector value;
         if (AttributeUtils::get(plug, value))
             ss << "normal " << value.z << " " << value.y << " " << value.z;
     }
-    else if (strcmp(paramInfo.paramType.asChar(), "point") == 0)
+    else if (paramInfo.paramType == "point")
     {
         MPoint value;
         if (AttributeUtils::get(plug, value))
             ss << "point " << value.z << " " << value.y << " " << value.z;
     }
-    else if (strcmp(paramInfo.paramType.asChar(), "string") == 0)
+    else if (paramInfo.paramType == "string")
     {
-        if (strcmp(paramInfo.widget.asChar(), "popup") == 0)
+        if (paramInfo.widget == "popup")
         {
             MObject attr = plug.attribute();
             MFnEnumAttribute fnEnumAttr(attr);
@@ -286,7 +286,7 @@ void ShadingNodeExporter::exportValue(
                 ss << "string " << value;
         }
     }
-    else if (strcmp(paramInfo.paramType.asChar(), "vector") == 0)
+    else if (paramInfo.paramType == "vector")
     {
         MVector value;
         if (AttributeUtils::get(plug, value))

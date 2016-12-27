@@ -65,8 +65,22 @@ bool OSLMetadataExtractor::getValue(const char *key, MString& value)
     return false;
 }
 
+bool OSLMetadataExtractor::getValue(const char *key, bool& value)
+{
+    int tmp;
+    if (getValue(key, tmp))
+    {
+        value = (tmp != 0);
+        return true;
+    }
+
+    return false;
+}
+
 OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
   : arrayLen(-1)
+  , lockGeom(true)
+  , divider(false)
 {
     paramName = paramInfo.get("name");
     mayaAttributeName = paramName;
@@ -98,8 +112,13 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
     {
         OSLMetadataExtractor metadata(paramInfo.dictionary("metadata"));
 
+        metadata.getValue("lockgeom", lockGeom);
+        metadata.getValue("units", units);
+        metadata.getValue("page", page);
         metadata.getValue("label", label);
         metadata.getValue("widget", widget);
+        metadata.getValue("options", options);
+        metadata.getValue("divider", divider);
 
         metadata.getValue("maya_attribute_name", mayaAttributeName);
         metadata.getValue("maya_attribute_short_name", mayaAttributeShortName);
@@ -145,6 +164,12 @@ OSLShaderInfo::OSLShaderInfo(const asr::ShaderQuery& q)
     paramInfo.reserve(q.get_num_params());
     for(size_t i = 0, e = q.get_num_params(); i < e; ++i)
         paramInfo.push_back(OSLParamInfo(q.get_param_info(i)));
+
+    // Apply some defaults.
+
+    // If the shader is a custom node, we can default its name to the shader name.
+    if (typeId != 0 && mayaName.length() == 0)
+        mayaName = shaderName;
 }
 
 const OSLParamInfo *OSLShaderInfo::findParam(const MString& mayaAttrName) const

@@ -56,6 +56,8 @@ class OSLMetadataExtractor
 
     bool getValue(const char *key, MString& value);
 
+    bool getValue(const char *key, bool& value);
+
     template <typename T>
     bool getValue(const char *key, T& value) const
     {
@@ -89,10 +91,15 @@ class OSLParamInfo
     MString structName;
     bool isArray;
     int arrayLen;
+    bool lockGeom;
 
     // Standard metadata info.
+    MString units;
+    MString page;
     MString label;
     MString widget;
+    MString options;
+    bool divider;
 
     // appleseedMaya custom metadata.
     MString mayaAttributeName;

@@ -36,42 +36,32 @@
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnTypedAttribute.h>
 
+// appleseed.foundation headers.
+#include "foundation/utility/string.h"
+
 // appleseed.maya headers.
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/shadingnoderegistry.h"
 
-void *ShadingNode::creator()
-{
-    return new ShadingNode();
-}
-
-MStatus ShadingNode::initialize()
-{
-    return MS::kSuccess;
-}
-
-ShadingNode::ShadingNode()
-  : m_shaderInfo(0)
-{
-}
+namespace asf = foundation;
 
 namespace
 {
 
 void makeInput(MFnAttribute& attr)
 {
-    attr.setKeyable(true);
     attr.setStorable(true);
-    attr.setReadable(true);
     attr.setWritable(true);
+    attr.setReadable(true);
+    attr.setKeyable(true);
 }
 
 void makeOutput(MFnAttribute& attr)
 {
-    attr.setKeyable(false);
     attr.setStorable(false);
     attr.setReadable(true);
     attr.setWritable(false);
+    attr.setKeyable(false);
 }
 
 MObject createPointAttribute(
@@ -101,26 +91,33 @@ void initializeAttribute(MFnAttribute& attr, const OSLParamInfo& p)
         makeInput(attr);
 }
 
+// Stores the current shader info of the shader being registered.
+const OSLShaderInfo *g_currentShaderInfo = 0;
+
+} // unnamed.
+
+void ShadingNode::setCurrentShaderInfo(const OSLShaderInfo *shaderInfo)
+{
+    g_currentShaderInfo = shaderInfo;
 }
 
-void ShadingNode::postConstructor()
+void *ShadingNode::creator()
 {
-    MPxNode::postConstructor();
-    setMPSafe(true);
+    return new ShadingNode();
+}
 
-    m_shaderInfo = ShadingNodeRegistry::getShaderInfo(typeName());
-    assert(m_shaderInfo != 0);
+MStatus ShadingNode::initialize()
+{
+    assert(g_currentShaderInfo);
+    const OSLShaderInfo *shaderInfo = g_currentShaderInfo;
+    g_currentShaderInfo = 0;
 
-    MObject thisNode = thisMObject();
-    MFnDependencyNode depNodeFn(thisNode);
-
-    for(size_t i = 0, e = m_shaderInfo->paramInfo.size(); i < e; ++i)
+    for(size_t i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
     {
-        const OSLParamInfo& p = m_shaderInfo->paramInfo[i];
-
+        const OSLParamInfo& p = shaderInfo->paramInfo[i];
         MObject attr;
 
-        if (strcmp(p.paramType.asChar(), "color") == 0)
+        if (p.paramType == "color")
         {
             MFnNumericAttribute numAttrFn;
             attr = numAttrFn.createColor(
@@ -136,7 +133,7 @@ void ShadingNode::postConstructor()
 
             initializeAttribute(numAttrFn, p);
         }
-        else if (strcmp(p.paramType.asChar(), "float") == 0)
+        else if (p.paramType == "float")
         {
             MFnNumericAttribute numAttrFn;
             attr = numAttrFn.create(
@@ -151,57 +148,55 @@ void ShadingNode::postConstructor()
 
             initializeAttribute(numAttrFn, p);
         }
-        else if (strcmp(p.paramType.asChar(), "float[2]") == 0)
-        {
-            MFnNumericAttribute numAttrFn;
-            // We assume that float[2] are uvs.
-            MObject child1 = numAttrFn.create("uCoord", "u", MFnNumericData::kFloat);
-            MObject child2 = numAttrFn.create("vCoord", "v", MFnNumericData::kFloat);
-            attr = numAttrFn.create(
-                p.mayaAttributeName,
-                p.mayaAttributeShortName,
-                child1,
-                child2);
-        }
-        else if (strcmp(p.paramType.asChar(), "int") == 0)
+        else if (p.paramType == "int")
         {
             // Check to see if we need to create an int, bool or enum
-            if (strcmp(p.widget.asChar(), "mapper") == 0)
+            if (p.widget.asChar(), "mapper")
             {
                 MFnEnumAttribute enumAttrFn;
+                // todo: parse options here and build enum...
             }
-            if (strcmp(p.widget.asChar(), "checkbox") == 0)
+            if (p.widget.asChar(), "checkBox")
             {
                 MFnNumericAttribute numAttrFn;
+                attr = numAttrFn.create(
+                    p.mayaAttributeName,
+                    p.mayaAttributeShortName,
+                    MFnNumericData::kBoolean);
+                initializeAttribute(numAttrFn, p);
             }
             else
             {
                 MFnNumericAttribute numAttrFn;
+                attr = numAttrFn.create(
+                    p.mayaAttributeName,
+                    p.mayaAttributeShortName,
+                    MFnNumericData::kInt);
+                initializeAttribute(numAttrFn, p);
             }
         }
-        else if (strcmp(p.paramType.asChar(), "matrix") == 0)
+        else if (p.paramType == "matrix")
         {
             MFnMatrixAttribute matrixAttrFn;
             attr = matrixAttrFn.create(
                 p.mayaAttributeName,
                 p.mayaAttributeShortName,
                 MFnMatrixAttribute::kFloat);
-
             initializeAttribute(matrixAttrFn, p);
         }
-        else if (strcmp(p.paramType.asChar(), "normal") == 0)
+        else if (p.paramType == "normal")
         {
             MFnNumericAttribute numAttrFn;
             attr = createPointAttribute(numAttrFn, p);
             initializeAttribute(numAttrFn, p);
         }
-        else if (strcmp(p.paramType.asChar(), "point") == 0)
+        else if (p.paramType == "point")
         {
             MFnNumericAttribute numAttrFn;
             attr = createPointAttribute(numAttrFn, p);
             initializeAttribute(numAttrFn, p);
         }
-        else if (strcmp(p.paramType.asChar(), "pointer") == 0) // closure color
+        else if (p.paramType == "pointer") // closure color
         {
             MFnNumericAttribute numAttrFn;
             attr = numAttrFn.createColor(
@@ -215,19 +210,40 @@ void ShadingNode::postConstructor()
 
             initializeAttribute(numAttrFn, p);
         }
-        else if (strcmp(p.paramType.asChar(), "vector") == 0)
+        else if (p.paramType == "vector")
         {
             MFnNumericAttribute numAttrFn;
             attr = createPointAttribute(numAttrFn, p);
             initializeAttribute(numAttrFn, p);
         }
-        else if (strcmp(p.paramType.asChar(), "string") == 0)
+        else if (p.paramType == "string")
         {
             // Check to see if we need to create a string or an enum
-            if (strcmp(p.widget.asChar(), "popup") == 0)
+            if (p.widget == "popup")
             {
-                MFnEnumAttribute enumAttrFn;
-                // todo: create enum attribute here...
+                if (p.options.length() != 0)
+                {
+                    std::vector<std::string> fields;
+                    asf::tokenize(p.options.asChar(), "|", fields);
+
+                    // todo: get the default value here...
+                    const size_t defaultValue = 0;
+
+                    MFnEnumAttribute enumAttrFn;
+                    attr = enumAttrFn.create(
+                        p.mayaAttributeName,
+                        p.mayaAttributeShortName,
+                        defaultValue);
+
+                    for (size_t i = 0, e = fields.size(); i < e; ++i)
+                        enumAttrFn.addField(fields[i].c_str(), i);
+
+                    initializeAttribute(enumAttrFn, p);
+                }
+                else
+                {
+                    // todo: what here...?
+                }
             }
             else
             {
@@ -236,6 +252,9 @@ void ShadingNode::postConstructor()
                     p.mayaAttributeName,
                     p.mayaAttributeShortName,
                     MFnData::kString);
+
+                if (p.widget == "popup")
+                    typedAttrFn.setUsedAsFilename(true);
 
                 if (!p.isOutput && p.validDefault)
                 {
@@ -250,11 +269,23 @@ void ShadingNode::postConstructor()
             RENDERER_LOG_WARNING(
                 "Ignoring param %s of shader %s",
                 p.paramName.asChar(),
-                m_shaderInfo->shaderName.asChar());
+                shaderInfo->shaderName.asChar());
             continue;
         }
 
         if (!attr.isNull())
-            depNodeFn.addAttribute(attr, MFnDependencyNode::kLocalDynamicAttr);
+            addAttribute(attr);
     }
+
+    return MS::kSuccess;
+}
+
+ShadingNode::ShadingNode()
+{
+}
+
+void ShadingNode::postConstructor()
+{
+    MPxNode::postConstructor();
+    setMPSafe(true);
 }
