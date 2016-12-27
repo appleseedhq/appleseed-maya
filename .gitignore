@@ -1,8 +1,7 @@
 build/
-*.pyc
 src/appleseedmaya/version.h
+*.pyc
 *.oso
 *~
 *.swp
 *.bak
-
