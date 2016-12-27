@@ -36,6 +36,7 @@
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
+#include "foundation/utility/iostreamop.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/shadergroup.h"
@@ -79,6 +80,7 @@ bool OSLMetadataExtractor::getValue(const char *key, bool& value)
 
 OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
   : arrayLen(-1)
+  , hasDefault(false)
   , lockGeom(true)
   , divider(false)
 {
@@ -89,9 +91,59 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
     paramType = paramInfo.get("type");
     validDefault = paramInfo.get<bool>("validdefault");
 
-    if (validDefault)
+    // todo: lots of refactoring possibilities here...
+    if (validDefault && lockGeom)
     {
-        //todo: get default_value here.
+        if (paramInfo.strings().exist("default"))
+        {
+            if (paramType == "color")
+            {
+                const asf::Vector3f v = paramInfo.get<asf::Vector3f>("default");
+                defaultValue.push_back(v[0]);
+                defaultValue.push_back(v[1]);
+                defaultValue.push_back(v[2]);
+                hasDefault = true;
+            }
+            else if (paramType == "float")
+            {
+                defaultValue.push_back(paramInfo.get<float>("default"));
+                hasDefault = true;
+            }
+            else if (paramType == "int")
+            {
+                defaultValue.push_back(paramInfo.get<int>("default"));
+                hasDefault = true;
+            }
+            if (paramType == "normal")
+            {
+                const asf::Vector3f v = paramInfo.get<asf::Vector3f>("default");
+                defaultValue.push_back(v[0]);
+                defaultValue.push_back(v[1]);
+                defaultValue.push_back(v[2]);
+                hasDefault = true;
+            }
+            if (paramType == "point")
+            {
+                const asf::Vector3f v = paramInfo.get<asf::Vector3f>("default");
+                defaultValue.push_back(v[0]);
+                defaultValue.push_back(v[1]);
+                defaultValue.push_back(v[2]);
+                hasDefault = true;
+            }
+            else if (paramType == "string")
+            {
+                defaultStringValue = paramInfo.get("default");
+                hasDefault = true;
+            }
+            else if (paramType == "vector")
+            {
+                const asf::Vector3f v = paramInfo.get<asf::Vector3f>("default");
+                defaultValue.push_back(v[0]);
+                defaultValue.push_back(v[1]);
+                defaultValue.push_back(v[2]);
+                hasDefault = true;
+            }
+        }
     }
 
     isOutput = paramInfo.get<bool>("isoutput");

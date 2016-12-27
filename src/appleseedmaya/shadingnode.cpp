@@ -37,6 +37,7 @@
 #include <maya/MFnTypedAttribute.h>
 
 // appleseed.foundation headers.
+#include "foundation/math/vector.h"
 #include "foundation/utility/string.h"
 
 // appleseed.maya headers.
@@ -112,6 +113,7 @@ MStatus ShadingNode::initialize()
     const OSLShaderInfo *shaderInfo = g_currentShaderInfo;
     g_currentShaderInfo = 0;
 
+    // todo: lots of refactoring possibilities here...
     for(size_t i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& p = shaderInfo->paramInfo[i];
@@ -126,9 +128,12 @@ MStatus ShadingNode::initialize()
 
             numAttrFn.setUsedAsColor(true);
 
-            if (!p.isOutput && p.validDefault)
+            if (p.hasDefault)
             {
-                // todo: set default here...
+                numAttrFn.setDefault(
+                    static_cast<float>(p.defaultValue[0]),
+                    static_cast<float>(p.defaultValue[1]),
+                    static_cast<float>(p.defaultValue[2]));
             }
 
             initializeAttribute(numAttrFn, p);
@@ -141,28 +146,30 @@ MStatus ShadingNode::initialize()
                 p.mayaAttributeShortName,
                 MFnNumericData::kFloat);
 
-            if (!p.isOutput && p.validDefault)
-            {
-                // todo: set default here...
-            }
+            if (p.hasDefault)
+                numAttrFn.setDefault(static_cast<float>(p.defaultValue[0]));
 
             initializeAttribute(numAttrFn, p);
         }
         else if (p.paramType == "int")
         {
             // Check to see if we need to create an int, bool or enum
-            if (p.widget.asChar(), "mapper")
+            if (p.widget == "mapper")
             {
                 MFnEnumAttribute enumAttrFn;
                 // todo: parse options here and build enum...
             }
-            if (p.widget.asChar(), "checkBox")
+            if (p.widget == "checkBox")
             {
                 MFnNumericAttribute numAttrFn;
                 attr = numAttrFn.create(
                     p.mayaAttributeName,
                     p.mayaAttributeShortName,
                     MFnNumericData::kBoolean);
+
+                if (p.hasDefault)
+                    numAttrFn.setDefault(static_cast<bool>(p.defaultValue[0]));
+
                 initializeAttribute(numAttrFn, p);
             }
             else
@@ -172,6 +179,10 @@ MStatus ShadingNode::initialize()
                     p.mayaAttributeName,
                     p.mayaAttributeShortName,
                     MFnNumericData::kInt);
+
+                if (p.hasDefault)
+                    numAttrFn.setDefault(static_cast<int>(p.defaultValue[0]));
+
                 initializeAttribute(numAttrFn, p);
             }
         }
@@ -188,12 +199,30 @@ MStatus ShadingNode::initialize()
         {
             MFnNumericAttribute numAttrFn;
             attr = createPointAttribute(numAttrFn, p);
+
+            if (p.hasDefault)
+            {
+                numAttrFn.setDefault(
+                    static_cast<float>(p.defaultValue[0]),
+                    static_cast<float>(p.defaultValue[1]),
+                    static_cast<float>(p.defaultValue[2]));
+            }
+
             initializeAttribute(numAttrFn, p);
         }
         else if (p.paramType == "point")
         {
             MFnNumericAttribute numAttrFn;
             attr = createPointAttribute(numAttrFn, p);
+
+            if (p.hasDefault)
+            {
+                numAttrFn.setDefault(
+                    static_cast<float>(p.defaultValue[0]),
+                    static_cast<float>(p.defaultValue[1]),
+                    static_cast<float>(p.defaultValue[2]));
+            }
+
             initializeAttribute(numAttrFn, p);
         }
         else if (p.paramType == "pointer") // closure color
@@ -202,18 +231,21 @@ MStatus ShadingNode::initialize()
             attr = numAttrFn.createColor(
                 p.mayaAttributeName,
                 p.mayaAttributeShortName);
-
-            if (!p.isOutput && p.validDefault)
-            {
-                // todo: set default here...
-            }
-
             initializeAttribute(numAttrFn, p);
         }
         else if (p.paramType == "vector")
         {
             MFnNumericAttribute numAttrFn;
             attr = createPointAttribute(numAttrFn, p);
+
+            if (p.hasDefault)
+            {
+                numAttrFn.setDefault(
+                    static_cast<float>(p.defaultValue[0]),
+                    static_cast<float>(p.defaultValue[1]),
+                    static_cast<float>(p.defaultValue[2]));
+            }
+
             initializeAttribute(numAttrFn, p);
         }
         else if (p.paramType == "string")
@@ -226,8 +258,18 @@ MStatus ShadingNode::initialize()
                     std::vector<std::string> fields;
                     asf::tokenize(p.options.asChar(), "|", fields);
 
-                    // todo: get the default value here...
-                    const size_t defaultValue = 0;
+                    size_t defaultValue = 0;
+                    if (p.hasDefault)
+                    {
+                        for (size_t i = 0, e = fields.size(); i < e; ++i)
+                        {
+                            if (p.defaultStringValue == fields[i].c_str())
+                            {
+                                defaultValue = i;
+                                break;
+                            }
+                        }
+                    }
 
                     MFnEnumAttribute enumAttrFn;
                     attr = enumAttrFn.create(
@@ -253,7 +295,12 @@ MStatus ShadingNode::initialize()
                     p.mayaAttributeShortName,
                     MFnData::kString);
 
-                if (p.widget == "popup")
+                if (p.hasDefault)
+                {
+                    // todo: set default here...
+                }
+
+                if (p.widget == "filename")
                     typedAttrFn.setUsedAsFilename(true);
 
                 if (!p.isOutput && p.validDefault)

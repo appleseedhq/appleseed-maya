@@ -83,8 +83,6 @@ class OSLParamInfo
     // Query info.
     MString paramName;
     MString paramType;
-    bool validDefault;
-    //T default_value
     bool isOutput;
     bool isClosure;
     bool isStruct;
@@ -92,6 +90,12 @@ class OSLParamInfo
     bool isArray;
     int arrayLen;
     bool lockGeom;
+
+    // Defaults.
+    bool validDefault;
+    bool hasDefault;
+    std::vector<double> defaultValue;
+    MString defaultStringValue;
 
     // Standard metadata info.
     MString units;
