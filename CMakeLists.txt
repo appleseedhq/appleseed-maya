@@ -96,6 +96,7 @@ if (WITH_PYTHON_BRIDGE)
     find_package (PythonLibs REQUIRED)
 endif ()
 
+
 #--------------------------------------------------------------------------------------------------
 # Include paths.
 #--------------------------------------------------------------------------------------------------
@@ -114,8 +115,6 @@ include_directories (
 
 add_definitions (-D_BOOL)
 add_definitions (-DREQUIRE_IOSTREAM)
-add_definitions (-DAPPLESEED_WITH_OIIO)
-add_definitions (-DAPPLESEED_WITH_OSL)
 
 if (XGEN_FOUND)
     add_definitions (-DAPPLESEED_MAYA_WITH_XGEN)
