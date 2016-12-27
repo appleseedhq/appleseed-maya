@@ -1,0 +1,86 @@
+
+surface as_disney
+[[
+    string help = "Material based on the Disney BRDF",
+    string maya_classification = "shader/surface:appleseed/surface:swatch/AppleseedRenderSwatch",
+    int maya_type_id = 1210820
+]]
+(
+    vector Normal = N,
+    vector Tn = 0
+    [[
+        string help = "Tangent",
+        string label = "Tangent",
+        int    lockgeom = 0
+    ]],
+    color  BaseColor = 0.5,
+    float  Subsurface = 0
+    [[
+        float  min = 0,
+        float  max = 1
+    ]],
+    float  Metallic = 0
+    [[
+        float  min = 0,
+        float  max = 1
+    ]],
+    float  Specular = 0.5
+    [[
+        float  min = 0,
+        float  max = 1
+    ]],
+    float  SpecularTint = 0
+    [[
+        float  min = 0,
+        float  max = 1
+    ]],
+    float  Anisotropic = 0
+    [[
+        float  min = -1,
+        float  max =  1
+    ]],
+    float  Roughness = 0.5
+    [[
+        float  min = 0,
+        float  max = 1
+    ]],
+    float  Sheen = 0
+    [[
+        float min = 0
+    ]],
+    float  SheenTint = 0.5
+    [[
+        float min = 0,
+        float max = 1
+    ]],
+    float  Clearcoat = 0
+    [[
+        float min = 0
+    ]],
+    float  ClearcoatGloss = 1
+    [[
+        float min = 0,
+        float max = 1
+    ]],
+    output closure color BRDF = 0
+    [[
+        string maya_attribute_name = "outColor",
+        string maya_attribute_short_name = "oc"
+    ]]
+)
+{
+    BRDF = as_disney(
+        Normal,
+        Tn,
+        BaseColor,
+        Subsurface,
+        Metallic,
+        Specular,
+        SpecularTint,
+        Anisotropic,
+        Roughness,
+        Sheen,
+        SheenTint,
+        Clearcoat,
+        ClearcoatGloss);
+}
