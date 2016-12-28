@@ -6,46 +6,76 @@ shader as_glass
     int maya_type_id = 1210821
 ]]
 (
-    vector               Normal = N,
-    vector               Tn = 0
+    color                SurfaceTransmittance = 1.0
     [[
-        int    lockgeom = 0,
-        string help = "Tangent",
-        string label = "Tangent"
+        string label = "Transmittance Color",
+        string page = "Surface Material Attributes",
     ]],
     float                Transmittance = 0.8
     [[
-        float  min = 0
+        float  min = 0,
+        string page = "Surface Material Attributes"
     ]],
-    color                SurfaceTransmittance = 1.0,
-    color                ReflectionTint = 1.0,
-    color                RefractionTint = 1.0,
+    color                ReflectionTint = 1.0
+    [[
+        string page = "Surface Material Attributes",
+    ]],
+    color                RefractionTint = 1.0
+    [[
+        string page = "Surface Material Attributes",
+    ]],
     float                Ior = 1.5
     [[
         string help = "Index of refraction",
+        string page = "Surface Material Attributes",
         int    divider = 1
     ]],
     string               Distribution = "ggx"
     [[
         string help = "Microfacet distribution to use",
+        string page = "Surface Material Attributes",
         string widget = "popup",
         string options = "beckmann|ggx"
     ]],
     float                Roughness = 0.1
     [[
-        string help = "Surface roughness",
+        string help = "Roughness",
+        string page = "Surface Material Attributes",
         float  min = 0.001,
         float  max = 1.0
     ]],
     float                Anisotropic = 0.0
     [[
         string help = "Anisotropy",
+        string page = "Surface Material Attributes",
         float  min = -1.0,
         float  max = 1.0,
         int    divider = 1
     ]],
-    color                VolumeTransmittance = 1.0,
-    float                VolumeTransmittanceDistance = 0.0,
+    vector               Normal = N
+    [[
+        string label = "Bump Normal",
+        string page = "Surface Material Attributes",
+        string maya_attribute_name = "normalCamera",
+        string maya_attribute_short_name = "n"
+    ]],
+    vector               Tn = 0
+    [[
+        int    lockgeom = 0,
+        string help = "Tangent",
+        string label = "Tangent",
+        string page = "Surface Material Attributes"
+    ]],
+    color                VolumeTransmittance = 1.0
+    [[
+        string label = "Transmittance",
+        string page = "Volume Material Attributes",
+    ]],
+    float                VolumeTransmittanceDistance = 0.0
+    [[
+        string label = "Transmittance Distance",
+        string page = "Volume Material Attributes",
+    ]],
     output closure color BSDF = 0
     [[
         string maya_attribute_name = "outColor",
