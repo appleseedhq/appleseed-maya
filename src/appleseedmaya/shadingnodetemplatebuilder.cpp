@@ -30,6 +30,7 @@
 #include "appleseedmaya/shadingnodetemplatebuilder.h"
 
 // Standard headers.
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 
@@ -41,19 +42,61 @@
 
 ShadingNodeTemplateBuilder::ShadingNodeTemplateBuilder(const OSLShaderInfo& shaderInfo)
 {
+    std::vector<MString> pages;
+    buildPageList(shaderInfo, pages);
+
     std::stringstream ss;
+    // Import the bump control.
+    ss << "source AElambertCommon;\n";
+
     ss << "global proc AE" << shaderInfo.mayaName << "Template(string $nodeName)\n";
     ss << "{\n";
-    ss << "    AEswatchDisplay $nodeName;\n"; // <-- this crashes Maya.
+    ss << "    AEswatchDisplay $nodeName;\n";
     ss << "    editorTemplate -beginScrollLayout;\n";
-    /*
-                editorTemplate -beginLayout "Group name" -collapse 0;
-                    editorTemplate -addControl "...";
-                editorTemplate -endLayout;
-    */
-	ss << "    AEdependNodeTemplate $nodeName;\n";
-	ss << "    editorTemplate -addExtraControls;\n";
-	ss << "    editorTemplate -endScrollLayout;\n";
+
+    // Create layout and add controls for each page.
+    for (size_t i = 0, ie = pages.size(); i < ie; ++i)
+    {
+        ss << "    editorTemplate -beginLayout \"" << pages[i] << "\"  -collapse 0;\n";
+
+        for(size_t j = 0, je = shaderInfo.paramInfo.size(); j < je; ++j)
+        {
+            const OSLParamInfo& p = shaderInfo.paramInfo[j];
+
+            if (p.widget == "null")
+                continue;
+
+            if (p.page == pages[i])
+            {
+                // Special case for Maya's bump. We want to reuse the bump control.
+                // Maybe this should be specified by some metadata entry instead of
+                // by attribute name?
+                if (p.mayaAttributeName == "normalCamera")
+                    ss << "        editorTemplate -callCustom \"AEshaderBumpNew\" \"AEshaderBumpReplace\" \"normalCamera\";\n";
+                else
+                    ss << "        editorTemplate -addControl \"" << p.mayaAttributeName << "\";\n";
+
+                if (p.divider)
+                    ss << "        editorTemplate -addSeparator;\n";
+            }
+        }
+
+        ss << "    editorTemplate -endLayout;\n";
+    }
+
+    // Supress hidden attributes.
+    for(size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
+    {
+        const OSLParamInfo& p = shaderInfo.paramInfo[i];
+        if (p.widget == "null")
+            ss << "    editorTemplate -suppress \"" << p.mayaAttributeName << "\";\n";
+    }
+
+    // Include/call base class/node attributes.
+    ss << "    AEdependNodeTemplate $nodeName;\n";
+
+    ss << "    editorTemplate -addExtraControls;\n";
+    ss << "    editorTemplate -endScrollLayout;\n";
     ss << "}\n";
 
     m_melTemplate = ss.str().c_str();
@@ -67,4 +110,21 @@ MStatus ShadingNodeTemplateBuilder::registerAETemplate() const
 void ShadingNodeTemplateBuilder::logAETemplate() const
 {
     std::cout << m_melTemplate << std::endl;
+}
+
+void ShadingNodeTemplateBuilder::buildPageList(
+    const OSLShaderInfo&    shaderInfo,
+    std::vector<MString>&   pages) const
+{
+    // Naive and slow, but the number of pages and parameters should be small,
+    // and we do the work only once at startup.
+    for(size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
+    {
+        const OSLParamInfo& p = shaderInfo.paramInfo[i];
+        if (p.page.length() != 0)
+        {
+            if (std::find(pages.begin(), pages.end(), p.page) == pages.end())
+                pages.push_back(p.page);
+        }
+    }
 }

@@ -29,6 +29,9 @@
 #ifndef APPLESEED_MAYA_SHADING_NODE_TEMPLATE_BUILDER_H
 #define APPLESEED_MAYA_SHADING_NODE_TEMPLATE_BUILDER_H
 
+// Standard headers.
+#include <vector>
+
 // Maya headers.
 #include <maya/MStatus.h>
 #include <maya/MString.h>
@@ -59,6 +62,9 @@ class ShadingNodeTemplateBuilder
     void logAETemplate() const;
 
   private:
+    void buildPageList(
+        const OSLShaderInfo&    shaderInfo,
+        std::vector<MString>&   pages) const;
 
     MString m_melTemplate;
 };
