@@ -34,6 +34,7 @@
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MFnMatrixAttribute.h>
 #include <maya/MFnNumericAttribute.h>
+#include <maya/MFnStringData.h>
 #include <maya/MFnTypedAttribute.h>
 
 // appleseed.foundation headers.
@@ -49,47 +50,74 @@ namespace asf = foundation;
 namespace
 {
 
-void makeInput(MFnAttribute& attr)
+MStatus makeInput(MFnAttribute& attr)
 {
     attr.setStorable(true);
     attr.setWritable(true);
     attr.setReadable(true);
     attr.setKeyable(true);
+    return MS::kSuccess;
 }
 
-void makeOutput(MFnAttribute& attr)
+MStatus makeOutput(MFnAttribute& attr)
 {
     attr.setStorable(false);
     attr.setReadable(true);
     attr.setWritable(false);
     attr.setKeyable(false);
+    return MS::kSuccess;
 }
 
 MObject createPointAttribute(
     MFnNumericAttribute&    numAttrFn,
-    const OSLParamInfo&     p)
+    const OSLParamInfo&     p,
+    MStatus&                status)
 {
     MObject attr = numAttrFn.createPoint(
         p.mayaAttributeName,
-        p.mayaAttributeShortName);
+        p.mayaAttributeShortName,
+        &status);
 
-    if (!p.isOutput && p.validDefault)
+    if (p.hasDefault)
     {
-        // todo: set default here...
+        numAttrFn.setDefault(
+            static_cast<float>(p.defaultValue[0]),
+            static_cast<float>(p.defaultValue[1]),
+            static_cast<float>(p.defaultValue[2]));
     }
 
     return attr;
 }
 
-void initializeAttribute(MFnAttribute& attr, const OSLParamInfo& p)
+template <typename T>
+MObject createNumericAttribute(
+    MFnNumericAttribute&    numAttrFn,
+    const OSLParamInfo&     p,
+    MFnNumericData::Type    type,
+    MStatus&                status)
+{
+    MObject attr = numAttrFn.create(
+        p.mayaAttributeName,
+        p.mayaAttributeShortName,
+        type,
+        T(0),
+        &status);
+
+    if (p.hasDefault)
+        numAttrFn.setDefault(static_cast<T>(p.defaultValue[0]));
+
+    return attr;
+}
+
+MStatus initializeAttribute(MFnAttribute& attr, const OSLParamInfo& p)
 {
     if (p.label.length() != 0)
         attr.setNiceNameOverride(p.label);
 
     if (p.isOutput)
-        makeOutput(attr);
+        return makeOutput(attr);
     else
-        makeInput(attr);
+        return makeInput(attr);
 }
 
 // Stores the current shader info of the shader being registered.
@@ -117,6 +145,8 @@ MStatus ShadingNode::initialize()
     for(size_t i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& p = shaderInfo->paramInfo[i];
+
+        MStatus status;
         MObject attr;
 
         if (p.paramType == "color")
@@ -124,7 +154,8 @@ MStatus ShadingNode::initialize()
             MFnNumericAttribute numAttrFn;
             attr = numAttrFn.createColor(
                 p.mayaAttributeName,
-                p.mayaAttributeShortName);
+                p.mayaAttributeShortName,
+                &status);
 
             numAttrFn.setUsedAsColor(true);
 
@@ -136,19 +167,12 @@ MStatus ShadingNode::initialize()
                     static_cast<float>(p.defaultValue[2]));
             }
 
-            initializeAttribute(numAttrFn, p);
+            status = initializeAttribute(numAttrFn, p);
         }
         else if (p.paramType == "float")
         {
             MFnNumericAttribute numAttrFn;
-            attr = numAttrFn.create(
-                p.mayaAttributeName,
-                p.mayaAttributeShortName,
-                MFnNumericData::kFloat);
-
-            if (p.hasDefault)
-                numAttrFn.setDefault(static_cast<float>(p.defaultValue[0]));
-
+            attr = createNumericAttribute<float>(numAttrFn, p, MFnNumericData::kFloat, status);
             initializeAttribute(numAttrFn, p);
         }
         else if (p.paramType == "int")
@@ -162,27 +186,13 @@ MStatus ShadingNode::initialize()
             if (p.widget == "checkBox")
             {
                 MFnNumericAttribute numAttrFn;
-                attr = numAttrFn.create(
-                    p.mayaAttributeName,
-                    p.mayaAttributeShortName,
-                    MFnNumericData::kBoolean);
-
-                if (p.hasDefault)
-                    numAttrFn.setDefault(static_cast<bool>(p.defaultValue[0]));
-
+                attr = createNumericAttribute<bool>(numAttrFn, p, MFnNumericData::kBoolean, status);
                 initializeAttribute(numAttrFn, p);
             }
             else
             {
                 MFnNumericAttribute numAttrFn;
-                attr = numAttrFn.create(
-                    p.mayaAttributeName,
-                    p.mayaAttributeShortName,
-                    MFnNumericData::kInt);
-
-                if (p.hasDefault)
-                    numAttrFn.setDefault(static_cast<int>(p.defaultValue[0]));
-
+                attr = createNumericAttribute<int>(numAttrFn, p, MFnNumericData::kInt, status);
                 initializeAttribute(numAttrFn, p);
             }
         }
@@ -198,31 +208,13 @@ MStatus ShadingNode::initialize()
         else if (p.paramType == "normal")
         {
             MFnNumericAttribute numAttrFn;
-            attr = createPointAttribute(numAttrFn, p);
-
-            if (p.hasDefault)
-            {
-                numAttrFn.setDefault(
-                    static_cast<float>(p.defaultValue[0]),
-                    static_cast<float>(p.defaultValue[1]),
-                    static_cast<float>(p.defaultValue[2]));
-            }
-
+            attr = createPointAttribute(numAttrFn, p, status);
             initializeAttribute(numAttrFn, p);
         }
         else if (p.paramType == "point")
         {
             MFnNumericAttribute numAttrFn;
-            attr = createPointAttribute(numAttrFn, p);
-
-            if (p.hasDefault)
-            {
-                numAttrFn.setDefault(
-                    static_cast<float>(p.defaultValue[0]),
-                    static_cast<float>(p.defaultValue[1]),
-                    static_cast<float>(p.defaultValue[2]));
-            }
-
+            attr = createPointAttribute(numAttrFn, p, status);
             initializeAttribute(numAttrFn, p);
         }
         else if (p.paramType == "pointer") // closure color
@@ -236,16 +228,7 @@ MStatus ShadingNode::initialize()
         else if (p.paramType == "vector")
         {
             MFnNumericAttribute numAttrFn;
-            attr = createPointAttribute(numAttrFn, p);
-
-            if (p.hasDefault)
-            {
-                numAttrFn.setDefault(
-                    static_cast<float>(p.defaultValue[0]),
-                    static_cast<float>(p.defaultValue[1]),
-                    static_cast<float>(p.defaultValue[2]));
-            }
-
+            attr = createPointAttribute(numAttrFn, p, status);
             initializeAttribute(numAttrFn, p);
         }
         else if (p.paramType == "string")
@@ -295,17 +278,14 @@ MStatus ShadingNode::initialize()
                     p.mayaAttributeShortName,
                     MFnData::kString);
 
-                if (p.hasDefault)
-                {
-                    // todo: set default here...
-                }
-
                 if (p.widget == "filename")
                     typedAttrFn.setUsedAsFilename(true);
 
-                if (!p.isOutput && p.validDefault)
+                if (p.hasDefault)
                 {
-                    // todo: set default here...
+                    MFnStringData stringDataFn;
+                    MObject defaultData = stringDataFn.create(p.defaultStringValue);
+                    typedAttrFn.setDefault(defaultData);
                 }
 
                 initializeAttribute(typedAttrFn, p);

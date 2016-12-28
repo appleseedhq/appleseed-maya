@@ -78,6 +78,19 @@ bool OSLMetadataExtractor::getValue(const char *key, bool& value)
     return false;
 }
 
+namespace
+{
+
+void getFloat3Default(const asf::Dictionary& paramInfo, std::vector<double>& defaultValue)
+{
+    const asf::Vector3f v = paramInfo.get<asf::Vector3f>("default");
+    defaultValue.push_back(v[0]);
+    defaultValue.push_back(v[1]);
+    defaultValue.push_back(v[2]);
+}
+
+}
+
 OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
   : arrayLen(-1)
   , hasDefault(false)
@@ -98,10 +111,7 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
         {
             if (paramType == "color")
             {
-                const asf::Vector3f v = paramInfo.get<asf::Vector3f>("default");
-                defaultValue.push_back(v[0]);
-                defaultValue.push_back(v[1]);
-                defaultValue.push_back(v[2]);
+                getFloat3Default(paramInfo, defaultValue);
                 hasDefault = true;
             }
             else if (paramType == "float")
@@ -116,18 +126,12 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
             }
             if (paramType == "normal")
             {
-                const asf::Vector3f v = paramInfo.get<asf::Vector3f>("default");
-                defaultValue.push_back(v[0]);
-                defaultValue.push_back(v[1]);
-                defaultValue.push_back(v[2]);
+                getFloat3Default(paramInfo, defaultValue);
                 hasDefault = true;
             }
             if (paramType == "point")
             {
-                const asf::Vector3f v = paramInfo.get<asf::Vector3f>("default");
-                defaultValue.push_back(v[0]);
-                defaultValue.push_back(v[1]);
-                defaultValue.push_back(v[2]);
+                getFloat3Default(paramInfo, defaultValue);
                 hasDefault = true;
             }
             else if (paramType == "string")
@@ -137,10 +141,7 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
             }
             else if (paramType == "vector")
             {
-                const asf::Vector3f v = paramInfo.get<asf::Vector3f>("default");
-                defaultValue.push_back(v[0]);
-                defaultValue.push_back(v[1]);
-                defaultValue.push_back(v[2]);
+                getFloat3Default(paramInfo, defaultValue);
                 hasDefault = true;
             }
         }
