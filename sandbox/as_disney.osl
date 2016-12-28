@@ -3,7 +3,8 @@ surface as_disney
 [[
     string help = "Material based on the Disney BRDF",
     string maya_classification = "shader/surface:appleseed/surface:swatch/AppleseedRenderSwatch",
-    int maya_type_id = 1210820
+    int maya_type_id = 1210820,
+    string maya_node_name = "AsDisney"
 ]]
 (
     color  BaseColor = 0.5

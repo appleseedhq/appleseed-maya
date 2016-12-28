@@ -3,7 +3,8 @@ shader as_glass
 [[
     string help = "Glass surface shader",
     string maya_classification = "shader/surface:appleseed/surface:swatch/AppleseedRenderSwatch",
-    int maya_type_id = 1210821
+    int maya_type_id = 1210821,
+    string maya_node_name = "AsGlass"
 ]]
 (
     color                SurfaceTransmittance = 1.0
@@ -49,15 +50,7 @@ shader as_glass
         string help = "Anisotropy",
         string page = "Surface Material Attributes",
         float  min = -1.0,
-        float  max = 1.0,
-        int    divider = 1
-    ]],
-    vector               Normal = N
-    [[
-        string label = "Bump Normal",
-        string page = "Surface Material Attributes",
-        string maya_attribute_name = "normalCamera",
-        string maya_attribute_short_name = "n"
+        float  max = 1.0
     ]],
     vector               Tn = 0
     [[
@@ -75,6 +68,13 @@ shader as_glass
     [[
         string label = "Transmittance Distance",
         string page = "Volume Material Attributes",
+    ]],
+    vector               Normal = N
+    [[
+        string label = "Bump Normal",
+        string page = "Bump Mapping",
+        string maya_attribute_name = "normalCamera",
+        string maya_attribute_short_name = "n"
     ]],
     output closure color BSDF = 0
     [[

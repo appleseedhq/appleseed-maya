@@ -30,7 +30,7 @@
 
 shader as_plastic
 [[
-    string maya_node_name = "as_plastic",
+    string maya_node_name = "AsPlastic",
     string maya_classification = "shader/surface:appleseed/surface:swatch/AppleseedRenderSwatch",
     int maya_type_id = 0x001279c3
 ]]
@@ -123,7 +123,7 @@ shader as_plastic
     normal surface_normal = N
     [[
         string label = "Bump Normal",
-        string page = "Common Material Attributes",
+        string page = "Bump Mapping",
         string maya_attribute_name = "normalCamera",
         string maya_attribute_short_name = "n"
     ]],
