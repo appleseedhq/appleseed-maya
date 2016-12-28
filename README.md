@@ -67,7 +67,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] multiply divide
 - [ ] particle sampler
 - [x] 2d placement
-- [ ] 3d placement
+- [x] 3d placement
 - [x] plus minus average
 - [ ] projection
 - [x] quad switch
@@ -110,7 +110,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] bifrost aero material
 - [ ] bifrost foam material
 - [ ] bifrost liquid material
-- [ ] blinn
+- [x] blinn
 - [ ] cgfx shader (**unsupported**)
 - [ ] hair tube shader
 - [x] lambert
@@ -142,8 +142,8 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 
 - [x] bulge
 - [x] checker
-- [ ] cloth
-- [ ] file
+- [x] cloth
+- [x] file
 - [ ] fluid texture 2d
 - [ ] fractal
 - [x] grid
@@ -153,7 +153,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] noise
 - [ ] ocean
 - [ ] psd file
-- [ ] ramp
+- [x] ramp
 - [ ] substance
 - [ ] substance output
 - [ ] water
@@ -161,7 +161,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 #### 3D textures
 
 - [ ] brownian
-- [ ] cloud
+- [x] cloud
 - [ ] crater
 - [ ] fluid texture 3d
 - [ ] granite
@@ -194,7 +194,7 @@ Other Textures:
 #### Lights
 
 - [ ] ambient light
-- [ ] area light
+- [x] area light
 - [x] directional light
 - [x] point light
 - [x] spot light
