@@ -79,7 +79,7 @@ void Place3dTextureExporter::exportShaderParameters(
     for(int i = 0; i < 4; ++i)
         for(int j = 0; j < 4; ++j)
             ss << matrixValue[i][j] << " ";
-    shaderParams.insert("in_placementMatrix", ss.str().c_str());
+    shaderParams.insert("inclusiveMatrixInverse", ss.str().c_str());
 
     // Handle the rest of the parameters.
     ShadingNodeExporter::exportShaderParameters(
