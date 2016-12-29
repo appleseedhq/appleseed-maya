@@ -30,6 +30,7 @@
 #define APPLESEED_MAYA_ENV_LIGHT_NODE_H
 
 // Maya headers.
+#include <maya/MColor.h>
 #include <maya/MDrawContext.h>
 #include <maya/MDrawRegistry.h>
 #include <maya/MHWGeometryUtilities.h>
@@ -71,6 +72,11 @@ class EnvLightNode
 class EnvLightData
   : public MUserData
 {
+  public:
+
+    float   m_size;
+    MColor  m_color;
+
   protected:
 
     EnvLightData();
@@ -90,6 +96,8 @@ class EnvLightDrawOverride
   protected:
 
     explicit EnvLightDrawOverride(const MObject& obj);
+
+    void initializeData(const MDagPath& objPath, EnvLightData& data) const;
 };
 
 #endif  // !APPLESEED_MAYA_ENV_LIGHT_NODE_H

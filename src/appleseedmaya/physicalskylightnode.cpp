@@ -235,12 +235,8 @@ MUserData *PhysicalSkyLightDrawOverride::prepareForDraw(
     PhysicalSkyLightData *data =dynamic_cast<PhysicalSkyLightData*>(oldData);
 
     if (!data)
-    {
-        float size = 1.0f;
-        AttributeUtils::get(objPath.node(), "size", size);
-
         data = new PhysicalSkyLightData();
-    }
 
+    initializeData(objPath, *data);
     return data;
 }

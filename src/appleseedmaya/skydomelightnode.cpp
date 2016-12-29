@@ -110,12 +110,8 @@ MUserData *SkyDomeLightDrawOverride::prepareForDraw(
     SkyDomeLightData *data =dynamic_cast<SkyDomeLightData*>(oldData);
 
     if (!data)
-    {
-        float size = 1.0f;
-        AttributeUtils::get(objPath.node(), "size", size);
-
         data = new SkyDomeLightData();
-    }
 
+    initializeData(objPath, *data);
     return data;
 }

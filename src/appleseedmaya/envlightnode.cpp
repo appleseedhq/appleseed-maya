@@ -229,12 +229,13 @@ void EnvLightNode::initialize()
         g_logoVertices.append(MPoint(3.81460761785, 5.38515358513, 0.0)); ++i;
         g_logoStripSizes.append(i);
 
+        // Reduce logo size and bring it nearer the sphere.
         for (size_t i = 0, e = g_logoVertices.length(); i < e; ++i)
         {
             const float x = g_logoVertices[i].x;
             const float y = g_logoVertices[i].y;
-            g_logoVertices[i].x = (x - 5.0) * 0.5 + 1.5;
-            g_logoVertices[i].y = (y - 5.0) * 0.5 + 1.5;
+            g_logoVertices[i].x = (x - 5.0) * 0.35 + 1.1;
+            g_logoVertices[i].y = (y - 5.0) * 0.35 + 1.1;
         }
     }
 
@@ -273,26 +274,17 @@ void EnvLightNode::draw(
     const float size = displaySize();
 
     view.beginGL();
-    glPushAttrib (GL_CURRENT_BIT);
+    glPushAttrib(GL_CURRENT_BIT);
+
+    if (status == M3dView::kActive)
+        view.setDrawColor(13, M3dView::kActiveColors);
+    else
+        view.setDrawColor(13, M3dView::kDormantColors);
 
     if (style == M3dView::kFlatShaded || style == M3dView::kGouraudShaded)
-    {
-        if (status == M3dView::kActive)
-            view.setDrawColor(13, M3dView::kActiveColors);
-        else
-            view.setDrawColor(13, M3dView::kDormantColors);
-
         drawSphereWireframe(size);
-    }
     else
-    {
-        if (status == M3dView::kActive)
-            view.setDrawColor(13, M3dView::kActiveColors);
-        else
-            view.setDrawColor(13, M3dView::kDormantColors);
-
         drawSphereWireframe(size);
-    }
 
     drawAppleseedLogo(size);
 
@@ -342,5 +334,61 @@ MBoundingBox EnvLightDrawOverride::boundingBox(const MDagPath& objPath, const MD
 
 void EnvLightDrawOverride::draw(const MHWRender::MDrawContext& context, const MUserData *data)
 {
-    // todo: implement this...
+    const EnvLightData *drawData = dynamic_cast<const EnvLightData*>(data);
+    if (!drawData)
+        return;
+
+    MStatus status;
+
+    const MMatrix transform = context.getMatrix(MHWRender::MDrawContext::kWorldViewMtx, &status);
+    if (status != MStatus::kSuccess)
+        return;
+
+    const MMatrix projection = context.getMatrix(MHWRender::MDrawContext::kProjectionMtx, &status);
+    if (status != MStatus::kSuccess)
+        return;
+
+    const unsigned int displayStyle = context.getDisplayStyle();
+
+    MHWRender::MRenderer *renderer = MHWRender::MRenderer::theRenderer();
+    if (!renderer)
+        return;
+
+    if (renderer->drawAPIIsOpenGL())
+    {
+        float color [3] ={ drawData->m_color.r, drawData->m_color.g, drawData->m_color.b};
+        glColor3fv(color);
+
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadMatrixd(transform.matrix[0]);
+
+        glMatrixMode (GL_PROJECTION);
+        glPushMatrix();
+        glLoadMatrixd(projection.matrix[0]);
+
+        glPushAttrib(GL_CURRENT_BIT);
+
+        if (displayStyle & MHWRender::MDrawContext::kGouraudShaded)
+            drawSphereWireframe(drawData->m_size);
+
+        if (displayStyle & MHWRender::MDrawContext::kWireFrame)
+            drawSphereWireframe(drawData->m_size);
+
+        drawAppleseedLogo(drawData->m_size);
+
+        glPopAttrib();
+
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+    }
+}
+
+void EnvLightDrawOverride::initializeData(const MDagPath &objPath, EnvLightData &data) const
+{
+    data.m_size = 1.0f;
+    AttributeUtils::get(objPath.node(), "size", data.m_size);
+
+    data.m_color = MHWRender::MGeometryUtilities::wireframeColor(objPath);
 }
