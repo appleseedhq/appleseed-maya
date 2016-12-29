@@ -74,7 +74,15 @@ ShadingNodeTemplateBuilder::ShadingNodeTemplateBuilder(const OSLShaderInfo& shad
                 if (p.mayaAttributeName == "normalCamera")
                     ss << "        editorTemplate -callCustom \"AEshaderBumpNew\" \"AEshaderBumpReplace\" \"normalCamera\";\n";
                 else
-                    ss << "        editorTemplate -addControl \"" << p.mayaAttributeName << "\";\n";
+                {
+                    ss << "        editorTemplate -addControl ";
+
+                    if (p.help.length() != 0)
+                        ss << "-ann \"" << p.help << "\"";
+
+                    ss << "\"" << p.mayaAttributeName << "\"";
+                    ss << ";\n";
+                }
 
                 if (p.divider)
                     ss << "        editorTemplate -addSeparator;\n";

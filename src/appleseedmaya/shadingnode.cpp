@@ -65,6 +65,7 @@ MStatus makeOutput(MFnAttribute& attr)
     attr.setReadable(true);
     attr.setWritable(false);
     attr.setKeyable(false);
+    attr.setHidden(true);
     return MS::kSuccess;
 }
 
@@ -120,6 +121,17 @@ MStatus initializeAttribute(MFnAttribute& attr, const OSLParamInfo& p)
         return makeInput(attr);
 }
 
+MStatus initializeNumericAttribute(MFnNumericAttribute& attr, const OSLParamInfo& p)
+{
+    if (p.hasMin)
+        attr.setMin(p.minValue);
+
+    if (p.hasMax)
+        attr.setMax(p.maxValue);
+
+    return initializeAttribute(attr, p);
+}
+
 // Stores the current shader info of the shader being registered.
 const OSLShaderInfo *g_currentShaderInfo = 0;
 
@@ -173,7 +185,7 @@ MStatus ShadingNode::initialize()
         {
             MFnNumericAttribute numAttrFn;
             attr = createNumericAttribute<float>(numAttrFn, p, MFnNumericData::kFloat, status);
-            initializeAttribute(numAttrFn, p);
+            initializeNumericAttribute(numAttrFn, p);
         }
         else if (p.paramType == "int")
         {
@@ -189,11 +201,11 @@ MStatus ShadingNode::initialize()
                 attr = createNumericAttribute<bool>(numAttrFn, p, MFnNumericData::kBoolean, status);
                 initializeAttribute(numAttrFn, p);
             }
-            else
+            else // normal int attribute.
             {
                 MFnNumericAttribute numAttrFn;
                 attr = createNumericAttribute<int>(numAttrFn, p, MFnNumericData::kInt, status);
-                initializeAttribute(numAttrFn, p);
+                initializeNumericAttribute(numAttrFn, p);
             }
         }
         else if (p.paramType == "matrix")
