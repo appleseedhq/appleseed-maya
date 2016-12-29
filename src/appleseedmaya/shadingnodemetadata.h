@@ -103,6 +103,11 @@ class OSLParamInfo
     MString label;
     MString widget;
     MString options;
+    MString help;
+    bool hasMin;
+    double minValue;
+    bool hasMax;
+    double maxValue;
     bool divider;
 
     // appleseedMaya custom metadata.

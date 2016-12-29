@@ -171,6 +171,9 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
         metadata.getValue("label", label);
         metadata.getValue("widget", widget);
         metadata.getValue("options", options);
+        metadata.getValue("help", help);
+        hasMin = metadata.getValue("min", minValue);
+        hasMax = metadata.getValue("max", maxValue);
         metadata.getValue("divider", divider);
 
         metadata.getValue("maya_attribute_name", mayaAttributeName);
