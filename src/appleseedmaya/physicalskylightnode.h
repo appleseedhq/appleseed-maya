@@ -49,6 +49,17 @@ class PhysicalSkyLightNode
 
     static void* creator();
     static MStatus initialize();
+
+  private:
+    static MObject m_sunTheta;
+    static MObject m_sunPhi;
+    static MObject m_turbidity;
+    static MObject m_turbidity_Multiplier;
+    static MObject m_luminanceMultiplier;
+    static MObject m_luminanceGamma;
+    static MObject m_saturationMultiplier;
+    static MObject m_horizonShift;
+    static MObject m_groundAlbedo;
 };
 
 class PhysicalSkyLightData

@@ -91,17 +91,17 @@ void XGenExporter::createEntity(const AppleseedSession::Options& options)
     MString currentScene;
     MGlobal::executeCommand("file -q -sn", currentScene);
 
-    MFileObject fo;
-    fo.setRawFullName(currentScene);
+    MFileObject f;
+    f.setRawFullName(currentScene);
 
     // Path to the directory containing the scene.
-    MString scenePath = fo.resolvedPath();
+    const MString scenePath = f.resolvedPath();
 
     // Filename of the scene with the extension.
-    MString sceneFile = fo.resolvedName();
+    const MString sceneFile = f.resolvedName();
 
     // Filename of the scene without the extension.
-    MString sceneName(sceneFile.asChar(), sceneFile.length() - 3);
+    const MString sceneName(sceneFile.asChar(), sceneFile.length() - 3);
 
     params.insert("scene_path", scenePath.asChar());
     params.insert("scene_file", sceneFile.asChar());
@@ -113,11 +113,14 @@ void XGenExporter::createEntity(const AppleseedSession::Options& options)
     MDagPath palettePath = dagPath();
     palettePath.pop();
     palettePath.pop();
+
+    // Collection name minus the '|' char.
     MString paletteName(palettePath.fullPathName().asChar() + 1);
 
     MDagPath descriptionPath = dagPath();
     descriptionPath.pop();
 
+    // Description name minus collection name minus 2 '|' chars.
     MString descriptionName(
         descriptionPath.fullPathName().asChar() + paletteName.length() + 2);
 

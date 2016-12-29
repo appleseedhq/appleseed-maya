@@ -44,6 +44,16 @@ const MTypeId PhysicalSkyLightNode::id(PhysicalSkyLightNodeTypeId);
 const MString PhysicalSkyLightNode::drawDbClassification("drawdb/geometry/appleseedPhysicalSkyLight");
 const MString PhysicalSkyLightNode::drawRegistrantId("appleseedPhysicalSkyLight");
 
+MObject PhysicalSkyLightNode::m_sunTheta;
+MObject PhysicalSkyLightNode::m_sunPhi;
+MObject PhysicalSkyLightNode::m_turbidity;
+MObject PhysicalSkyLightNode::m_turbidity_Multiplier;
+MObject PhysicalSkyLightNode::m_luminanceMultiplier;
+MObject PhysicalSkyLightNode::m_luminanceGamma;
+MObject PhysicalSkyLightNode::m_saturationMultiplier;
+MObject PhysicalSkyLightNode::m_horizonShift;
+MObject PhysicalSkyLightNode::m_groundAlbedo;
+
 void* PhysicalSkyLightNode::creator()
 {
     return new PhysicalSkyLightNode();
@@ -81,6 +91,19 @@ MStatus PhysicalSkyLightNode::initialize()
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: Failed to add envLight display size attribute");
+
+    /*
+    m_sunTheta = numAttrFn.create(
+        "sun_theta",
+        "sun_theta",
+        MFnUnitAttribute::kAngle,
+        45.0,
+        &status);
+    numAttrFn.setNiceNameOverride("Sun Theta Angle");
+    numAttrFn.setMin(0.0);
+    numAttrFn.setMax(90.0);
+    status = addAttribute(m_sunTheta);
+    */
 
     return status;
 
