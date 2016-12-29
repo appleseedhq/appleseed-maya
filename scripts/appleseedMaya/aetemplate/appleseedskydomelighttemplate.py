@@ -32,7 +32,6 @@ import pymel.core as pm
 # appleseedMaya imports.
 from appleseedMaya.logger import logger
 
-
 class AEappleseedSkyDomeLightTemplate(pm.ui.AETemplate):
     def __init__(self, nodeName):
         super(AEappleseedSkyDomeLightTemplate, self).__init__(nodeName)

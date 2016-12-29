@@ -55,7 +55,7 @@ EnvLightExporter::~EnvLightExporter()
 {
     if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
     {
-        // todo: cleanup here.
+        scene().environment_edfs().remove(m_envLight.get());
     }
 }
 
@@ -81,6 +81,15 @@ DagNodeExporter *PhysicalSkyLightExporter::create(
     AppleseedSession::SessionMode   sessionMode)
 {
     return new PhysicalSkyLightExporter(path, project, sessionMode);
+}
+
+PhysicalSkyLightExporter::~PhysicalSkyLightExporter()
+{
+    if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    {
+        if (m_sunLight.get())
+            mainAssembly().lights().remove(m_sunLight.get());
+    }
 }
 
 PhysicalSkyLightExporter::PhysicalSkyLightExporter(

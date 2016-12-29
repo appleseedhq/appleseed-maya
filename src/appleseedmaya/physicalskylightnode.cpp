@@ -47,12 +47,14 @@ const MString PhysicalSkyLightNode::drawRegistrantId("appleseedPhysicalSkyLight"
 MObject PhysicalSkyLightNode::m_sunTheta;
 MObject PhysicalSkyLightNode::m_sunPhi;
 MObject PhysicalSkyLightNode::m_turbidity;
-MObject PhysicalSkyLightNode::m_turbidity_Multiplier;
+MObject PhysicalSkyLightNode::m_turbidityMultiplier;
 MObject PhysicalSkyLightNode::m_luminanceMultiplier;
 MObject PhysicalSkyLightNode::m_luminanceGamma;
 MObject PhysicalSkyLightNode::m_saturationMultiplier;
 MObject PhysicalSkyLightNode::m_horizonShift;
 MObject PhysicalSkyLightNode::m_groundAlbedo;
+MObject PhysicalSkyLightNode::m_sunEnable;
+MObject PhysicalSkyLightNode::m_radianceMultiplier;
 
 void* PhysicalSkyLightNode::creator()
 {
@@ -63,151 +65,167 @@ MStatus PhysicalSkyLightNode::initialize()
 {
     EnvLightNode::initialize();
 
-    MFnNumericAttribute numAttrFn;
     MFnMessageAttribute msgAttrFn;
+    MFnNumericAttribute numAttrFn;
+    MFnUnitAttribute unitAttrFn;
 
     MStatus status;
 
     // Render globals connection.
     m_message = msgAttrFn.create("globalsMessage", "globalsMessage", &status);
-    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
-        status,
-        "appleseedMaya: Failed to create envLight message attribute");
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
 
     status = addAttribute(m_message);
-    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
-        status,
-        "appleseedMaya: Failed to add envLight message attribute");
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
 
     // Display size.
     m_displaySize = numAttrFn.create("size", "sz", MFnNumericData::kFloat, 1.0f, &status);
-    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
-        status,
-        "appleseedMaya: Failed to create envLight display size attribute");
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
 
     numAttrFn.setMin(0.01f);
     numAttrFn.setMax(100.0f);
     status = addAttribute(m_displaySize);
-    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
-        status,
-        "appleseedMaya: Failed to add envLight display size attribute");
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
 
-    /*
-    m_sunTheta = numAttrFn.create(
-        "sun_theta",
-        "sun_theta",
+    m_sunTheta = unitAttrFn.create(
+        "sunTheta",
+        "sunTheta",
         MFnUnitAttribute::kAngle,
-        45.0,
+        0.7853981, // 45 degrees
         &status);
-    numAttrFn.setNiceNameOverride("Sun Theta Angle");
-    numAttrFn.setMin(0.0);
-    numAttrFn.setMax(90.0);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
+    unitAttrFn.setNiceNameOverride("Sun Theta Angle");
+    unitAttrFn.setMin(0.0);
+    unitAttrFn.setMax(90.0);
     status = addAttribute(m_sunTheta);
-    */
+
+    m_sunPhi = unitAttrFn.create(
+        "sunPhi",
+        "sunPhi",
+        MFnUnitAttribute::kAngle,
+        0.0,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
+    unitAttrFn.setNiceNameOverride("Sun Phi Angle");
+    unitAttrFn.setMin(-360.0);
+    unitAttrFn.setMax(360.0);
+    status = addAttribute(m_sunPhi);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
+
+    m_turbidity = numAttrFn.create(
+        "turbidity",
+        "turbidity",
+        MFnNumericData::kFloat,
+        1.0,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
+    numAttrFn.setNiceNameOverride("Turbidity");
+    status = addAttribute(m_turbidity);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
+
+    m_turbidityMultiplier = numAttrFn.create(
+        "turbidityScale",
+        "turbidityScale",
+        MFnNumericData::kFloat,
+        2.0,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
+    numAttrFn.setMin(0.0);
+    numAttrFn.setMax(8.0);
+    numAttrFn.setNiceNameOverride("Turbidity Scale");
+    status = addAttribute(m_turbidityMultiplier);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
+
+    m_luminanceMultiplier = numAttrFn.create(
+        "luminanceScale",
+        "luminanceScale",
+        MFnNumericData::kFloat,
+        1.0,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
+    numAttrFn.setMin(0.0);
+    numAttrFn.setMax(10.0);
+    numAttrFn.setNiceNameOverride("Luminance Scale");
+    status = addAttribute(m_luminanceMultiplier);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
+
+    m_luminanceGamma = numAttrFn.create(
+        "luminanceGamma",
+        "luminanceGamma",
+        MFnNumericData::kFloat,
+        1.0,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
+    numAttrFn.setMin(0.0);
+    numAttrFn.setMax(3.0);
+    numAttrFn.setNiceNameOverride("Luminance Gamma");
+    status = addAttribute(m_luminanceGamma);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
+
+    m_saturationMultiplier = numAttrFn.create(
+        "saturationScale",
+        "saturationScale",
+        MFnNumericData::kFloat,
+        1.0,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
+    numAttrFn.setMin(0.0);
+    numAttrFn.setMax(10.0);
+    numAttrFn.setNiceNameOverride("Saturation Scale");
+    status = addAttribute(m_saturationMultiplier);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
+
+    m_horizonShift = unitAttrFn.create(
+        "horizonShift",
+        "horizonShift",
+        MFnUnitAttribute::kAngle,
+        0.0,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
+    unitAttrFn.setNiceNameOverride("Horizon Shift");
+    unitAttrFn.setMin(-360.0);
+    unitAttrFn.setMax(360.0);
+    status = addAttribute(m_horizonShift);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
+
+    m_groundAlbedo = numAttrFn.create(
+        "groundAlbedo",
+        "groundAlbedo",
+        MFnNumericData::kFloat,
+        0.3,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
+    numAttrFn.setMin(0.0);
+    numAttrFn.setMax(1.0);
+    numAttrFn.setNiceNameOverride("Ground Albedo");
+    status = addAttribute(m_groundAlbedo);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
+
+    m_sunEnable = numAttrFn.create(
+        "sunEnable",
+        "sunEnable",
+        MFnNumericData::kBoolean,
+        true,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
+    numAttrFn.setNiceNameOverride("Sun Light");
+    status = addAttribute(m_sunEnable);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
+
+    m_radianceMultiplier = numAttrFn.create(
+        "radianceScale",
+        "radianceScale",
+        MFnNumericData::kFloat,
+        1.0,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
+    numAttrFn.setMin(0.0);
+    numAttrFn.setMax(10.0);
+    numAttrFn.setNiceNameOverride("Sun Intensity");
+    status = addAttribute(m_radianceMultiplier);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
 
     return status;
-
-/*
-    metadata.push_back(
-        Dictionary()
-            .insert("name", "sun_theta")
-            .insert("label", "Sun Theta Angle")
-            .insert("type", "numeric")
-            .insert("min_value", "0.0")
-            .insert("max_value", "90.0")
-            .insert("use", "required")
-            .insert("default", "45.0")
-            .insert("help", "Sun polar (vertical) angle in degrees"));
-
-    metadata.push_back(
-        Dictionary()
-            .insert("name", "sun_phi")
-            .insert("label", "Sun Phi Angle")
-            .insert("type", "numeric")
-            .insert("min_value", "-360.0")
-            .insert("max_value", "360.0")
-            .insert("use", "required")
-            .insert("default", "0.0")
-            .insert("help", "Sun azimuthal (horizontal) angle in degrees"));
-
-    metadata.push_back(
-        Dictionary()
-            .insert("name", "turbidity")
-            .insert("label", "Turbidity")
-            .insert("type", "colormap")
-            .insert("entity_types",
-                Dictionary().insert("texture_instance", "Textures"))
-            .insert("use", "required")
-            .insert("default", "1.0")
-            .insert("help", "Atmospheric haziness"));
-
-    metadata.push_back(
-        Dictionary()
-            .insert("name", "turbidity_multiplier")
-            .insert("label", "Turbidity Multiplier")
-            .insert("type", "numeric")
-            .insert("min_value", "0.0")
-            .insert("max_value", "8.0")
-            .insert("use", "optional")
-            .insert("default", "2.0")
-            .insert("help", "Atmospheric haziness multiplier"));
-
-    metadata.push_back(
-        Dictionary()
-            .insert("name", "luminance_multiplier")
-            .insert("label", "Luminance Multiplier")
-            .insert("type", "numeric")
-            .insert("min_value", "0.0")
-            .insert("max_value", "10.0")
-            .insert("use", "optional")
-            .insert("default", "1.0")
-            .insert("help", "Sky luminance multiplier"));
-
-    metadata.push_back(
-        Dictionary()
-            .insert("name", "luminance_gamma")
-            .insert("label", "Luminance Gamma")
-            .insert("type", "numeric")
-            .insert("min_value", "0.0")
-            .insert("max_value", "3.0")
-            .insert("use", "optional")
-            .insert("default", "1.0")
-            .insert("help", "Sky luminance gamma"));
-
-    metadata.push_back(
-        Dictionary()
-            .insert("name", "saturation_multiplier")
-            .insert("label", "Saturation Multiplier")
-            .insert("type", "numeric")
-            .insert("min_value", "0.0")
-            .insert("max_value", "10.0")
-            .insert("use", "optional")
-            .insert("default", "1.0")
-            .insert("help", "Sky color saturation multiplier"));
-
-    metadata.push_back(
-        Dictionary()
-            .insert("name", "horizon_shift")
-            .insert("label", "Horizon Shift")
-            .insert("type", "text")
-            .insert("use", "optional")
-            .insert("default", "0.0")
-            .insert("help", "Rotate the sky horizontally by a given number of degrees"));
-
-// hosek only...
-
-    metadata.push_back(
-        Dictionary()
-            .insert("name", "ground_albedo")
-            .insert("label", "Ground Albedo")
-            .insert("type", "numeric")
-            .insert("min_value", "0.0")
-            .insert("max_value", "1.0")
-            .insert("use", "optional")
-            .insert("default", "0.3")
-            .insert("help", "Ground albedo (reflection coefficient of the ground)"));
-
-*/
 }
 
 PhysicalSkyLightData::PhysicalSkyLightData()

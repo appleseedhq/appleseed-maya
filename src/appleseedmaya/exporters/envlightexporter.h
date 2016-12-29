@@ -34,6 +34,7 @@
 
 // appleseed.renderer headers.
 #include "renderer/api/environmentedf.h"
+#include "renderer/api/light.h"
 
 class EnvLightExporter
   : public DagNodeExporter
@@ -68,6 +69,8 @@ class PhysicalSkyLightExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
+    ~PhysicalSkyLightExporter();
+
     virtual void createEntity(const AppleseedSession::Options& options);
 
   private:
@@ -76,6 +79,8 @@ class PhysicalSkyLightExporter
       const MDagPath&               path,
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
+
+    AppleseedEntityPtr<renderer::Light> m_sunLight;
 };
 
 class SkyDomeLightExporter

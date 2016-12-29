@@ -54,12 +54,14 @@ class PhysicalSkyLightNode
     static MObject m_sunTheta;
     static MObject m_sunPhi;
     static MObject m_turbidity;
-    static MObject m_turbidity_Multiplier;
+    static MObject m_turbidityMultiplier;
     static MObject m_luminanceMultiplier;
     static MObject m_luminanceGamma;
     static MObject m_saturationMultiplier;
     static MObject m_horizonShift;
     static MObject m_groundAlbedo;
+    static MObject m_sunEnable;
+    static MObject m_radianceMultiplier;
 };
 
 class PhysicalSkyLightData
