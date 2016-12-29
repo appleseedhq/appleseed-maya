@@ -90,7 +90,7 @@ def createRenderNodeCallback(postCommand, nodeType):
 
     for c in pm.getClassification(nodeType):
         if 'appleseed' in c.lower():
-            buildNodeCmd = "import appleseedMaya.callbacks; appleseedMaya.callbacks.createRenderNode(nodeType=\\\"{0}\\\", postCommand='{1}')".format(nodeType, postCommand)
+            buildNodeCmd = "import appleseedMaya.hyperShadeCallbacks; appleseedMaya.hyperShadeCallbacks.createRenderNode(nodeType=\\\"{0}\\\", postCommand='{1}')".format(nodeType, postCommand)
             buildNodeCmd = "string $cmd = \"{0}\"; python($cmd);".format(buildNodeCmd)
             return buildNodeCmd
 
