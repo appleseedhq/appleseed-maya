@@ -11,6 +11,8 @@ shader as_glass
     [[
         string label = "Transmittance Color",
         string page = "Surface Material Attributes",
+        string maya_attribute_name = "color",
+        string maya_attribute_short_name = "c"
     ]],
     float                Transmittance = 0.8
     [[
@@ -69,10 +71,10 @@ shader as_glass
         string label = "Transmittance Distance",
         string page = "Volume Material Attributes",
     ]],
-    vector               Normal = N
+    vector Normal = N
     [[
-        string label = "Bump Normal",
-        string page = "Bump Mapping",
+        string label = "Map",
+        string page = "Bump/Normal Mapping",
         string maya_attribute_name = "normalCamera",
         string maya_attribute_short_name = "n"
     ]],

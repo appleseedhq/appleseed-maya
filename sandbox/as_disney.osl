@@ -9,7 +9,9 @@ surface as_disney
 (
     color  BaseColor = 0.5
     [[
-        string page = "Common Material Attributes"
+        string page = "Common Material Attributes",
+        string maya_attribute_name = "color",
+        string maya_attribute_short_name = "c"
     ]],
     float  Subsurface = 0
     [[
@@ -71,8 +73,8 @@ surface as_disney
     ]],
     vector Normal = N
     [[
-        string label = "Bump Normal",
-        string page = "Common Material Attributes",
+        string label = "Map",
+        string page = "Bump/Normal Mapping",
         string maya_attribute_name = "normalCamera",
         string maya_attribute_short_name = "n"
     ]],

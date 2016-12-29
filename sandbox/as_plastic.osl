@@ -32,13 +32,15 @@ shader as_plastic
 [[
     string maya_node_name = "AsPlastic",
     string maya_classification = "shader/surface:appleseed/surface:swatch/AppleseedRenderSwatch",
-    int maya_type_id = 0x001279c3
+    int maya_type_id = 1210819
 ]]
 (
     color surface_color = color(0, 0.26, 0.7)
     [[
         string label = "Surface Color",
-        string page = "Common Material Attributes"
+        string page = "Common Material Attributes",
+        string maya_attribute_name = "color",
+        string maya_attribute_short_name = "c"
     ]],
     color sss_radius = 1.0
     [[
@@ -122,8 +124,8 @@ shader as_plastic
     ]],
     normal surface_normal = N
     [[
-        string label = "Bump Normal",
-        string page = "Bump Mapping",
+        string label = "Map",
+        string page = "Bump/Normal Mapping",
         string maya_attribute_name = "normalCamera",
         string maya_attribute_short_name = "n"
     ]],
