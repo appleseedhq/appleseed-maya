@@ -32,12 +32,16 @@
 // Forward declaration header.
 #include "shadingnodeexporterfwd.h"
 
+// Standard headers.
+#include <vector>
+
 // Maya headers.
 #include <maya/MObject.h>
 #include <maya/MPlug.h>
 #include <maya/MString.h>
 
 // appleseed.maya headers.
+#include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/shadingnoderegistry.h"
 #include "appleseedmaya/utils.h"
 
@@ -55,20 +59,13 @@ class ShadingNodeExporter
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);
 
-    MObject node() const;
+    // Create appleseed entities.
+    void createEntities(
+        const ShadingNodeExporterMap&    exporters,
+        const AppleseedSession::Options& options);
 
-    const OSLShaderInfo& getShaderInfo() const;
-
-    virtual void createShader();
-
-    virtual void exportShaderParameters(
-        const OSLShaderInfo&     shaderInfo,
-        renderer::ParamArray&    shaderParams) const;
-
-    virtual void exportParameterValue(
-        const MPlug&             plug,
-        const OSLParamInfo&      paramInfo,
-        renderer::ParamArray&    shaderParams) const;
+    // Flush entities to the renderer.
+    void flushEntities();
 
     virtual bool layerAndParamNameFromPlug(
         const MPlug&             plug,
@@ -78,21 +75,56 @@ class ShadingNodeExporter
   protected:
 
     ShadingNodeExporter(
-        const MObject&          object,
-        renderer::ShaderGroup&  shaderGroup);
+        const MObject&                  object,
+        renderer::ShaderGroup&          shaderGroup);
+
+    virtual void exportShaderParameters(
+        const OSLShaderInfo&            shaderInfo,
+        renderer::ParamArray&           shaderParams) const;
+
+    virtual void exportParameterValue(
+        const MPlug&                    plug,
+        const OSLParamInfo&             paramInfo,
+        renderer::ParamArray&           shaderParams) const;
 
     void exportValue(
-        const MPlug&              plug,
-        const OSLParamInfo&       paramInfo,
-        renderer::ParamArray&     shaderParams) const;
+        const MPlug&                    plug,
+        const OSLParamInfo&             paramInfo,
+        renderer::ParamArray&           shaderParams) const;
 
     void exportArrayValue(
-        const MPlug&              plug,
-        const OSLParamInfo&       paramInfo,
-        renderer::ParamArray&     shaderParams) const;
+        const MPlug&                    plug,
+        const OSLParamInfo&             paramInfo,
+        renderer::ParamArray&           shaderParams) const;
 
-    MObject                 m_object;
-    renderer::ShaderGroup&  m_shaderGroup;
+    MObject node() const;
+
+    const OSLShaderInfo& getShaderInfo() const;
+
+    const ShadingNodeExporter *findExporterForNode(
+        const ShadingNodeExporterMap&   exporters,
+        const MObject&                  node) const;
+
+    struct ShaderEntry
+    {
+        MString                 m_shaderType;
+        MString                 m_shaderName;
+        MString                 m_layerName;
+        renderer::ParamArray    m_params;
+    };
+
+    struct ConnectionEntry
+    {
+        MString m_srcLayerName;
+        MString m_srcParam;
+        MString m_dstLayerName;
+        MString m_dstParam;
+    };
+
+    MObject                         m_object;
+    renderer::ShaderGroup&          m_shaderGroup;
+    std::vector<ShaderEntry>        m_shaders;
+    std::vector<ConnectionEntry>    m_connections;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H

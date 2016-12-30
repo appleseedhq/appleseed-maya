@@ -160,3 +160,4 @@ void RampExporter::exportParameterValue(
             shaderParams);
     }
 }
+

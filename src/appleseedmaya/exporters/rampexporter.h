@@ -43,15 +43,16 @@ class RampExporter
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);
 
+  private:
+
+    RampExporter(
+        const MObject&          object,
+        renderer::ShaderGroup&  shaderGroup);
+
     virtual void exportParameterValue(
         const MPlug&            plug,
         const OSLParamInfo&     paramInfo,
         renderer::ParamArray&   shaderParams) const;
-
-  private:
-    RampExporter(
-        const MObject&          object,
-        renderer::ShaderGroup&  shaderGroup);
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_RAMP_EXPORTER_H

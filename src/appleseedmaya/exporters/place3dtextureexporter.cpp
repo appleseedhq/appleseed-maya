@@ -117,3 +117,4 @@ bool Place3dTextureExporter::layerAndParamNameFromPlug(
 
     return ShadingNodeExporter::layerAndParamNameFromPlug(plug, layerName, paramName);
 }
+

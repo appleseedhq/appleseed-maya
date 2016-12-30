@@ -43,19 +43,20 @@ class Place3dTextureExporter
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);
 
-    virtual void exportShaderParameters(
-        const OSLShaderInfo&    shaderInfo,
-        renderer::ParamArray&   shaderParams) const;
-
     virtual bool layerAndParamNameFromPlug(
         const MPlug&             plug,
         MString&                 layerName,
         MString&                 paramName) const;
 
   private:
+
     Place3dTextureExporter(
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);
+
+    virtual void exportShaderParameters(
+        const OSLShaderInfo&    shaderInfo,
+        renderer::ParamArray&   shaderParams) const;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_PLACE3DTEXTURE_EXPORTER_H

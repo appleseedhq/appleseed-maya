@@ -78,11 +78,7 @@ class ShadingNetworkExporter
       renderer::Assembly&           mainAssembly,
       AppleseedSession::SessionMode sessionMode);
 
-    void exportShadingNetwork();
-    void exportConnections(ShadingNodeExporter& dstNodeExporter);
     void createShaderNodeExporters(const MObject& node);
-
-    ShadingNodeExporter *findExporterForNode(const MObject& node);
 
     ShadingNetworkContext                       m_context;
     AppleseedSession::SessionMode               m_sessionMode;
