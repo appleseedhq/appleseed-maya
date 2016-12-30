@@ -46,7 +46,7 @@ class Place3dTextureExporter
     virtual bool layerAndParamNameFromPlug(
         const MPlug&             plug,
         MString&                 layerName,
-        MString&                 paramName) const;
+        MString&                 paramName);
 
   private:
 

@@ -32,9 +32,6 @@
 // Forward declaration header.
 #include "shadingnodeexporterfwd.h"
 
-// Standard headers.
-#include <vector>
-
 // Maya headers.
 #include <maya/MObject.h>
 #include <maya/MPlug.h>
@@ -56,21 +53,14 @@ class ShadingNodeExporter
     static void registerExporters();
 
     static ShadingNodeExporter *create(
-        const MObject&          object,
-        renderer::ShaderGroup&  shaderGroup);
+        const MObject&                  object,
+        renderer::ShaderGroup&          shaderGroup);
 
     // Create appleseed entities.
-    void createEntities(
-        const ShadingNodeExporterMap&    exporters,
-        const AppleseedSession::Options& options);
+    void createEntities(ShadingNodeExporterMap& exporters);
 
     // Flush entities to the renderer.
     void flushEntities();
-
-    virtual bool layerAndParamNameFromPlug(
-        const MPlug&             plug,
-        MString&                 layerName,
-        MString&                 paramName) const;
 
   protected:
 
@@ -97,34 +87,48 @@ class ShadingNodeExporter
         const OSLParamInfo&             paramInfo,
         renderer::ParamArray&           shaderParams) const;
 
+    virtual bool layerAndParamNameFromPlug(
+        const MPlug&                    plug,
+        MString&                        layerName,
+        MString&                        paramName);
+
     MObject node() const;
 
     const OSLShaderInfo& getShaderInfo() const;
 
-    const ShadingNodeExporter *findExporterForNode(
-        const ShadingNodeExporterMap&   exporters,
-        const MObject&                  node) const;
+    ShadingNodeExporter *findExporterForNode(
+        ShadingNodeExporterMap&         exporters,
+        const MObject&                  node);
 
-    struct ShaderEntry
-    {
-        MString                 m_shaderType;
-        MString                 m_shaderName;
-        MString                 m_layerName;
-        renderer::ParamArray    m_params;
-    };
+    ShadingNodeExporter *getSrcPlugAndExporter(
+        const MPlug&                    plug,
+        ShadingNodeExporterMap&         exporters,
+        MPlug&                          srcPlug);
 
-    struct ConnectionEntry
-    {
-        MString m_srcLayerName;
-        MString m_srcParam;
-        MString m_dstLayerName;
-        MString m_dstParam;
-    };
+    MString createAdaptorShader(
+        const MString&                  shaderName,
+        const MString&                  layerName,
+        const renderer::ParamArray&     params);
+
+    void createInputFloatCompoundAdaptorShader(
+        const OSLParamInfo&             paramInfo,
+        const MPlug&                    plug,
+        ShadingNodeExporterMap&         exporters,
+        const MString&                  shaderName,
+        const MString&                  layerName,
+        const char**                    shaderParamNames,
+        const char*                     shaderOutputParamName);
+
+    bool createOutputFloatCompoundAdaptorShader(
+        const MPlug&                    plug,
+        const MString&                  shaderName,
+        const char**                    shaderParamNames,
+        const char*                     shaderInputParamName,
+        MString&                        layerName,
+        MString&                        paramName);
 
     MObject                         m_object;
     renderer::ShaderGroup&          m_shaderGroup;
-    std::vector<ShaderEntry>        m_shaders;
-    std::vector<ConnectionEntry>    m_connections;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H

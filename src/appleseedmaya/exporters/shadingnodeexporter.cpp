@@ -37,6 +37,9 @@
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 
+// appleseed.foundation headers.
+#include "foundation/utility/string.h"
+
 // appleseed.maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
@@ -45,6 +48,17 @@
 
 namespace asf = foundation;
 namespace asr = renderer;
+
+namespace
+{
+
+const char *g_compToVectorParamNames[] = {"compX", "compY", "compZ"};
+const char *g_compToVectorOutputParamName = "comp";
+
+const char *g_vectorToCompParamNames[] = {"compX", "compY", "compZ"};
+const char *g_vectorToCompInputParamName = "comp";
+
+}
 
 void ShadingNodeExporter::registerExporters()
 {
@@ -74,27 +88,79 @@ ShadingNodeExporter::ShadingNodeExporter(
 {
 }
 
-void ShadingNodeExporter::createEntities(
-    const ShadingNodeExporterMap&       exporters,
-    const AppleseedSession::Options&    options)
+void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
 {
+    MStatus status;
     MFnDependencyNode depNodeFn(m_object);
     const OSLShaderInfo& shaderInfo = getShaderInfo();
 
-    // Shader and param values.
+    // The fact that we need to specify shaders in depth first
+    // order and that Maya allows component connections but OSL
+    // does not make things a bit messy...
+
+    // - We need to create any input adaptor shader first.
+    // - Then we need to create the shader itself.
+    // - Output adaptor shaders are created as needed.
+
+    // Create adaptor shaders and add component connections first.
+    for(size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
+    {
+        const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
+
+        // Skip output attributes.
+        if (paramInfo.isOutput)
+            continue;
+
+        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
+        if (!status)
+            continue;
+
+        if (plug.isConnected())
+            continue;
+
+        if (plug.isCompound() && plug.numConnectedChildren() != 0)
+        {
+            if (plug.numChildren() == 3)
+            {
+                createInputFloatCompoundAdaptorShader(
+                    paramInfo,
+                    plug,
+                    exporters,
+                    "as_maya_components2Vector",
+                    "comp2Vector#",
+                    g_compToVectorParamNames,
+                    g_compToVectorOutputParamName);
+            }
+            else
+            {
+                RENDERER_LOG_WARNING(
+                    "Skipping child compound connection to attribute %s of shading node %s",
+                    paramInfo.mayaAttributeName.asChar(),
+                    depNodeFn.typeName().asChar());
+            }
+        }
+        else if (plug.isArray() && plug.numConnectedElements() != 0)
+        {
+            // todo: implement this...
+            RENDERER_LOG_WARNING(
+                "Skipping array element connection to attribute %s of shading node %s",
+                paramInfo.mayaAttributeName.asChar(),
+                depNodeFn.typeName().asChar());
+        }
+    }
+
+    // Convert the param values and create the shader for this node.
     asr::ParamArray shaderParams;
     exportShaderParameters(shaderInfo, shaderParams);
 
-    ShaderEntry entry;
-    entry.m_shaderType = shaderInfo.shaderType;
-    entry.m_shaderName = shaderInfo.shaderName;
-    entry.m_layerName = depNodeFn.name();
-    entry.m_params = shaderParams;
-    m_shaders.push_back(entry);
+    m_shaderGroup.add_shader(
+        shaderInfo.shaderType.asChar(),
+        shaderInfo.shaderName.asChar(),
+        depNodeFn.name().asChar(),
+        shaderParams);
 
-    // Connections.
-    MStatus status;
-    for(int i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
+    // Create connections.
+    for(size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
 
@@ -112,12 +178,10 @@ void ShadingNodeExporter::createEntities(
             continue;
         }
 
-        MPlugArray inputConnections;
         if (plug.isConnected())
         {
-            plug.connectedTo(inputConnections, true, false, &status);
-            MPlug srcPlug = inputConnections[0];
-            const ShadingNodeExporter *srcNodeExporter = findExporterForNode(exporters, srcPlug.node());
+            MPlug srcPlug;
+            ShadingNodeExporter *srcNodeExporter = getSrcPlugAndExporter(plug, exporters, srcPlug);
             if (!srcNodeExporter)
             {
                 MFnDependencyNode srcDepNodeFn(srcPlug.node());
@@ -131,71 +195,46 @@ void ShadingNodeExporter::createEntities(
             MString srcParam;
             if (srcNodeExporter->layerAndParamNameFromPlug(srcPlug, srcLayerName, srcParam))
             {
-                ConnectionEntry entry;
-                entry.m_srcLayerName = srcLayerName;
-                entry.m_srcParam = srcParam.asChar();
-                entry.m_dstLayerName = depNodeFn.name();
-                entry.m_dstParam = paramInfo.paramName;
-                m_connections.push_back(entry);
+                m_shaderGroup.add_connection(
+                    srcLayerName.asChar(),
+                    srcParam.asChar(),
+                    depNodeFn.name().asChar(),
+                    paramInfo.paramName.asChar());
             }
         }
-
-        if (plug.isCompound() && plug.numConnectedChildren() != 0)
-        {
-            // todo: implement this...
-            RENDERER_LOG_WARNING(
-                "Skipping child compound connection to attribute %s of shading node %s",
-                paramInfo.mayaAttributeName.asChar(),
-                depNodeFn.typeName().asChar());
-        }
-        else if (plug.isArray() && plug.numConnectedElements() != 0)
-        {
-            // todo: implement this...
-            RENDERER_LOG_WARNING(
-                "Skipping array element connection to attribute %s of shading node %s",
-                paramInfo.mayaAttributeName.asChar(),
-                depNodeFn.typeName().asChar());
-        }
-    }
-}
-
-void ShadingNodeExporter::flushEntities()
-{
-    for (size_t i = 0, e = m_shaders.size(); i < e; ++i)
-    {
-        const ShaderEntry& entry = m_shaders[i];
-        m_shaderGroup.add_shader(
-            entry.m_shaderType.asChar(),
-            entry.m_shaderName.asChar(),
-            entry.m_layerName.asChar(),
-            entry.m_params);
-    }
-
-    for (size_t i = 0, e = m_connections.size(); i < e; ++i)
-    {
-        const ConnectionEntry& entry = m_connections[i];
-        m_shaderGroup.add_connection(
-            entry.m_srcLayerName.asChar(),
-            entry.m_srcParam.asChar(),
-            entry.m_dstLayerName.asChar(),
-            entry.m_dstParam.asChar());
     }
 }
 
 bool ShadingNodeExporter::layerAndParamNameFromPlug(
-    const MPlug&             plug,
-    MString&                 layerName,
-    MString&                 paramName) const
+    const MPlug&                        plug,
+    MString&                            layerName,
+    MString&                            paramName)
 {
     MFnDependencyNode depNodeFn(node());
 
     if (plug.isChild())
     {
-        RENDERER_LOG_WARNING(
-            "Skipping compound child connection to attribute %s of shading node %s",
-            plug.name().asChar(),
-            depNodeFn.typeName().asChar());
-        return false;
+        MPlug parentPlug = plug.parent();
+
+        if (parentPlug.numChildren() == 3)
+        {
+            layerName = "vector2Comps#";
+            return createOutputFloatCompoundAdaptorShader(
+                plug,
+                "as_maya_vector2Components",
+                g_vectorToCompParamNames,
+                g_vectorToCompInputParamName,
+                layerName,
+                paramName);
+        }
+        else
+        {
+            RENDERER_LOG_WARNING(
+                "Skipping compound child connection to attribute %s of shading node %s",
+                plug.name().asChar(),
+                depNodeFn.typeName().asChar());
+            return false;
+        }
     }
 
     if (plug.isElement())
@@ -450,7 +489,7 @@ MObject ShadingNodeExporter::node() const
     return m_object;
 }
 
-const OSLShaderInfo&ShadingNodeExporter::getShaderInfo() const
+const OSLShaderInfo& ShadingNodeExporter::getShaderInfo() const
 {
     MFnDependencyNode depNodeFn(m_object);
     const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
@@ -459,9 +498,9 @@ const OSLShaderInfo&ShadingNodeExporter::getShaderInfo() const
     return *shaderInfo;
 }
 
-const ShadingNodeExporter*ShadingNodeExporter::findExporterForNode(
-    const ShadingNodeExporterMap&       exporters,
-    const MObject&                      node) const
+ShadingNodeExporter *ShadingNodeExporter::findExporterForNode(
+    ShadingNodeExporterMap&             exporters,
+    const MObject&                      node)
 {
     MFnDependencyNode depNodeFn(node);
     ShadingNodeExporterMap::const_iterator it;
@@ -471,4 +510,154 @@ const ShadingNodeExporter*ShadingNodeExporter::findExporterForNode(
         return it->second;
 
     return 0;
+}
+
+ShadingNodeExporter *ShadingNodeExporter::getSrcPlugAndExporter(
+    const MPlug&                        plug,
+    ShadingNodeExporterMap&             exporters,
+    MPlug&                              srcPlug)
+{
+    MStatus status;
+    MPlugArray inputConnections;
+    plug.connectedTo(inputConnections, true, false, &status);
+    srcPlug = inputConnections[0];
+    return findExporterForNode(exporters, srcPlug.node());
+}
+
+MString ShadingNodeExporter::createAdaptorShader(
+    const MString&                      shaderName,
+    const MString&                      layerName,
+    const renderer::ParamArray&         params)
+{
+    std::string uniqueLayerName = asf::get_numbered_string(
+        layerName.asChar(),
+        m_shaderGroup.shaders().size());
+
+    m_shaderGroup.add_shader(
+        "shader",
+        shaderName.asChar(),
+        uniqueLayerName.c_str(),
+        params);
+
+    return uniqueLayerName.c_str();
+}
+
+void ShadingNodeExporter::createInputFloatCompoundAdaptorShader(
+    const OSLParamInfo&                 paramInfo,
+    const MPlug&                        plug,
+    ShadingNodeExporterMap&             exporters,
+    const MString&                      shaderName,
+    const MString&                      layerName,
+    const char**                        shaderParamNames,
+    const char*                         shaderOutputParamName)
+{
+    MFnDependencyNode depNodeFn(node());
+
+    asr::ParamArray params;
+    std::vector<MString> srcLayerNames;
+    std::vector<MString> srcParamNames;
+    std::vector<size_t>  dstParamIndices;
+
+    // For each child attribute.
+    for (size_t i = 0, e = plug.numChildren(); i < e; ++i)
+    {
+        MPlug childPlug = plug.child(i);
+        if (childPlug.isConnected())
+        {
+            MPlug srcPlug;
+            ShadingNodeExporter *srcNodeExporter = getSrcPlugAndExporter(childPlug, exporters, srcPlug);
+            if (!srcNodeExporter)
+            {
+                MFnDependencyNode srcDepNodeFn(srcPlug.node());
+                RENDERER_LOG_WARNING(
+                    "Skipping connections to unsupported shading node %s",
+                    srcDepNodeFn.typeName().asChar());
+                continue;
+            }
+
+            // Find the layer and param names on the other side of the connection.
+            MString srcLayerName;
+            MString srcParam;
+            if (srcNodeExporter->layerAndParamNameFromPlug(srcPlug, srcLayerName, srcParam))
+            {
+                // We cannot do make a connection now because we don't know
+                // the name of the destination layer (has not been created yet).
+                // Save the info we need to make a connection later.
+                srcLayerNames.push_back(srcLayerName);
+                srcParamNames.push_back(srcParam);
+                dstParamIndices.push_back(i);
+            }
+        }
+        else
+        {
+            // Save the value of this child attribute as a shader param.
+            float value;
+            if (AttributeUtils::get(childPlug, value))
+            {
+                std::stringstream ss;
+                ss << "float " << value;
+                params.insert(shaderParamNames[i], ss.str().c_str());
+            }
+        }
+    }
+
+    const MString adaptorName = createAdaptorShader(
+        shaderName,
+        layerName,
+        params);
+
+    for (size_t j = 0; j < dstParamIndices.size(); ++j)
+    {
+        m_shaderGroup.add_connection(
+            srcLayerNames[j].asChar(),
+            srcParamNames[j].asChar(),
+            adaptorName.asChar(),
+            shaderParamNames[dstParamIndices[j]]);
+    }
+
+    m_shaderGroup.add_connection(
+        adaptorName.asChar(),
+        shaderOutputParamName,
+        depNodeFn.name().asChar(),
+        paramInfo.paramName.asChar());
+}
+
+bool ShadingNodeExporter::createOutputFloatCompoundAdaptorShader(
+    const MPlug&                        plug,
+    const MString&                      shaderName,
+    const char**                        shaderParamNames,
+    const char*                         shaderInputParamName,
+    MString&                            layerName,
+    MString&                            paramName)
+{
+    MPlug parentPlug = plug.parent();
+
+    MString srcLayerName;
+    MString srcParamName;
+    if (layerAndParamNameFromPlug(parentPlug, srcLayerName, srcParamName) == false)
+        return false;
+
+    for (size_t i = 0, e = parentPlug.numChildren(); i < e; ++i)
+    {
+        if (plug == parentPlug.child(i))
+        {
+            paramName = shaderParamNames[i];
+            break;
+        }
+    }
+
+    if (paramName.length() == 0)
+        return false;
+
+    layerName = createAdaptorShader(
+        shaderName,
+        layerName,
+        asr::ParamArray());
+    m_shaderGroup.add_connection(
+        srcLayerName.asChar(),
+        srcParamName.asChar(),
+        layerName.asChar(),
+        shaderInputParamName);
+
+    return true;
 }

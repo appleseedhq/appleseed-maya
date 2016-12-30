@@ -83,19 +83,13 @@ void ShadingNetworkExporter::createEntities(const AppleseedSession::Options& opt
 
     createShaderNodeExporters(m_object);
 
-    // Sort the exporters in depth first order.
-    std::reverse(m_nodeExporters.begin(), m_nodeExporters.end());
-
     // Create shader entities
     for(size_t i = 0, e = m_nodeExporters.size(); i < e; ++i)
-        m_nodeExporters[i]->createEntities(m_namesToExporters, options);
+        m_nodeExporters[i]->createEntities(m_namesToExporters);
 }
 
 void ShadingNetworkExporter::flushEntities()
 {
-    for(size_t i = 0, e = m_nodeExporters.size(); i < e; ++i)
-        m_nodeExporters[i]->flushEntities();
-
     // Add any extra shader and or connections, depending on the context.
     switch(m_context)
     {
@@ -161,7 +155,6 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
 {
     MStatus status;
     MFnDependencyNode depNodeFn(node);
-
     if (m_namesToExporters.count(depNodeFn.name()) != 0)
     {
         RENDERER_LOG_DEBUG(
@@ -173,14 +166,6 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
     const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
     if (shaderInfo)
     {
-        ShadingNodeExporterPtr exporter(
-            NodeExporterFactory::createShadingNodeExporter(
-                node,
-                *m_shaderGroup));
-        m_nodeExporters.push_back(exporter);
-        m_namesToExporters[depNodeFn.name()] = exporter.get();
-        RENDERER_LOG_DEBUG("Created shading node exporter for node %s", depNodeFn.name().asChar());
-
         // Look for nodes connected to the shader and create exporters for them.
         for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
         {
@@ -238,6 +223,14 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
                 }
             }
         }
+
+        ShadingNodeExporterPtr exporter(
+            NodeExporterFactory::createShadingNodeExporter(
+                node,
+                *m_shaderGroup));
+        m_nodeExporters.push_back(exporter);
+        m_namesToExporters[depNodeFn.name()] = exporter.get();
+        RENDERER_LOG_DEBUG("Created shading node exporter for node %s", depNodeFn.name().asChar());
     }
     else
     {

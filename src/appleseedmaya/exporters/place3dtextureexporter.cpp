@@ -90,7 +90,7 @@ void Place3dTextureExporter::exportShaderParameters(
 bool Place3dTextureExporter::layerAndParamNameFromPlug(
     const MPlug&             plug,
     MString&                 layerName,
-    MString&                 paramName) const
+    MString&                 paramName)
 {
     if (plug.isElement())
     {
