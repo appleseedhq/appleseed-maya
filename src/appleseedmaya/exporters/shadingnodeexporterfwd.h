@@ -29,10 +29,18 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_FWD_H
 #define APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_FWD_H
 
+// Standard headers.
+#include <map>
+
 // Boost headers.
 #include "boost/shared_ptr.hpp"
 
+// appleseed.maya headers.
+#include "appleseedmaya/utils.h"
+
 class ShadingNodeExporter;
 typedef boost::shared_ptr<ShadingNodeExporter> ShadingNodeExporterPtr;
+
+typedef std::map<MString, ShadingNodeExporter*, MStringCompareLess> ShadingNodeExporterMap;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_FWD_H

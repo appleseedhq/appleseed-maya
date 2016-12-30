@@ -257,8 +257,6 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
 
 void ShadingNetworkExporter::exportConnections(ShadingNodeExporter& dstNodeExporter)
 {
-    dstNodeExporter.exportInputAdaptorConnections();
-
     MStatus status;
     MFnDependencyNode depNodeFn(dstNodeExporter.node());
 
@@ -327,14 +325,12 @@ void ShadingNetworkExporter::exportConnections(ShadingNodeExporter& dstNodeExpor
                 depNodeFn.typeName().asChar());
         }
     }
-
-    dstNodeExporter.exportOutputAdaptorConnections();
 }
 
 ShadingNodeExporter *ShadingNetworkExporter::findExporterForNode(const MObject& node)
 {
     MFnDependencyNode depNodeFn(node);
-    std::map<MString, ShadingNodeExporter*, MStringCompareLess>::iterator it;
+    ShadingNodeExporterMap::iterator it;
     it = m_namesToExporters.find(depNodeFn.name());
 
     if (it != m_namesToExporters.end())

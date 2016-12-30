@@ -417,13 +417,3 @@ bool ShadingNodeExporter::layerAndParamNameFromPlug(
 
     return false;
 }
-
-void ShadingNodeExporter::exportInputAdaptorConnections()
-{
-    // todo: implement...
-}
-
-void ShadingNodeExporter::exportOutputAdaptorConnections()
-{
-    // todo: implement...
-}

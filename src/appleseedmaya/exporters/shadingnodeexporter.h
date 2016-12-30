@@ -32,9 +32,6 @@
 // Forward declaration header.
 #include "shadingnodeexporterfwd.h"
 
-// Standard headers.
-#include<map>
-
 // Maya headers.
 #include <maya/MObject.h>
 #include <maya/MPlug.h>
@@ -78,9 +75,6 @@ class ShadingNodeExporter
         MString&                 layerName,
         MString&                 paramName) const;
 
-    void exportInputAdaptorConnections();
-    void exportOutputAdaptorConnections();
-
   protected:
 
     ShadingNodeExporter(
@@ -97,8 +91,8 @@ class ShadingNodeExporter
         const OSLParamInfo&       paramInfo,
         renderer::ParamArray&     shaderParams) const;
 
-    MObject                                         m_object;
-    renderer::ShaderGroup&                          m_shaderGroup;
+    MObject                 m_object;
+    renderer::ShaderGroup&  m_shaderGroup;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H
