@@ -64,11 +64,11 @@ class MeshExporter
 
     virtual void createExporters(const AppleseedSession::Services& services);
 
-    virtual void createEntity(const AppleseedSession::Options& options);
+    virtual void createEntities(const AppleseedSession::Options& options);
 
     virtual void exportShapeMotionStep(float time);
 
-    virtual void flushEntity();
+    virtual void flushEntities();
 
   private:
 

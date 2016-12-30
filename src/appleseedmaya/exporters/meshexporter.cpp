@@ -208,7 +208,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
     }
 }
 
-void MeshExporter::createEntity(const AppleseedSession::Options& options)
+void MeshExporter::createEntities(const AppleseedSession::Options& options)
 {
     shapeAttributesToParams(m_meshParams);
     meshAttributesToParams(m_meshParams);
@@ -281,9 +281,9 @@ void MeshExporter::exportShapeMotionStep(float time)
     m_shapeExportStep++;
 }
 
-void MeshExporter::flushEntity()
+void MeshExporter::flushEntities()
 {
-    ShapeExporter::flushEntity();
+    ShapeExporter::flushEntities();
 
     MString objectName = appleseedName();
 

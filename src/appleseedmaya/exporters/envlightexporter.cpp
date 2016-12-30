@@ -63,7 +63,7 @@ void EnvLightExporter::exportTransformMotionStep(float time)
 {
 }
 
-void EnvLightExporter::flushEntity()
+void EnvLightExporter::flushEntities()
 {
 }
 
@@ -100,7 +100,7 @@ PhysicalSkyLightExporter::PhysicalSkyLightExporter(
 {
 }
 
-void PhysicalSkyLightExporter::createEntity(const AppleseedSession::Options& options)
+void PhysicalSkyLightExporter::createEntities(const AppleseedSession::Options& options)
 {
 }
 
@@ -127,6 +127,6 @@ SkyDomeLightExporter::SkyDomeLightExporter(
 {
 }
 
-void SkyDomeLightExporter::createEntity(const AppleseedSession::Options& options)
+void SkyDomeLightExporter::createEntities(const AppleseedSession::Options& options)
 {
 }

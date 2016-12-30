@@ -90,7 +90,7 @@ void AreaLightExporter::createExporters(const AppleseedSession::Services& servic
         MPlug());
 }
 
-void AreaLightExporter::createEntity(const AppleseedSession::Options& options)
+void AreaLightExporter::createEntities(const AppleseedSession::Options& options)
 {
     MString objectName = appleseedName();
 
@@ -131,7 +131,7 @@ void AreaLightExporter::createEntity(const AppleseedSession::Options& options)
             materialMappings));
 }
 
-void AreaLightExporter::flushEntity()
+void AreaLightExporter::flushEntities()
 {
     if (m_lightNetworkExporter)
     {

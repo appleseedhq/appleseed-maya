@@ -53,7 +53,7 @@ class ShapeExporter
 
     virtual void exportTransformMotionStep(float time);
 
-    virtual void flushEntity() = 0;
+    virtual void flushEntities() = 0;
 
   protected:
 

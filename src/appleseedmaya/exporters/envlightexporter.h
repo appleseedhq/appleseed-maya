@@ -45,7 +45,7 @@ class EnvLightExporter
 
     virtual void exportTransformMotionStep(float time);
 
-    virtual void flushEntity();
+    virtual void flushEntities();
 
   protected:
 
@@ -71,7 +71,7 @@ class PhysicalSkyLightExporter
 
     ~PhysicalSkyLightExporter();
 
-    virtual void createEntity(const AppleseedSession::Options& options);
+    virtual void createEntities(const AppleseedSession::Options& options);
 
   private:
 
@@ -95,7 +95,7 @@ class SkyDomeLightExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
-    virtual void createEntity(const AppleseedSession::Options& options);
+    virtual void createEntities(const AppleseedSession::Options& options);
 
     private:
 

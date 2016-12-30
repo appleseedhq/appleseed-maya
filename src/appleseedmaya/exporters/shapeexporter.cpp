@@ -76,7 +76,7 @@ void ShapeExporter::exportTransformMotionStep(float time)
     m_transformSequence.set_transform(0.0, xform);
 }
 
-void ShapeExporter::flushEntity()
+void ShapeExporter::flushEntities()
 {
     m_transformSequence.optimize();
 

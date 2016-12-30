@@ -388,18 +388,18 @@ struct SessionImpl
         for(size_t i = 0; i < NumShadingNetworkContexts; ++i)
         {
             for(ShadingNetworkExporterMap::const_iterator it = m_shadingNetworkExporters[i].begin(), e = m_shadingNetworkExporters[i].end(); it != e; ++it)
-                it->second->createEntity(m_options);
+                it->second->createEntities(m_options);
         }
 
         RENDERER_LOG_DEBUG("Creating shading engine entities");
         for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
-            it->second->createEntity(m_options);
+            it->second->createEntities(m_options);
 
         checkUserAborted();
 
         RENDERER_LOG_DEBUG("Creating dag entities");
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
-            it->second->createEntity(m_options);
+            it->second->createEntities(m_options);
 
         RENDERER_LOG_DEBUG("Exporting motion steps");
         // For each time step...
@@ -429,20 +429,20 @@ struct SessionImpl
         for(size_t i = 0; i < NumShadingNetworkContexts; ++i)
         {
             for(ShadingNetworkExporterMap::const_iterator it = m_shadingNetworkExporters[i].begin(), e = m_shadingNetworkExporters[i].end(); it != e; ++it)
-                it->second->flushEntity();
+                it->second->flushEntities();
         }
 
         checkUserAborted();
 
         RENDERER_LOG_DEBUG("Flushing shading engines entities");
         for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
-            it->second->flushEntity();
+            it->second->flushEntities();
 
         checkUserAborted();
 
         RENDERER_LOG_DEBUG("Flushing dag entities");
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
-            it->second->flushEntity();
+            it->second->flushEntities();
     }
 
     void exportDefaultRenderGlobals()

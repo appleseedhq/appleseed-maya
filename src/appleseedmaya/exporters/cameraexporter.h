@@ -49,11 +49,11 @@ class CameraExporter
 
     ~CameraExporter();
 
-    virtual void createEntity(const AppleseedSession::Options& options);
+    virtual void createEntities(const AppleseedSession::Options& options);
 
     virtual void exportCameraMotionStep(float time);
 
-    virtual void flushEntity();
+    virtual void flushEntities();
 
   private:
 

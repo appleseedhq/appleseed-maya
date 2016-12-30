@@ -74,7 +74,7 @@ CameraExporter::~CameraExporter()
         scene().cameras().remove(m_camera.get());
 }
 
-void CameraExporter::createEntity(const AppleseedSession::Options& options)
+void CameraExporter::createEntities(const AppleseedSession::Options& options)
 {
     MStatus status;
     MFnCamera camera(dagPath());
@@ -136,7 +136,7 @@ void CameraExporter::exportCameraMotionStep(float time)
     m_camera->transform_sequence().set_transform(0.0, xform);
 }
 
-void CameraExporter::flushEntity()
+void CameraExporter::flushEntities()
 {
     scene().cameras().insert(m_camera.release());
 }

@@ -85,7 +85,7 @@ bool LightExporter::supportsMotionBlur() const
     return false;
 }
 
-void LightExporter::createEntity(const AppleseedSession::Options& options)
+void LightExporter::createEntities(const AppleseedSession::Options& options)
 {
     asr::LightFactoryRegistrar lightFactories;
     const asr::ILightFactory *lightFactory = 0;
@@ -164,7 +164,7 @@ void LightExporter::createEntity(const AppleseedSession::Options& options)
     m_light->set_transform(xform);
 }
 
-void LightExporter::flushEntity()
+void LightExporter::flushEntities()
 {
     if (m_light.get())
     {

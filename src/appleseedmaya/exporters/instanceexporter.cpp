@@ -51,7 +51,7 @@ InstanceExporter::InstanceExporter(
     master.instanceCreated();
 }
 
-void InstanceExporter::flushEntity()
+void InstanceExporter::flushEntities()
 {
     const MString assemblyName = m_masterShapeName + MString("_assembly");
     const MString assemblyInstanceName = appleseedName() + MString("_instance");

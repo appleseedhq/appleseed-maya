@@ -79,7 +79,7 @@ void XGenExporter::createExporters(const AppleseedSession::Services& services)
     // todo: implement this.
 }
 
-void XGenExporter::createEntity(const AppleseedSession::Options& options)
+void XGenExporter::createEntities(const AppleseedSession::Options& options)
 {
     const MString assemblyName = appleseedName() + MString("_assembly");
     asr::ParamArray params;
@@ -159,7 +159,7 @@ void XGenExporter::exportTransformMotionStep(float time)
     m_transformSequence.set_transform(0.0, xform);
 }
 
-void XGenExporter::flushEntity()
+void XGenExporter::flushEntities()
 {
     mainAssembly().assemblies().insert(m_assembly.release());
 

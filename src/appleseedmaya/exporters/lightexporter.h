@@ -58,9 +58,9 @@ class LightExporter
 
     bool supportsMotionBlur() const;
 
-    virtual void createEntity(const AppleseedSession::Options& options);
+    virtual void createEntities(const AppleseedSession::Options& options);
 
-    virtual void flushEntity();
+    virtual void flushEntities();
 
   private:
 

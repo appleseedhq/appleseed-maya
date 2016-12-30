@@ -58,11 +58,11 @@ class XGenExporter
 
     virtual void createExporters(const AppleseedSession::Services& services);
 
-    virtual void createEntity(const AppleseedSession::Options& options);
+    virtual void createEntities(const AppleseedSession::Options& options);
 
     virtual void exportTransformMotionStep(float time);
 
-    virtual void flushEntity();
+    virtual void flushEntities();
 
   private:
 

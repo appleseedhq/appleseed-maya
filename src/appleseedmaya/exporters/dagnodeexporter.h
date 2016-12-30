@@ -73,7 +73,7 @@ class DagNodeExporter
     virtual void createExporters(const AppleseedSession::Services& services);
 
     // Create appleseed entities.
-    virtual void createEntity(const AppleseedSession::Options& options) = 0;
+    virtual void createEntities(const AppleseedSession::Options& options) = 0;
 
     // Motion blur.
     virtual void collectMotionBlurSteps(MotionBlurTimes& motionTimes) const;
@@ -82,7 +82,7 @@ class DagNodeExporter
     virtual void exportShapeMotionStep(float time);
 
     // Flush entities to the renderer.
-    virtual void flushEntity() = 0;
+    virtual void flushEntities() = 0;
 
   protected:
 

@@ -88,7 +88,7 @@ void ShadingEngineExporter::createExporters(const AppleseedSession::Services& se
     }
 }
 
-void ShadingEngineExporter::createEntity(const AppleseedSession::Options& options)
+void ShadingEngineExporter::createEntities(const AppleseedSession::Options& options)
 {
     MFnDependencyNode depNodeFn(m_object);
     const MString appleseedName = depNodeFn.name();
@@ -107,7 +107,7 @@ void ShadingEngineExporter::createEntity(const AppleseedSession::Options& option
         asr::OSLMaterialFactory().create(materialName.asChar(), params));
 }
 
-void ShadingEngineExporter::flushEntity()
+void ShadingEngineExporter::flushEntities()
 {
     if (m_surfaceNetworkExporter)
     {
