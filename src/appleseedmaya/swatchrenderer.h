@@ -39,6 +39,9 @@ class SwatchRenderer
     static const MString name;
     static const MString fullName;
 
+    static void initialize();
+    static void uninitialize();
+
     static MSwatchRenderBase* creator(
         MObject dependNode,
         MObject renderNode,

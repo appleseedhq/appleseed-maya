@@ -161,6 +161,7 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
 
     if (MGlobal::mayaState() != MGlobal::kBatch)
     {
+        SwatchRenderer::initialize();
         status = MSwatchRenderRegister::registerSwatchRender(SwatchRenderer::name, SwatchRenderer::creator);
         APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
             status,
@@ -247,6 +248,7 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
 
     if (MGlobal::mayaState() != MGlobal::kBatch)
     {
+        SwatchRenderer::uninitialize();
         status = MSwatchRenderRegister::unregisterSwatchRender(SwatchRenderer::name);
         APPLESEED_MAYA_CHECK_MSTATUS_MSG(
             status,

@@ -109,3 +109,14 @@ MStatus uninitialize()
 }
 
 } // namespace Logger.
+
+ScopedSetLoggerVerbosity::ScopedSetLoggerVerbosity(foundation::LogMessage::Category newLevel)
+{
+    m_prevLevel = asr::global_logger().get_verbosity_level();
+    asr::global_logger().set_verbosity_level(newLevel);
+}
+
+ScopedSetLoggerVerbosity::~ScopedSetLoggerVerbosity()
+{
+    asr::global_logger().set_verbosity_level(m_prevLevel);
+}

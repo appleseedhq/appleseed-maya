@@ -44,4 +44,15 @@ MStatus uninitialize();
 
 } // namespace Logger
 
+class ScopedSetLoggerVerbosity
+{
+  public:
+
+    explicit ScopedSetLoggerVerbosity(foundation::LogMessage::Category newLevel);
+    ~ScopedSetLoggerVerbosity();
+
+  private:
+    foundation::LogMessage::Category m_prevLevel;
+};
+
 #endif  // !APPLESEED_MAYA_LOGGER_H
