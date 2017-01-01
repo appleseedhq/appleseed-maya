@@ -268,8 +268,6 @@ void RenderGlobalsNode::applyGlobalsToProject(
     asr::ParamArray& finalParams = project.configurations().get_by_name("final")->get_parameters();
     asr::ParamArray& iprParams   = project.configurations().get_by_name("interactive")->get_parameters();
 
-    MFnDependencyNode depNodeFn(globals);
-
     int samples;
     if (AttributeUtils::get(MPlug(globals, m_pixelSamples), samples))
     {
@@ -300,22 +298,29 @@ void RenderGlobalsNode::applyGlobalsToProject(
         }
     }
 
-    int bounces = 0;
-    AttributeUtils::get(MPlug(globals, m_bounces), bounces);
-
     bool gi;
     if (AttributeUtils::get(MPlug(globals, m_gi), gi))
     {
         if (gi)
         {
-            finalParams.insert_path("pt.max_path_length", bounces == 0 ? 0 : bounces + 1);
-            iprParams.insert_path("pt.max_path_length", bounces == 0 ? 0 : bounces + 1);
+            finalParams.insert_path("lighting_engine", "pt");
+            iprParams.insert_path("lighting_engine", "pt");
         }
         else
         {
-            finalParams.insert_path("pt.max_path_length", 1);
-            iprParams.insert_path("pt.max_path_length", 1);
+            finalParams.insert_path("lighting_engine", "drt");
+            iprParams.insert_path("lighting_engine", "drt");
         }
+    }
+
+    int bounces = 0;
+    AttributeUtils::get(MPlug(globals, m_bounces), bounces);
+    {
+        finalParams.insert_path("pt.max_path_length", bounces);
+        iprParams.insert_path("pt.max_path_length", bounces);
+
+        finalParams.insert_path("drt.max_path_length", bounces);
+        iprParams.insert_path("drt.max_path_length", bounces);
     }
 
     bool caustics;
@@ -346,6 +351,9 @@ void RenderGlobalsNode::applyGlobalsToProject(
     {
         finalParams.insert_path("pt.dl_light_samples", lightSamples);
         iprParams.insert_path("pt.dl_light_samples", lightSamples);
+
+        finalParams.insert_path("drt.dl_light_samples", lightSamples);
+        iprParams.insert_path("drt.dl_light_samples", lightSamples);
     }
 
     float envSamples;
@@ -353,6 +361,9 @@ void RenderGlobalsNode::applyGlobalsToProject(
     {
         finalParams.insert_path("pt.ibl_env_samples", envSamples);
         iprParams.insert_path("pt.ibl_env_samples", envSamples);
+
+        finalParams.insert_path("drt.ibl_env_samples", envSamples);
+        iprParams.insert_path("drt.ibl_env_samples", envSamples);
     }
 
     int threads;

@@ -64,9 +64,6 @@ class AppleseedRenderGlobalsMainTab(object):
             self.__scriptJobs[attrName] = mc.scriptJob(
                 attributeChange=["appleseedRenderGlobals." + attrName, changeCallback])
 
-    def __updateGIControls(self):
-        self.__uis["bounces"].setEnable(mc.getAttr("appleseedRenderGlobals.gi"))
-
     def create(self):
         # Create default render globals node if needed.
         createGlobalNodes()
@@ -103,8 +100,7 @@ class AppleseedRenderGlobalsMainTab(object):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
                         self.__addControl(
                             ui=pm.checkBoxGrp(label="Global Illumination"),
-                            attrName="gi",
-                            changeCallback=self.__updateGIControls)
+                            attrName="gi")
                         self.__addControl(
                             ui=pm.checkBoxGrp(label="Caustics"),
                             attrName="caustics")
