@@ -65,7 +65,7 @@ MStatus makeOutput(MFnAttribute& attr)
     attr.setReadable(true);
     attr.setWritable(false);
     attr.setKeyable(false);
-    attr.setHidden(true);
+    //attr.setHidden(true);
     return MS::kSuccess;
 }
 
@@ -192,10 +192,39 @@ MStatus ShadingNode::initialize()
             // Check to see if we need to create an int, bool or enum
             if (p.widget == "mapper")
             {
-                MFnEnumAttribute enumAttrFn;
-                // todo: parse options here and build enum...
+                if (p.options.length() != 0)
+                {
+                    std::vector<std::string> fields;
+                    asf::tokenize(p.options.asChar(), "|", fields);
+
+                    int defaultValue = 0;
+                    if (p.hasDefault)
+                        defaultValue = static_cast<int>(p.defaultValue[0]);
+
+                    MFnEnumAttribute enumAttrFn;
+                    attr = enumAttrFn.create(
+                        p.mayaAttributeName,
+                        p.mayaAttributeShortName,
+                        defaultValue);
+
+                    std::vector<std::string> subfields;
+                    for (size_t i = 0, e = fields.size(); i < e; ++i)
+                    {
+                        subfields.clear();
+                        asf::tokenize(fields[i].c_str(), ":", subfields);
+                        enumAttrFn.addField(
+                            subfields[0].c_str(),
+                            asf::from_string<int>(subfields[1]));
+                    }
+
+                    initializeAttribute(enumAttrFn, p);
+                }
+                else
+                {
+                    // todo: what here...?
+                }
             }
-            if (p.widget == "checkBox")
+            else if (p.widget == "checkBox")
             {
                 MFnNumericAttribute numAttrFn;
                 attr = createNumericAttribute<bool>(numAttrFn, p, MFnNumericData::kBoolean, status);
@@ -235,12 +264,6 @@ MStatus ShadingNode::initialize()
             attr = numAttrFn.createColor(
                 p.mayaAttributeName,
                 p.mayaAttributeShortName);
-            initializeAttribute(numAttrFn, p);
-        }
-        else if (p.paramType == "vector")
-        {
-            MFnNumericAttribute numAttrFn;
-            attr = createPointAttribute(numAttrFn, p, status);
             initializeAttribute(numAttrFn, p);
         }
         else if (p.paramType == "string")
@@ -302,6 +325,12 @@ MStatus ShadingNode::initialize()
 
                 initializeAttribute(typedAttrFn, p);
             }
+        }
+        else if (p.paramType == "vector")
+        {
+            MFnNumericAttribute numAttrFn;
+            attr = createPointAttribute(numAttrFn, p, status);
+            initializeAttribute(numAttrFn, p);
         }
         else
         {
