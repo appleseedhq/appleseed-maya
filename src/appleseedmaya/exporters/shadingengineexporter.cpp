@@ -58,7 +58,9 @@ ShadingEngineExporter::~ShadingEngineExporter()
     if (m_sessionMode == AppleseedSession::ProgressiveRenderSession)
     {
         m_mainAssembly.materials().remove(m_material.get());
-        m_mainAssembly.surface_shaders().remove(m_surfaceShader.get());
+
+        if (m_surfaceShader.get())
+            m_mainAssembly.surface_shaders().remove(m_surfaceShader.get());
     }
 }
 
@@ -93,18 +95,21 @@ void ShadingEngineExporter::createEntities(const AppleseedSession::Options& opti
     MFnDependencyNode depNodeFn(m_object);
     const MString appleseedName = depNodeFn.name();
 
-    MString surfaceShaderName = appleseedName + MString("_surface_shader");
     asr::ParamArray params;
+    /*
+    MString surfaceShaderName = appleseedName + MString("_surface_shader");
     m_surfaceShader.reset(
         asr::PhysicalSurfaceShaderFactory().create(
             surfaceShaderName.asChar(),
             params));
+
     params.clear();
+    if (m_surfaceShader.get())
+        params.insert("surface_shader", surfaceShaderName.asChar());
+    */
 
     MString materialName = appleseedName + MString("_material");
-    params.insert("surface_shader", surfaceShaderName.asChar());
-    m_material.reset(
-        asr::OSLMaterialFactory().create(materialName.asChar(), params));
+    m_material.reset(asr::OSLMaterialFactory().create(materialName.asChar(), params));
 }
 
 void ShadingEngineExporter::flushEntities()
@@ -117,6 +122,8 @@ void ShadingEngineExporter::flushEntities()
     }
 
     m_mainAssembly.materials().insert(m_material.release());
-    m_mainAssembly.surface_shaders().insert(m_surfaceShader.release());
+
+    if (m_surfaceShader.get())
+        m_mainAssembly.surface_shaders().insert(m_surfaceShader.release());
 }
 
