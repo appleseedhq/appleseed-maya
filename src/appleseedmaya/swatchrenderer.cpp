@@ -115,7 +115,7 @@ void SwatchRenderer::initialize()
             .insert("focal_length", "0.035"));
     camera->transform_sequence().set_transform(
         0.0f,
-        asf::Transformd(asf::Matrix4d::make_translation(asf::Vector3d(0.0, 0.0, 0.0))));
+        asf::Transformd(asf::Matrix4d::make_translation(asf::Vector3d(0.0, 0.0, 2.65))));
     g_project->get_scene()->cameras().insert(camera);
 
     // Create the frame.
@@ -152,11 +152,35 @@ void SwatchRenderer::initialize()
     g_mainAssembly->materials().insert(material);
 
     // Create the geometry.
-    // ...
+    asf::auto_release_ptr<asr::MeshObject> sphere = asr::create_primitive_mesh(
+        "sphere",
+        asr::ParamArray()
+            .insert("primitive", "sphere")
+            .insert("radius", "1.0")
+            .insert("resolution_u", "30")
+            .insert("resolution_v", "15"));
+    g_mainAssembly->objects().insert(asf::auto_release_ptr<asr::Object>(sphere.release()));
+
+    asf::StringDictionary materials;
+    materials.insert("default", g_material->get_name());
+
+    asf::auto_release_ptr<asr::ObjectInstance> objInstance = asr::ObjectInstanceFactory().create(
+        "sphereInstance",
+        asr::ParamArray(),
+        "sphere",
+        asf::Transformd::make_identity(),
+        materials,
+        materials);
+    g_mainAssembly->object_instances().insert(objInstance);
 
     // Instance the main assembly.
     asf::auto_release_ptr<asr::AssemblyInstance> assemblyInstance = asr::AssemblyInstanceFactory::create("assembly_inst", asr::ParamArray(), "assembly");
     g_project->get_scene()->assembly_instances().insert(assemblyInstance);
+
+    // While testing...
+    cfg_params->insert_path(
+        "shading_engine.override_shading.mode",
+        "facing_ratio");
 
     // Create the master renderer.
     g_renderer =
@@ -194,11 +218,15 @@ SwatchRenderer::SwatchRenderer(
 bool SwatchRenderer::doIteration()
 {
     MFnDependencyNode depNodeFn(node());
+    const MString name = depNodeFn.name();
+    const MString typeName = depNodeFn.typeName();
+    const MString classification = MFnDependencyNode::classification(typeName);
+
     RENDERER_LOG_DEBUG(
-        "Rendering swatch for node %s of type %s and classification %s. res = %s",
-        depNodeFn.name().asChar(),
-        depNodeFn.typeName().asChar(),
-        MFnDependencyNode::classification(depNodeFn.typeName()).asChar(),
+        "Rendering swatch for node %s of type %s and classification %s. res = %d",
+        name.asChar(),
+        typeName.asChar(),
+        classification.asChar(),
         resolution());
 
     // Disable logging while rendering the swatch.
@@ -220,27 +248,28 @@ bool SwatchRenderer::doIteration()
     g_project->set_frame(frame);
 
     // Do not render yet, as the project is empty.
-    /*
     g_renderer->render();
 
     const asf::CanvasProperties& props = g_project->get_frame()->image().properties();
     const foundation::Tile& tile = g_project->get_frame()->image().tile(0, 0);
     assert(props.m_channel_count == 4);
 
-    uint8_t* pixels = image().floatPixels();
+    uint8_t *src = tile.get_storage();
+    uint8_t *dst = image().pixels();
     for (size_t y = 0; y < props.m_canvas_height; ++y)
     {
         for (size_t x = 0; x < props.m_canvas_width; ++x)
         {
             // todo: do we need to flip the image vertically
             // like in the render view?
-            *pixels++ = tile.get_component<uint8_t>(x, y, 0);
-            *pixels++ = tile.get_component<uint8_t>(x, y, 1);
-            *pixels++ = tile.get_component<uint8_t>(x, y, 2);
-            *pixels++ = tile.get_component<uint8_t>(x, y, 3);
+            *dst++ = *src++;
+            *dst++ = *src++;
+            *dst++ = *src++;
+
+            // Make swatch opaque.
+            *dst++ = 255; ++src;
         }
     }
-    */
 
     return true;
 }
