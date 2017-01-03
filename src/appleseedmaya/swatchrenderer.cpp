@@ -41,6 +41,9 @@
 
 // appleseed.renderer headers.
 #include "renderer/api/camera.h"
+#include "renderer/api/environment.h"
+#include "renderer/api/environmentedf.h"
+#include "renderer/api/environmentshader.h"
 #include "renderer/api/frame.h"
 #include "renderer/api/light.h"
 #include "renderer/api/material.h"
@@ -130,7 +133,21 @@ void SwatchRenderer::initialize()
     g_project->set_frame(frame);
 
     // Create the environment.
-    asf::auto_release_ptr<asr::Environment> environment(asr::EnvironmentFactory().create("environment", asr::ParamArray()));
+    asf::auto_release_ptr<asr::EnvironmentEDF> environmentEDF(asr::ConstantEnvironmentEDFFactory().create(
+        "environmentEDF",
+        asr::ParamArray().insert("radiance", "0.2")));
+    g_project->get_scene()->environment_edfs().insert(environmentEDF);
+
+    asf::auto_release_ptr<asr::EnvironmentShader> environmentShader(asr::EDFEnvironmentShaderFactory().create(
+        "environmentShader",
+        asr::ParamArray()
+            .insert("environment_edf", "environmentEDF")
+            .insert("alpha_value", "1.0")));
+    g_project->get_scene()->environment_shaders().insert(environmentShader);
+
+    asf::auto_release_ptr<asr::Environment> environment(asr::EnvironmentFactory().create(
+        "environment",
+        asr::ParamArray().insert("environment_shader", "environmentShader")));
     g_project->get_scene()->set_environment(environment);
 
     // Create the main assembly.
@@ -262,12 +279,13 @@ bool SwatchRenderer::doIteration()
         {
             // todo: do we need to flip the image vertically
             // like in the render view?
-            *dst++ = *src++;
-            *dst++ = *src++;
-            *dst++ = *src++;
 
-            // Make swatch opaque.
-            *dst++ = 255; ++src;
+            // Maya docs say RGBA, but it is actually BGRA?.
+            *dst++ = src[2];
+            *dst++ = src[1];
+            *dst++ = src[0];
+            *dst++ = src[3];
+            src += 4;
         }
     }
 

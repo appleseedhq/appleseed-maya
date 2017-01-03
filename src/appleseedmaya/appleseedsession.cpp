@@ -388,7 +388,7 @@ struct SessionImpl
         for(size_t i = 0; i < NumShadingNetworkContexts; ++i)
         {
             for(ShadingNetworkExporterMap::const_iterator it = m_shadingNetworkExporters[i].begin(), e = m_shadingNetworkExporters[i].end(); it != e; ++it)
-                it->second->createEntities(m_options);
+                it->second->createEntities();
         }
 
         RENDERER_LOG_DEBUG("Creating shading engine entities");

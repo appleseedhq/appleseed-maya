@@ -75,7 +75,7 @@ MString ShadingNetworkExporter::shaderGroupName() const
     return m_shaderGroup->get_name();
 }
 
-void ShadingNetworkExporter::createEntities(const AppleseedSession::Options& options)
+void ShadingNetworkExporter::createEntities()
 {
     MFnDependencyNode depNodeFn(m_object);
     MString shaderGroupName = depNodeFn.name() + MString("_shader_group");

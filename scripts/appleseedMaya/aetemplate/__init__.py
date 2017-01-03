@@ -25,6 +25,7 @@
 # THE SOFTWARE.
 #
 
+import maya.cmds as mc
 import pymel.core as pm
 
 # appleseedMaya imports.
@@ -37,12 +38,6 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         self.buildBody(nodeName)
         logger.debug('Built custom appleseed AETemplate.')
 
-    def addControl(self, control, label=None, **kwargs):
-        pm.ui.AETemplate.addControl(self, control, label=label, **kwargs)
-
-    def beginLayout(self, name, collapse=True):
-        pm.ui.AETemplate.beginLayout(self, name, collapse=collapse)
-
     def __buildVisibilitySection(self):
         self.beginLayout('Visibility' ,collapse=1)
         self.addControl('as_visibility_camera'  , label='Camera')
@@ -52,6 +47,12 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         self.addControl('as_visibility_specular', label='Specular')
         self.addControl('as_visibility_glossy'  , label='Glossy')
         self.endLayout()
+
+    def asSurfaceShaderNew(self, attr):
+        mc.attrNavigationControlGrp("asSurfaceShader", label="Surface Shader", attribute=attr)
+
+    def asSurfaceShaderUpdate(self, attr):
+        mc.attrNavigationControlGrp("asSurfaceShader", edit=True, attribute=attr)
 
     def buildBody(self, nodeName):
         self.thisNode = pm.PyNode(nodeName)
@@ -73,6 +74,7 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
 
         if self.thisNode.type() == 'shadingEngine':
             self.beginLayout('Appleseed' ,collapse=1)
+            self.callCustom(self.asSurfaceShaderNew, self.asSurfaceShaderUpdate, "asSurfaceShader")
             self.endLayout()
 
 def appleseedAETemplateCallback(nodeName):

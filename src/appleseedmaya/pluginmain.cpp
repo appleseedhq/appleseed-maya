@@ -36,6 +36,7 @@
 #include "appleseedmaya/appleseedtranslator.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/extensionAttributes.h"
 #include "appleseedmaya/idlejobqueue.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/rendercommands.h"
@@ -137,6 +138,11 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: failed to register render command");
+
+    status = addExtensionAttributes();
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: failed to add extension attributes");
 
     // Make sure that the modules we need can be imported...
     status = MGlobal::executePythonCommand("import appleseed", false, false);

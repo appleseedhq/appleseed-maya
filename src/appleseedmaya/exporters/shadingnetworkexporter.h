@@ -63,7 +63,7 @@ class ShadingNetworkExporter
     MString shaderGroupName() const;
 
     // Create appleseed entities.
-    void createEntities(const AppleseedSession::Options& options);
+    void createEntities();
 
     // Flush entities to the renderer.
     void flushEntities();

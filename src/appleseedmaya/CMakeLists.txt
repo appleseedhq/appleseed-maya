@@ -75,6 +75,8 @@ set (appleseed_maya_sources
     exporters/shadingnodeexporterfwd.h
     exporters/shapeexporter.cpp
     exporters/shapeexporter.h
+    extensionAttributes.cpp
+    extensionAttributes.h
     idlejobqueue.cpp
     idlejobqueue.h
     logger.cpp
