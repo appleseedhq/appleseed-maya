@@ -32,6 +32,7 @@
 // Maya headers.
 #include <maya/MAngle.h>
 #include <maya/MColor.h>
+#include <maya/MFnAttribute.h>
 #include <maya/MFnDependencyNode.h>
 #include <maya/MMatrix.h>
 #include <maya/MObject.h>
@@ -84,6 +85,9 @@ MStatus getPlugConnectedTo(const MPlug& dstPlug, MPlug& srcPlug);
 bool hasConnections(const MPlug& plug, bool input);
 
 bool anyChildPlugConnected(const MPlug& plug, bool input);
+
+MStatus makeInput(MFnAttribute& attr);
+MStatus makeOutput(MFnAttribute& attr);
 
 } // AttributeUtils.
 

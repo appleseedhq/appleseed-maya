@@ -1,0 +1,14 @@
+
+
+shader as_shading_map_sample(
+    output color Cout = 0,
+    output float Aout = 0)
+{
+    color Cin;
+    getattribute("surface_shader:color", Cin);
+    Cout = Cin;
+
+    float Ain;
+    getattribute("surface_shader:alpha", Ain);
+    Aout = Ain;
+}

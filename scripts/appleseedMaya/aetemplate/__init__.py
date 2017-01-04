@@ -40,19 +40,28 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
 
     def __buildVisibilitySection(self):
         self.beginLayout('Visibility' ,collapse=1)
-        self.addControl('as_visibility_camera'  , label='Camera')
-        self.addControl('as_visibility_light'   , label='Light')
-        self.addControl('as_visibility_shadow'  , label='Shadow')
-        self.addControl('as_visibility_diffuse' , label='Diffuse')
-        self.addControl('as_visibility_specular', label='Specular')
-        self.addControl('as_visibility_glossy'  , label='Glossy')
+        self.addControl('asVisibilityCamera'  , label='Camera')
+        self.addControl('asVisibilityLight'   , label='Light')
+        self.addControl('asVisibilityShadow'  , label='Shadow')
+        self.addControl('asVisibilityDiffuse' , label='Diffuse')
+        self.addControl('asVisibilitySpecular', label='Specular')
+        self.addControl('asVisibilityGlossy'  , label='Glossy')
         self.endLayout()
 
-    def asSurfaceShaderNew(self, attr):
-        mc.attrNavigationControlGrp("asSurfaceShader", label="Surface Shader", attribute=attr)
+    def asShadingMapNew(self, attr):
+        logger.debug("asShadingMapNew: attr = %s" % attr)
 
-    def asSurfaceShaderUpdate(self, attr):
-        mc.attrNavigationControlGrp("asSurfaceShader", edit=True, attribute=attr)
+        mc.attrNavigationControlGrp("asShadingMap", label="Shading Map", attribute=attr)
+        self.asShadingMapUpdate(attr)
+
+    def asShadingMapUpdate(self, attr):
+        newCallback = 'createRenderNode -allWithShadersUp "defaultNavigation -connectToExisting -destination '
+        newCallback += attr + ' -source %node" "";'
+        mc.attrNavigationControlGrp(
+            "asShadingMap",
+            edit=True,
+            attribute=attr,
+            createNew=newCallback)
 
     def buildBody(self, nodeName):
         self.thisNode = pm.PyNode(nodeName)
@@ -69,12 +78,12 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         if self.thisNode.type() == 'mesh':
             self.beginLayout('Appleseed' ,collapse=1)
             self.__buildVisibilitySection()
-            self.addControl('as_medium_priority', label='Medium Priority')
+            self.addControl('asMediumPriority', label='Medium Priority')
             self.endLayout()
 
         if self.thisNode.type() == 'shadingEngine':
             self.beginLayout('Appleseed' ,collapse=1)
-            self.callCustom(self.asSurfaceShaderNew, self.asSurfaceShaderUpdate, "asSurfaceShader")
+            self.callCustom(self.asShadingMapNew, self.asShadingMapUpdate, "asShadingMap")
             self.endLayout()
 
 def appleseedAETemplateCallback(nodeName):

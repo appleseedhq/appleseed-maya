@@ -136,27 +136,27 @@ void DagNodeExporter::visibilityAttributesToParams(asr::ParamArray& params)
     asf::Dictionary visFlags;
 
     bool flag = true;
-    if(AttributeUtils::get(node(), "as_visibility_camera", flag))
+    if(AttributeUtils::get(node(), "asVisibilityCamera", flag))
         visFlags.insert("camera", flag);
 
     flag = true;
-    if (AttributeUtils::get(node(), "as_visibility_light", flag))
+    if (AttributeUtils::get(node(), "asVisibilityLight", flag))
         visFlags.insert("light", flag);
 
     flag = true;
-    if (AttributeUtils::get(node(), "as_visibility_shadow", flag))
+    if (AttributeUtils::get(node(), "asVisibilityShadow", flag))
         visFlags.insert("shadow", flag);
 
     flag = true;
-    if (AttributeUtils::get(node(), "as_visibility_diffuse", flag))
+    if (AttributeUtils::get(node(), "asVisibilityDiffuse", flag))
         visFlags.insert("diffuse", flag);
 
     flag = true;
-    if (AttributeUtils::get(node(), "as_visibility_specular", flag))
+    if (AttributeUtils::get(node(), "asVisibilitySpecular", flag))
         visFlags.insert("specular", flag);
 
     flag = true;
-    if (AttributeUtils::get(node(), "as_visibility_glossy", flag))
+    if (AttributeUtils::get(node(), "asVisibilityGlossy", flag))
         visFlags.insert("glossy", flag);
 
     params.insert("visibility", visFlags);

@@ -40,43 +40,146 @@
 #include <maya/MNodeClass.h>
 
 // appleseed.maya headers.
+#include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/logger.h"
 
 namespace
 {
 
-MStatus makeInput(MFnAttribute& attr)
+const MString g_extensionsCategory("appleseedMaya");
+
+template <typename T>
+MObject createNumericAttribute(
+    MFnNumericAttribute&    numAttrFn,
+    const MString&          longName,
+    const MString&          shortName,
+    MFnNumericData::Type    type,
+    const T                 defaultValue,
+    MStatus&                status)
 {
-    attr.setStorable(true);
-    attr.setWritable(true);
-    attr.setReadable(true);
-    attr.setKeyable(true);
-    return MS::kSuccess;
+    MObject attr = numAttrFn.create(
+        longName,
+        shortName,
+        type,
+        defaultValue,
+        &status);
+    numAttrFn.addToCategory(g_extensionsCategory);
+    return attr;
 }
 
-MStatus makeOutput(MFnAttribute& attr)
+void addVisibilityExtensionAttributes(
+    const MNodeClass&   nodeClass,
+    MDGModifier&        modifier)
 {
-    attr.setStorable(false);
-    attr.setReadable(true);
-    attr.setWritable(false);
-    attr.setKeyable(false);
-    //attr.setHidden(true);
-    return MS::kSuccess;
+    MStatus status;
+
+    MFnNumericAttribute numAttrFn;
+    MObject attr = createNumericAttribute<bool>(
+        numAttrFn,
+        "asVisibilityCamera",
+        "asVisibilityCamera",
+        MFnNumericData::kBoolean,
+        true,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    attr = createNumericAttribute<bool>(
+        numAttrFn,
+        "asVisibilityLight",
+        "asVisibilityLight",
+        MFnNumericData::kBoolean,
+        true,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    attr = createNumericAttribute<bool>(
+        numAttrFn,
+        "asVisibilityShadow",
+        "asVisibilityShadow",
+        MFnNumericData::kBoolean,
+        true,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    attr = createNumericAttribute<bool>(
+        numAttrFn,
+        "asVisibilityDiffuse",
+        "asVisibilityDiffuse",
+        MFnNumericData::kBoolean,
+        true,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    attr = createNumericAttribute<bool>(
+        numAttrFn,
+        "asVisibilitySpecular",
+        "asVisibilitySpecular",
+        MFnNumericData::kBoolean,
+        true,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    attr = createNumericAttribute<bool>(
+        numAttrFn,
+        "asVisibilityGlossy",
+        "asVisibilityGlossy",
+        MFnNumericData::kBoolean,
+        true,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+}
+
+void addMeshExtensionAttributes()
+{
+    MStatus status;
+
+    MNodeClass nodeClass("mesh");
+    MDGModifier modifier;
+
+    addVisibilityExtensionAttributes(nodeClass, modifier);
+
+    MFnNumericAttribute numAttrFn;
+    MObject attr = createNumericAttribute<int>(
+        numAttrFn,
+        "asMediumPriority",
+        "asMediumPriority",
+        MFnNumericData::kInt,
+        0,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    modifier.doIt();
+}
+
+void addAreaLightExtensionAttributes()
+{
+    MNodeClass nodeClass("areaLight");
+    MDGModifier modifier;
+
+    addVisibilityExtensionAttributes(nodeClass, modifier);
+    modifier.doIt();
 }
 
 void addShadingEngineExtensionAttrs()
 {
-    MStatus status;
-
     MFnTypedAttribute typedAttrFn;
     MObject attr = typedAttrFn.create(
-        "asSurfaceShader",
-        "asSurfaceShader",
+        "asShadingMap",
+        "asShadingMap",
         MFnData::kAny);
-    typedAttrFn.setNiceNameOverride("asSurfaceShader");
+    typedAttrFn.setNiceNameOverride("asShadingMap");
     typedAttrFn.setStorable(true);
     typedAttrFn.setWritable(true);
     typedAttrFn.setReadable(true);
+    typedAttrFn.setKeyable(false);
+    typedAttrFn.addToCategory(g_extensionsCategory);
 
     MNodeClass nodeClass("shadingEngine");
     MDGModifier modifier;
@@ -89,6 +192,8 @@ void addShadingEngineExtensionAttrs()
 
 MStatus addExtensionAttributes()
 {
+    addMeshExtensionAttributes();
+    addAreaLightExtensionAttributes();
     addShadingEngineExtensionAttrs();
 
     return MS::kSuccess;

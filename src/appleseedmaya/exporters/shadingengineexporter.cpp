@@ -58,9 +58,10 @@ ShadingEngineExporter::~ShadingEngineExporter()
     if (m_sessionMode == AppleseedSession::ProgressiveRenderSession)
     {
         m_mainAssembly.materials().remove(m_material.get());
+        m_mainAssembly.surface_shaders().remove(m_surfaceShader.get());
 
-        if (m_surfaceShader.get())
-            m_mainAssembly.surface_shaders().remove(m_surfaceShader.get());
+        if (m_shadingMapSurfaceShader.get())
+            m_mainAssembly.surface_shaders().remove(m_shadingMapSurfaceShader.get());
     }
 }
 
@@ -88,6 +89,26 @@ void ShadingEngineExporter::createExporters(const AppleseedSession::Services& se
     {
         RENDERER_LOG_WARNING("Unsupported component connection to shading engine.");
     }
+
+    plug = depNodeFn.findPlug("asShadingMap", &status);
+    if (plug.isConnected())
+    {
+        MPlugArray otherPlugs;
+        plug.connectedTo(otherPlugs, true, false, &status);
+        if (otherPlugs.length() == 1)
+        {
+            MObject otherNode = otherPlugs[0].node();
+            depNodeFn.setObject(otherNode);
+            m_shadingMapNetworkExporter = services.createShadingNetworkExporter(
+                ShadingMapNetworkContext,
+                otherNode,
+                otherPlugs[0]);
+        }
+    }
+    else if (plug.numConnectedChildren() != 0)
+    {
+        RENDERER_LOG_WARNING("Unsupported component connection to shading engine.");
+    }
 }
 
 void ShadingEngineExporter::createEntities(const AppleseedSession::Options& options)
@@ -95,21 +116,36 @@ void ShadingEngineExporter::createEntities(const AppleseedSession::Options& opti
     MFnDependencyNode depNodeFn(m_object);
     const MString appleseedName = depNodeFn.name();
 
-    asr::ParamArray params;
-    /*
+    // Create a surface shader.
     MString surfaceShaderName = appleseedName + MString("_surface_shader");
     m_surfaceShader.reset(
         asr::PhysicalSurfaceShaderFactory().create(
             surfaceShaderName.asChar(),
-            params));
+            asr::ParamArray()));
 
-    params.clear();
-    if (m_surfaceShader.get())
-        params.insert("surface_shader", surfaceShaderName.asChar());
-    */
+    // Check if we have a shading map shader.
+    if (m_shadingMapNetworkExporter)
+    {
+        // Create an OSL surface shader.
+        MString shadingMapShaderName = appleseedName + MString("_shading_map_surface_shader");
+        m_shadingMapSurfaceShader.reset(
+            asr::OSLSurfaceShaderFactory().create(
+                shadingMapShaderName.asChar(),
+                asr::ParamArray()
+                    .insert("surface_shader", m_surfaceShader->get_name())));
+    }
 
+    // Create the material.
     MString materialName = appleseedName + MString("_material");
-    m_material.reset(asr::OSLMaterialFactory().create(materialName.asChar(), params));
+    m_material.reset(asr::OSLMaterialFactory().create(
+        materialName.asChar(), asr::ParamArray()));
+
+    // Set the surface shader in the material.
+    if (m_shadingMapSurfaceShader.get())
+        m_material->get_parameters().insert("surface_shader", m_shadingMapSurfaceShader->get_name());
+    else
+        m_material->get_parameters().insert("surface_shader", m_surfaceShader->get_name());
+
 }
 
 void ShadingEngineExporter::flushEntities()
@@ -125,5 +161,15 @@ void ShadingEngineExporter::flushEntities()
 
     if (m_surfaceShader.get())
         m_mainAssembly.surface_shaders().insert(m_surfaceShader.release());
+
+    if (m_shadingMapNetworkExporter)
+    {
+        m_shadingMapSurfaceShader->get_parameters().insert(
+            "osl_shader",
+            m_shadingMapNetworkExporter->shaderGroupName());
+    }
+
+    if (m_shadingMapSurfaceShader.get())
+        m_mainAssembly.surface_shaders().insert(m_shadingMapSurfaceShader.release());
 }
 

@@ -42,6 +42,7 @@
 #include "foundation/utility/string.h"
 
 // appleseed.maya headers.
+#include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/shadingnoderegistry.h"
 
@@ -49,25 +50,6 @@ namespace asf = foundation;
 
 namespace
 {
-
-MStatus makeInput(MFnAttribute& attr)
-{
-    attr.setStorable(true);
-    attr.setWritable(true);
-    attr.setReadable(true);
-    attr.setKeyable(true);
-    return MS::kSuccess;
-}
-
-MStatus makeOutput(MFnAttribute& attr)
-{
-    attr.setStorable(false);
-    attr.setReadable(true);
-    attr.setWritable(false);
-    attr.setKeyable(false);
-    //attr.setHidden(true);
-    return MS::kSuccess;
-}
 
 MObject createPointAttribute(
     MFnNumericAttribute&    numAttrFn,
@@ -116,9 +98,9 @@ MStatus initializeAttribute(MFnAttribute& attr, const OSLParamInfo& p)
         attr.setNiceNameOverride(p.label);
 
     if (p.isOutput)
-        return makeOutput(attr);
+        return AttributeUtils::makeOutput(attr);
     else
-        return makeInput(attr);
+        return AttributeUtils::makeInput(attr);
 }
 
 MStatus initializeNumericAttribute(MFnNumericAttribute& attr, const OSLParamInfo& p)

@@ -162,4 +162,23 @@ bool anyChildPlugConnected(const MPlug& plug, bool input)
     return false;
 }
 
+MStatus makeInput(MFnAttribute& attr)
+{
+    attr.setStorable(true);
+    attr.setWritable(true);
+    attr.setReadable(true);
+    attr.setKeyable(true);
+    return MS::kSuccess;
+}
+
+MStatus makeOutput(MFnAttribute& attr)
+{
+    attr.setStorable(false);
+    attr.setReadable(true);
+    attr.setWritable(false);
+    attr.setKeyable(false);
+    //attr.setHidden(true);
+    return MS::kSuccess;
+}
+
 }

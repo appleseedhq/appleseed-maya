@@ -107,9 +107,6 @@ void ShapeExporter::flushEntities()
 
 void ShapeExporter::shapeAttributesToParams(renderer::ParamArray& params)
 {
-    //m_objectInstance->get_parameters().insert( "medium_priority", appleseedAttributes->m_mediumPriority );
-
-    // TODO: implement this...
 }
 
 void ShapeExporter::createObjectInstance(const MString& objectName)

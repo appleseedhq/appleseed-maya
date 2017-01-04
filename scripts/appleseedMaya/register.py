@@ -37,7 +37,6 @@ import maya.OpenMaya as om
 
 # appleseedMaya imports.
 from aetemplate import appleseedAETemplateCallback
-from extensionAttributes import addExtensionAttributes
 from hyperShadeCallbacks import *
 from logger import logger
 from menu import createMenu, deleteMenu
@@ -105,9 +104,6 @@ def register():
             "appleseedUpdateTabProcedure"
             )
         )
-
-    # Extension attributes.
-    addExtensionAttributes()
 
     # AE templates.
     pm.callbacks(

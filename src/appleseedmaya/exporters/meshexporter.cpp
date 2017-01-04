@@ -327,7 +327,7 @@ void MeshExporter::flushEntities()
 void MeshExporter::meshAttributesToParams(renderer::ParamArray& params)
 {
     int mediumPriority = 0;
-    if (AttributeUtils::get(node(), "as_medium_priority", mediumPriority))
+    if (AttributeUtils::get(node(), "asMediumPriority", mediumPriority))
         params.insert("medium_priority", mediumPriority);
 }
 
