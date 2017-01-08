@@ -34,8 +34,6 @@
 #include <maya/MImage.h>
 
 // appleseed.foundation headers.
-#include "foundation/image/image.h"
-#include "foundation/image/tile.h"
 #include "foundation/math/vector.h"
 #include "foundation/utility/iostreamop.h"
 
@@ -53,6 +51,7 @@
 #include "renderer/api/scene.h"
 
 // appleseed.maya headers.
+#include "appleseedmaya/imageutils.h"
 #include "appleseedmaya/logger.h"
 
 namespace asf = foundation;
@@ -78,6 +77,8 @@ void SwatchRenderer::initialize()
     g_project = asr::ProjectFactory::create("project");
     g_project->add_default_configurations();
 
+    const size_t NumThreads = 2;
+
     // Insert some config params needed by the interactive renderer.
     asr::Configuration *cfg = g_project->configurations().get_by_name("interactive");
     asr::ParamArray *cfg_params = &cfg->get_parameters();
@@ -89,7 +90,7 @@ void SwatchRenderer::initialize()
     cfg_params->insert("pixel_renderer", "uniform");
     cfg_params->insert("sampling_mode", "qmc");
     cfg_params->insert_path("progressive_frame_renderer.max_fps", "5");
-    cfg_params->insert("rendering_threads", "1");
+    cfg_params->insert("rendering_threads", NumThreads);
 
     // Insert some config params needed by the final renderer.
     cfg = g_project->configurations().get_by_name("final");
@@ -102,7 +103,7 @@ void SwatchRenderer::initialize()
     cfg_params->insert("pixel_renderer", "uniform");
     cfg_params->insert("sampling_mode", "qmc");
     cfg_params->insert_path("uniform_pixel_renderer.samples", "4");
-    cfg_params->insert("rendering_threads", "1");
+    cfg_params->insert("rendering_threads", NumThreads);
 
     // Create some basic project entities.
 
@@ -122,6 +123,7 @@ void SwatchRenderer::initialize()
     g_project->get_scene()->cameras().insert(camera);
 
     // Create the frame.
+    const size_t TileSize = 32;
     asf::auto_release_ptr<asr::Frame> frame(
         asr::FrameFactory::create(
             "beauty",
@@ -129,7 +131,8 @@ void SwatchRenderer::initialize()
                 .insert("resolution", "128 128")
                 .insert("camera", "camera")
                 .insert("pixel_format", "uint8")
-                .insert("color_space", "srgb")));
+                .insert("color_space", "srgb")
+                .insert("tile_size", asf::Vector2i(TileSize, TileSize))));
     g_project->set_frame(frame);
 
     // Create the environment.
@@ -260,34 +263,11 @@ bool SwatchRenderer::doIteration()
     // Recreate the frame.
     asr::ParamArray frameParams = g_project->get_frame()->get_parameters();
     frameParams.insert("resolution", asf::Vector2i(resolution(), resolution()));
-    frameParams.insert("tile_size", asf::Vector2i(resolution(), resolution()));
     asf::auto_release_ptr<asr::Frame> frame(asr::FrameFactory::create("beauty", frameParams));
     g_project->set_frame(frame);
 
-    // Do not render yet, as the project is empty.
     g_renderer->render();
 
-    const asf::CanvasProperties& props = g_project->get_frame()->image().properties();
-    const foundation::Tile& tile = g_project->get_frame()->image().tile(0, 0);
-    assert(props.m_channel_count == 4);
-
-    uint8_t *src = tile.get_storage();
-    uint8_t *dst = image().pixels();
-    for (size_t y = 0; y < props.m_canvas_height; ++y)
-    {
-        for (size_t x = 0; x < props.m_canvas_width; ++x)
-        {
-            // todo: do we need to flip the image vertically
-            // like in the render view?
-
-            // Maya docs say RGBA, but it is actually BGRA?.
-            *dst++ = src[2];
-            *dst++ = src[1];
-            *dst++ = src[0];
-            *dst++ = src[3];
-            src += 4;
-        }
-    }
-
+    ImageUtils::copySwatchImage(g_project->get_frame()->image(), image());
     return true;
 }

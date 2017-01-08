@@ -26,15 +26,18 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_IMAGE_H
-#define APPLESEED_MAYA_IMAGE_H
+#ifndef APPLESEED_MAYA_IMAGEUTILS_H
+#define APPLESEED_MAYA_IMAGEUTILS_H
 
 // Forward declarations.
 class MImage;
+namespace foundation { class Image; }
 
 namespace ImageUtils
 {
 
+void copySwatchImage(const foundation::Image& src, MImage& dst);
+
 } // namespace ImageUtils.
 
-#endif  // !APPLESEED_MAYA_IMAGE_H
+#endif  // !APPLESEED_MAYA_IMAGEUTILS_H
