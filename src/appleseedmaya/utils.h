@@ -38,13 +38,16 @@
 
 // Maya headers.
 #include <maya/MComputation.h>
-#include <maya/MDagPath.h>
-#include <maya/MObject.h>
 #include <maya/MString.h>
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
 #include "foundation/utility/string.h"
+
+// Forward declarations.
+class MDagPath;
+class MObject;
+class MStatus;
 
 //
 // NonCopyable.

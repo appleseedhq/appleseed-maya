@@ -44,6 +44,7 @@
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/exporters/shadingnodeexporter.h"
 #include "appleseedmaya/logger.h"
+#include "appleseedmaya/shadingnodemetadata.h"
 #include "appleseedmaya/shadingnoderegistry.h"
 
 namespace asf = foundation;

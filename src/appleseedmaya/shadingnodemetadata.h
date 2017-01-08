@@ -34,7 +34,6 @@
 #include <vector>
 
 // Maya headers.
-#include <maya/MPlug.h>
 #include <maya/MString.h>
 
 // appleseed.foundation headers.
@@ -44,6 +43,7 @@
 #include "appleseedmaya/utils.h"
 
 // Forward declarations.
+class MPlug;
 namespace renderer { class ShaderQuery; }
 
 class OSLMetadataExtractor

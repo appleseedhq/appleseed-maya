@@ -38,7 +38,9 @@
 #include "boost/thread/mutex.hpp"
 
 // Maya headers.
+#include <maya/MDagPath.h>
 #include <maya/MEventMessage.h>
+#include <maya/MObject.h>
 #include <maya/MSelectionList.h>
 
 MStatus getDependencyNodeByName(const MString& name, MObject& node)

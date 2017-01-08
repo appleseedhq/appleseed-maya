@@ -79,6 +79,8 @@ set (appleseed_maya_sources
     extensionAttributes.h
     idlejobqueue.cpp
     idlejobqueue.h
+    image.cpp
+    image.h
     logger.cpp
     logger.h
     murmurhash.cpp

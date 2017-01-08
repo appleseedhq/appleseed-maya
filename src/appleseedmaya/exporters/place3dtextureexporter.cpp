@@ -37,6 +37,9 @@
 #include <maya/MFnDependencyNode.h>
 #include <maya/MMatrix.h>
 
+// appleseed.renderer headers.
+#include "renderer/api/utility.h"
+
 // appleseed.maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"

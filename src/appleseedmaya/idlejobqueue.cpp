@@ -34,6 +34,7 @@
 
 // Maya headers.
 #include <maya/MEventMessage.h>
+#include <maya/MStatus.h>
 #include <maya/MString.h>
 
 // appleseed.maya headers.

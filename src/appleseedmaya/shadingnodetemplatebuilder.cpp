@@ -36,9 +36,11 @@
 
 // Maya headers.
 #include <maya/MGlobal.h>
+#include <maya/MStatus.h>
 
 // appleseed.maya headers.
-#include <appleseedmaya/shadingnoderegistry.h>
+#include "appleseedmaya/shadingnodemetadata.h"
+#include "appleseedmaya/shadingnoderegistry.h"
 
 ShadingNodeTemplateBuilder::ShadingNodeTemplateBuilder(const OSLShaderInfo& shaderInfo)
 {

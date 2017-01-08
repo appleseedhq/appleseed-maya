@@ -39,24 +39,31 @@
 #include "boost/filesystem.hpp"
 
 // Maya headers.
-
 #define MNoPluginEntry
 #define MNoVersionString
 #include <maya/MFnPlugin.h>
 
 #include <maya/MFnDependencyNode.h>
 #include <maya/MGlobal.h>
+#include <maya/MObject.h>
 #include <maya/MPxNode.h>
+#include <maya/MStatus.h>
+#include <maya/MStringArray.h>
 #include <maya/MTypeId.h>
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
+#include "foundation/utility/containers/dictionary.h"
 #include "foundation/utility/searchpaths.h"
 #include "foundation/utility/string.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/shadergroup.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/shadingnode.h"
+#include "appleseedmaya/shadingnodemetadata.h"
 #include "appleseedmaya/shadingnodetemplatebuilder.h"
 #include "appleseedmaya/utils.h"
 

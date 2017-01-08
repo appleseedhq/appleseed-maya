@@ -34,6 +34,9 @@
 #include <map>
 #include <vector>
 
+// Maya headers.
+#include <maya/MPlug.h>
+
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
 #include "foundation/utility/iostreamop.h"

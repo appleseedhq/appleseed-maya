@@ -43,10 +43,6 @@
 #include <maya/MString.h>
 #include <maya/MVector.h>
 
-// appleseed.foundation headers.
-
-// appleseed.renderer headers.
-
 namespace AttributeUtils
 {
 

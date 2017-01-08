@@ -32,8 +32,8 @@
 // Boost headers.
 #include <boost/function.hpp>
 
-// Maya headers.
-#include <maya/MStatus.h>
+// Forward declarations.
+class MStatus;
 
 namespace IdleJobQueue
 {

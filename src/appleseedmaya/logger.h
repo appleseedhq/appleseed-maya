@@ -29,12 +29,11 @@
 #ifndef APPLESEED_MAYA_LOGGER_H
 #define APPLESEED_MAYA_LOGGER_H
 
-// Maya headers.
-#include <maya/MStatus.h>
-#include <maya/MString.h>
-
 // appleseed.renderer headers.
 #include "renderer/api/log.h"
+
+// Forward declarations.
+class MStatus;
 
 namespace Logger
 {

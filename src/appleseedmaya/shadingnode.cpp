@@ -44,6 +44,7 @@
 // appleseed.maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/logger.h"
+#include "appleseedmaya/shadingnodemetadata.h"
 #include "appleseedmaya/shadingnoderegistry.h"
 
 namespace asf = foundation;

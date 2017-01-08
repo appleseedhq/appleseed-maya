@@ -29,20 +29,12 @@
 #ifndef APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
 #define APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
 
-// Maya headers.
-#include <maya/MObject.h>
-#include <maya/MStatus.h>
-#include <maya/MStringArray.h>
-
-// appleseed.foundation headers.
-#include "foundation/utility/containers/dictionary.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/shadergroup.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/shadingnodemetadata.h"
-#include "appleseedmaya/utils.h"
+// Forward declarations.
+class MObject;
+class MStatus;
+class MString;
+class MStringArray;
+class OSLShaderInfo;
 
 //
 // ShadingNodeRegistry.

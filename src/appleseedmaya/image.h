@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2017 Esteban Tovagliari, The appleseedhq Organization
+// Copyright (c) 2017 Esteban Tovagliari, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,54 +26,15 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SKY_DOME_LIGHT_NODE_H
-#define APPLESEED_MAYA_SKY_DOME_LIGHT_NODE_H
-
-// Maya headers.
-#include <maya/MString.h>
-#include <maya/MTypeId.h>
-
-// appleseed.maya headers.
-#include "appleseedmaya/envlightnode.h"
+#ifndef APPLESEED_MAYA_IMAGE_H
+#define APPLESEED_MAYA_IMAGE_H
 
 // Forward declarations.
-class MObject;
+class MImage;
 
-class SkyDomeLightNode
-  : public EnvLightNode
+namespace ImageUtils
 {
-  public:
-    static const MString nodeName;
-    static const MTypeId id;
-    static const MString drawDbClassification;
-    static const MString drawRegistrantId;
 
-    static void* creator();
-    static MStatus initialize();
-};
+} // namespace ImageUtils.
 
-class SkyDomeLightData
-  : public EnvLightData
-{
-  public:
-
-    SkyDomeLightData();
-};
-
-class SkyDomeLightDrawOverride
-  : public EnvLightDrawOverride
-{
-  public:
-
-    static MHWRender::MPxDrawOverride *creator(const MObject& obj);
-
-    SkyDomeLightDrawOverride(const MObject& obj);
-
-    virtual MUserData *prepareForDraw(
-        const MDagPath&                 objPath,
-        const MDagPath&                 cameraPath,
-        const MHWRender::MFrameContext& frameContext,
-        MUserData*                      oldData);
-};
-
-#endif  // !APPLESEED_MAYA_SKY_DOME_LIGHT_NODE_H
+#endif  // !APPLESEED_MAYA_IMAGE_H

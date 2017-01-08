@@ -33,13 +33,13 @@
 #include <vector>
 
 // Maya headers.
-#include <maya/MStatus.h>
 #include <maya/MString.h>
 
 // appleseed.maya headers.
 #include "appleseedmaya/utils.h"
 
 // Forward declarations.
+class MStatus;
 class OSLShaderInfo;
 
 //

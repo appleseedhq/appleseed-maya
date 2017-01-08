@@ -31,10 +31,10 @@
 
 // Maya headers.
 #include <maya/MPxFileTranslator.h>
-#include <maya/MString.h>
 
 // Forward declarations.
 class MFileObject;
+class MString;
 class MStatus;
 
 class AppleseedTranslator

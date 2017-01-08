@@ -39,10 +39,12 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
-#include "appleseedmaya/shadingnoderegistry.h"
 #include "appleseedmaya/utils.h"
 
 // Forward declarations.
+class OSLParamInfo;
+class OSLShaderInfo;
+namespace renderer { class ParamArray; }
 namespace renderer { class ShaderGroup; }
 
 class ShadingNodeExporter
