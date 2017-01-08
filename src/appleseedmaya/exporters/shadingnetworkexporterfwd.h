@@ -39,7 +39,6 @@ enum ShadingNetworkContext
     // DisplacementContext,
     // LightAttenuationContext,
     // ...
-    ShadingMapNetworkContext,
     NumShadingNetworkContexts
 };
 

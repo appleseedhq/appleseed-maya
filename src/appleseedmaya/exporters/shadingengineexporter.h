@@ -77,8 +77,6 @@ class ShadingEngineExporter
     AppleseedEntityPtr<renderer::Material>          m_material;
     AppleseedEntityPtr<renderer::SurfaceShader>     m_surfaceShader;
     ShadingNetworkExporterPtr                       m_surfaceNetworkExporter;
-    AppleseedEntityPtr<renderer::SurfaceShader>     m_shadingMapSurfaceShader;
-    ShadingNetworkExporterPtr                       m_shadingMapNetworkExporter;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H

@@ -48,21 +48,6 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         self.addControl('asVisibilityGlossy'  , label='Glossy')
         self.endLayout()
 
-    def asShadingMapNew(self, attr):
-        logger.debug("asShadingMapNew: attr = %s" % attr)
-
-        mc.attrNavigationControlGrp("asShadingMap", label="Shading Map", attribute=attr)
-        self.asShadingMapUpdate(attr)
-
-    def asShadingMapUpdate(self, attr):
-        newCallback = 'createRenderNode -allWithShadersUp "defaultNavigation -connectToExisting -destination '
-        newCallback += attr + ' -source %node" "";'
-        mc.attrNavigationControlGrp(
-            "asShadingMap",
-            edit=True,
-            attribute=attr,
-            createNew=newCallback)
-
     def buildBody(self, nodeName):
         self.thisNode = pm.PyNode(nodeName)
 
@@ -79,11 +64,6 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
             self.beginLayout('Appleseed' ,collapse=1)
             self.__buildVisibilitySection()
             self.addControl('asMediumPriority', label='Medium Priority')
-            self.endLayout()
-
-        if self.thisNode.type() == 'shadingEngine':
-            self.beginLayout('Appleseed' ,collapse=1)
-            self.callCustom(self.asShadingMapNew, self.asShadingMapUpdate, "asShadingMap")
             self.endLayout()
 
 def appleseedAETemplateCallback(nodeName):

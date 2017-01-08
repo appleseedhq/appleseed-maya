@@ -169,23 +169,6 @@ void addAreaLightExtensionAttributes()
 
 void addShadingEngineExtensionAttrs()
 {
-    MFnTypedAttribute typedAttrFn;
-    MObject attr = typedAttrFn.create(
-        "asShadingMap",
-        "asShadingMap",
-        MFnData::kAny);
-    typedAttrFn.setNiceNameOverride("asShadingMap");
-    typedAttrFn.setStorable(true);
-    typedAttrFn.setWritable(true);
-    typedAttrFn.setReadable(true);
-    typedAttrFn.setKeyable(false);
-    typedAttrFn.addToCategory(g_extensionsCategory);
-
-    MNodeClass nodeClass("shadingEngine");
-    MDGModifier modifier;
-
-    modifier.addExtensionAttribute(nodeClass, attr);
-    modifier.doIt();
 }
 
 } // unnamed.

@@ -140,10 +140,6 @@ void ShadingNetworkExporter::flushEntities()
             // Nothing to do here...
         break;
 
-        case ShadingMapNetworkContext:
-            // Nothing to do here...?
-        break;
-
         default:
             assert(false);
             RENDERER_LOG_ERROR("Unknown shading network context.");
