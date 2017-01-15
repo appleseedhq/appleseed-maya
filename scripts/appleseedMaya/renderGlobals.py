@@ -50,10 +50,13 @@ def createGlobalNodes():
     logger.debug("Created appleseed render global node")
 
 def imageFormatChanged():
-    newFormat = mc.getAttr("appleseedRenderGlobals.imageFormat")
-    logger.debug("Image file format changed, value = %s." % newFormat)
 
-    # Since we only support two file formats now, we can hardcode things here.
+    # Since we only support two file formats atm., we can hardcode things.
+    # 32 is the format code for png, 51 is custom image format.
+    # We also update the extension attribute (used in the file names preview).
+
+    newFormat = mc.getAttr("appleseedRenderGlobals.imageFormat")
+
     if newFormat == 0: # EXR
         mc.setAttr("defaultRenderGlobals.imageFormat", 51)
         mc.setAttr("defaultRenderGlobals.imfkey", "exr", type="string")
@@ -67,8 +70,10 @@ def currentRendererChanged():
     if mel.eval("currentRenderer()") != "appleseed":
         return
 
+    # Make sure our render globals node exists.
     createGlobalNodes()
 
+    # If the render globals window does not exist, create it.
     if not mc.window("unifiedRenderGlobalsWindow", exists=True):
         mel.eval("unifiedRenderGlobalsWindow")
         mc.window("unifiedRenderGlobalsWindow", edit=True, visible=False)
@@ -76,30 +81,30 @@ def currentRendererChanged():
     # "Customize" the image formats menu.
     mc.setParent("unifiedRenderGlobalsWindow")
     mel.eval("setParentToCommonTab;")
-
     mc.setParent("imageFileOutputSW")
     mc.setParent("imageMenuMayaSW")
     mc.setParent("..")
     parent = mc.setParent(q=True)
 
-    # Remove the menu callback.
+    # Remove the menu callback and the menu items.
     mel.eval('optionMenuGrp -e -changeCommand "" imageMenuMayaSW;')
-
-    # Remove menu items.
     items = mc.optionMenuGrp("imageMenuMayaSW", q=True, itemListLong=True)
     for item in items:
         mc.deleteUI(item)
 
     # Add the formats we support.
     menu = parent + "|imageMenuMayaSW|OptionMenu"
-    mc.menuItem(parent=menu, label="OpenEXR (exr)", data=0)
-    mc.menuItem(parent=menu, label="PNG (png)", data=1)
+    mc.menuItem(parent=menu, label="OpenEXR (.exr)", data=0)
+    mc.menuItem(parent=menu, label="PNG (.png)", data=1)
 
-    # Connect the control to one internal attribute in our globals.
+    # Connect the control to one internal attribute in our globals node
+    # so that we can add a changed callback to it.
     mc.connectControl("imageMenuMayaSW", "appleseedRenderGlobals.imageFormat", index=1)
     mc.connectControl("imageMenuMayaSW", "appleseedRenderGlobals.imageFormat", index=2)
 
     # Add a callback when our internal attribute changes.
+    # This callback gets the current value from our internal attribute and
+    # uses it to update the original image format attribute (closing the circle.)
     mc.scriptJob(
         parent=parent,
         replacePrevious=True,
@@ -108,6 +113,7 @@ def currentRendererChanged():
             "from appleseedMaya.renderGlobals import imageFormatChanged; imageFormatChanged()"]
     )
 
+    # Update the image format controls now.
     imageFormatChanged()
 
 class AppleseedRenderGlobalsMainTab(object):
