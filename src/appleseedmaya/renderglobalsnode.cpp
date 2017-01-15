@@ -73,6 +73,8 @@ MObject RenderGlobalsNode::m_envLightNode;
 
 MObject RenderGlobalsNode::m_renderingThreads;
 
+MObject RenderGlobalsNode::m_imageFormat;
+
 void* RenderGlobalsNode::creator()
 {
     return new RenderGlobalsNode();
@@ -252,6 +254,17 @@ MStatus RenderGlobalsNode::initialize()
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: Failed to add render globals envLight attribute");
+
+    // Image Format
+    m_imageFormat = numAttrFn.create("imageFormat", "imageFormat", MFnNumericData::kInt, 0, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals imageFormat attribute");
+
+    status = addAttribute(m_imageFormat);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals imageFormat attribute");
 
     return status;
 }

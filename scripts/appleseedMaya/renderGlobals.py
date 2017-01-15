@@ -49,6 +49,66 @@ def createGlobalNodes():
     mc.select(sel, replace=True)
     logger.debug("Created appleseed render global node")
 
+def imageFormatChanged():
+    newFormat = mc.getAttr("appleseedRenderGlobals.imageFormat")
+    logger.debug("Image file format changed, value = %s." % newFormat)
+
+    # Since we only support two file formats now, we can hardcode things here.
+    if newFormat == 0: # EXR
+        mc.setAttr("defaultRenderGlobals.imageFormat", 51)
+        mc.setAttr("defaultRenderGlobals.imfkey", "exr", type="string")
+    elif newFormat == 1: # PNG
+        mc.setAttr("defaultRenderGlobals.imageFormat", 32)
+        mc.setAttr("defaultRenderGlobals.imfkey", "png", type="string")
+    else:
+        raise RuntimeError("Unknown render global image file format")
+
+def currentRendererChanged():
+    if mel.eval("currentRenderer()") != "appleseed":
+        return
+
+    createGlobalNodes()
+
+    if not mc.window("unifiedRenderGlobalsWindow", exists=True):
+        mel.eval("unifiedRenderGlobalsWindow")
+        mc.window("unifiedRenderGlobalsWindow", edit=True, visible=False)
+
+    # "Customize" the image formats menu.
+    mc.setParent("unifiedRenderGlobalsWindow")
+    mel.eval("setParentToCommonTab;")
+
+    mc.setParent("imageFileOutputSW")
+    mc.setParent("imageMenuMayaSW")
+    mc.setParent("..")
+    parent = mc.setParent(q=True)
+
+    # Remove the menu callback.
+    mel.eval('optionMenuGrp -e -changeCommand "" imageMenuMayaSW;')
+
+    # Remove menu items.
+    items = mc.optionMenuGrp("imageMenuMayaSW", q=True, itemListLong=True)
+    for item in items:
+        mc.deleteUI(item)
+
+    # Add the formats we support.
+    menu = parent + "|imageMenuMayaSW|OptionMenu"
+    mc.menuItem(parent=menu, label="OpenEXR (exr)", data=0)
+    mc.menuItem(parent=menu, label="PNG (png)", data=1)
+
+    # Connect the control to one internal attribute in our globals.
+    mc.connectControl("imageMenuMayaSW", "appleseedRenderGlobals.imageFormat", index=1)
+    mc.connectControl("imageMenuMayaSW", "appleseedRenderGlobals.imageFormat", index=2)
+
+    # Add a callback when our internal attribute changes.
+    mc.scriptJob(
+        parent=parent,
+        replacePrevious=True,
+        attributeChange=[
+            "appleseedRenderGlobals.imageFormat",
+            "from appleseedMaya.renderGlobals import imageFormatChanged; imageFormatChanged()"]
+    )
+
+    imageFormatChanged()
 
 class AppleseedRenderGlobalsMainTab(object):
     def __init__(self):
@@ -165,7 +225,15 @@ g_appleseedMainTab = AppleseedRenderGlobalsMainTab()
 
 def createRenderTabsMelProcedures():
     mel.eval('''
-        global proc appleseedCreateTabProcedure()
+        global proc appleseedCurrentRendererChanged()
+        {
+            python("from appleseedMaya.renderGlobals import currentRendererChanged");
+            python("currentRendererChanged()");
+        }
+        '''
+    )
+    mel.eval('''
+        global proc appleseedCreateAppleseedTabProcedure()
         {
             python("from appleseedMaya.renderGlobals import g_appleseedMainTab");
             python("g_appleseedMainTab.create()");
@@ -173,49 +241,10 @@ def createRenderTabsMelProcedures():
         '''
     )
     mel.eval('''
-        global proc appleseedUpdateTabProcedure()
+        global proc appleseedUpdateAppleseedTabProcedure()
         {
             python("from appleseedMaya.renderGlobals import g_appleseedMainTab");
             python("g_appleseedMainTab.update()");
         }
         '''
     )
-
-
-'''
-def environment_select_create(self, attr=None):
-    self.environment_select_layout = mc.rowLayout(nc=3)
-    mc.text('Environment')
-    self.environment_select_option_menu = mc.optionMenu(cc=partial(self.environment_select_set, attr))
-    if attr is not None:
-        self.environment_select_update(attr)
-
-
-        def environment_select_update(self, attr):
-            if self.environment_select_option_menu is not None:
-                items = mc.optionMenu(self.environment_select_option_menu, q=True, ill=True)
-                if items is not None:
-                    for item in items:
-                        mc.deleteUI(item)
-                mc.menuItem(label='<none>', p=self.environment_select_option_menu)
-                for environment in mc.ls(type='ms_environment') + mc.ls(type='ms_physical_environment'):
-                    mc.menuItem(label=environment, p=self.environment_select_option_menu)
-                connection = mc.listConnections(attr, sh=True)
-                if connection is None:
-                    mc.optionMenu(self.environment_select_option_menu, e=True, v='<none>')
-                else:
-                    mc.optionMenu(self.environment_select_option_menu, e=True, v=connection[0])
-
-
-        def environment_select_set(self, attr, environment):
-            value = mc.optionMenu(self.environment_select_option_menu, q=True, v=True)
-            connection = mc.listConnections(attr, sh=True)
-            if value == '<none>':
-                if connection is not None:
-                    mc.disconnectAttr(connection[0] + '.message', attr)
-            else:
-                if connection is not None:
-                    if connection[0] == environment:
-                        return
-                mc.connectAttr(environment + '.message', attr, f=True)
-'''

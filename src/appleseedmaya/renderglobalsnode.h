@@ -73,6 +73,8 @@ class RenderGlobalsNode
     static MObject m_backgroundEmitsLight;
 
     static MObject m_renderingThreads;
+
+    static MObject m_imageFormat;
 };
 
 #endif  // !APPLESEED_MAYA_RENDER_GLOBALS_NODE_H

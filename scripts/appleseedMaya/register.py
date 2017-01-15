@@ -85,6 +85,9 @@ def register():
     pm.renderer("appleseed", edit=True, addGlobalsNode="defaultResolution")
     pm.renderer("appleseed", edit=True, addGlobalsNode="appleseedRenderGlobals")
 
+    mel.eval(
+        'registerUpdateRendererUIProc("evalDeferred -lp appleseedCurrentRendererChanged");')
+
     pm.renderer(
         "appleseed",
         edit=True,
@@ -100,8 +103,8 @@ def register():
         edit=True,
         addGlobalsTab=(
             "Appleseed",
-            "appleseedCreateTabProcedure",
-            "appleseedUpdateTabProcedure"
+            "appleseedCreateAppleseedTabProcedure",
+            "appleseedUpdateAppleseedTabProcedure"
             )
         )
 
