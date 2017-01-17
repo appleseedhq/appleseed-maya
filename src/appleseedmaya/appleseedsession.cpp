@@ -43,15 +43,18 @@
 
 // Maya headers.
 #include <maya/MAnimControl.h>
+#include <maya/MCommonRenderSettingsData.h>
 #include <maya/MComputation.h>
 #include <maya/MDagPath.h>
 #include <maya/MFnDagNode.h>
 #include <maya/MFnDependencyNode.h>
+#include <maya/MFnRenderLayer.h>
 #include <maya/MGlobal.h>
 #include <maya/MItDag.h>
 #include <maya/MSelectionList.h>
 #include <maya/MObject.h>
 #include <maya/MObjectArray.h>
+#include <maya/MRenderUtil.h>
 
 // appleseed.foundation headers.
 #include "foundation/platform/timers.h"
@@ -748,7 +751,8 @@ MStatus projectExport(
     const MString& fileName,
     const Options& options)
 {
-    assert(g_globalSession.get() == 0);
+    // In case we were doing IPR.
+    endSession();
 
     ScopedEndSession session;
     ScopedComputation computation;
@@ -813,9 +817,10 @@ MStatus projectExport(
     return MS::kSuccess;
 }
 
-MStatus finalRender(const Options& options, const bool batch)
+MStatus render(const Options& options)
 {
-    assert(g_globalSession.get() == 0);
+    // In case we were doing IPR.
+    endSession();
 
     ScopedComputation computation;
 
@@ -829,10 +834,7 @@ MStatus finalRender(const Options& options, const bool batch)
         if (computation.isInterruptRequested())
             return MS::kSuccess;
 
-        if (batch)
-            g_globalSession->batchRender();
-        else
-            g_globalSession->finalRender();
+        g_globalSession->finalRender();
     }
     catch (const AbortRequested&)
     {
@@ -842,6 +844,63 @@ MStatus finalRender(const Options& options, const bool batch)
     catch (const AppleseedMayaException&)
     {
         return MS::kFailure;
+    }
+
+    return MS::kSuccess;
+}
+
+MStatus batchRender(const Options& options)
+{
+    // In case we were doing IPR.
+    endSession();
+
+    MStatus status;
+
+    MObject renderLayer = MFnRenderLayer::currentLayer(&status);
+
+    MCommonRenderSettingsData renderSettings;
+    MRenderUtil::getCommonRenderSettings(renderSettings);
+
+    if (renderSettings.isAnimated())
+    {
+        const double frameStart = renderSettings.frameStart.value();
+        const double frameEnd = renderSettings.frameEnd.value();
+        const double frameBy = renderSettings.frameBy;
+
+        for (double frame = frameStart; frame <= frameEnd; frame += frameBy)
+        {
+            MGlobal::viewFrame(frame);
+            MString outputFileName = renderSettings.getImageName(
+                MCommonRenderSettingsData::kFullPathImage,
+                frame,
+                MString(),
+                MString(),
+                MString(),
+                renderLayer,
+                true,
+                &status);
+
+            RENDERER_LOG_DEBUG("Batch render: rendering frame %f, filename = %s", frame, outputFileName.asChar());
+            RENDERER_LOG_DEBUG("Status = %s", status.errorString().asChar());
+            RENDERER_LOG_DEBUG("=================================");
+        }
+    }
+    else
+    {
+        const double frame = MAnimControl::currentTime().value();
+        MString outputFileName = renderSettings.getImageName(
+            MCommonRenderSettingsData::kFullPathImage,
+            frame,
+            MString(),
+            MString(),
+            MString(),
+            renderLayer,
+            true,
+            &status);
+
+        RENDERER_LOG_DEBUG("Batch render: rendering single frame, filename = %s", outputFileName.asChar());
+        RENDERER_LOG_DEBUG("Status = %s", status.errorString().asChar());
+        RENDERER_LOG_DEBUG("=================================");
     }
 
     return MS::kSuccess;

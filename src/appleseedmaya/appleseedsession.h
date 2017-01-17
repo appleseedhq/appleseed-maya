@@ -128,13 +128,11 @@ class Services
     Services();
 };
 
-MStatus projectExport(
-    const MString& fileName,
-    const Options& options);
+MStatus projectExport(const MString& fileName, const Options& options);
 
-MStatus finalRender(
-    const Options&  options,
-    const bool      batch);
+MStatus render(const Options& options);
+
+MStatus batchRender(const Options& options);
 
 void endSession();
 

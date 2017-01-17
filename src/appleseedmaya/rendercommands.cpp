@@ -138,7 +138,10 @@ MStatus FinalRenderCommand::doIt(const MArgList& args)
         }
     }
 
-    AppleseedSession::finalRender(options, isBatch);
+    if (isBatch)
+        AppleseedSession::batchRender(options);
+    else
+        AppleseedSession::render(options);
 
     std::cout << std::endl;
     return MS::kSuccess;
