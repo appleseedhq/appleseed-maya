@@ -127,10 +127,63 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
         if (!status)
             continue;
 
-        if (plug.isConnected())
-            continue;
+        if (hasConnections(plug, true, false))
+        {
+            // If the attribute is a float attribute,
+            // check for component connections on the other side.
+            if (paramInfo.paramType == "float")
+            {
+                MPlugArray inputConnections;
+                plug.connectedTo(inputConnections, true, false, &status);
 
-        if (plug.isCompound() && plug.numConnectedChildren() != 0)
+                if (!status || inputConnections.length() == 0)
+                    continue;
+
+                const MPlug otherPlug = inputConnections[0];
+
+                if (otherPlug.isChild())
+                {
+                    MPlug srcPlug;
+                    ShadingNodeExporter *srcNodeExporter = getSrcPlugAndExporter(plug, exporters, srcPlug);
+                    if (!srcNodeExporter)
+                    {
+                        MFnDependencyNode srcDepNodeFn(srcPlug.node());
+                        RENDERER_LOG_WARNING(
+                            "Skipping connections to unsupported shading node %s",
+                            srcDepNodeFn.typeName().asChar());
+                        continue;
+                    }
+
+                    MString srcLayerName;
+                    MString srcParam;
+                    if (srcNodeExporter->layerAndParamNameFromPlug(srcPlug, srcLayerName, srcParam))
+                    {
+                        m_shaderGroup.add_connection(
+                            srcLayerName.asChar(),
+                            srcParam.asChar(),
+                            depNodeFn.name().asChar(),
+                            paramInfo.paramName.asChar());
+                    }
+                }
+                else if (otherPlug.isElement())
+                {
+                    // todo: implement this...
+                    RENDERER_LOG_WARNING(
+                        "Skipping array element connection to attribute %s of shading node %s",
+                        paramInfo.mayaAttributeName.asChar(),
+                        depNodeFn.typeName().asChar());
+                }
+
+                continue;
+            }
+            else
+            {
+                // Skip non float connected plugs.
+                continue;
+            }
+        }
+
+        if (plug.isCompound() && hasChildrenConnections(plug, true, false))
         {
             if (paramInfo.paramType == "color"  ||
                 paramInfo.paramType == "normal" ||
@@ -165,7 +218,7 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
                     depNodeFn.typeName().asChar());
             }
         }
-        else if (plug.isArray() && plug.numConnectedElements() != 0)
+        else if (plug.isArray() && hasElementConnections(plug, true, false))
         {
             // todo: implement this...
             RENDERER_LOG_WARNING(
@@ -216,6 +269,10 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
                     srcDepNodeFn.typeName().asChar());
                 continue;
             }
+
+            // We already handled this case.
+            if (srcPlug.isChild() || srcPlug.isElement())
+                continue;
 
             MString srcLayerName;
             MString srcParam;
@@ -330,12 +387,8 @@ void ShadingNodeExporter::exportParameterValue(
     const OSLParamInfo&                 paramInfo,
     renderer::ParamArray&               shaderParams) const
 {
-    // Skip params with shader global defaults.
+    // Skip params with shader globals defaults.
     if (!paramInfo.validDefault)
-        return;
-
-    // Skip connected attributes.
-    if (plug.isConnected())
         return;
 
     // Skip output attributes.
@@ -534,6 +587,65 @@ MObject ShadingNodeExporter::node() const
     return m_object;
 }
 
+bool ShadingNodeExporter::hasConnections(
+    const MPlug&                        plug,
+    const bool                          asDst,
+    const bool                          asSrc) const
+{
+    MStatus status;
+    MPlugArray inputConnections;
+    plug.connectedTo(inputConnections, asDst, asSrc, &status);
+
+    if (!status || inputConnections.length() == 0)
+        return false;
+
+    return true;
+}
+
+bool ShadingNodeExporter::hasChildrenConnections(
+    const MPlug&                        plug,
+    const bool                          asDst,
+    const bool                          asSrc) const
+{
+    assert(plug.isCompound());
+
+    if (plug.numConnectedChildren() != 0)
+    {
+        for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
+        {
+            MStatus status;
+            MPlug childPlug = plug.child(i, &status);
+
+            if (status && hasConnections(childPlug, asDst, asSrc))
+                return true;
+        }
+    }
+
+    return false;
+}
+
+bool ShadingNodeExporter::hasElementConnections(
+    const MPlug&                        plug,
+    const bool                          asDst,
+    const bool                          asSrc) const
+{
+    assert(plug.isArray());
+
+    if (plug.numConnectedElements() != 0)
+    {
+        for(size_t i = 0, e = plug.numElements(); i < e; ++i)
+        {
+            MStatus status;
+            MPlug elementPlug = plug.elementByPhysicalIndex(i, &status);
+
+            if (status && hasConnections(elementPlug, asDst, asSrc))
+                return true;
+        }
+    }
+
+    return false;
+}
+
 const OSLShaderInfo& ShadingNodeExporter::getShaderInfo() const
 {
     MFnDependencyNode depNodeFn(m_object);
@@ -565,6 +677,10 @@ ShadingNodeExporter *ShadingNodeExporter::getSrcPlugAndExporter(
     MStatus status;
     MPlugArray inputConnections;
     plug.connectedTo(inputConnections, true, false, &status);
+
+    if (!status || inputConnections.length() == 0)
+        return 0;
+
     srcPlug = inputConnections[0];
     return findExporterForNode(exporters, srcPlug.node());
 }

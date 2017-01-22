@@ -96,6 +96,10 @@ class ShadingNodeExporter
 
     MObject node() const;
 
+    bool hasConnections(const MPlug& plug, const bool asDst, const bool asSrc) const;
+    bool hasChildrenConnections(const MPlug& plug, const bool asDst, const bool asSrc) const;
+    bool hasElementConnections(const MPlug& plug, const bool asDst, const bool asSrc) const;
+
     const OSLShaderInfo& getShaderInfo() const;
 
     ShadingNodeExporter *findExporterForNode(
