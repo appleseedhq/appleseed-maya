@@ -163,6 +163,40 @@ void addAreaLightExtensionAttributes()
     MNodeClass nodeClass("areaLight");
     MDGModifier modifier;
 
+    MStatus status;
+
+    MFnNumericAttribute numAttrFn;
+
+    MObject attr = createNumericAttribute<float>(
+        numAttrFn,
+        "asIntensityScale",
+        "asIntensityScale",
+        MFnNumericData::kFloat,
+        1.0f,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    attr = createNumericAttribute<float>(
+        numAttrFn,
+        "asExposure",
+        "asexposure",
+        MFnNumericData::kFloat,
+        0.0f,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    attr = createNumericAttribute<bool>(
+        numAttrFn,
+        "asNormalize",
+        "asNormalize",
+        MFnNumericData::kBoolean,
+        false,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
     addVisibilityExtensionAttributes(nodeClass, modifier);
     modifier.doIt();
 }

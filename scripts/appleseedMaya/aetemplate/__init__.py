@@ -53,6 +53,9 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
 
         if self.thisNode.type() == 'areaLight':
             self.beginLayout('Appleseed' ,collapse=1)
+            self.addControl('asIntensityScale', label='Intensity Scale')
+            self.addControl('asExposure', label='Exposure')
+            self.addControl('asNormalize', label='Normalize')
             self.__buildVisibilitySection()
             self.endLayout()
 
