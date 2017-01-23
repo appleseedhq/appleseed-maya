@@ -76,6 +76,7 @@ class AreaLightExporter
     AppleseedEntityPtr<renderer::MeshObject>        m_lightMesh;
     AppleseedEntityPtr<renderer::ObjectInstance>    m_objectInstance;
     AppleseedEntityPtr<renderer::Material>          m_material;
+    AppleseedEntityPtr<renderer::Material>          m_backMaterial;
     ShadingNetworkExporterPtr                       m_lightNetworkExporter;
 };
 

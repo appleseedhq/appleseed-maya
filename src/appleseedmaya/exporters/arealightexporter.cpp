@@ -72,6 +72,7 @@ AreaLightExporter::~AreaLightExporter()
     if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
     {
         mainAssembly().materials().remove(m_material.get());
+        mainAssembly().materials().remove(m_backMaterial.get());
         mainAssembly().objects().remove(m_lightMesh.get());
         mainAssembly().object_instances().remove(m_objectInstance.get());
     }
@@ -109,8 +110,14 @@ void AreaLightExporter::createEntities(const AppleseedSession::Options& options)
     MString materialName = objectName + MString("_area_light_material");
     m_material.reset(asr::OSLMaterialFactory().create(materialName.asChar(), asr::ParamArray()));
 
-    asf::StringDictionary materialMappings;
-    materialMappings.insert("default", materialName.asChar());
+    asf::StringDictionary frontMaterialMappings;
+    frontMaterialMappings.insert("default", materialName.asChar());
+
+    MString backMaterialName = objectName + MString("_area_light_back_material");
+    m_backMaterial.reset(asr::GenericMaterialFactory().create(backMaterialName.asChar(), asr::ParamArray()));
+
+    asf::StringDictionary backMaterialMappings;
+    backMaterialMappings.insert("default", backMaterialName.asChar());
 
     asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
 
@@ -127,8 +134,8 @@ void AreaLightExporter::createEntities(const AppleseedSession::Options& options)
             params,
             objectName.asChar(),
             xform,
-            materialMappings,
-            materialMappings));
+            frontMaterialMappings,
+            backMaterialMappings));
 }
 
 void AreaLightExporter::flushEntities()
@@ -141,6 +148,7 @@ void AreaLightExporter::flushEntities()
     }
 
     mainAssembly().materials().insert(m_material.release());
+    mainAssembly().materials().insert(m_backMaterial.release());
     mainAssembly().objects().insert(m_lightMesh.releaseAs<asr::Object>());
     mainAssembly().object_instances().insert(m_objectInstance.release());
 }
