@@ -135,9 +135,8 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 
 #### Displacement
 
-- [ ] displacement:
-- [ ] C muscle shader
 - [ ] displacement
+- [ ] C muscle shader
 
 #### 2D textures
 
@@ -146,14 +145,14 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] cloth
 - [x] file
 - [ ] fluid texture 2d
-- [ ] fractal
+- [x] fractal
 - [x] grid
 - [ ] mandelbrot
-- [ ] mountain
+- [x] mountain
 - [ ] movie
 - [ ] noise
 - [ ] ocean
-- [ ] psd file
+- [x] psd file
 - [x] ramp
 - [ ] substance
 - [ ] substance output
