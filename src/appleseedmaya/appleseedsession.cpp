@@ -220,7 +220,7 @@ struct SessionImpl
       , m_services(*this)
       , m_computation(computation)
     {
-        createProject();
+        createProject(options.m_colorspace);
     }
 
     // Constructor. (Scene export)
@@ -247,7 +247,7 @@ struct SessionImpl
             }
         }
 
-        createProject();
+        createProject(options.m_colorspace);
 
         // Set the project filename and add the project directory to the search paths.
         m_project->set_path(m_fileName.asChar());
@@ -259,7 +259,7 @@ struct SessionImpl
         abortRender();
     }
 
-    void createProject()
+    void createProject(const char* colorspace)
     {
         assert(m_project.get() == 0);
 
@@ -294,12 +294,13 @@ struct SessionImpl
 
         // Create the frame.
         asf::auto_release_ptr<asr::Frame> frame(
-            asr::FrameFactory::create("beauty", asr::ParamArray().insert("resolution", "640 480")));
+            asr::FrameFactory::create(
+                "beauty",
+                asr::ParamArray()
+                    .insert("resolution", "640 480")
+                    .insert("pixel_format", "float")
+                    .insert("color_space", colorspace)));
         m_project->set_frame(frame);
-
-        // 16 bits float (half) is the default pixel format in appleseed.
-        // Force the pixel format to float to avoid half -> float conversions.
-        m_project->get_frame()->get_parameters().insert("pixel_format", "float");
 
         // Create the scene
         asf::auto_release_ptr<asr::Scene> scene = asr::SceneFactory::create();
@@ -624,8 +625,6 @@ struct SessionImpl
 
     void batchRender()
     {
-        ScopedEndSession session;
-
         // Reset the renderer controller.
         m_rendererController.set_status(asr::IRendererController::ContinueRendering);
 
@@ -640,8 +639,7 @@ struct SessionImpl
                 &m_rendererController,
                 static_cast<asr::ITileCallbackFactory*>(0)));
 
-        // todo: render here (blocking)...
-        // todo: save frame here...
+        m_renderer->render();
     }
 
     void progressiveRender()
@@ -684,6 +682,12 @@ struct SessionImpl
             filename,
             asr::ProjectFileWriter::OmitHandlingAssetFiles |
             asr::ProjectFileWriter::OmitWritingGeometryFiles);
+    }
+
+    void writeMainImage(const char *filename) const
+    {
+        const asr::Frame* frame = m_project->get_frame();
+        frame->write_main_image(filename);
     }
 
     asr::Assembly *mainAssembly()
@@ -747,6 +751,27 @@ MStatus uninitialize()
     return MS::kSuccess;
 }
 
+namespace
+{
+
+void beginSession(
+    AppleseedSession::SessionMode       mode,
+    const AppleseedSession::Options&    options,
+    ScopedComputation*                  computation)
+{
+    g_globalSession.reset(new SessionImpl(mode, options, computation));
+}
+
+void beginSession(
+    const char*                         fileName,
+    const AppleseedSession::Options&    options,
+    ScopedComputation*                  computation)
+{
+    g_globalSession.reset(new SessionImpl(fileName, options, computation));
+}
+
+} // unamed
+
 MStatus projectExport(
     const MString& fileName,
     const Options& options)
@@ -780,7 +805,7 @@ MStatus projectExport(
             fname = asf::get_numbered_string(fname, frame);
             try
             {
-                g_globalSession.reset(new SessionImpl(fname.c_str(), options, &computation));
+                beginSession(fname.c_str(), options, &computation);
                 g_globalSession->exportProject();
                 g_globalSession->writeProject();
             }
@@ -799,7 +824,7 @@ MStatus projectExport(
     {
         try
         {
-            g_globalSession.reset(new SessionImpl(fileName, options, &computation));
+            beginSession(fileName.asChar(), options, &computation);
             g_globalSession->exportProject();
             g_globalSession->writeProject();
         }
@@ -822,13 +847,14 @@ MStatus render(const Options& options)
     // In case we were doing IPR.
     endSession();
 
+    ScopedEndSession session;
     ScopedComputation computation;
 
     g_savedTime = MAnimControl::currentTime();
 
     try
     {
-        g_globalSession.reset(new SessionImpl(FinalRenderSession, options, &computation));
+        beginSession(FinalRenderSession, options, &computation);
         g_globalSession->exportProject();
 
         if (computation.isInterruptRequested())
@@ -848,6 +874,45 @@ MStatus render(const Options& options)
 
     return MS::kSuccess;
 }
+
+namespace
+{
+
+MStatus batchRenderFrame(
+    Options        options,
+    const MString& outputFilename)
+{
+    ScopedEndSession session;
+
+    try
+    {
+        if (asf::ends_with(outputFilename.asChar(), ".png"))
+            options.m_colorspace = "srgb";
+        else
+            options.m_colorspace = "linear_rgb";
+
+        beginSession(FinalRenderSession, options, 0);
+        g_globalSession->exportProject();
+        g_globalSession->batchRender();
+        g_globalSession->writeMainImage(outputFilename.asChar());
+    }
+    catch (const AppleseedMayaException&)
+    {
+        return MS::kFailure;
+    }
+    catch (const std::exception&)
+    {
+        return MS::kFailure;
+    }
+    catch (...)
+    {
+        return MS::kFailure;
+    }
+
+    return MS::kSuccess;
+}
+
+} // unnamed.
 
 MStatus batchRender(const Options& options)
 {
@@ -881,6 +946,7 @@ MStatus batchRender(const Options& options)
                 &status);
 
             RENDERER_LOG_DEBUG("Batch render: rendering frame %f, filename = %s", frame, outputFileName.asChar());
+            status = batchRenderFrame(options, outputFileName);
             RENDERER_LOG_DEBUG("Status = %s", status.errorString().asChar());
             RENDERER_LOG_DEBUG("=================================");
         }
@@ -899,6 +965,7 @@ MStatus batchRender(const Options& options)
             &status);
 
         RENDERER_LOG_DEBUG("Batch render: rendering single frame, filename = %s", outputFileName.asChar());
+        status = batchRenderFrame(options, outputFileName);
         RENDERER_LOG_DEBUG("Status = %s", status.errorString().asChar());
         RENDERER_LOG_DEBUG("=================================");
     }

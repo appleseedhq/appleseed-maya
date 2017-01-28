@@ -77,6 +77,7 @@ struct Options
         , m_ymin(-1)
         , m_xmax(-1)
         , m_ymax(-1)
+        , m_colorspace("linear_rgb")
         , m_sequence(false)
         , m_firstFrame(1)
         , m_lastFrame(1)
@@ -85,16 +86,18 @@ struct Options
     }
 
     // Common options.
-    MString m_camera;
-    bool m_selectionOnly;
+    MString     m_camera;
+    bool        m_selectionOnly;
 
-    int m_width;
-    int m_height;
-    bool m_renderRegion;
-    int m_xmin;
-    int m_ymin;
-    int m_xmax;
-    int m_ymax;
+    int         m_width;
+    int         m_height;
+    bool        m_renderRegion;
+    int         m_xmin;
+    int         m_ymin;
+    int         m_xmax;
+    int         m_ymax;
+
+    const char* m_colorspace;
 
     // Final render options.
     // ...
@@ -103,10 +106,10 @@ struct Options
     // ...
 
     // Project export options.
-    bool m_sequence;
-    int m_firstFrame;
-    int m_lastFrame;
-    int m_frameStep;
+    bool        m_sequence;
+    int         m_firstFrame;
+    int         m_lastFrame;
+    int         m_frameStep;
 };
 
 class Services
