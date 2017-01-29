@@ -33,7 +33,7 @@
 
 cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 
-project (appleseed-maya2)
+project (appleseed-maya)
 
 set (CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
