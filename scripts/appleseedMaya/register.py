@@ -52,7 +52,7 @@ def register():
     logger.info("Registering appleseed renderer.")
 
     # Register render.
-    pm.renderer("appleseed", rendererUIName="appleseed")
+    pm.renderer("appleseed", rendererUIName="Appleseed")
 
     # Final Render procedures.
     createRenderMelProcedures()
@@ -85,8 +85,7 @@ def register():
     pm.renderer("appleseed", edit=True, addGlobalsNode="defaultResolution")
     pm.renderer("appleseed", edit=True, addGlobalsNode="appleseedRenderGlobals")
 
-    mel.eval(
-        'registerUpdateRendererUIProc("evalDeferred -lp appleseedCurrentRendererChanged");')
+    mel.eval('registerUpdateRendererUIProc("evalDeferred -lp appleseedCurrentRendererChanged");')
 
     pm.renderer(
         "appleseed",
@@ -94,10 +93,9 @@ def register():
         addGlobalsTab=(
             "Common",
             "createMayaSoftwareCommonGlobalsTab",
-            "updateMayaSoftwareCommonGlobalsTab"
+            "appleseedUpdateCommonTabProcedure"
             )
         )
-
     pm.renderer(
         "appleseed",
         edit=True,

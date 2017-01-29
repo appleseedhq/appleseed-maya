@@ -50,11 +50,9 @@ def createGlobalNodes():
     logger.debug("Created appleseed render global node")
 
 def imageFormatChanged():
-
     # Since we only support two file formats atm., we can hardcode things.
     # 32 is the format code for png, 51 is custom image format.
     # We also update the extension attribute (used in the file names preview).
-
     newFormat = mc.getAttr("appleseedRenderGlobals.imageFormat")
 
     if newFormat == 0: # EXR
@@ -114,6 +112,9 @@ def currentRendererChanged():
     )
 
     # Update the image format controls now.
+    imageFormatChanged()
+
+def postUpdateCommonTab():
     imageFormatChanged()
 
 class AppleseedRenderGlobalsMainTab(object):
@@ -235,6 +236,16 @@ def createRenderTabsMelProcedures():
         {
             python("from appleseedMaya.renderGlobals import currentRendererChanged");
             python("currentRendererChanged()");
+        }
+        '''
+    )
+    mel.eval('''
+        global proc appleseedUpdateCommonTabProcedure()
+        {
+            updateMayaSoftwareCommonGlobalsTab();
+
+            python("from appleseedMaya.renderGlobals import postUpdateCommonTab");
+            python("postUpdateCommonTab()");
         }
         '''
     )

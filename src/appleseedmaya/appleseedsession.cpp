@@ -351,7 +351,14 @@ struct SessionImpl
                     RENDERER_LOG_WARNING("Wrong camera!");
             }
             else
-                RENDERER_LOG_WARNING("No active camera");
+            {
+                // Default to the first renderable camera as the active camera.
+                if (m_project->get_scene()->cameras().size() != 0)
+                {
+                    asr::Camera* camera = m_project->get_scene()->cameras().get_by_index(0);
+                    params.insert("camera", camera->get_name());
+                }
+            }
 
             // Set the resolution.
             params.insert("resolution", asf::Vector2i(m_options.m_width, m_options.m_height));
@@ -878,6 +885,23 @@ MStatus render(const Options& options)
 namespace
 {
 
+MString batchRenderFileName(
+    const MCommonRenderSettingsData&    renderSettings,
+    double                              frame,
+    MObject                             renderLayer,
+    MStatus*                            status)
+{
+    return renderSettings.getImageName(
+        MCommonRenderSettingsData::kFullPathImage,
+        frame,
+        MString(),
+        MString(),
+        MString(),
+        renderLayer,
+        true,
+        status);
+}
+
 MStatus batchRenderFrame(
     Options        options,
     const MString& outputFilename)
@@ -921,6 +945,11 @@ MStatus batchRender(const Options& options)
 
     MStatus status;
 
+    // Hack!: update the file format and file extension in the render globals.
+    MGlobal::executePythonCommand(
+        "import appleseedMaya.renderGlobals\n"
+        "appleseedMaya.renderGlobals.imageFormatChanged()");
+
     MObject renderLayer = MFnRenderLayer::currentLayer(&status);
 
     MCommonRenderSettingsData renderSettings;
@@ -935,14 +964,10 @@ MStatus batchRender(const Options& options)
         for (double frame = frameStart; frame <= frameEnd; frame += frameBy)
         {
             MGlobal::viewFrame(frame);
-            MString outputFileName = renderSettings.getImageName(
-                MCommonRenderSettingsData::kFullPathImage,
+            MString outputFileName = batchRenderFileName(
+                renderSettings,
                 frame,
-                MString(),
-                MString(),
-                MString(),
                 renderLayer,
-                true,
                 &status);
 
             RENDERER_LOG_DEBUG("Batch render: rendering frame %f, filename = %s", frame, outputFileName.asChar());
@@ -954,14 +979,10 @@ MStatus batchRender(const Options& options)
     else
     {
         const double frame = MAnimControl::currentTime().value();
-        MString outputFileName = renderSettings.getImageName(
-            MCommonRenderSettingsData::kFullPathImage,
+        MString outputFileName = batchRenderFileName(
+            renderSettings,
             frame,
-            MString(),
-            MString(),
-            MString(),
             renderLayer,
-            true,
             &status);
 
         RENDERER_LOG_DEBUG("Batch render: rendering single frame, filename = %s", outputFileName.asChar());
