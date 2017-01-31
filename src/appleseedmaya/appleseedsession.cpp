@@ -854,7 +854,6 @@ MStatus render(const Options& options)
     // In case we were doing IPR.
     endSession();
 
-    ScopedEndSession session;
     ScopedComputation computation;
 
     g_savedTime = MAnimControl::currentTime();
