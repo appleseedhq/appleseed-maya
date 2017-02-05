@@ -349,8 +349,8 @@ struct SessionImpl
             // If the camera name is a transform name, move to the camera.
             status = camera.extendToShape();
 
-            MFnDagNode fnDagNode(camera);
-            if (fnDagNode.typeName() == "camera")
+            MFnDagNode dagNodeFn(camera);
+            if (dagNodeFn.typeName() == "camera")
             {
                 RENDERER_LOG_DEBUG(
                     "Setting active camera to %s",
@@ -368,6 +368,26 @@ struct SessionImpl
                 asr::Camera* camera = m_project->get_scene()->cameras().get_by_index(0);
                 params.insert("camera", camera->get_name());
             }
+        }
+
+        // Set the environment.
+        if (!m_project->get_scene()->environment_edfs().empty())
+        {
+            /*
+            MObject appleseedRenderGlobalsNode;
+            getDependencyNodeByName("appleseedRenderGlobals", appleseedRenderGlobalsNode);
+            MFnDependencyNode depNodeFn(appleseedRenderGlobalsNode);
+            MPlug dstPlug = depNodeFn.findPlug("envLight");
+            MPlug srcPlug;
+
+            if (AttributeUtils::getPlugConnectedTo(dstPlug, srcPlug))
+            {
+                if (!srcPlug.isNull())
+                {
+                    MFnDagNode dagNodeFn(srcPlug.node());
+                }
+            }
+            */
         }
 
         // Set the resolution.
