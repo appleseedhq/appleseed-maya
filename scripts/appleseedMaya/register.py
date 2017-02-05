@@ -41,7 +41,10 @@ from hyperShadeCallbacks import *
 from logger import logger
 from menu import createMenu, deleteMenu
 from renderer import createRenderMelProcedures
-from renderGlobals import createRenderTabsMelProcedures
+from renderGlobals import (
+    createRenderTabsMelProcedures,
+    addRenderGlobalsScriptJobs,
+    removeRenderGlobalsScriptJobs)
 from translator import createTranslatorMelProcedures
 from util import appleseedIconsPath
 
@@ -81,6 +84,8 @@ def register():
 
     # Globals
     createRenderTabsMelProcedures()
+    addRenderGlobalsScriptJobs()
+
     pm.renderer("appleseed", edit=True, addGlobalsNode="defaultRenderGlobals")
     pm.renderer("appleseed", edit=True, addGlobalsNode="defaultResolution")
     pm.renderer("appleseed", edit=True, addGlobalsNode="appleseedRenderGlobals")
@@ -215,6 +220,8 @@ def unregister():
         deleteMenu()
 
     pm.callbacks(clearCallbacks=True, owner="appleseed")
+
+    removeRenderGlobalsScriptJobs()
 
     if pm.renderer("appleseed", q=True, ex=True):
         pm.renderer("appleseed", unregisterRenderer=True)

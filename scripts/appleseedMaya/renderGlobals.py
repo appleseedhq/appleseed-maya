@@ -30,6 +30,7 @@
 import maya.cmds as mc
 import maya.mel as mel
 import pymel.core as pm
+import maya.OpenMaya as om
 
 # appleseedMaya imports.
 from logger import logger
@@ -48,6 +49,93 @@ def createGlobalNodes():
     mc.lockNode("appleseedRenderGlobals")
     mc.select(sel, replace=True)
     logger.debug("Created appleseed render global node")
+
+def createRenderTabsMelProcedures():
+    mel.eval('''
+        global proc appleseedCurrentRendererChanged()
+        {
+            python("from appleseedMaya.renderGlobals import currentRendererChanged");
+            python("currentRendererChanged()");
+        }
+        '''
+    )
+    mel.eval('''
+        global proc appleseedUpdateCommonTabProcedure()
+        {
+            updateMayaSoftwareCommonGlobalsTab();
+
+            python("from appleseedMaya.renderGlobals import postUpdateCommonTab");
+            python("postUpdateCommonTab()");
+        }
+        '''
+    )
+    mel.eval('''
+        global proc appleseedCreateAppleseedTabProcedure()
+        {
+            python("from appleseedMaya.renderGlobals import g_appleseedMainTab");
+            python("g_appleseedMainTab.create()");
+        }
+        '''
+    )
+    mel.eval('''
+        global proc appleseedUpdateAppleseedTabProcedure()
+        {
+            python("from appleseedMaya.renderGlobals import g_appleseedMainTab");
+            python("g_appleseedMainTab.update()");
+        }
+        '''
+    )
+
+g_nodeAddedCallbackID = None
+g_nodeRemovedCallbackID = None
+g_environmentLightsList = []
+
+APPLESEED_ENVIRONMENT_LIGHTS = [
+    "appleseedSkyDomeLight",
+    "appleseedPhysicalSkyLight"]
+
+
+def __nodeAdded(node, data):
+    depNodeFn = om.MFnDependencyNode(node)
+    nodeType = depNodeFn.typeName()
+
+    if nodeType in APPLESEED_ENVIRONMENT_LIGHTS:
+        logger.debug("Added or removed appleseed environment light")
+
+        global g_environmentLightsList
+        g_environmentLightsList.append(depNodeFn.name())
+        g_appleseedMainTab.updateEnvLightControl()
+
+def __nodeRemoved(node, data):
+    depNodeFn = om.MFnDependencyNode(node)
+    nodeType = depNodeFn.typeName()
+
+    if nodeType in APPLESEED_ENVIRONMENT_LIGHTS:
+        logger.debug("Removed appleseed environment light")
+
+        global g_environmentLightsList
+        g_environmentLightsList.remove(depNodeFn.name())
+        g_appleseedMainTab.updateEnvLightControl()
+
+def addRenderGlobalsScriptJobs():
+    global g_nodeAddedCallbackID
+    assert g_nodeAddedCallbackID == None
+    g_nodeAddedCallbackID = om.MDGMessage.addNodeAddedCallback(__nodeAdded)
+
+    global g_nodeRemovedCallbackID
+    assert g_nodeRemovedCallbackID == None
+    g_nodeRemovedCallbackID = om.MDGMessage.addNodeRemovedCallback(__nodeRemoved)
+
+def removeRenderGlobalsScriptJobs():
+    global g_nodeAddedCallbackID
+    assert g_nodeAddedCallbackID != None
+    om.MMessage.removeCallback(g_nodeAddedCallbackID)
+    g_nodeAddedCallbackID = None
+
+    global g_nodeRemovedCallbackID
+    assert g_nodeRemovedCallbackID != None
+    om.MMessage.removeCallback(g_nodeRemovedCallbackID)
+    g_nodeRemovedCallbackID = None
 
 def imageFormatChanged():
     # Since we only support two file formats atm., we can hardcode things.
@@ -120,16 +208,61 @@ def postUpdateCommonTab():
 class AppleseedRenderGlobalsMainTab(object):
     def __init__(self):
         self.__uis = {}
-        self.__scriptJobs = {}
 
-    def __addControl(self, ui, attrName, changeCallback=None, connectIndex=2):
+    def __addControl(self, ui, attrName, connectIndex=2):
         self.__uis[attrName] = ui
         attr = pm.Attribute("appleseedRenderGlobals." + attrName)
         pm.connectControl(ui, attr, index=connectIndex)
 
-        if changeCallback:
-            self.__scriptJobs[attrName] = mc.scriptJob(
-                attributeChange=["appleseedRenderGlobals." + attrName, changeCallback])
+    def __environmentLightSelected(self, envLight):
+        logger.debug("Environment light selected: %s" % envLight)
+
+        connections = mc.listConnections(
+            "appleseedRenderGlobals.envLight",
+            plugs=True)
+        if connections:
+            mc.disconnectAttr(connections[0], "appleseedRenderGlobals.envLight")
+
+        if envLight != "<none>":
+            mc.connectAttr(
+                envLight + ".globalsMessage",
+                "appleseedRenderGlobals.envLight")
+
+    def updateEnvLightControl(self):
+        if "envLight" in self.__uis:
+            logger.debug("Updating env lights menu")
+
+            uiName = self.__uis["envLight"]
+            assert pm.optionMenu(uiName, exists=True)
+
+            # Remove the callback.
+            pm.optionMenu(uiName, edit=True, changeCommand="")
+
+            # Delete the menu items.
+            items = pm.optionMenu(uiName, query=True, itemListLong=True)
+            for item in items:
+                pm.deleteUI(item)
+
+            connections = mc.listConnections("appleseedRenderGlobals.envLight")
+
+            # Rebuild the menu.
+            pm.menuItem(parent=uiName, label="<none>")
+            for envLight in g_environmentLightsList:
+                pm.menuItem(parent=uiName, label=envLight)
+
+            # Update the currently selected item.
+            if connections:
+                node = connections[0]
+                if mc.nodeType(node) == "transform":
+                    shapes = mc.listRelatives(node, shapes=True)
+                    assert shapes
+                    node = shapes[0]
+                    pm.optionMenu(uiName, edit=True, value=node)
+            else:
+                pm.optionMenu(uiName, edit=True, value="<none>")
+
+            # Restore the callback.
+            pm.optionMenu(uiName, edit=True, changeCommand=self.__environmentLightSelected)
 
     def create(self):
         # Create default render globals node if needed.
@@ -190,13 +323,14 @@ class AppleseedRenderGlobalsMainTab(object):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
                         with pm.rowLayout("appleseedRowLayout", nc=3):
                             pm.text("Environment Light")
-                            ui = pm.optionMenu()
-                            pm.menuItem(label='<none>')
+                            ui = pm.optionMenu(changeCommand=self.__environmentLightSelected)
+                            pm.menuItem(label="<none>")
+
+                            for envLight in g_environmentLightsList:
+                                pm.menuItem(label=envLight)
 
                             self.__uis["envLight"] = ui
-                            # todo: add change callback here...
-                            #self.__scriptJobs["envLight"] = mc.scriptJob(
-                            #    attributeChange=["appleseedRenderGlobals.envLight", changeCallback])
+                            logger.debug("Created globals env light menu, name = %s" % ui)
 
                         self.__addControl(
                             ui=pm.checkBoxGrp(label="Background Emits Light"),
@@ -225,43 +359,7 @@ class AppleseedRenderGlobalsMainTab(object):
         self.update()
 
     def update(self):
-        assert(mc.objExists("appleseedRenderGlobals"))
-
+        assert mc.objExists("appleseedRenderGlobals")
+        #self.updateEnvLightControl()
 
 g_appleseedMainTab = AppleseedRenderGlobalsMainTab()
-
-def createRenderTabsMelProcedures():
-    mel.eval('''
-        global proc appleseedCurrentRendererChanged()
-        {
-            python("from appleseedMaya.renderGlobals import currentRendererChanged");
-            python("currentRendererChanged()");
-        }
-        '''
-    )
-    mel.eval('''
-        global proc appleseedUpdateCommonTabProcedure()
-        {
-            updateMayaSoftwareCommonGlobalsTab();
-
-            python("from appleseedMaya.renderGlobals import postUpdateCommonTab");
-            python("postUpdateCommonTab()");
-        }
-        '''
-    )
-    mel.eval('''
-        global proc appleseedCreateAppleseedTabProcedure()
-        {
-            python("from appleseedMaya.renderGlobals import g_appleseedMainTab");
-            python("g_appleseedMainTab.create()");
-        }
-        '''
-    )
-    mel.eval('''
-        global proc appleseedUpdateAppleseedTabProcedure()
-        {
-            python("from appleseedMaya.renderGlobals import g_appleseedMainTab");
-            python("g_appleseedMainTab.update()");
-        }
-        '''
-    )
