@@ -326,60 +326,69 @@ struct SessionImpl
 
         exportScene();
 
-        // update the frame.
+        // Set the shutter open and close times in all cameras.
+        const float shutter_open_time =  0.0f;
+        const float shutter_close_time = 0.0f;
+
+        asr::CameraContainer& cameras = m_project->get_scene()->cameras();
+        for (size_t i = 0, e = cameras.size(); i < e; ++i)
         {
-            asr::ParamArray params = m_project->get_frame()->get_parameters();
+            cameras.get_by_index(i)->get_parameters()
+                .insert("shutter_open_time", shutter_open_time)
+                .insert("shutter_close_time", shutter_close_time);
+        }
 
-            // Set the camera.
-            if (m_options.m_camera.length() != 0)
+        asr::ParamArray params = m_project->get_frame()->get_parameters();
+
+        // Set the camera.
+        if (m_options.m_camera.length() != 0)
+        {
+            MDagPath camera;
+            MStatus status = getDagPathByName(m_options.m_camera, camera);
+
+            // If the camera name is a transform name, move to the camera.
+            status = camera.extendToShape();
+
+            MFnDagNode fnDagNode(camera);
+            if (fnDagNode.typeName() == "camera")
             {
-                MDagPath camera;
-                MStatus status = getDagPathByName(m_options.m_camera, camera);
-
-                // If the camera name is a transform name, move to the camera.
-                status = camera.extendToShape();
-
-                MFnDagNode fnDagNode(camera);
-                if (fnDagNode.typeName() == "camera")
-                {
-                    RENDERER_LOG_DEBUG(
-                        "Setting active camera to %s",
-                        camera.fullPathName().asChar());
-                    params.insert("camera", camera.fullPathName().asChar());
-                }
-                else
-                    RENDERER_LOG_WARNING("Wrong camera!");
+                RENDERER_LOG_DEBUG(
+                    "Setting active camera to %s",
+                    camera.fullPathName().asChar());
+                params.insert("camera", camera.fullPathName().asChar());
             }
             else
+                RENDERER_LOG_WARNING("Wrong camera!");
+        }
+        else
+        {
+            // Default to the first renderable camera as the active camera.
+            if (m_project->get_scene()->cameras().size() != 0)
             {
-                // Default to the first renderable camera as the active camera.
-                if (m_project->get_scene()->cameras().size() != 0)
-                {
-                    asr::Camera* camera = m_project->get_scene()->cameras().get_by_index(0);
-                    params.insert("camera", camera->get_name());
-                }
+                asr::Camera* camera = m_project->get_scene()->cameras().get_by_index(0);
+                params.insert("camera", camera->get_name());
             }
+        }
 
-            // Set the resolution.
-            params.insert("resolution", asf::Vector2i(m_options.m_width, m_options.m_height));
+        // Set the resolution.
+        params.insert("resolution", asf::Vector2i(m_options.m_width, m_options.m_height));
 
-            // Set the tile size.
-            MFnDependencyNode fnDepNode(globalsNode);
-            int tileSize;
-            if (AttributeUtils::get(fnDepNode, "tileSize", tileSize))
-                params.insert("tile_size", asf::Vector2i(tileSize));
+        // Set the tile size.
+        MFnDependencyNode fnDepNode(globalsNode);
+        int tileSize;
+        if (AttributeUtils::get(fnDepNode, "tileSize", tileSize))
+            params.insert("tile_size", asf::Vector2i(tileSize));
 
-            // Replace the frame.
-            m_project->set_frame(asr::FrameFactory().create("beauty", params));
+        // Replace the frame.
+        m_project->set_frame(asr::FrameFactory().create("beauty", params));
 
-            // Set the crop window.
-            if (m_options.m_renderRegion)
-            {
-                m_project->get_frame()->set_crop_window(
-                    asf::AABB2u(
-                        asf::Vector2u(m_options.m_xmin, m_options.m_ymin),
-                        asf::Vector2u(m_options.m_xmax, m_options.m_ymax)));
-            }
+        // Set the crop window.
+        if (m_options.m_renderRegion)
+        {
+            m_project->get_frame()->set_crop_window(
+                asf::AABB2u(
+                    asf::Vector2u(m_options.m_xmin, m_options.m_ymin),
+                    asf::Vector2u(m_options.m_xmax, m_options.m_ymax)));
         }
     }
 
