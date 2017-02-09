@@ -86,6 +86,9 @@ add_definitions (-DBOOST_ALL_NO_LIB)
 
 find_package (Appleseed REQUIRED)
 find_package (OpenGL REQUIRED)
+find_package (Imath REQUIRED)
+find_package (OpenImageIO REQUIRED)
+find_package (OSL REQUIRED)
 
 find_package (Maya REQUIRED)
 message ("Maya API version = ${MAYA_API_VERSION}")
@@ -104,6 +107,10 @@ endif ()
 include_directories (
     ${MAYA_INCLUDE_DIRS}
     ${APPLESEED_INCLUDE_DIRS}
+    ${IMATH_INCLUDE_DIRS}
+    ${IMATH_INCLUDE_DIRS}/OpenEXR/
+    ${OPENIMAGEIO_INCLUDE_DIRS}
+    ${OSL_INCLUDE_DIRS}
     ${PYTHON_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
 )
