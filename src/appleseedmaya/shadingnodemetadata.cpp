@@ -220,8 +220,8 @@ OSLShaderInfo::OSLShaderInfo(const asr::ShaderQuery& q)
     metadata.getValue("maya_classification", mayaClassification);
     metadata.getValue<unsigned int>("maya_type_id", typeId);
 
-    paramInfo.reserve(q.get_num_params());
-    for(size_t i = 0, e = q.get_num_params(); i < e; ++i)
+    paramInfo.reserve(q.get_param_count());
+    for(size_t i = 0, e = q.get_param_count(); i < e; ++i)
         paramInfo.push_back(OSLParamInfo(q.get_param_info(i)));
 
     // Apply some defaults.
