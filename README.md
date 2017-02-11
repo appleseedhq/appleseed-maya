@@ -15,18 +15,18 @@
 
 ### Planned features
 
-- appleseed project export
-- Command line render
-- Batch render
-- Render to RenderView
-- IPR
-- Motion blur
-- IBL
-- Maya shading nodes support
-- OSL shaders
-- Scripted access to translated scenes
-- Bifrost
-- XGen
+- [ ] appleseed project export
+- [ ] Command line render
+- [ ] Batch render
+- [ ] Render to RenderView
+- [ ] IPR
+- [ ] Motion blur
+- [ ] IBL
+- [ ] Maya shading nodes support
+- [ ] OSL shaders
+- [ ] Scripted access to translated scenes
+- [ ] Bifrost
+- [ ] XGen
 
 ### Maya shading nodes status
 
