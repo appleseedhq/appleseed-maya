@@ -51,4 +51,9 @@ struct UnknownShadingNode
 {
 };
 
+// Not really an exception.
+struct AbortRequested
+{
+};
+
 #endif  // !APPLESEED_MAYA_EXCEPTIONS_H

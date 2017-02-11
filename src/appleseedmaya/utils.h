@@ -35,6 +35,7 @@
 
 // Boost headers.
 #include <boost/function.hpp>
+#include <boost/shared_ptr.hpp>
 
 // Maya headers.
 #include <maya/MComputation.h>
@@ -198,8 +199,33 @@ void insertEntityWithUniqueName(
     }
 }
 
+// Get Maya dependency nodes and dag paths by name.
 MStatus getDependencyNodeByName(const MString& name, MObject& object);
-
 MStatus getDagPathByName(const MString& name, MDagPath& dag);
+
+//
+// Simple wrapper around MComputation
+//
+
+class Computation
+  : public NonCopyable
+{
+  public:
+
+    static boost::shared_ptr<Computation> create();
+
+    ~Computation();
+
+    bool isInterruptRequested();
+
+    void thowIfInterruptRequested();
+
+  private:
+    Computation();
+
+    MComputation m_computation;
+};
+
+typedef boost::shared_ptr<Computation> ComputationPtr;
 
 #endif  // !APPLESEED_MAYA_UTILS_H

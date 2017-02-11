@@ -65,7 +65,11 @@ class RenderViewTileCallback
   : public renderer::ITileCallback
 {
   public:
-    RenderViewTileCallback(int width, int height, RendererController& rendererController, MComputation& computation)
+    RenderViewTileCallback(
+        int                 width,
+        int                 height,
+        RendererController& rendererController,
+        ComputationPtr&     computation)
       : m_width(width)
       , m_height(height)
       , m_rendererController(rendererController)
@@ -132,7 +136,7 @@ class RenderViewTileCallback
             int                 lineSize,
             RV_PIXEL*           highlightPixels,
             RendererController& rendererController,
-            MComputation&       computation)
+            ComputationPtr      computation)
           : m_xmin(xmin)
           , m_ymin(ymin)
           , m_xmax(xmax)
@@ -146,7 +150,7 @@ class RenderViewTileCallback
 
         void operator()()
         {
-            if (m_computation.isInterruptRequested())
+            if (m_computation->isInterruptRequested())
             {
                 m_rendererController.set_status(RendererController::AbortRendering);
                 return;
@@ -182,7 +186,7 @@ class RenderViewTileCallback
         int                 m_lineSize;
         RV_PIXEL*           m_pixels;
         RendererController& m_rendererController;
-        MComputation&       m_computation;
+        ComputationPtr      m_computation;
     };
 
     struct WriteTileToRenderView
@@ -194,7 +198,7 @@ class RenderViewTileCallback
             int                             ymax,
             boost::shared_array<RV_PIXEL>   pixels,
             RendererController&             rendererController,
-            MComputation&                   computation)
+            ComputationPtr                  computation)
           : m_xmin(xmin)
           , m_ymin(ymin)
           , m_xmax(xmax)
@@ -207,7 +211,7 @@ class RenderViewTileCallback
 
         void operator()()
         {
-            if (m_computation.isInterruptRequested())
+            if (m_computation->isInterruptRequested())
             {
                 m_rendererController.set_status(RendererController::AbortRendering);
                 return;
@@ -223,7 +227,7 @@ class RenderViewTileCallback
         int                             m_ymax;
         boost::shared_array<RV_PIXEL>   m_pixels;
         RendererController&             m_rendererController;
-        MComputation&                   m_computation;
+        ComputationPtr                  m_computation;
     };
 
     void write_tile(
@@ -272,14 +276,14 @@ class RenderViewTileCallback
     int                 m_width;
     int                 m_height;
     RendererController& m_rendererController;
-    MComputation&       m_computation;
+    ComputationPtr      m_computation;
 };
 
 } // unnamed.
 
 RenderViewTileCallbackFactory::RenderViewTileCallbackFactory(
     RendererController&  rendererController,
-    MComputation&        computation)
+    ComputationPtr       computation)
   : m_rendererController(rendererController)
   , m_computation(computation)
   , m_width(-1)

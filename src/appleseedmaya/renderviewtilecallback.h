@@ -40,6 +40,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/renderercontroller.h"
+#include "appleseedmaya/utils.h"
 
 // Forward declarations.
 namespace foundation    { class Tile; }
@@ -53,7 +54,7 @@ class RenderViewTileCallbackFactory
 
     RenderViewTileCallbackFactory(
         RendererController& rendererController,
-        MComputation&       computation);
+        ComputationPtr      computation);
 
     virtual ~RenderViewTileCallbackFactory();
 
@@ -65,7 +66,7 @@ class RenderViewTileCallbackFactory
 
   private:
     RendererController& m_rendererController;
-    MComputation&       m_computation;
+    ComputationPtr      m_computation;
     int                 m_width;
     int                 m_height;
 };

@@ -43,6 +43,9 @@
 #include <maya/MObject.h>
 #include <maya/MSelectionList.h>
 
+// appleseed.maya headers.
+#include "appleseedmaya/exceptions.h"
+
 MStatus getDependencyNodeByName(const MString& name, MObject& node)
 {
     MSelectionList selList;
@@ -63,4 +66,30 @@ MStatus getDagPathByName(const MString& name, MDagPath& dag)
         return MS::kFailure;
 
     return selList.getDagPath(0, dag);
+}
+
+boost::shared_ptr<Computation> Computation::create()
+{
+    return boost::shared_ptr<Computation>(new Computation());
+}
+
+Computation::Computation()
+{
+    m_computation.beginComputation();
+}
+
+Computation::~Computation()
+{
+    m_computation.endComputation();
+}
+
+bool Computation::isInterruptRequested()
+{
+    return m_computation.isInterruptRequested();
+}
+
+void Computation::thowIfInterruptRequested()
+{
+    if (m_computation.isInterruptRequested())
+        throw AbortRequested();
 }

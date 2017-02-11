@@ -44,7 +44,6 @@
 // Maya headers.
 #include <maya/MAnimControl.h>
 #include <maya/MCommonRenderSettingsData.h>
-#include <maya/MComputation.h>
 #include <maya/MDagPath.h>
 #include <maya/MFnDagNode.h>
 #include <maya/MFnDependencyNode.h>
@@ -87,7 +86,6 @@
 #include "appleseedmaya/renderercontroller.h"
 #include "appleseedmaya/renderglobalsnode.h"
 #include "appleseedmaya/renderviewtilecallback.h"
-#include "appleseedmaya/utils.h"
 
 namespace bfs = boost::filesystem;
 namespace asf = foundation;
@@ -111,45 +109,6 @@ struct ScopedEndSession
         AppleseedSession::endSession();
     }
 };
-
-struct AbortRequested
-{
-};
-
-class ScopedComputation
-  : public NonCopyable
-{
-  public:
-    ScopedComputation()
-    {
-        m_computation.beginComputation();
-    }
-
-    ~ScopedComputation()
-    {
-        m_computation.endComputation();
-    }
-
-    MComputation& computation()
-    {
-        return m_computation;
-    }
-
-    bool isInterruptRequested()
-    {
-        return m_computation.isInterruptRequested();
-    }
-
-    void thowIfInterruptRequested()
-    {
-        if (m_computation.isInterruptRequested())
-            throw AbortRequested();
-    }
-
-    static MComputation m_computation;
-};
-
-MComputation ScopedComputation::m_computation;
 
 struct SessionImpl
   : NonCopyable
@@ -214,7 +173,7 @@ struct SessionImpl
     SessionImpl(
         AppleseedSession::SessionMode       mode,
         const AppleseedSession::Options&    options,
-        ScopedComputation*                  computation)
+        ComputationPtr                      computation)
       : m_sessionMode(mode)
       , m_options(options)
       , m_services(*this)
@@ -227,7 +186,7 @@ struct SessionImpl
     SessionImpl(
         const MString&                      fileName,
         const AppleseedSession::Options&    options,
-        ScopedComputation*                  computation)
+        ComputationPtr                      computation)
       : m_sessionMode(AppleseedSession::ExportSession)
       , m_options(options)
       , m_services(*this)
@@ -644,7 +603,7 @@ struct SessionImpl
         const asr::ParamArray& params = cfg->get_parameters();
 
         m_tileCallbackFactory.reset(
-            new RenderViewTileCallbackFactory(m_rendererController, m_computation->computation()));
+            new RenderViewTileCallbackFactory(m_rendererController, m_computation));
         m_tileCallbackFactory->renderViewStart(*m_project->get_frame());
 
         m_renderer.reset(
@@ -745,7 +704,7 @@ struct SessionImpl
 
     AppleseedSession::SessionMode                           m_sessionMode;
     AppleseedSession::Options                               m_options;
-    ScopedComputation*                                      m_computation;
+    ComputationPtr                                          m_computation;
     ServicesImpl                                            m_services;
     MTime                                                   m_savedTime;
 
@@ -793,7 +752,7 @@ namespace
 void beginSession(
     AppleseedSession::SessionMode       mode,
     const AppleseedSession::Options&    options,
-    ScopedComputation*                  computation)
+    ComputationPtr                      computation)
 {
     g_globalSession.reset(new SessionImpl(mode, options, computation));
 }
@@ -801,7 +760,7 @@ void beginSession(
 void beginSession(
     const char*                         fileName,
     const AppleseedSession::Options&    options,
-    ScopedComputation*                  computation)
+    ComputationPtr                      computation)
 {
     g_globalSession.reset(new SessionImpl(fileName, options, computation));
 }
@@ -816,7 +775,7 @@ MStatus projectExport(
     endSession();
 
     ScopedEndSession session;
-    ScopedComputation computation;
+    ComputationPtr computation = Computation::create();
 
     g_savedTime = MAnimControl::currentTime();
 
@@ -831,7 +790,7 @@ MStatus projectExport(
 
         for(int frame = options.m_firstFrame; frame <= options.m_lastFrame; frame += options.m_frameStep)
         {
-            if (computation.isInterruptRequested())
+            if (computation->isInterruptRequested())
             {
                 RENDERER_LOG_INFO("Project export aborted.");
                 return MS::kSuccess;
@@ -841,7 +800,7 @@ MStatus projectExport(
             fname = asf::get_numbered_string(fname, frame);
             try
             {
-                beginSession(fname.c_str(), options, &computation);
+                beginSession(fname.c_str(), options, computation);
                 g_globalSession->exportProject();
                 g_globalSession->writeProject();
             }
@@ -860,7 +819,7 @@ MStatus projectExport(
     {
         try
         {
-            beginSession(fileName.asChar(), options, &computation);
+            beginSession(fileName.asChar(), options, computation);
             g_globalSession->exportProject();
             g_globalSession->writeProject();
         }
@@ -883,16 +842,16 @@ MStatus render(const Options& options)
     // In case we were doing IPR.
     endSession();
 
-    ScopedComputation computation;
+    ComputationPtr computation = Computation::create();
 
     g_savedTime = MAnimControl::currentTime();
 
     try
     {
-        beginSession(FinalRenderSession, options, &computation);
+        beginSession(FinalRenderSession, options, computation);
         g_globalSession->exportProject();
 
-        if (computation.isInterruptRequested())
+        if (computation->isInterruptRequested())
             return MS::kSuccess;
 
         g_globalSession->finalRender();
@@ -943,7 +902,7 @@ MStatus batchRenderFrame(
         else
             options.m_colorspace = "linear_rgb";
 
-        beginSession(FinalRenderSession, options, 0);
+        beginSession(FinalRenderSession, options, ComputationPtr());
         g_globalSession->exportProject();
         g_globalSession->batchRender();
         g_globalSession->writeMainImage(outputFilename.asChar());
