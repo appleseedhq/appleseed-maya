@@ -70,7 +70,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] 2d placement
 - [x] 3d placement
 - [x] plus minus average
-- [ ] projection
+- [ ] projection (Unsupported, see AS Projection instead)
 - [x] quad switch
 - [ ] quat add
 - [ ] quat conjugate
@@ -150,7 +150,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] mandelbrot
 - [x] mountain
 - [ ] movie
-- [ ] noise
+- [x] noise
 - [ ] ocean
 - [x] psd file
 - [x] ramp
@@ -199,3 +199,7 @@ Other Textures:
 - [x] point light
 - [x] spot light
 - [ ] volume light
+
+#### Custom Nodes
+
+- [ ] AS Projection
