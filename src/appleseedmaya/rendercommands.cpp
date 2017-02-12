@@ -47,6 +47,7 @@
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/logger.h"
+#include "appleseedmaya/utils.h"
 
 MString FinalRenderCommand::cmdName("appleseedRender");
 
@@ -89,10 +90,13 @@ MStatus FinalRenderCommand::doIt(const MArgList& args)
     if (depNodeFn.findPlug("useRenderRegion").asBool())
     {
         options.m_renderRegion = true;
-        AttributeUtils::get(depNodeFn, "left" , options.m_xmin);
-        AttributeUtils::get(depNodeFn, "bot"  , options.m_ymin);
-        AttributeUtils::get(depNodeFn, "right", options.m_xmax);
-        AttributeUtils::get(depNodeFn, "top"  , options.m_ymax);
+        AttributeUtils::get(depNodeFn, "leftRegion"  , options.m_xmin);
+        AttributeUtils::get(depNodeFn, "rightRegion" , options.m_xmax);
+        AttributeUtils::get(depNodeFn, "bottomRegion", options.m_ymin);
+        AttributeUtils::get(depNodeFn, "topRegion"   , options.m_ymax);
+
+        // Flip the render region vertically (Maya is Y up).
+        flip_pixel_interval(options.m_height, options.m_ymin, options.m_ymax);
     }
 
     //options.m_selectionOnly = !renderSettings.renderAll;

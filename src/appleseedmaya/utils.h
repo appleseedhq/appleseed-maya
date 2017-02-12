@@ -228,4 +228,18 @@ class Computation
 
 typedef boost::shared_ptr<Computation> ComputationPtr;
 
+template <typename T>
+T flip_pixel_coordinate(const T size, const T x)
+{
+    return size - x - 1;
+}
+
+template <typename T>
+inline void flip_pixel_interval(const T size, T& xmin, T& xmax)
+{
+    T tmp = xmax;
+    xmax = flip_pixel_coordinate(size, xmin);
+    xmin = flip_pixel_coordinate(size, tmp);
+}
+
 #endif  // !APPLESEED_MAYA_UTILS_H

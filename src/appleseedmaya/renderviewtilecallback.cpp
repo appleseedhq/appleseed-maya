@@ -66,21 +66,22 @@ class RenderViewTileCallback
 {
   public:
     RenderViewTileCallback(
-        int                 width,
-        int                 height,
-        RendererController& rendererController,
-        ComputationPtr&     computation)
-      : m_width(width)
-      , m_height(height)
+        const asf::AABB2u&      displayWindow,
+        const asf::AABB2u&      dataWindow,
+        RendererController&     rendererController,
+        ComputationPtr&         computation)
+      : m_displayWindow(displayWindow)
+      , m_dataWindow(dataWindow)
       , m_rendererController(rendererController)
       , m_computation(computation)
     {
-        assert(m_width > 0);
-        assert(m_height > 0);
-
         for(int i = 0; i < MaxHighlightSize; ++i)
-            m_highlightPixels[i].r = m_highlightPixels[i].g = m_highlightPixels[i].b = m_highlightPixels[i].a = 1.0f;
-
+        {
+            m_highlightPixels[i].r = 1.0f;
+            m_highlightPixels[i].g = 1.0f;
+            m_highlightPixels[i].b = 1.0f;
+            m_highlightPixels[i].a = 1.0f;
+        }
     }
 
     virtual void release()
@@ -89,26 +90,31 @@ class RenderViewTileCallback
     }
 
     virtual void pre_render(
-        const size_t            x,
-        const size_t            y,
-        const size_t            width,
-        const size_t            height)
+        const size_t        x,
+        const size_t        y,
+        const size_t        width,
+        const size_t        height)
     {
-        int xmin = static_cast<int>(x);
-        int xmax = static_cast<int>(x + width - 1);
-        int ymin = static_cast<int>(m_height - y - height);
-        int ymax = static_cast<int>(m_height - y - 1);
+        size_t xmin = x;
+        size_t ymin = y;
+        size_t xmax = x + width  - 1;
+        size_t ymax = y + height - 1;
 
-        int halfWidth  = (xmax - xmin) / 2;
-        int halfHeight = (ymax - ymin) / 2;
-        int lineSize = std::min(std::min(halfWidth, halfHeight), MaxHighlightSize);
+        if (!intersect_with_data_window(xmin, ymin, xmax, ymax))
+            return;
 
-        HighlightTile h(xmin, ymin, xmax, ymax, lineSize, m_highlightPixels, m_rendererController, m_computation);
-        IdleJobQueue::pushJob(h);
+        int halfWidth  = (xmax - xmin + 1) / 2;
+        int halfHeight = (ymax - ymin + 1) / 2;
+        int lineSize = std::min(std::min(halfWidth, halfHeight), MaxHighlightSize - 1);
+
+        // Flip Y interval vertically (Maya is Y up).
+        flip_pixel_interval(displayWindowHeight(), ymin, ymax);
+        HighlightTile highlightJob(xmin, ymin, xmax, ymax, lineSize, m_highlightPixels, m_rendererController, m_computation);
+        IdleJobQueue::pushJob(highlightJob);
     }
 
     virtual void post_render(
-        const renderer::Frame*  frame)
+        const asr::Frame*   frame)
     {
         const asf::CanvasProperties& frame_props = frame->image().properties();
 
@@ -118,9 +124,9 @@ class RenderViewTileCallback
     }
 
     virtual void post_render_tile(
-        const renderer::Frame*  frame,
-        const size_t            tile_x,
-        const size_t            tile_y)
+        const asr::Frame*   frame,
+        const size_t        tile_x,
+        const size_t        tile_y)
     {
         write_tile(frame, tile_x, tile_y);
     }
@@ -129,11 +135,11 @@ class RenderViewTileCallback
     struct HighlightTile
     {
         HighlightTile(
-            int                 xmin,
-            int                 ymin,
-            int                 xmax,
-            int                 ymax,
-            int                 lineSize,
+            const size_t        xmin,
+            const size_t        ymin,
+            const size_t        xmax,
+            const size_t        ymax,
+            const size_t        lineSize,
             RV_PIXEL*           highlightPixels,
             RendererController& rendererController,
             ComputationPtr      computation)
@@ -156,34 +162,40 @@ class RenderViewTileCallback
                 return;
             }
 
-            draw_hline(m_xmin, m_xmin + m_lineSize, m_ymin, m_pixels);
-            draw_hline(m_xmax - m_lineSize, m_xmax, m_ymin, m_pixels);
-            draw_hline(m_xmin, m_xmin + m_lineSize, m_ymax, m_pixels);
-            draw_hline(m_xmax - m_lineSize, m_xmax, m_ymax, m_pixels);
+            draw_hline(m_xmin             , m_xmin + m_lineSize, m_ymin);
+            draw_hline(m_xmax - m_lineSize, m_xmax             , m_ymin);
+            draw_hline(m_xmin             , m_xmin + m_lineSize, m_ymax);
+            draw_hline(m_xmax - m_lineSize, m_xmax             , m_ymax);
 
-            draw_vline(m_xmin, m_ymin, m_ymin + m_lineSize, m_pixels);
-            draw_vline(m_xmin, m_ymax - m_lineSize, m_ymax, m_pixels);
-            draw_vline(m_xmax, m_ymin, m_ymin + m_lineSize, m_pixels);
-            draw_vline(m_xmax, m_ymax - m_lineSize, m_ymax, m_pixels);
+            draw_vline(m_xmin, m_ymin             , m_ymin + m_lineSize);
+            draw_vline(m_xmin, m_ymax - m_lineSize, m_ymax             );
+            draw_vline(m_xmax, m_ymin             , m_ymin + m_lineSize);
+            draw_vline(m_xmax, m_ymax - m_lineSize, m_ymax             );
         }
 
-        void draw_hline(int x0, int x1, int y, RV_PIXEL *pixels) const
+        void draw_hline(
+            const size_t    x0,
+            const size_t    x1,
+            const size_t    y) const
         {
-            MRenderView::updatePixels(x0, x1, y, y, pixels, true);
+            MRenderView::updatePixels(x0, x1, y, y, m_pixels, true);
             MRenderView::refresh(x0, x1, y, y);
         }
 
-        void draw_vline(int x, int y0, int y1, RV_PIXEL *pixels) const
+        void draw_vline(
+            const size_t    x,
+            const size_t    y0,
+            const size_t    y1) const
         {
-            MRenderView::updatePixels(x, x, y0, y1, pixels, true);
+            MRenderView::updatePixels(x, x, y0, y1, m_pixels, true);
             MRenderView::refresh(x, x, y0, y1);
         }
 
-        int                 m_xmin;
-        int                 m_ymin;
-        int                 m_xmax;
-        int                 m_ymax;
-        int                 m_lineSize;
+        const size_t        m_xmin;
+        const size_t        m_ymin;
+        const size_t        m_xmax;
+        const size_t        m_ymax;
+        const size_t        m_lineSize;
         RV_PIXEL*           m_pixels;
         RendererController& m_rendererController;
         ComputationPtr      m_computation;
@@ -192,10 +204,10 @@ class RenderViewTileCallback
     struct WriteTileToRenderView
     {
         WriteTileToRenderView(
-            int                             xmin,
-            int                             ymin,
-            int                             xmax,
-            int                             ymax,
+            const size_t                    xmin,
+            const size_t                    ymin,
+            const size_t                    xmax,
+            const size_t                    ymax,
             boost::shared_array<RV_PIXEL>   pixels,
             RendererController&             rendererController,
             ComputationPtr                  computation)
@@ -221,60 +233,87 @@ class RenderViewTileCallback
             MRenderView::refresh(m_xmin, m_xmax, m_ymin, m_ymax);
         }
 
-        int                             m_xmin;
-        int                             m_ymin;
-        int                             m_xmax;
-        int                             m_ymax;
+        const size_t                    m_xmin;
+        const size_t                    m_ymin;
+        const size_t                    m_xmax;
+        const size_t                    m_ymax;
         boost::shared_array<RV_PIXEL>   m_pixels;
         RendererController&             m_rendererController;
         ComputationPtr                  m_computation;
     };
 
     void write_tile(
-        const renderer::Frame*  frame,
-        const size_t            tile_x,
-        const size_t            tile_y)
+        const asr::Frame*   frame,
+        const size_t        tile_x,
+        const size_t        tile_y)
     {
-        const asf::CanvasProperties& frameProps = frame->image().properties();
-
         const foundation::Tile& tile = frame->image().tile(tile_x, tile_y);
         assert(tile.get_pixel_format() == foundation::PixelFormatFloat);
         assert(tile.get_channel_count() == 4);
 
-        const size_t tileWidth = tile.get_width();
-        const size_t tileHeight = tile.get_height();
+        const asf::CanvasProperties& props = frame->image().properties();
+        const size_t x0 = tile_x * props.m_tile_width;
+        const size_t y0 = tile_y * props.m_tile_height;
 
-        boost::shared_array<RV_PIXEL> pixels(new RV_PIXEL[tileWidth * tileHeight]);
-        RV_PIXEL *p = pixels.get();
+        size_t xmin = x0;
+        size_t ymin = y0;
+        size_t xmax = xmin + tile.get_width() - 1;
+        size_t ymax = ymin + tile.get_height() - 1;
+
+        if (!intersect_with_data_window(xmin, ymin, xmax, ymax))
+            return;
+
+        const size_t w = xmax - xmin + 1;
+        const size_t h = ymax - ymin + 1;
+        boost::shared_array<RV_PIXEL> pixels(new RV_PIXEL[w * h]);
+        RV_PIXEL* p = pixels.get();
 
         // Copy and flip the tile verticaly (Maya's renderview is y up).
-        for (size_t y = 0; y < tileHeight; y++)
+        for (size_t j = ymin; j <= ymax; ++j)
         {
-            for (size_t x = 0; x < tileWidth; x++)
+            size_t y = flip_pixel_coordinate(tile.get_height(), j - y0);
+
+            for (size_t i = xmin; i <= xmax; ++i)
             {
-                const float* source = reinterpret_cast<const float*>(tile.pixel(x, tileHeight - y - 1));
-                p->r = source[0];
-                p->g = source[1];
-                p->b = source[2];
-                p->a = source[3];
-                ++p;
+                const size_t x = i - x0;
+                p->r = tile.get_component<float>(x, y, 0);
+                p->g = tile.get_component<float>(x, y, 1);
+                p->b = tile.get_component<float>(x, y, 2);
+                p->a = tile.get_component<float>(x, y, 3);
+                p++;
             }
         }
 
-        const size_t x = tile_x * frameProps.m_tile_width;
-        const size_t y = tile_y * frameProps.m_tile_height;
-        int xmin = static_cast<int>(x);
-        int xmax = static_cast<int>(x + tileWidth - 1);
-        int ymin = static_cast<int>(m_height - y - tileHeight);
-        int ymax = static_cast<int>(m_height - y - 1);
+        flip_pixel_interval(displayWindowHeight(), ymin, ymax);
+        WriteTileToRenderView tileJob(xmin, ymin, xmax, ymax, pixels, m_rendererController, m_computation);
+        IdleJobQueue::pushJob(tileJob);
+    }
 
-        WriteTileToRenderView w(xmin, ymin, xmax, ymax, pixels, m_rendererController, m_computation);
-        IdleJobQueue::pushJob(w);
+    size_t displayWindowHeight() const
+    {
+        return m_displayWindow.max.y + 1;
+    }
+
+    bool intersect_with_data_window(
+        size_t&             xmin,
+        size_t&             ymin,
+        size_t&             xmax,
+        size_t&             ymax) const
+    {
+        xmin = std::max(m_dataWindow.min.x, xmin);
+        ymin = std::max(m_dataWindow.min.y, ymin);
+        xmax = std::min(m_dataWindow.max.x, xmax);
+        ymax = std::min(m_dataWindow.max.y, ymax);
+
+        if (xmax < xmin || ymax < ymin)
+            return false;
+
+        return true;
     }
 
     RV_PIXEL            m_highlightPixels[MaxHighlightSize];
-    int                 m_width;
-    int                 m_height;
+    const asf::AABB2u   m_displayWindow;
+    const asf::AABB2u   m_dataWindow;
     RendererController& m_rendererController;
     ComputationPtr      m_computation;
 };
@@ -286,8 +325,6 @@ RenderViewTileCallbackFactory::RenderViewTileCallbackFactory(
     ComputationPtr       computation)
   : m_rendererController(rendererController)
   , m_computation(computation)
-  , m_width(-1)
-  , m_height(-1)
 {
 }
 
@@ -303,34 +340,42 @@ void RenderViewTileCallbackFactory::release()
 
 renderer::ITileCallback* RenderViewTileCallbackFactory::create()
 {
-    return new RenderViewTileCallback(m_width, m_height, m_rendererController, m_computation);
+    return new RenderViewTileCallback(
+        m_displayWindow,
+        m_dataWindow,
+        m_rendererController,
+        m_computation);
 }
 
 void RenderViewTileCallbackFactory::renderViewStart(const renderer::Frame& frame)
 {
     const asf::CanvasProperties& frameProps = frame.image().properties();
 
-    m_width = frameProps.m_canvas_width;
-    m_height = frameProps.m_canvas_height;
+    const size_t width = frameProps.m_canvas_width;
+    const size_t height = frameProps.m_canvas_height;
+    m_displayWindow = asf::AABB2u(asf::Vector2u(0, 0), asf::Vector2u(width - 1, height - 1));
 
     if (frame.has_crop_window())
     {
+        m_dataWindow = frame.get_crop_window();
+
+        size_t ymin = m_dataWindow.min.y;
+        size_t ymax = m_dataWindow.max.y;
+        flip_pixel_interval(height, ymin, ymax);
+
         MRenderView::startRegionRender(
-            m_width,
-            m_height,
-            frame.get_crop_window().min.x,
-            frame.get_crop_window().max.x,
-            frame.get_crop_window().min.y,
-            frame.get_crop_window().max.y,
+            width,
+            height,
+            m_dataWindow.min.x,
+            m_dataWindow.max.x,
+            ymin,
+            ymax,
             false,
             true);
     }
     else
     {
-        MRenderView::startRender(
-            m_width,
-            m_height,
-            false,
-            true);
+        m_dataWindow = m_displayWindow;
+        MRenderView::startRender(width, height, false, true);
     }
 }

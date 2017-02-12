@@ -35,6 +35,9 @@
 // Maya headers.
 #include <maya/MComputation.h>
 
+// appleseed.foundation headers.
+#include "foundation/math/aabb.h"
+
 // appleseed.renderer headers.
 #include "renderer/api/rendering.h"
 
@@ -67,8 +70,8 @@ class RenderViewTileCallbackFactory
   private:
     RendererController& m_rendererController;
     ComputationPtr      m_computation;
-    int                 m_width;
-    int                 m_height;
+    foundation::AABB2u  m_displayWindow;
+    foundation::AABB2u  m_dataWindow;
 };
 
 #endif  // !APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
