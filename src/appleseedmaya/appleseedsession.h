@@ -131,11 +131,11 @@ class Services
     Services();
 };
 
-MStatus projectExport(const MString& fileName, const Options& options);
+MStatus projectExport(const MString& fileName, Options options);
 
-MStatus render(const Options& options);
+MStatus render(Options options);
 
-MStatus batchRender(const Options& options);
+MStatus batchRender(Options options);
 
 void endSession();
 

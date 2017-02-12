@@ -320,14 +320,7 @@ struct SessionImpl
                 RENDERER_LOG_WARNING("Wrong camera!");
         }
         else
-        {
-            // Default to the first renderable camera as the active camera.
-            if (m_project->get_scene()->cameras().size() != 0)
-            {
-                asr::Camera* camera = m_project->get_scene()->cameras().get_by_index(0);
-                params.insert("camera", camera->get_name());
-            }
-        }
+            RENDERER_LOG_WARNING("No active camera in project!");
 
         // Set the environment.
         if (!m_project->get_scene()->environment_edfs().empty())
@@ -769,7 +762,7 @@ void beginSession(
 
 MStatus projectExport(
     const MString& fileName,
-    const Options& options)
+    Options        options)
 {
     // In case we were doing IPR.
     endSession();
@@ -837,7 +830,7 @@ MStatus projectExport(
     return MS::kSuccess;
 }
 
-MStatus render(const Options& options)
+MStatus render(Options options)
 {
     // In case we were doing IPR.
     endSession();
@@ -875,15 +868,18 @@ namespace
 MString batchRenderFileName(
     const MCommonRenderSettingsData&    renderSettings,
     double                              frame,
+    const MString&                      sceneName,
+    const MString&                      cameraName,
+    const MString&                      fileFormat,
     MObject                             renderLayer,
     MStatus*                            status)
 {
     return renderSettings.getImageName(
         MCommonRenderSettingsData::kFullPathImage,
         frame,
-        MString(),
-        MString(),
-        MString(),
+        sceneName,
+        cameraName,
+        fileFormat,
         renderLayer,
         true,
         status);
@@ -925,7 +921,7 @@ MStatus batchRenderFrame(
 
 } // unnamed.
 
-MStatus batchRender(const Options& options)
+MStatus batchRender(Options options)
 {
     // In case we were doing IPR.
     endSession();
@@ -936,6 +932,43 @@ MStatus batchRender(const Options& options)
     MGlobal::executePythonCommand(
         "import appleseedMaya.renderGlobals\n"
         "appleseedMaya.renderGlobals.imageFormatChanged()");
+
+    // Get the current scene name.
+    MString sceneName("untitled");
+    MGlobal::executeCommand("file -q -sn -shn", sceneName);
+
+    if (sceneName.length() != 0)
+    {
+        // Filename of the scene without the __xxxx tmp file suffix
+        // and without the .ma or .mb extension.
+        sceneName = MString(sceneName.asChar(), sceneName.length() - 9);
+    }
+    else
+        sceneName = MString("untitled");
+
+    // Use the first renderable camera as the render camera.
+    MString cameraName;
+    {
+        MDagPath path;
+        for(MItDag it(MItDag::kDepthFirst, MFn::kCamera); !it.isDone(); it.next())
+        {
+            it.getPath(path);
+            MFnDagNode dagNodeFn(path);
+
+            bool isRenderable = false;
+            AttributeUtils::get(path.node(), "renderable", isRenderable);
+
+            if (isRenderable)
+            {
+                options.m_camera = dagNodeFn.fullPathName();
+                cameraName = dagNodeFn.name();
+                break;
+            }
+        }
+    }
+
+    // TODO: check if this is needed and how to get it...
+    MString fileFormat;
 
     MObject renderLayer = MFnRenderLayer::currentLayer(&status);
 
@@ -954,6 +987,9 @@ MStatus batchRender(const Options& options)
             MString outputFileName = batchRenderFileName(
                 renderSettings,
                 frame,
+                sceneName,
+                cameraName,
+                fileFormat,
                 renderLayer,
                 &status);
 
@@ -969,6 +1005,9 @@ MStatus batchRender(const Options& options)
         MString outputFileName = batchRenderFileName(
             renderSettings,
             frame,
+            sceneName,
+            cameraName,
+            fileFormat,
             renderLayer,
             &status);
 
