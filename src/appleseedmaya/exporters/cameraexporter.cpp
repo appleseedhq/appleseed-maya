@@ -163,17 +163,7 @@ void CameraExporter::flushEntities()
 
 bool CameraExporter::isRenderable(const MDagPath& path)
 {
-    MFnDagNode node(path);
-
-    MStatus status;
-    MPlug p = node.findPlug("renderable", &status);
-
-    if (status == MS::kSuccess)
-    {
-        bool result = true;
-        p.getValue(result);
-        return result;
-    }
-
-    return true;
+    bool isRenderable = false;
+    AttributeUtils::get(path.node(), "renderable", isRenderable);
+    return isRenderable;
 }
