@@ -66,8 +66,8 @@ class RenderViewTileCallback
 {
   public:
     RenderViewTileCallback(
-        const asf::AABB2u&      displayWindow,
-        const asf::AABB2u&      dataWindow,
+        const asf::AABB2i&      displayWindow,
+        const asf::AABB2i&      dataWindow,
         RendererController&     rendererController,
         ComputationPtr&         computation)
       : m_displayWindow(displayWindow)
@@ -95,10 +95,10 @@ class RenderViewTileCallback
         const size_t        width,
         const size_t        height)
     {
-        size_t xmin = x;
-        size_t ymin = y;
-        size_t xmax = x + width  - 1;
-        size_t ymax = y + height - 1;
+        int xmin = x;
+        int ymin = y;
+        int xmax = x + width  - 1;
+        int ymax = y + height - 1;
 
         if (!intersect_with_data_window(xmin, ymin, xmax, ymax))
             return;
@@ -252,13 +252,13 @@ class RenderViewTileCallback
         assert(tile.get_channel_count() == 4);
 
         const asf::CanvasProperties& props = frame->image().properties();
-        const size_t x0 = tile_x * props.m_tile_width;
-        const size_t y0 = tile_y * props.m_tile_height;
+        const int x0 = tile_x * props.m_tile_width;
+        const int y0 = tile_y * props.m_tile_height;
 
-        size_t xmin = x0;
-        size_t ymin = y0;
-        size_t xmax = xmin + tile.get_width() - 1;
-        size_t ymax = ymin + tile.get_height() - 1;
+        int xmin = x0;
+        int ymin = y0;
+        int xmax = xmin + tile.get_width() - 1;
+        int ymax = ymin + tile.get_height() - 1;
 
         if (!intersect_with_data_window(xmin, ymin, xmax, ymax))
             return;
@@ -269,11 +269,11 @@ class RenderViewTileCallback
         RV_PIXEL* p = pixels.get();
 
         // Copy and flip the tile verticaly (Maya's renderview is y up).
-        for (size_t j = ymin; j <= ymax; ++j)
+        for (int j = ymax; j >= ymin; --j)
         {
-            size_t y = flip_pixel_coordinate(tile.get_height(), j - y0);
+            size_t y = j - y0;
 
-            for (size_t i = xmin; i <= xmax; ++i)
+            for (int i = xmin; i <= xmax; ++i)
             {
                 const size_t x = i - x0;
                 p->r = tile.get_component<float>(x, y, 0);
@@ -289,20 +289,20 @@ class RenderViewTileCallback
         IdleJobQueue::pushJob(tileJob);
     }
 
-    size_t displayWindowHeight() const
+    int displayWindowHeight() const
     {
         return m_displayWindow.max.y + 1;
     }
 
     bool intersect_with_data_window(
-        size_t&             xmin,
-        size_t&             ymin,
-        size_t&             xmax,
-        size_t&             ymax) const
+        int&               xmin,
+        int&               ymin,
+        int&               xmax,
+        int&               ymax) const
     {
         xmin = std::max(m_dataWindow.min.x, xmin);
-        ymin = std::max(m_dataWindow.min.y, ymin);
         xmax = std::min(m_dataWindow.max.x, xmax);
+        ymin = std::max(m_dataWindow.min.y, ymin);
         ymax = std::min(m_dataWindow.max.y, ymax);
 
         if (xmax < xmin || ymax < ymin)
@@ -312,8 +312,8 @@ class RenderViewTileCallback
     }
 
     RV_PIXEL            m_highlightPixels[MaxHighlightSize];
-    const asf::AABB2u   m_displayWindow;
-    const asf::AABB2u   m_dataWindow;
+    const asf::AABB2i   m_displayWindow;
+    const asf::AABB2i   m_dataWindow;
     RendererController& m_rendererController;
     ComputationPtr      m_computation;
 };
@@ -353,7 +353,7 @@ void RenderViewTileCallbackFactory::renderViewStart(const renderer::Frame& frame
 
     const size_t width = frameProps.m_canvas_width;
     const size_t height = frameProps.m_canvas_height;
-    m_displayWindow = asf::AABB2u(asf::Vector2u(0, 0), asf::Vector2u(width - 1, height - 1));
+    m_displayWindow = asf::AABB2i(asf::Vector2i(0, 0), asf::Vector2i(width - 1, height - 1));
 
     if (frame.has_crop_window())
     {

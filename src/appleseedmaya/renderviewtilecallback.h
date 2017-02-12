@@ -70,8 +70,8 @@ class RenderViewTileCallbackFactory
   private:
     RendererController& m_rendererController;
     ComputationPtr      m_computation;
-    foundation::AABB2u  m_displayWindow;
-    foundation::AABB2u  m_dataWindow;
+    foundation::AABB2i  m_displayWindow;
+    foundation::AABB2i  m_dataWindow;
 };
 
 #endif  // !APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
