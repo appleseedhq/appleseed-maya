@@ -50,6 +50,21 @@ class SkyDomeLightNode
 
     static void* creator();
     static MStatus initialize();
+
+    virtual MStringArray getFilesToArchive(
+        bool                            shortName,
+        bool                            unresolvedName,
+        bool                            markCouldBeImageSequence) const;
+
+    virtual void getExternalContent(MExternalContentInfoTable& table) const;
+    virtual void setExternalContent(const MExternalContentLocationTable& table);
+
+  private:
+    static MObject m_map;
+    static MObject m_intensity;
+    static MObject m_exposure;
+    static MObject m_horizontalShift;
+    static MObject m_verticalShift;
 };
 
 class SkyDomeLightData

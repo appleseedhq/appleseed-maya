@@ -91,12 +91,12 @@ MStatus PhysicalSkyLightNode::initialize()
         "sunTheta",
         "sunTheta",
         MFnUnitAttribute::kAngle,
-        0.7853981, // 45 degrees
+        M_PI * 0.25, // 45 degrees
         &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
     unitAttrFn.setNiceNameOverride("Sun Theta Angle");
     unitAttrFn.setMin(0.0);
-    unitAttrFn.setMax(90.0);
+    unitAttrFn.setMax(M_PI * 0.5);
     status = addAttribute(m_sunTheta);
 
     m_sunPhi = unitAttrFn.create(
@@ -107,8 +107,8 @@ MStatus PhysicalSkyLightNode::initialize()
         &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
     unitAttrFn.setNiceNameOverride("Sun Phi Angle");
-    unitAttrFn.setMin(-360.0);
-    unitAttrFn.setMax(360.0);
+    unitAttrFn.setMin(-M_PI * 2.0);
+    unitAttrFn.setMax(M_PI * 2.0);
     status = addAttribute(m_sunPhi);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
 

@@ -33,6 +33,7 @@
 #include <maya/MFnDagNode.h>
 
 // appleseed.renderer headers.
+#include "renderer/api/environmentedf.h"
 #include "renderer/api/scene.h"
 
 // appleseed.maya headers.
@@ -54,9 +55,7 @@ EnvLightExporter::EnvLightExporter(
 EnvLightExporter::~EnvLightExporter()
 {
     if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
-    {
         scene().environment_edfs().remove(m_envLight.get());
-    }
 }
 
 void EnvLightExporter::exportTransformMotionStep(float time)

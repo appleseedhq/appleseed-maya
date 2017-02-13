@@ -30,8 +30,10 @@
 #include "appleseedmaya/skydomelightnode.h"
 
 // Maya headers.
+#include <maya/MFileObject.h>
 #include <maya/MFnMessageAttribute.h>
 #include <maya/MFnNumericAttribute.h>
+#include <maya/MFnTypedAttribute.h>
 #include <maya/MFnUnitAttribute.h>
 
 // appleseed.maya headers.
@@ -44,6 +46,12 @@ const MTypeId SkyDomeLightNode::id(SkyDomeLightNodeTypeId);
 const MString SkyDomeLightNode::drawDbClassification("drawdb/geometry/appleseedSkyDomeLight");
 const MString SkyDomeLightNode::drawRegistrantId("appleseedSkyDomeLight");
 
+MObject SkyDomeLightNode::m_map;
+MObject SkyDomeLightNode::m_intensity;
+MObject SkyDomeLightNode::m_exposure;
+MObject SkyDomeLightNode::m_horizontalShift;
+MObject SkyDomeLightNode::m_verticalShift;
+
 void* SkyDomeLightNode::creator()
 {
     return new SkyDomeLightNode();
@@ -55,6 +63,8 @@ MStatus SkyDomeLightNode::initialize()
 
     MFnNumericAttribute numAttrFn;
     MFnMessageAttribute msgAttrFn;
+    MFnTypedAttribute typedAttrFn;
+    MFnUnitAttribute unitAttrFn;
 
     MStatus status;
 
@@ -74,12 +84,111 @@ MStatus SkyDomeLightNode::initialize()
     status = addAttribute(m_displaySize);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add envLight attribute");
 
+    // Map.
+    m_map = typedAttrFn.create("map", "map", MFnData::kString);
+    typedAttrFn.setUsedAsFilename(true);
+    status = addAttribute(m_map);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add envLight attribute");
+
+    // Intensity.
+    m_intensity = numAttrFn.create(
+        "intensity",
+        "intensity",
+        MFnNumericData::kFloat,
+        1.0,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create envLight attribute");
+    numAttrFn.setMin(0.0);
+    numAttrFn.setNiceNameOverride("Intensity");
+    status = addAttribute(m_intensity);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add envLight attribute");
+
+    // Exposure.
+    m_exposure = numAttrFn.create(
+        "exposure",
+        "exposure",
+        MFnNumericData::kFloat,
+        1.0,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create envLight attribute");
+    numAttrFn.setMin(0.0);
+    numAttrFn.setNiceNameOverride("Exposure");
+    status = addAttribute(m_exposure);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add envLight attribute");
+
+    // Horizontal shift.
+    m_horizontalShift = unitAttrFn.create(
+        "hShift",
+        "hShift",
+        MFnUnitAttribute::kAngle,
+        0.0,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create sky dome light attribute");
+    unitAttrFn.setNiceNameOverride("Horizontal Shift");
+    unitAttrFn.setMin(-M_PI * 2.0);
+    unitAttrFn.setMax(M_PI * 2.0);
+    status = addAttribute(m_horizontalShift);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add sky dome light attribute");
+
+    // Vertical shift.
+    m_verticalShift = unitAttrFn.create(
+        "vShift",
+        "vShift",
+        MFnUnitAttribute::kAngle,
+        0.0,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create sky dome light attribute");
+    unitAttrFn.setNiceNameOverride("Vertical Shift");
+    unitAttrFn.setMin(-M_PI * 2.0);
+    unitAttrFn.setMax(M_PI * 2.0);
+    status = addAttribute(m_verticalShift);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add sky dome light attribute");
+
     return status;
 }
 
 SkyDomeLightData::SkyDomeLightData()
   : EnvLightData()
 {
+}
+
+MStringArray SkyDomeLightNode::getFilesToArchive(
+    bool                            shortName,
+    bool                            unresolvedName,
+    bool                            markCouldBeImageSequence) const
+{
+    MStringArray files;
+    MStatus status = MS::kSuccess;
+
+    MPlug fileNamePlug(thisMObject(), m_map);
+    MString fileName = fileNamePlug.asString(MDGContext::fsNormal, &status);
+
+    if (status == MS::kSuccess && fileName.length() > 0)
+    {
+        if(unresolvedName)
+            files.append(fileName);
+        else
+        {
+            //unresolvedName is false, resolve the path via MFileObject.
+            MFileObject fileObject;
+            fileObject.setRawFullName(fileName);
+            files.append(fileObject.resolvedFullName());
+        }
+    }
+
+    return files;
+}
+
+void SkyDomeLightNode::getExternalContent(MExternalContentInfoTable& table) const
+{
+   addExternalContentForFileAttr(table, m_map);
+   MPxNode::getExternalContent(table);
+}
+
+void SkyDomeLightNode::setExternalContent(const MExternalContentLocationTable& table)
+{
+   setExternalContentForFileAttr(m_map, table);
+   MPxNode::setExternalContent(table);
 }
 
 MHWRender::MPxDrawOverride *SkyDomeLightDrawOverride::creator(const MObject& obj)
