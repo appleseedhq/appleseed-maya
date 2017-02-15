@@ -58,6 +58,12 @@ namespace asr = renderer;
 namespace
 {
 
+const char *g_compToColorParamNames[] = {"compR", "compG", "compB"};
+const char *g_compToColorOutputParamName = "comp";
+
+const char *g_colorToCompParamNames[] = {"compR", "compG", "compB"};
+const char *g_colorToCompInputParamName = "comp";
+
 const char *g_compToVectorParamNames[] = {"compX", "compY", "compZ"};
 const char *g_compToVectorOutputParamName = "comp";
 
@@ -185,7 +191,18 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
 
         if (plug.isCompound() && hasChildrenConnections(plug, true, false))
         {
-            if (paramInfo.paramType == "color"  ||
+            if (paramInfo.paramType == "color")
+            {
+                createInputFloatCompoundAdaptorShader(
+                    paramInfo,
+                    plug,
+                    exporters,
+                    "as_maya_components2Color",
+                    "__comp2Color#",
+                    g_compToColorParamNames,
+                    g_compToColorOutputParamName);
+            }
+            else if (
                 paramInfo.paramType == "normal" ||
                 paramInfo.paramType == "point"  ||
                 paramInfo.paramType == "vector")
@@ -304,7 +321,18 @@ bool ShadingNodeExporter::layerAndParamNameFromPlug(
         if (!paramInfo)
             return false;
 
-        if (paramInfo->paramType == "color"  ||
+        if (paramInfo->paramType == "color")
+        {
+            layerName = "__color2Comps#";
+            return createOutputFloatCompoundAdaptorShader(
+                plug,
+                "as_maya_color2Components",
+                g_colorToCompParamNames,
+                g_colorToCompInputParamName,
+                layerName,
+                paramName);
+        }
+        else if (
             paramInfo->paramType == "normal" ||
             paramInfo->paramType == "point"  ||
             paramInfo->paramType == "vector")
