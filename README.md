@@ -1,4 +1,6 @@
-## Experimental [appleseed](http://appleseedhq.net/)-[maya](http://www.autodesk.com/products/maya/overview) integration plugin
+## appleseed-maya
+
+appleseed-maya is an appleseed plugin for [Autodesk® Maya®](http://www.autodesk.com/products/maya/overview).
 
 ### Setup
 
