@@ -58,17 +58,11 @@ namespace asr = renderer;
 namespace
 {
 
-const char *g_compToVectorParamNames[] = {"compX", "compY", "compZ"};
-const char *g_compToVectorOutputParamName = "comp";
+const char *g_colorComponentNames[] = {"compR", "compG", "compB"};
+const char *g_vectorComponentNames[] = {"compX", "compY", "compZ"};
+const char *g_uvComponentNames[] = {"compU", "compV"};
 
-const char *g_vectorToCompParamNames[] = {"compX", "compY", "compZ"};
-const char *g_vectorToCompInputParamName = "comp";
-
-const char *g_compToUVParamNames[] = {"compU", "compV"};
-const char *g_compToUVOutputParamName = "comp";
-
-const char *g_uvToCompParamNames[] = {"compU", "compV"};
-const char *g_uvToCompInputParamName = "comp";
+const char *g_componentParamName = "comp";
 
 }
 
@@ -185,7 +179,18 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
 
         if (plug.isCompound() && hasChildrenConnections(plug, true, false))
         {
-            if (paramInfo.paramType == "color"  ||
+            if (paramInfo.paramType == "color")
+            {
+                createInputFloatCompoundAdaptorShader(
+                    paramInfo,
+                    plug,
+                    exporters,
+                    "as_maya_components2Color",
+                    "__comp2Color#",
+                    g_colorComponentNames,
+                    g_componentParamName);
+            }
+            else if (
                 paramInfo.paramType == "normal" ||
                 paramInfo.paramType == "point"  ||
                 paramInfo.paramType == "vector")
@@ -196,8 +201,8 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
                     exporters,
                     "as_maya_components2Vector",
                     "__comp2Vector#",
-                    g_compToVectorParamNames,
-                    g_compToVectorOutputParamName);
+                    g_vectorComponentNames,
+                    g_componentParamName);
             }
             else if (paramInfo.paramType == "float[2]")
             {
@@ -207,8 +212,8 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
                     exporters,
                     "as_maya_components2UV",
                     "__comp2UV#",
-                    g_compToUVParamNames,
-                    g_compToUVOutputParamName);
+                    g_uvComponentNames,
+                    g_componentParamName);
             }
             else
             {
@@ -304,7 +309,18 @@ bool ShadingNodeExporter::layerAndParamNameFromPlug(
         if (!paramInfo)
             return false;
 
-        if (paramInfo->paramType == "color"  ||
+        if (paramInfo->paramType == "color")
+        {
+            layerName = "__color2Comps#";
+            return createOutputFloatCompoundAdaptorShader(
+                plug,
+                "as_maya_color2Components",
+                g_colorComponentNames,
+                g_componentParamName,
+                layerName,
+                paramName);
+        }
+        else if (
             paramInfo->paramType == "normal" ||
             paramInfo->paramType == "point"  ||
             paramInfo->paramType == "vector")
@@ -313,8 +329,8 @@ bool ShadingNodeExporter::layerAndParamNameFromPlug(
             return createOutputFloatCompoundAdaptorShader(
                 plug,
                 "as_maya_vector2Components",
-                g_vectorToCompParamNames,
-                g_vectorToCompInputParamName,
+                g_vectorComponentNames,
+                g_componentParamName,
                 layerName,
                 paramName);
         }
@@ -324,8 +340,8 @@ bool ShadingNodeExporter::layerAndParamNameFromPlug(
             return createOutputFloatCompoundAdaptorShader(
                 plug,
                 "as_maya_uv2Components",
-                g_uvToCompParamNames,
-                g_uvToCompInputParamName,
+                g_uvComponentNames,
+                g_componentParamName,
                 layerName,
                 paramName);
         }
