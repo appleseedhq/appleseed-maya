@@ -211,16 +211,17 @@ void addBump2dExtensionAttributes()
 
     MFnNumericAttribute numAttrFn;
 
-    MObject attr = createNumericAttribute<float>(
-        numAttrFn,
-        "asNormalMap",
-        "asNormalMap",
-        MFnNumericData::k3Float,
-        0.0,
-        status);
+    MObject attr = numAttrFn.createColor(
+		"asNormalMap",
+		"asNormalMap",
+		&status);
+		
+	numAttrFn.setUsedAsColor(true);	
+	numAttrFn.setDefault(0.0);
+	
     AttributeUtils::makeInput(numAttrFn);
     modifier.addExtensionAttribute(nodeClass, attr);
-
+        
     attr = createNumericAttribute<int>(
         numAttrFn,
         "asNormalMapMode",
