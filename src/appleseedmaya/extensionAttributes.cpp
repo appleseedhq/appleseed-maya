@@ -201,6 +201,69 @@ void addAreaLightExtensionAttributes()
     modifier.doIt();
 }
 
+void addBump2dExtensionAttributes()
+{
+    MNodeClass nodeClass("bump2d");
+    MDGModifier modifier;
+
+    MStatus status;
+
+    MFnNumericAttribute numAttrFn;
+
+    MObject attr = numAttrFn.createColor(
+        "asNormalMap",
+        "asNormalMap",
+        &status);
+
+    numAttrFn.setUsedAsColor(true);
+    numAttrFn.setDefault(0.0);
+
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    attr = createNumericAttribute<int>(
+        numAttrFn,
+        "asNormalMapMode",
+        "asNormalMapMode",
+        MFnNumericData::kInt,
+        0,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    attr = createNumericAttribute<bool>(
+        numAttrFn,
+        "asNormalMapFlipR",
+        "asNormalMapFlipR",
+        MFnNumericData::kBoolean,
+        false,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    attr = createNumericAttribute<bool>(
+        numAttrFn,
+        "asNormalMapFlipG",
+        "asNormalMapFlipG",
+        MFnNumericData::kBoolean,
+        false,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    attr = createNumericAttribute<bool>(
+        numAttrFn,
+        "asNormalMapSwapRG",
+        "asNormalMapSwapRG",
+        MFnNumericData::kBoolean,
+        false,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    modifier.doIt();
+}
+
 void addShadingEngineExtensionAttrs()
 {
 }
@@ -211,6 +274,7 @@ MStatus addExtensionAttributes()
 {
     addMeshExtensionAttributes();
     addAreaLightExtensionAttributes();
+    addBump2dExtensionAttributes();
     addShadingEngineExtensionAttrs();
 
     return MS::kSuccess;

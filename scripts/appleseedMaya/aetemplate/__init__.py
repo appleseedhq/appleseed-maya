@@ -39,7 +39,7 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         logger.debug('Built custom appleseed AETemplate.')
 
     def __buildVisibilitySection(self):
-        self.beginLayout('Visibility' ,collapse=1)
+        self.beginLayout('Visibility' , collapse=1)
         self.addControl('asVisibilityCamera'  , label='Camera')
         self.addControl('asVisibilityLight'   , label='Light')
         self.addControl('asVisibilityShadow'  , label='Shadow')
@@ -48,23 +48,38 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         self.addControl('asVisibilityGlossy'  , label='Glossy')
         self.endLayout()
 
+    def __buildBumpSection(self):
+        self.beginLayout('Bump' , collapse=1)
+        self.addControl('asNormalMap'       , label='Normal Map')
+        self.addControl('asNormalMapMode'   , label='Map Mode')
+        self.addSeparator()
+        self.addControl('asNormalMapFlipR'  , label='Flip Red Channel')
+        self.addControl('asNormalMapFlipG'  , label='Flip Green Channel')
+        self.addControl('asNormalMapSwapRG' , label='Swap R/G Channels')
+        self.endLayout()
+
     def buildBody(self, nodeName):
         self.thisNode = pm.PyNode(nodeName)
 
         if self.thisNode.type() == 'areaLight':
-            self.beginLayout('Appleseed' ,collapse=1)
+            self.beginLayout('Appleseed' , collapse=1)
             self.addControl('asIntensityScale', label='Intensity Scale')
-            self.addControl('asExposure', label='Exposure')
-            self.addControl('asNormalize', label='Normalize')
+            self.addControl('asExposure'      , label='Exposure')
+            self.addControl('asNormalize'     , label='Normalize')
             self.__buildVisibilitySection()
             self.endLayout()
 
+        if self.thisNode.type() == 'bump2d':
+            self.beginLayout('Appleseed' , collapse=1)
+            self.__buildBumpSection()
+            self.endLayout()
+
         if self.thisNode.type() == 'camera':
-            self.beginLayout('Appleseed' ,collapse=1)
+            self.beginLayout('Appleseed' , collapse=1)
             self.endLayout()
 
         if self.thisNode.type() == 'mesh':
-            self.beginLayout('Appleseed' ,collapse=1)
+            self.beginLayout('Appleseed' , collapse=1)
             self.__buildVisibilitySection()
             self.addControl('asMediumPriority', label='Medium Priority')
             self.endLayout()
