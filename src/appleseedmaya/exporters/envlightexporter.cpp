@@ -37,6 +37,7 @@
 #include "renderer/api/scene.h"
 
 // appleseed.maya headers.
+#include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/physicalskylightnode.h"
 #include "appleseedmaya/skydomelightnode.h"
@@ -55,17 +56,41 @@ EnvLightExporter::EnvLightExporter(
 EnvLightExporter::~EnvLightExporter()
 {
     if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    {
+        scene().environment_shaders().remove(m_envShader.get());
         scene().environment_edfs().remove(m_envLight.get());
+    }
+}
+
+void EnvLightExporter::createEntities(const AppleseedSession::Options& options)
+{
+    asr::EnvironmentShaderFactoryRegistrar factoryRegistrar;
+    const asr::IEnvironmentShaderFactory *factory = factoryRegistrar.lookup("edf_environment_shader");
+
+    MString envShaderName = appleseedName() + "_shader";
+    m_envShader = factory->create(
+        envShaderName.asChar(),
+        asr::ParamArray().insert(
+            "environment_edf",
+            appleseedName().asChar()));
 }
 
 void EnvLightExporter::exportTransformMotionStep(float time)
 {
+    asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
+    asf::Matrix4d invM = convert(dagPath().inclusiveMatrixInverse());
+    asf::Transformd xform(m, invM);
+    m_envLight->transform_sequence().set_transform(time, xform);
 }
 
 void EnvLightExporter::flushEntities()
 {
-}
+    if (m_envLight.get())
+        scene().environment_edfs().insert(m_envLight.release());
 
+    if (m_envShader.get())
+        scene().environment_shaders().insert(m_envShader.release());
+}
 
 void PhysicalSkyLightExporter::registerExporter()
 {
@@ -82,6 +107,14 @@ DagNodeExporter *PhysicalSkyLightExporter::create(
     return new PhysicalSkyLightExporter(path, project, sessionMode);
 }
 
+PhysicalSkyLightExporter::PhysicalSkyLightExporter(
+    const MDagPath&                 path,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+  : EnvLightExporter(path, project, sessionMode)
+{
+}
+
 PhysicalSkyLightExporter::~PhysicalSkyLightExporter()
 {
     if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
@@ -91,16 +124,52 @@ PhysicalSkyLightExporter::~PhysicalSkyLightExporter()
     }
 }
 
-PhysicalSkyLightExporter::PhysicalSkyLightExporter(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
-  : EnvLightExporter(path, project, sessionMode)
-{
-}
-
 void PhysicalSkyLightExporter::createEntities(const AppleseedSession::Options& options)
 {
+    asr::ParamArray params;
+    MAngle angle;
+    float val;
+
+    AttributeUtils::get(node(), "sunTheta", angle);
+    params.insert("sun_theta", angle.asDegrees());
+
+    AttributeUtils::get(node(), "sunPhi", angle);
+    params.insert("sun_phi", angle.asDegrees());
+
+    AttributeUtils::get(node(), "turbidity", val);
+    params.insert("turbidity", val);
+
+    AttributeUtils::get(node(), "turbidityScale", val);
+    params.insert("turbidity_multiplier", val);
+
+    AttributeUtils::get(node(), "luminanceScale", val);
+    params.insert("luminance_multiplier", val);
+
+    AttributeUtils::get(node(), "luminanceGamma", val);
+    params.insert("luminance_gamma", val);
+
+    AttributeUtils::get(node(), "saturationScale", val);
+    params.insert("saturation_multiplier", val);
+
+    AttributeUtils::get(node(), "horizonShift", angle);
+    params.insert("horizon_shift", angle.asDegrees());
+
+    AttributeUtils::get(node(), "groundAlbedo", val);
+    params.insert("ground_albedo", val);
+
+    m_envLight = asr::HosekEnvironmentEDFFactory().create(
+        appleseedName().asChar(),
+        params);
+
+    EnvLightExporter::createEntities(options);
+}
+
+void PhysicalSkyLightExporter::flushEntities()
+{
+    EnvLightExporter::flushEntities();
+
+    if (m_sunLight.get())
+        mainAssembly().lights().insert(m_sunLight.release());
 }
 
 void SkyDomeLightExporter::registerExporter()
@@ -126,6 +195,68 @@ SkyDomeLightExporter::SkyDomeLightExporter(
 {
 }
 
+SkyDomeLightExporter::~SkyDomeLightExporter()
+{
+    if (sessionMode() == AppleseedSession::ProgressiveRenderSession)
+    {
+        if (m_mapTexture.get())
+            scene().textures().remove(m_mapTexture.get());
+
+        if (m_mapTextureInstance.get())
+            scene().texture_instances().remove(m_mapTextureInstance.get());
+    }
+}
+
 void SkyDomeLightExporter::createEntities(const AppleseedSession::Options& options)
 {
+    asr::ParamArray params;
+
+    MString map;
+    float val;
+    MAngle angle;
+
+    AttributeUtils::get(node(), "map", map);
+    MString textureName = appleseedName() + "_texture";
+    m_mapTexture = asr::DiskTexture2dFactory().create(
+        textureName.asChar(),
+        asr::ParamArray()
+            .insert("filename", map.asChar())
+            .insert("color_space", "linear_rgb"),
+        project().search_paths());
+
+    MString textureInstanceName = textureName + "_instance";
+    m_mapTextureInstance = asr::TextureInstanceFactory().create(
+        textureInstanceName.asChar(),
+        asr::ParamArray(),
+        textureName.asChar());
+    params.insert("radiance", textureInstanceName.asChar());
+
+    AttributeUtils::get(node(), "intensity", val);
+    params.insert("radiance_multiplier", val);
+
+    AttributeUtils::get(node(), "exposure", val);
+    params.insert("exposure", val);
+
+    AttributeUtils::get(node(), "hShift", angle);
+    params.insert("horizontal_shift", angle.asDegrees());
+
+    AttributeUtils::get(node(), "vShift", angle);
+    params.insert("vertical_shift", angle.asDegrees());
+
+    m_envLight = asr::LatLongMapEnvironmentEDFFactory().create(
+        appleseedName().asChar(),
+        params);
+
+    EnvLightExporter::createEntities(options);
+}
+
+void SkyDomeLightExporter::flushEntities()
+{
+    if (m_mapTexture.get())
+        scene().textures().insert(m_mapTexture.release());
+
+    if (m_mapTextureInstance.get())
+        scene().texture_instances().insert(m_mapTextureInstance.release());
+
+    EnvLightExporter::flushEntities();
 }

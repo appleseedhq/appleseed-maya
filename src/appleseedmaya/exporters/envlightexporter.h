@@ -34,6 +34,8 @@
 
 // appleseed.renderer headers.
 #include "renderer/api/environmentedf.h"
+#include "renderer/api/environmentshader.h"
+#include "renderer/api/texture.h"
 #include "renderer/api/light.h"
 
 class EnvLightExporter
@@ -54,7 +56,10 @@ class EnvLightExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
-    AppleseedEntityPtr<renderer::EnvironmentEDF> m_envLight;
+    virtual void createEntities(const AppleseedSession::Options& options);
+
+    AppleseedEntityPtr<renderer::EnvironmentEDF>    m_envLight;
+    AppleseedEntityPtr<renderer::EnvironmentShader> m_envShader;
 };
 
 class PhysicalSkyLightExporter
@@ -72,6 +77,8 @@ class PhysicalSkyLightExporter
     ~PhysicalSkyLightExporter();
 
     virtual void createEntities(const AppleseedSession::Options& options);
+
+    virtual void flushEntities();
 
   private:
 
@@ -95,7 +102,11 @@ class SkyDomeLightExporter
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
+    virtual ~SkyDomeLightExporter();
+
     virtual void createEntities(const AppleseedSession::Options& options);
+
+    virtual void flushEntities();
 
     private:
 
@@ -103,6 +114,9 @@ class SkyDomeLightExporter
         const MDagPath&               path,
         renderer::Project&            project,
         AppleseedSession::SessionMode sessionMode);
+
+      AppleseedEntityPtr<renderer::Texture>         m_mapTexture;
+      AppleseedEntityPtr<renderer::TextureInstance> m_mapTextureInstance;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_ENV_LIGHTEXPORTER_H

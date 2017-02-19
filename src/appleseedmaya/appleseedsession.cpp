@@ -325,7 +325,6 @@ struct SessionImpl
         // Set the environment.
         if (!m_project->get_scene()->environment_edfs().empty())
         {
-            /*
             MObject appleseedRenderGlobalsNode;
             getDependencyNodeByName("appleseedRenderGlobals", appleseedRenderGlobalsNode);
             MFnDependencyNode depNodeFn(appleseedRenderGlobalsNode);
@@ -337,9 +336,21 @@ struct SessionImpl
                 if (!srcPlug.isNull())
                 {
                     MFnDagNode dagNodeFn(srcPlug.node());
+                    const MString envName = dagNodeFn.fullPathName();
+
+                    m_project->get_scene()->get_environment()->get_parameters()
+                        .insert("environment_edf", envName.asChar());
+
+                    bool bgLight;
+                    AttributeUtils::get(appleseedRenderGlobalsNode, "bgLight", bgLight);
+                    if (bgLight)
+                    {
+                        const MString envShaderName = envName + "_shader";
+                        m_project->get_scene()->get_environment()->get_parameters()
+                            .insert("environment_shader", envShaderName.asChar());
+                    }
                 }
             }
-            */
         }
 
         // Set the resolution.

@@ -73,7 +73,7 @@ void ShapeExporter::exportTransformMotionStep(float time)
     asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
     asf::Matrix4d invM = convert(dagPath().inclusiveMatrixInverse());
     asf::Transformd xform(m, invM);
-    m_transformSequence.set_transform(0.0, xform);
+    m_transformSequence.set_transform(time, xform);
 }
 
 void ShapeExporter::flushEntities()
