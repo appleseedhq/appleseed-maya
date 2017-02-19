@@ -51,11 +51,11 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
     def __buildBumpSection(self):
         self.beginLayout('Bump' ,collapse=1)
         self.addControl('asNormalMap'       , label='Normal Map')
-        self.addControl('asNormalMapMode'	, label='Map Mode')
+        self.addControl('asNormalMapMode'   , label='Map Mode')
         self.addSeparator()
-        self.addControl('asNormalMapFlipR' 	, label='Flip Red Channel')
-        self.addControl('asNormalMapFlipG' 	, label='Flip Green Channel')
-        self.addControl('asNormalMapSwapRG'	, label='Swap R/G Channels')
+        self.addControl('asNormalMapFlipR'  , label='Flip Red Channel')
+        self.addControl('asNormalMapFlipG'  , label='Flip Green Channel')
+        self.addControl('asNormalMapSwapRG' , label='Swap R/G Channels')
         self.endLayout()
 
     def buildBody(self, nodeName):
@@ -64,8 +64,8 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         if self.thisNode.type() == 'areaLight':
             self.beginLayout('Appleseed' ,collapse=1)
             self.addControl('asIntensityScale', label='Intensity Scale')
-            self.addControl('asExposure', label='Exposure')
-            self.addControl('asNormalize', label='Normalize')
+            self.addControl('asExposure'      , label='Exposure')
+            self.addControl('asNormalize'     , label='Normalize')
             self.__buildVisibilitySection()
             self.endLayout()
 
