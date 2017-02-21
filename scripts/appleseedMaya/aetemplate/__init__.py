@@ -48,16 +48,6 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         self.addControl('asVisibilityGlossy'  , label='Glossy')
         self.endLayout()
 
-    def __buildBumpSection(self):
-        self.beginLayout('Bump' , collapse=1)
-        self.addControl('asNormalMap'       , label='Normal Map')
-        self.addControl('asNormalMapMode'   , label='Map Mode')
-        self.addSeparator()
-        self.addControl('asNormalMapFlipR'  , label='Flip Red Channel')
-        self.addControl('asNormalMapFlipG'  , label='Flip Green Channel')
-        self.addControl('asNormalMapSwapRG' , label='Swap R/G Channels')
-        self.endLayout()
-
     def buildBody(self, nodeName):
         self.thisNode = pm.PyNode(nodeName)
 
@@ -71,7 +61,11 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
 
         if self.thisNode.type() == 'bump2d':
             self.beginLayout('Appleseed' , collapse=1)
-            self.__buildBumpSection()
+            self.addControl('asNormalMapMode'   , label='Map Mode')
+            self.addSeparator()
+            self.addControl('asNormalMapFlipR'  , label='Flip Red Channel')
+            self.addControl('asNormalMapFlipG'  , label='Flip Green Channel')
+            self.addControl('asNormalMapSwapRG' , label='Swap R/G Channels')
             self.endLayout()
 
         if self.thisNode.type() == 'camera':
