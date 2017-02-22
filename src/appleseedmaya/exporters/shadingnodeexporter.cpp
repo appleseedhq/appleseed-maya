@@ -291,6 +291,39 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
             }
         }
     }
+
+    // Special case for Maya's bump2d node.
+    if (depNodeFn.typeName() == "bump2d")
+    {
+        // If we have a bumpValue connection.
+        MPlug plug = depNodeFn.findPlug("bumpValue", &status);
+        if (plug.isConnected())
+        {
+            // Find the node on the other side.
+            MPlug srcPlug;
+            ShadingNodeExporter *srcNodeExporter = getSrcPlugAndExporter(plug, exporters, srcPlug);
+            if (!srcNodeExporter)
+                return;
+
+            // Check if the node has an outColor attribute.
+            MFnDependencyNode otherDepNodeFn(srcPlug.node());
+            srcPlug = otherDepNodeFn.findPlug("outColor", &status);
+            if (!status)
+                return;
+
+            // Try to connect outColor to our normalMap extension attribute.
+            MString srcLayerName;
+            MString srcParam;
+            if (srcNodeExporter->layerAndParamNameFromPlug(srcPlug, srcLayerName, srcParam))
+            {
+                m_shaderGroup.add_connection(
+                    srcLayerName.asChar(),
+                    srcParam.asChar(),
+                    depNodeFn.name().asChar(),
+                    "in_normalMap");
+            }
+        }
+    }
 }
 
 bool ShadingNodeExporter::layerAndParamNameFromPlug(

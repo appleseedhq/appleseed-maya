@@ -208,29 +208,18 @@ void addBump2dExtensionAttributes()
 
     MStatus status;
 
+    MFnEnumAttribute enumAttrFn;
+    MObject attr = enumAttrFn.create(
+        "asNormalMapMode",
+        "asNormalMapMode",
+        0);
+
+    enumAttrFn.addField("Unsigned", 0);
+    enumAttrFn.addField("Signed", 1);
+    AttributeUtils::makeInput(enumAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
     MFnNumericAttribute numAttrFn;
-
-    MObject attr = numAttrFn.createColor(
-        "asNormalMap",
-        "asNormalMap",
-        &status);
-
-    numAttrFn.setUsedAsColor(true);
-    numAttrFn.setDefault(0.0);
-
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    attr = createNumericAttribute<int>(
-        numAttrFn,
-        "asNormalMapMode",
-        "asNormalMapMode",
-        MFnNumericData::kInt,
-        0,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
     attr = createNumericAttribute<bool>(
         numAttrFn,
         "asNormalMapFlipR",
