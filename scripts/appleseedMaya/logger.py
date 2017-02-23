@@ -27,6 +27,24 @@
 #
 
 # Standard imports.
+import os
 import logging
 
-logger = logging.getLogger(__name__)
+def __createLogger():
+    logger = logging.getLogger(__name__)
+    logLevel = os.environ.get('APPLESEED_MAYA_LOG_LEVEL', 'info')
+
+    if logLevel == 'debug':
+        logger.setLevel(logging.DEBUG)
+    elif logLevel == 'info':
+        logger.setLevel(logging.INFO)
+    elif logLevel == 'warning':
+        logger.setLevel(logging.WARNING)
+    elif logLevel == 'error':
+        logger.setLevel(logging.ERROR)
+    else:
+        logger.setLevel(logging.INFO)
+
+    return logger
+
+logger = __createLogger()

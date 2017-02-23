@@ -150,7 +150,7 @@ bool doRegisterShader(
             }
         }
 
-        RENDERER_LOG_INFO(
+        RENDERER_LOG_DEBUG(
             "Registered OSL shader %s",
             shaderInfo.shaderName.asChar());
 

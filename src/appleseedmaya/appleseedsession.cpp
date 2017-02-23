@@ -945,7 +945,7 @@ MStatus batchRender(Options options)
         "appleseedMaya.renderGlobals.imageFormatChanged()");
 
     // Get the current scene name.
-    MString sceneName("untitled");
+    MString sceneName;
     MGlobal::executeCommand("file -q -sn -shn", sceneName);
 
     if (sceneName.length() != 0)
@@ -955,7 +955,7 @@ MStatus batchRender(Options options)
         sceneName = MString(sceneName.asChar(), sceneName.length() - 9);
     }
     else
-        sceneName = MString("untitled");
+        sceneName.set("untitled");
 
     // Use the first renderable camera as the render camera.
     MString cameraName;

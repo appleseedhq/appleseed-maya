@@ -30,7 +30,8 @@
 #include "logger.h"
 
 // Standard headers.
-#include <iostream>
+#include <cstdlib>
+#include <cstring>
 
 // Maya headers.
 #include <maya/MGlobal.h>
@@ -95,11 +96,20 @@ MStatus initialize()
 {
     asr::global_logger().add_target(&gLogTarget);
 
-#ifndef NDEBUG
-    // while debugging we want all output...
-    asr::global_logger().set_verbosity_level(asf::LogMessage::Debug);
-#endif
+    asf::LogMessage::Category level = asf::LogMessage::Info;
+    if (const char *logLevel = getenv("APPLESEED_MAYA_LOG_LEVEL"))
+    {
+        if (strcmp(logLevel, "debug") == 0)
+            level = asf::LogMessage::Debug;
+        else if (strcmp(logLevel, "info") == 0)
+            level = asf::LogMessage::Info;
+        else if (strcmp(logLevel, "warning") == 0)
+            level = asf::LogMessage::Warning;
+        else if (strcmp(logLevel, "error") == 0)
+            level = asf::LogMessage::Error;
+    }
 
+    asr::global_logger().set_verbosity_level(level);
     return MS::kSuccess;
 }
 
