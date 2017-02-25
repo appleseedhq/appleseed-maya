@@ -49,7 +49,7 @@ MCallbackId g_callbackId;
 static void idleCallback(void *clientData)
 {
     boost::function<void()> job;
-    while (g_jobQueue.try_pop(job))
+    if (g_jobQueue.try_pop(job))
         job();
 }
 
@@ -95,7 +95,13 @@ void stop()
 
         MEventMessage::removeCallback(g_callbackId);
         g_callbackId = 0;
-        idleCallback(0);
+
+        // Perform any pending jobs.
+        boost::function<void()> job;
+        while (g_jobQueue.try_pop(job))
+            job();
+
+        assert(g_jobQueue.empty());
     }
 }
 
