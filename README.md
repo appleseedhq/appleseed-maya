@@ -42,8 +42,8 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] array mapper
 - [x] blend colors
 - [ ] blend two attr
-- [ ] bump 2d
-- [ ] bump 3d
+- [x] bump 2d
+- [x] bump 3d
 - [ ] choice
 - [ ] chooser
 - [x] clamp
@@ -119,7 +119,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] lambert
 - [ ] layered shader
 - [ ] ocean shader
-- [ ] phong
+- [x] phong
 - [ ] phongE
 - [ ] ramp shader
 - [ ] shading map
