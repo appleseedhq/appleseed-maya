@@ -72,7 +72,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] 2d placement
 - [x] 3d placement
 - [x] plus minus average
-- [ ] projection (Unsupported, see AS Projection instead)
+- [ ] projection (Unsupported, use AS Projection instead)
 - [x] quad switch
 - [ ] quat add
 - [ ] quat conjugate
@@ -109,7 +109,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] GLSL shader (**unsupported**)
 - [ ] shaderfx shader (**unsupported**)
 - [ ] stingrayPBS (**unsupported**)
-- [ ] anisotropic
+- [x] anisotropic
 - [ ] bifrost aero material
 - [ ] bifrost foam material
 - [ ] bifrost liquid material
@@ -151,7 +151,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] grid
 - [ ] mandelbrot
 - [x] mountain
-- [ ] movie
+- [x] movie
 - [x] noise
 - [ ] ocean
 - [x] psd file
@@ -179,15 +179,15 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 
 #### Env textures
 
-- [ ] env ball
-- [ ] env chrome
-- [ ] env cube
+- [ ] env ball (Unsupported, use AS manifold instead)
+- [x] env chrome
+- [ ] env cube (Unsupported, use AS manifold instead)
 - [ ] env sky
-- [ ] env sphere
+- [ ] env sphere (Unsupported, use AS manifold instead)
 
 Other Textures:
 
-- [ ] layered texture
+- [x] layered texture
 
 #### Lookdevkit nodes
 
@@ -205,3 +205,4 @@ Other Textures:
 #### Custom Nodes
 
 - [ ] AS Projection
+- [ ] AS Manifold
