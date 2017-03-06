@@ -88,6 +88,7 @@ class MeshExporter
     renderer::ParamArray                          m_meshParams;
     bool                                          m_exportUVs;
     bool                                          m_exportNormals;
+    bool                                          m_exportTangents;
     std::vector<std::string>                      m_fileNames;
     MIntArray                                     m_perFaceAssignments;
     size_t                                        m_shapeExportStep;

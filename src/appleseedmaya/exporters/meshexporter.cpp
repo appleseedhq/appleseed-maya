@@ -216,6 +216,8 @@ void MeshExporter::createEntities(const AppleseedSession::Options& options)
     MFnMesh meshFn(dagPath());
     m_exportUVs = meshFn.numUVs() != 0;
     m_exportNormals = meshFn.numNormals() != 0;
+    m_exportTangents = true; // todo: add a control for this...
+
     m_shapeExportStep = 0;
 
     if (sessionMode() != AppleseedSession::ExportSession)
@@ -236,6 +238,10 @@ void MeshExporter::exportShapeMotionStep(float time)
         createMaterialSlots();
         fillTopology();
         exportGeometry();
+
+        // Compute smooth tangents if needed.
+        if (m_exportUVs && m_exportTangents)
+            asr::compute_smooth_vertex_tangents(*m_mesh);
 
         MurmurHash meshHash;
         staticMeshObjectHash(*m_mesh, m_materialMappings, meshHash);
@@ -312,6 +318,12 @@ void MeshExporter::flushEntities()
 
         m_mesh.reset(asr::MeshObjectFactory().create(m_mesh->get_name(), params));
         objectName += ".mesh";
+    }
+    else
+    {
+        // Compute smooth tangents if needed.
+        if (m_exportUVs && m_exportTangents)
+            asr::compute_smooth_vertex_tangents(*m_mesh);
     }
 
     RENDERER_LOG_DEBUG("Flushing mesh object %s", m_mesh->get_name());
