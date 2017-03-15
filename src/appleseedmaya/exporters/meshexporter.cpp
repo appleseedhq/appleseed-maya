@@ -254,7 +254,7 @@ void MeshExporter::exportShapeMotionStep(float time)
 #endif
         const std::string fileName = std::string("_geometry/") + meshHash.toString() + extension;
 
-        bfs::path projectPath = project().search_paths().get_root_path();
+        bfs::path projectPath = project().search_paths().get_root_path().c_str();
         bfs::path p = projectPath / fileName;
 
         // Write a geom file for the object if needed.
