@@ -40,6 +40,9 @@ enum AppleseedMayaTypeIds
     RenderGlobalsNodeTypeId = FirstTypeId,
     SkyDomeLightNodeTypeId,
     PhysicalSkyLightNodeTypeId,
+    AsDisneyMaterialNodeTypeId,
+    AsGlassMaterialNodeTypeId,
+    AsCarPaintMaterialNodeTypeId,
 
     LastTypeId =  0x00127a3f
 };
