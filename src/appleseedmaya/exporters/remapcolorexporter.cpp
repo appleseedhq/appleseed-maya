@@ -245,7 +245,7 @@ void RemapColorExporter::exportParameterValue(
         paramInfo.paramName == "in_green_FloatValue" ||
         paramInfo.paramName == "in_green_Interp" ||
         paramInfo.paramName == "in_blue_FloatValue" ||
-        paramInfo.paramName == "in_blueInterp")
+        paramInfo.paramName == "in_blue_Interp")
     {
         // Value and interpolation saved with position
     }
