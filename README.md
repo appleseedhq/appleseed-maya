@@ -17,14 +17,14 @@ appleseed-maya is an appleseed plugin for [Autodesk® Maya®](http://www.autodes
 
 ### Planned features
 
-- [ ] appleseed project export
+- [x] appleseed project export
 - [ ] Command line render
 - [ ] Batch render
-- [ ] Render to RenderView
+- [x] Render to RenderView
 - [ ] IPR
 - [ ] Motion blur
-- [ ] IBL
-- [ ] Maya shading nodes support
+- [x] IBL
+- [x] Maya shading nodes support
 - [ ] OSL shaders
 - [ ] Scripted access to translated scenes
 - [ ] Bifrost
@@ -58,7 +58,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] double switch
 - [ ] euler to quat
 - [x] four by four matrix
-- [ ] frame cache
+- [ ] frame cache (Unsupported)
 - [x] gamma correct
 - [ ] height field
 - [x] hsv to rgb
@@ -72,7 +72,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] 2d placement
 - [x] 3d placement
 - [x] plus minus average
-- [ ] projection (Unsupported, use AS Projection instead)
+- [ ] projection (**unsupported**, see AS Projection instead)
 - [x] quad switch
 - [ ] quat add
 - [ ] quat conjugate
@@ -120,9 +120,9 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] layered shader
 - [ ] ocean shader
 - [x] phong
-- [ ] phongE
+- [x] phongE
 - [ ] ramp shader
-- [ ] shading map
+- [ ] shading map (**unsupported**)
 - [ ] surface shader
 - [ ] use background
 
@@ -156,7 +156,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] ocean
 - [x] psd file
 - [x] ramp
-- [ ] substance
+- [x] substance (Use node image file output)
 - [ ] substance output
 - [ ] water
 
@@ -179,11 +179,11 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 
 #### Env textures
 
-- [ ] env ball (Unsupported, use AS manifold instead)
+- [ ] env ball
 - [x] env chrome
-- [ ] env cube (Unsupported, use AS manifold instead)
+- [ ] env cube
 - [ ] env sky
-- [ ] env sphere (Unsupported, use AS manifold instead)
+- [ ] env sphere
 
 Other Textures:
 
@@ -204,5 +204,11 @@ Other Textures:
 
 #### Custom Nodes
 
+##### Surface
+
+- [x] AS Disney Material
+- [x] AS Glass
+
+##### Manifolds
+
 - [ ] AS Projection
-- [ ] AS Manifold
