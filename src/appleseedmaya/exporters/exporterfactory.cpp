@@ -47,6 +47,8 @@
 #include "appleseedmaya/exporters/place3dtextureexporter.h"
 #include "appleseedmaya/exporters/rampexporter.h"
 #include "appleseedmaya/exporters/remapcolorexporter.h"
+#include "appleseedmaya/exporters/remaphsvexporter.h"
+#include "appleseedmaya/exporters/remapvalueexporter.h"
 #include "appleseedmaya/exporters/shadingengineexporter.h"
 #include "appleseedmaya/exporters/shadingnetworkexporter.h"
 #include "appleseedmaya/exporters/shadingnodeexporter.h"
@@ -95,6 +97,8 @@ MStatus NodeExporterFactory::initialize(const MString& pluginPath)
     Place3dTextureExporter::registerExporter();
     RampExporter::registerExporter();
     RemapColorExporter::registerExporter();
+    RemapHsvExporter::registerExporter();
+    RemapValueExporter::registerExporter();
 
     return MS::kSuccess;
 }
