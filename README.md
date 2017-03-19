@@ -180,7 +180,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 #### Env textures
 
 - [ ] env ball
-- [ ] env chrome
+- [x] env chrome
 - [ ] env cube
 - [ ] env sky
 - [ ] env sphere

@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2017 Esteban Tovagliari, The appleseedhq Organization
+// Copyright (c) 2017 Luis Barrancos, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,25 +26,33 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_TYPEIDS_H
-#define APPLESEED_MAYA_TYPEIDS_H
+#ifndef APPLESEED_MAYA_EXPORTERS_REMAPCOLOR_EXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_REMAPCOLOR_EXPORTER_H
 
-//
-// Maya typeids assigned to appleseedhq.
-// Everytime a new appleseed Maya node is added, the enum should be updated.
-//
+// appleseed.maya headers.
+#include "appleseedmaya/exporters/shadingnodeexporter.h"
 
-enum AppleseedMayaTypeIds
+class RemapColorExporter
+  : public ShadingNodeExporter
 {
-    FirstTypeId = 0x001279c0,
-    RenderGlobalsNodeTypeId = FirstTypeId,
-    SkyDomeLightNodeTypeId,
-    PhysicalSkyLightNodeTypeId,
-    AsDisneyMaterialNodeTypeId,
-    AsGlassMaterialNodeTypeId,
-    AsCarPaintMaterialNodeTypeId,
+  public:
 
-    LastTypeId =  0x00127a3f
+    static void registerExporter();
+
+    static ShadingNodeExporter *create(
+        const MObject&          object,
+        renderer::ShaderGroup&  shaderGroup);
+
+  private:
+
+    RemapColorExporter(
+        const MObject&          object,
+        renderer::ShaderGroup&  shaderGroup);
+
+    virtual void exportParameterValue(
+        const MPlug&            plug,
+        const OSLParamInfo&     paramInfo,
+        renderer::ParamArray&   shaderParams) const;
 };
 
-#endif  // !APPLESEED_MAYA_TYPEIDS_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_REMAPCOLOR_EXPORTER_H
