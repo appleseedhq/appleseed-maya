@@ -64,6 +64,8 @@ set (appleseed_maya_sources
     exporters/place3dtextureexporter.h
     exporters/rampexporter.cpp
     exporters/rampexporter.h
+    exporters/remapcolorexporter.cpp
+    exporters/remapcolorexporter.h
     exporters/shadingengineexporter.cpp
     exporters/shadingengineexporter.h
     exporters/shadingengineexporterfwd.h
