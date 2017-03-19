@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/remapcolorexporter.h"
+#include "appleseedmaya/exporters/remaphsvexporter.h"
 
 // Standard headers.
 #include <algorithm>
@@ -51,16 +51,16 @@ namespace asr = renderer;
 namespace
 {
 
-struct RemapColorEntry
+struct RemapHsvEntry
 {
-    RemapColorEntry(float pos, float val, int in)
+    RemapHsvEntry(float pos, float val, int in)
       : m_pos(pos)
       , m_value(val)
       , m_interp(in)
     {
     }
 
-    bool operator<(const RemapColorEntry& other) const
+    bool operator<(const RemapHsvEntry& other) const
     {
         return m_pos < other.m_pos;
     }
@@ -72,28 +72,28 @@ struct RemapColorEntry
 
 } // unnamed
 
-void RemapColorExporter::registerExporter()
+void RemapHsvExporter::registerExporter()
 {
     NodeExporterFactory::registerShadingNodeExporter(
-        "remapColor",
-        &RemapColorExporter::create);
+        "remapHsv",
+        &RemapHsvExporter::create);
 }
 
-ShadingNodeExporter *RemapColorExporter::create(
+ShadingNodeExporter *RemapHsvExporter::create(
     const MObject&      object,
     asr::ShaderGroup&   shaderGroup)
 {
-    return new RemapColorExporter(object, shaderGroup);
+    return new RemapHsvExporter(object, shaderGroup);
 }
 
-RemapColorExporter::RemapColorExporter(
+RemapHsvExporter::RemapHsvExporter(
     const MObject&      object,
     asr::ShaderGroup&   shaderGroup)
   : ShadingNodeExporter(object, shaderGroup)
 {
 }
 
-void RemapColorExporter::exportParameterValue(
+void RemapHsvExporter::exportParameterValue(
     const MPlug&        plug,
     const OSLParamInfo& paramInfo,
     asr::ParamArray&    shaderParams) const
@@ -101,12 +101,12 @@ void RemapColorExporter::exportParameterValue(
     MFnDependencyNode depNodeFn(node());
     MStatus status;
 
-    if (paramInfo.paramName == "in_red_Position")
+    if (paramInfo.paramName == "in_hue_Position")
     {
-        MPlug plug = depNodeFn.findPlug("red", &status);
+        MPlug plug = depNodeFn.findPlug("hue", &status);
 
-        std::vector<RemapColorEntry> remapRed;
-        remapRed.reserve(plug.numElements());
+        std::vector<RemapHsvEntry> remapHue;
+        remapHue.reserve(plug.numElements());
 
         for(size_t i = 0, e = plug.numElements(); i < e; ++i)
         {
@@ -124,7 +124,7 @@ void RemapColorExporter::exportParameterValue(
             int in;
             AttributeUtils::get(interp, in);
 
-            remapRed.push_back(RemapColorEntry(p, v, in));
+            remapHue.push_back(RemapHsvEntry(p, v, in));
         }
 
         std::stringstream ssp;
@@ -136,23 +136,23 @@ void RemapColorExporter::exportParameterValue(
         std::stringstream ssi;
         ssi << "int[] ";
 
-        for(size_t i = 0, e = remapRed.size(); i < e; ++i)
+        for(size_t i = 0, e = remapHue.size(); i < e; ++i)
         {
-            ssp << remapRed[i].m_pos    << " ";
-            ssv << remapRed[i].m_value  << " ";
-            ssi << remapRed[i].m_interp << " ";
+            ssp << remapHue[i].m_pos    << " ";
+            ssv << remapHue[i].m_value  << " ";
+            ssi << remapHue[i].m_interp << " ";
         }
 
-        shaderParams.insert("in_red_Position"  , ssp.str().c_str());
-        shaderParams.insert("in_red_FloatValue", ssv.str().c_str());
-        shaderParams.insert("in_red_Interp"    , ssi.str().c_str());
+        shaderParams.insert("in_hue_Position"  , ssp.str().c_str());
+        shaderParams.insert("in_hue_FloatValue", ssv.str().c_str());
+        shaderParams.insert("in_hue_Interp"    , ssi.str().c_str());
     }
-    else if (paramInfo.paramName == "in_green_Position")
+    else if (paramInfo.paramName == "in_saturation_Position")
     {
-        MPlug plug = depNodeFn.findPlug("green", &status);
+        MPlug plug = depNodeFn.findPlug("saturation", &status);
 
-        std::vector<RemapColorEntry> remapGreen;
-        remapGreen.reserve(plug.numElements());
+        std::vector<RemapHsvEntry> remapSaturation;
+        remapSaturation.reserve(plug.numElements());
 
         for(size_t i = 0, e = plug.numElements(); i < e; ++i)
         {
@@ -170,7 +170,7 @@ void RemapColorExporter::exportParameterValue(
             int in;
             AttributeUtils::get(interp, in);
 
-            remapGreen.push_back(RemapColorEntry(p, v, in));
+            remapSaturation.push_back(RemapHsvEntry(p, v, in));
         }
 
         std::stringstream ssp;
@@ -182,23 +182,23 @@ void RemapColorExporter::exportParameterValue(
         std::stringstream ssi;
         ssi << "int[] ";
 
-        for(size_t i = 0, e = remapGreen.size(); i < e; ++i)
+        for(size_t i = 0, e = remapSaturation.size(); i < e; ++i)
         {
-            ssp << remapGreen[i].m_pos    << " ";
-            ssv << remapGreen[i].m_value  << " ";
-            ssi << remapGreen[i].m_interp << " ";
+            ssp << remapSaturation[i].m_pos    << " ";
+            ssv << remapSaturation[i].m_value  << " ";
+            ssi << remapSaturation[i].m_interp << " ";
         }
 
-        shaderParams.insert("in_green_Position"  , ssp.str().c_str());
-        shaderParams.insert("in_green_FloatValue", ssv.str().c_str());
-        shaderParams.insert("in_green_Interp"    , ssi.str().c_str());
+        shaderParams.insert("in_saturation_Position"  , ssp.str().c_str());
+        shaderParams.insert("in_saturation_FloatValue", ssv.str().c_str());
+        shaderParams.insert("in_saturation_Interp"    , ssi.str().c_str());
     }
-    else if (paramInfo.paramName == "in_blue_Position")
+    else if (paramInfo.paramName == "in_value_Position")
     {
-        MPlug plug = depNodeFn.findPlug("blue", &status);
+        MPlug plug = depNodeFn.findPlug("value", &status);
 
-        std::vector<RemapColorEntry> remapBlue;
-        remapBlue.reserve(plug.numElements());
+        std::vector<RemapHsvEntry> remapValue;
+        remapValue.reserve(plug.numElements());
 
         for(size_t i = 0, e = plug.numElements(); i < e; ++i)
         {
@@ -216,7 +216,7 @@ void RemapColorExporter::exportParameterValue(
             int in;
             AttributeUtils::get(interp, in);
 
-            remapBlue.push_back(RemapColorEntry(p, v, in));
+            remapValue.push_back(RemapHsvEntry(p, v, in));
         }
 
         std::stringstream ssp;
@@ -228,26 +228,27 @@ void RemapColorExporter::exportParameterValue(
         std::stringstream ssi;
         ssi << "int[] ";
 
-        for(size_t i = 0, e = remapBlue.size(); i < e; ++i)
+        for(size_t i = 0, e = remapValue.size(); i < e; ++i)
         {
-            ssp << remapBlue[i].m_pos    << " ";
-            ssv << remapBlue[i].m_value  << " ";
-            ssi << remapBlue[i].m_interp << " ";
+            ssp << remapValue[i].m_pos    << " ";
+            ssv << remapValue[i].m_value  << " ";
+            ssi << remapValue[i].m_interp << " ";
         }
 
-        shaderParams.insert("in_blue_Position"  , ssp.str().c_str());
-        shaderParams.insert("in_blue_FloatValue", ssv.str().c_str());
-        shaderParams.insert("in_blue_Interp"    , ssi.str().c_str());
+        shaderParams.insert("in_value_Position"  , ssp.str().c_str());
+        shaderParams.insert("in_value_FloatValue", ssv.str().c_str());
+        shaderParams.insert("in_value_Interp"    , ssi.str().c_str());
     }
     else if (
-        paramInfo.paramName == "in_red_FloatValue" ||
-        paramInfo.paramName == "in_red_Interp" ||
-        paramInfo.paramName == "in_green_FloatValue" ||
-        paramInfo.paramName == "in_green_Interp" ||
-        paramInfo.paramName == "in_blue_FloatValue" ||
-        paramInfo.paramName == "in_blueInterp")
+        paramInfo.paramName == "in_hue_FloatValue" ||
+        paramInfo.paramName == "in_hue_Interp" ||
+        paramInfo.paramName == "in_saturation_FloatValue" ||
+        paramInfo.paramName == "in_saturation_Interp" ||
+        paramInfo.paramName == "in_value_FloatValue" ||
+        paramInfo.paramName == "in_value_Interp"
+        )
     {
-        // Value and interpolation saved with position
+        ; // Saved with resp. position attributes
     }
     else
     {

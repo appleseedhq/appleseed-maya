@@ -66,6 +66,10 @@ set (appleseed_maya_sources
     exporters/rampexporter.h
     exporters/remapcolorexporter.cpp
     exporters/remapcolorexporter.h
+    exporters/remaphsvexporter.cpp
+    exporters/remaphsvexporter.h
+    exporters/remapvalueexporter.cpp
+    exporters/remapvalueexporter.h
     exporters/shadingengineexporter.cpp
     exporters/shadingengineexporter.h
     exporters/shadingengineexporterfwd.h
