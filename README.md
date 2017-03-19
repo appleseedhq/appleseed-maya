@@ -17,14 +17,14 @@ appleseed-maya is an appleseed plugin for [Autodesk® Maya®](http://www.autodes
 
 ### Planned features
 
-- [ ] appleseed project export
+- [x] appleseed project export
 - [ ] Command line render
 - [ ] Batch render
-- [ ] Render to RenderView
+- [x] Render to RenderView
 - [ ] IPR
 - [ ] Motion blur
-- [ ] IBL
-- [ ] Maya shading nodes support
+- [x] IBL
+- [x] Maya shading nodes support
 - [ ] OSL shaders
 - [ ] Scripted access to translated scenes
 - [ ] Bifrost
@@ -42,8 +42,8 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] array mapper
 - [x] blend colors
 - [ ] blend two attr
-- [ ] bump 2d
-- [ ] bump 3d
+- [x] bump 2d
+- [x] bump 3d
 - [ ] choice
 - [ ] chooser
 - [x] clamp
@@ -58,7 +58,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] double switch
 - [ ] euler to quat
 - [x] four by four matrix
-- [ ] frame cache
+- [ ] frame cache (Unsupported)
 - [x] gamma correct
 - [ ] height field
 - [x] hsv to rgb
@@ -72,7 +72,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] 2d placement
 - [x] 3d placement
 - [x] plus minus average
-- [ ] projection (Unsupported, see AS Projection instead)
+- [ ] projection (**unsupported**, see AS Projection instead)
 - [x] quad switch
 - [ ] quat add
 - [ ] quat conjugate
@@ -109,7 +109,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] GLSL shader (**unsupported**)
 - [ ] shaderfx shader (**unsupported**)
 - [ ] stingrayPBS (**unsupported**)
-- [ ] anisotropic
+- [x] anisotropic
 - [ ] bifrost aero material
 - [ ] bifrost foam material
 - [ ] bifrost liquid material
@@ -119,10 +119,10 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] lambert
 - [ ] layered shader
 - [ ] ocean shader
-- [ ] phong
-- [ ] phongE
+- [x] phong
+- [x] phongE
 - [ ] ramp shader
-- [ ] shading map
+- [ ] shading map (**unsupported**)
 - [ ] surface shader
 - [ ] use background
 
@@ -151,12 +151,12 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] grid
 - [ ] mandelbrot
 - [x] mountain
-- [ ] movie
+- [x] movie
 - [x] noise
 - [ ] ocean
 - [x] psd file
 - [x] ramp
-- [ ] substance
+- [x] substance (Use node image file output)
 - [ ] substance output
 - [ ] water
 
@@ -187,7 +187,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 
 Other Textures:
 
-- [ ] layered texture
+- [x] layered texture
 
 #### Lookdevkit nodes
 
@@ -203,5 +203,12 @@ Other Textures:
 - [ ] volume light
 
 #### Custom Nodes
+
+##### Surface
+
+- [x] AS Disney Material
+- [x] AS Glass
+
+##### Manifolds
 
 - [ ] AS Projection
