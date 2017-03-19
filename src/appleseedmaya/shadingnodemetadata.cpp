@@ -209,11 +209,14 @@ OSLShaderInfo::OSLShaderInfo()
 {
 }
 
-OSLShaderInfo::OSLShaderInfo(const asr::ShaderQuery& q)
+OSLShaderInfo::OSLShaderInfo(
+    const asr::ShaderQuery&     q,
+    const MString&              filename)
     : typeId(0)
 {
     shaderName = q.get_shader_name();
     shaderType = q.get_shader_type();
+    shaderFileName = filename;
     OSLMetadataExtractor metadata(q.get_metadata());
 
     metadata.getValue("maya_node_name", mayaName);

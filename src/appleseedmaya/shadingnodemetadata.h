@@ -123,13 +123,16 @@ class OSLShaderInfo
   public:
     OSLShaderInfo();
 
-    explicit OSLShaderInfo(const renderer::ShaderQuery& q);
+    OSLShaderInfo(
+        const renderer::ShaderQuery&    q,
+        const MString&                  filename);
 
     const OSLParamInfo *findParam(const MString& mayaAttrName) const;
     const OSLParamInfo *findParam(const MPlug& plug) const;
 
     MString shaderName;
     MString shaderType;
+    MString shaderFileName;
 
     MString mayaName;
     MString mayaClassification;

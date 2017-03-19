@@ -239,7 +239,7 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
 
     m_shaderGroup.add_shader(
         shaderInfo.shaderType.asChar(),
-        shaderInfo.shaderName.asChar(),
+        shaderInfo.shaderFileName.asChar(),
         depNodeFn.name().asChar(),
         shaderParams);
 

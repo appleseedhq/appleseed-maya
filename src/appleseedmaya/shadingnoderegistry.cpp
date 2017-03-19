@@ -95,6 +95,7 @@ void logShader(const OSLShaderInfo& s)
     std::cout << "------------------------\n";
 
     std::cout << "Name = " << s.shaderName << " type = " << s.shaderType << "\n";
+    std::cout << "File Name = " << s.shaderFileName << "\n";
     std::cout << "Maya Name = " << s.mayaName << "\n";
     std::cout << "Maya Classification = " << s.mayaClassification << "\n";
 
@@ -121,7 +122,9 @@ bool doRegisterShader(
 {
     if (query.open(shaderPath.string().c_str()))
     {
-        OSLShaderInfo shaderInfo(query);
+        const MString shaderFilename(
+            shaderPath.filename().replace_extension().c_str());
+        OSLShaderInfo shaderInfo(query, shaderFilename);
 
         if (shaderInfo.mayaName.length() == 0)
         {
