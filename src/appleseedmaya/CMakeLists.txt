@@ -140,7 +140,7 @@ if (${MAYA_API_VERSION} EQUAL 201600 OR ${MAYA_API_VERSION} GREATER 201600)
         hypershaderenderer.cpp
         hypershaderenderer.h
     )
-endif()
+endif ()
 
 add_library (appleseedMaya SHARED
     ${appleseed_maya_sources}
