@@ -36,15 +36,16 @@
 
 enum AppleseedMayaTypeIds
 {
-    FirstTypeId = 0x001279c0,
-    RenderGlobalsNodeTypeId = FirstTypeId,
-    SkyDomeLightNodeTypeId,
-    PhysicalSkyLightNodeTypeId,
-    AsDisneyMaterialNodeTypeId,
-    AsGlassMaterialNodeTypeId,
-    AsCarPaintMaterialNodeTypeId,
+    FirstTypeId                     = 0x001279c0,   // 1210816
 
-    LastTypeId =  0x00127a3f
+    RenderGlobalsNodeTypeId         = FirstTypeId,  // 1210816
+    SkyDomeLightNodeTypeId          = 0x001279c1,   // 1210817
+    PhysicalSkyLightNodeTypeId      = 0x001279c2,   // 1210818
+    AsDisneyMaterialNodeTypeId      = 0x001279c3,   // 1210819
+    AsGlassMaterialNodeTypeId       = 0x001279c4,   // 1210820
+    AsCarPaintMaterialNodeTypeId    = 0x001279c5,   // 1210821
+
+    LastTypeId                      = 0x00127a3f    // 1210943
 };
 
 #endif  // !APPLESEED_MAYA_TYPEIDS_H
