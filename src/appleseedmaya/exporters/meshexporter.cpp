@@ -477,13 +477,14 @@ void MeshExporter::exportGeometry()
 
     if (m_exportNormals)
     {
+        const asr::GVector3 Y(0.0f, 1.0f, 0.0f);
         m_mesh->reserve_vertex_normals(meshFn.numNormals());
         const float *p = meshFn.getRawNormals(&status);
 
         for(size_t i = 0, e = meshFn.numNormals(); i < e; ++i, p += 3)
         {
             asr::GVector3 n(p[0], p[1], p[2]);
-            m_mesh->push_vertex_normal(asf::safe_normalize(n));
+            m_mesh->push_vertex_normal(asf::safe_normalize(n, Y));
         }
     }
 }
@@ -514,6 +515,7 @@ void MeshExporter::exportMeshKey()
 
     if (m_exportNormals)
     {
+        const asr::GVector3 Y(0.0f, 1.0f, 0.0f);
         m_mesh->reserve_vertex_normals(meshFn.numNormals());
         const float *p = meshFn.getRawNormals(&status);
 
@@ -523,7 +525,7 @@ void MeshExporter::exportMeshKey()
             m_mesh->set_vertex_normal_pose(
                 i,
                 m_shapeExportStep - 1,
-                asf::safe_normalize(n));
+                asf::safe_normalize(n, Y));
         }
     }
 }
