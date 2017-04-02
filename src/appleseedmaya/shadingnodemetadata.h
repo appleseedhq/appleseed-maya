@@ -117,6 +117,7 @@ class OSLParamInfo
     // appleseedMaya custom metadata.
     MString mayaAttributeName;
     MString mayaAttributeShortName;
+    MString mayaAttributeType;
 };
 
 std::ostream& operator<<(std::ostream& os, const OSLParamInfo& paramInfo);
