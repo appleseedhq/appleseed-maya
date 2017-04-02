@@ -293,7 +293,7 @@ MStatus registerShadingNodes(MObject plugin)
 
     // Look relative to plugin
     bfs::path p(pluginFn.loadPath().asChar());
-    p = p.parent_path() / "shaders";
+    p = p.parent_path() / ".." / "shaders";
     shaderPaths.push_back(p);
 
     // Paths from the environment.
