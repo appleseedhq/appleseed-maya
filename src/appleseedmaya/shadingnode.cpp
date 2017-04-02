@@ -138,6 +138,13 @@ void *ShadingNode::creator()
 
 MStatus ShadingNode::initialize()
 {
+    #define CHECK_STATUS_AND_HANDLE_ERROR           \
+        if (!status)                                \
+        {                                           \
+            report_error(*shaderInfo, p, status);   \
+            return status;                          \
+        }
+
     assert(g_currentShaderInfo);
     const OSLShaderInfo *shaderInfo = g_currentShaderInfo;
     g_currentShaderInfo = 0;
@@ -157,6 +164,7 @@ MStatus ShadingNode::initialize()
                 p.mayaAttributeName,
                 p.mayaAttributeShortName,
                 &status);
+            CHECK_STATUS_AND_HANDLE_ERROR
 
             numAttrFn.setUsedAsColor(true);
 
@@ -169,12 +177,16 @@ MStatus ShadingNode::initialize()
             }
 
             status = initializeAttribute(numAttrFn, p);
+            CHECK_STATUS_AND_HANDLE_ERROR
         }
         else if (p.paramType == "float")
         {
             MFnNumericAttribute numAttrFn;
             attr = createNumericAttribute<float>(numAttrFn, p, MFnNumericData::kFloat, status);
-            initializeNumericAttribute(numAttrFn, p);
+            CHECK_STATUS_AND_HANDLE_ERROR
+
+            status = initializeNumericAttribute(numAttrFn, p);
+            CHECK_STATUS_AND_HANDLE_ERROR
         }
         else if (p.paramType == "int")
         {
@@ -194,19 +206,23 @@ MStatus ShadingNode::initialize()
                     attr = enumAttrFn.create(
                         p.mayaAttributeName,
                         p.mayaAttributeShortName,
-                        defaultValue);
+                        defaultValue,
+                        &status);
+                    CHECK_STATUS_AND_HANDLE_ERROR
 
                     std::vector<std::string> subfields;
                     for (size_t i = 0, e = fields.size(); i < e; ++i)
                     {
                         subfields.clear();
                         asf::tokenize(fields[i].c_str(), ":", subfields);
-                        enumAttrFn.addField(
+                        status = enumAttrFn.addField(
                             subfields[0].c_str(),
                             asf::from_string<int>(subfields[1]));
+                        CHECK_STATUS_AND_HANDLE_ERROR
                     }
 
-                    initializeAttribute(enumAttrFn, p);
+                    status = initializeAttribute(enumAttrFn, p);
+                    CHECK_STATUS_AND_HANDLE_ERROR
                 }
                 else
                 {
@@ -217,13 +233,19 @@ MStatus ShadingNode::initialize()
             {
                 MFnNumericAttribute numAttrFn;
                 attr = createNumericAttribute<bool>(numAttrFn, p, MFnNumericData::kBoolean, status);
-                initializeAttribute(numAttrFn, p);
+                CHECK_STATUS_AND_HANDLE_ERROR
+
+                status = initializeAttribute(numAttrFn, p);
+                CHECK_STATUS_AND_HANDLE_ERROR
             }
             else // normal int attribute.
             {
                 MFnNumericAttribute numAttrFn;
                 attr = createNumericAttribute<int>(numAttrFn, p, MFnNumericData::kInt, status);
-                initializeNumericAttribute(numAttrFn, p);
+                CHECK_STATUS_AND_HANDLE_ERROR
+
+                status = initializeNumericAttribute(numAttrFn, p);
+                CHECK_STATUS_AND_HANDLE_ERROR
             }
         }
         else if (p.paramType == "matrix")
@@ -232,28 +254,42 @@ MStatus ShadingNode::initialize()
             attr = matrixAttrFn.create(
                 p.mayaAttributeName,
                 p.mayaAttributeShortName,
-                MFnMatrixAttribute::kFloat);
+                MFnMatrixAttribute::kFloat,
+                &status);
+            CHECK_STATUS_AND_HANDLE_ERROR
+
             initializeAttribute(matrixAttrFn, p);
+            CHECK_STATUS_AND_HANDLE_ERROR
         }
         else if (p.paramType == "normal")
         {
             MFnNumericAttribute numAttrFn;
             attr = createPointAttribute(numAttrFn, p, status);
-            initializeAttribute(numAttrFn, p);
+            CHECK_STATUS_AND_HANDLE_ERROR
+
+            status = initializeAttribute(numAttrFn, p);
+            CHECK_STATUS_AND_HANDLE_ERROR
         }
         else if (p.paramType == "point")
         {
             MFnNumericAttribute numAttrFn;
             attr = createPointAttribute(numAttrFn, p, status);
-            initializeAttribute(numAttrFn, p);
+            CHECK_STATUS_AND_HANDLE_ERROR
+
+            status = initializeAttribute(numAttrFn, p);
+            CHECK_STATUS_AND_HANDLE_ERROR
         }
         else if (p.paramType == "pointer") // closure color
         {
             MFnNumericAttribute numAttrFn;
             attr = numAttrFn.createColor(
                 p.mayaAttributeName,
-                p.mayaAttributeShortName);
-            initializeAttribute(numAttrFn, p);
+                p.mayaAttributeShortName,
+                &status);
+            CHECK_STATUS_AND_HANDLE_ERROR
+
+            status = initializeAttribute(numAttrFn, p);
+            CHECK_STATUS_AND_HANDLE_ERROR
         }
         else if (p.paramType == "string")
         {
@@ -282,12 +318,15 @@ MStatus ShadingNode::initialize()
                     attr = enumAttrFn.create(
                         p.mayaAttributeName,
                         p.mayaAttributeShortName,
-                        defaultValue);
+                        defaultValue,
+                        &status);
+                    CHECK_STATUS_AND_HANDLE_ERROR
 
                     for (size_t i = 0, e = fields.size(); i < e; ++i)
                         enumAttrFn.addField(fields[i].c_str(), i);
 
-                    initializeAttribute(enumAttrFn, p);
+                    status = initializeAttribute(enumAttrFn, p);
+                    CHECK_STATUS_AND_HANDLE_ERROR
                 }
                 else
                 {
@@ -300,7 +339,9 @@ MStatus ShadingNode::initialize()
                 attr = typedAttrFn.create(
                     p.mayaAttributeName,
                     p.mayaAttributeShortName,
-                    MFnData::kString);
+                    MFnData::kString,
+                    &status);
+                CHECK_STATUS_AND_HANDLE_ERROR
 
                 if (p.widget == "filename")
                     typedAttrFn.setUsedAsFilename(true);
@@ -312,14 +353,18 @@ MStatus ShadingNode::initialize()
                     typedAttrFn.setDefault(defaultData);
                 }
 
-                initializeAttribute(typedAttrFn, p);
+                status = initializeAttribute(typedAttrFn, p);
+                CHECK_STATUS_AND_HANDLE_ERROR
             }
         }
         else if (p.paramType == "vector")
         {
             MFnNumericAttribute numAttrFn;
             attr = createPointAttribute(numAttrFn, p, status);
-            initializeAttribute(numAttrFn, p);
+            CHECK_STATUS_AND_HANDLE_ERROR
+
+            status = initializeAttribute(numAttrFn, p);
+            CHECK_STATUS_AND_HANDLE_ERROR
         }
         else
         {
@@ -331,8 +376,13 @@ MStatus ShadingNode::initialize()
         }
 
         if (!attr.isNull())
-            addAttribute(attr);
+        {
+            status = addAttribute(attr);
+            CHECK_STATUS_AND_HANDLE_ERROR
+        }
     }
+
+    #undef CHECK_STATUS_AND_HANDLE_ERROR
 
     return MS::kSuccess;
 }
@@ -345,4 +395,16 @@ void ShadingNode::postConstructor()
 {
     MPxNode::postConstructor();
     setMPSafe(true);
+}
+
+void ShadingNode::report_error(
+    const OSLShaderInfo&    shaderInfo,
+    const OSLParamInfo&     paramInfo,
+    MStatus&                status)
+{
+    RENDERER_LOG_WARNING(
+        "Error while initializing node %s, param %s, error = %s",
+        shaderInfo.shaderName.asChar(),
+        paramInfo.paramName.asChar(),
+        status.errorString().asChar());
 }

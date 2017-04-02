@@ -33,6 +33,7 @@
 #include <maya/MPxNode.h>
 
 // Forward declarations.
+class OSLParamInfo;
 class OSLShaderInfo;
 
 class ShadingNode
@@ -49,6 +50,12 @@ class ShadingNode
     ShadingNode();
 
     virtual void postConstructor();
+
+  private:
+    static void report_error(
+        const OSLShaderInfo&    shaderInfo,
+        const OSLParamInfo&     paramInfo,
+        MStatus&                status);
 };
 
 #endif  // !APPLESEED_MAYA_SHADING_NODE_H
