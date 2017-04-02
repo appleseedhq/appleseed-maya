@@ -177,11 +177,13 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
         metadata.getValue("help", help);
         hasMin = metadata.getValue("min", minValue);
         hasMax = metadata.getValue("max", maxValue);
+        hasSoftMin = metadata.getValue("softmin", softMinValue);
+        hasSoftMax = metadata.getValue("softmax", softMaxValue);
         metadata.getValue("divider", divider);
 
-        metadata.getValue("maya_attribute_name", mayaAttributeName);
-        metadata.getValue("maya_attribute_short_name", mayaAttributeShortName);
-        metadata.getValue("maya_attribute_type", mayaAttributeType);
+        metadata.getValue("as_maya_attribute_name", mayaAttributeName);
+        metadata.getValue("as_maya_attribute_short_name", mayaAttributeShortName);
+        metadata.getValue("as_maya_attribute_type", mayaAttributeType);
     }
 }
 
@@ -219,9 +221,9 @@ OSLShaderInfo::OSLShaderInfo(
     shaderFileName = filename;
     OSLMetadataExtractor metadata(q.get_metadata());
 
-    metadata.getValue("maya_node_name", mayaName);
-    metadata.getValue("maya_classification", mayaClassification);
-    metadata.getValue<unsigned int>("maya_type_id", typeId);
+    metadata.getValue("as_maya_node_name", mayaName);
+    metadata.getValue("as_maya_classification", mayaClassification);
+    metadata.getValue<unsigned int>("as_maya_type_id", typeId);
 
     paramInfo.reserve(q.get_param_count());
     for(size_t i = 0, e = q.get_param_count(); i < e; ++i)

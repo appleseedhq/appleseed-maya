@@ -108,6 +108,10 @@ class OSLParamInfo
     double minValue;
     bool hasMax;
     double maxValue;
+    bool hasSoftMin;
+    double softMinValue;
+    bool hasSoftMax;
+    double softMaxValue;
     bool divider;
 
     // appleseedMaya custom metadata.

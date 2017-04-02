@@ -112,6 +112,12 @@ MStatus initializeNumericAttribute(MFnNumericAttribute& attr, const OSLParamInfo
     if (p.hasMax)
         attr.setMax(p.maxValue);
 
+    if (p.hasSoftMin)
+        attr.setSoftMin(p.softMinValue);
+
+    if (p.hasSoftMax)
+        attr.setSoftMax(p.softMaxValue);
+
     return initializeAttribute(attr, p);
 }
 
