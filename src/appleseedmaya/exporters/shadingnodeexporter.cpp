@@ -469,7 +469,7 @@ void ShadingNodeExporter::exportValue(
     }
     else if (paramInfo.paramType == "float")
     {
-        if (paramInfo.mayaAttributeType == "angle")
+        if (paramInfo.units == "degrees")
         {
             MAngle value(0.0f, MAngle::kDegrees);
             if (AttributeUtils::get(plug, value))

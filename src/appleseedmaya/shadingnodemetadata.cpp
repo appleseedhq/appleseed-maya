@@ -183,7 +183,6 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
 
         metadata.getValue("as_maya_attribute_name", mayaAttributeName);
         metadata.getValue("as_maya_attribute_short_name", mayaAttributeShortName);
-        metadata.getValue("as_maya_attribute_type", mayaAttributeType);
     }
 }
 
