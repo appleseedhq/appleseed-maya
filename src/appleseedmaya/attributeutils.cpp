@@ -165,8 +165,8 @@ bool anyChildPlugConnected(const MPlug& plug, bool input)
 MStatus makeInput(MFnAttribute& attr)
 {
     attr.setStorable(true);
+    attr.setReadable(false);
     attr.setWritable(true);
-    attr.setReadable(true);
     attr.setKeyable(true);
     return MS::kSuccess;
 }

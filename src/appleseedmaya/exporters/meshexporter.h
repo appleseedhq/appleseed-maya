@@ -46,6 +46,7 @@
 #include "renderer/api/scene.h"
 
 // appleseed.maya headers.
+#include "appleseedmaya/exporters/alphamapexporterfwd.h"
 #include "appleseedmaya/exporters/shapeexporter.h"
 
 class MeshExporter
@@ -84,14 +85,15 @@ class MeshExporter
     void exportGeometry();
     void exportMeshKey();
 
-    AppleseedEntityPtr<renderer::MeshObject>      m_mesh;
-    renderer::ParamArray                          m_meshParams;
-    bool                                          m_exportUVs;
-    bool                                          m_exportNormals;
-    bool                                          m_exportTangents;
-    std::vector<std::string>                      m_fileNames;
-    MIntArray                                     m_perFaceAssignments;
-    size_t                                        m_shapeExportStep;
+    AppleseedEntityPtr<renderer::MeshObject>    m_mesh;
+    renderer::ParamArray                        m_meshParams;
+    bool                                        m_exportUVs;
+    bool                                        m_exportNormals;
+    bool                                        m_exportTangents;
+    std::vector<std::string>                    m_fileNames;
+    MIntArray                                   m_perFaceAssignments;
+    size_t                                      m_shapeExportStep;
+    AlphaMapExporterPtr                         m_alphaMapExporter;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H

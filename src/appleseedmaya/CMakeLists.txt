@@ -33,6 +33,8 @@ configure_file (${PROJECT_SOURCE_DIR}/src/appleseedmaya/version.h.in
 include_directories (${PROJECT_SOURCE_DIR}/src)
 
 set (appleseed_maya_sources
+    alphamapnode.cpp
+    alphamapnode.h
     appleseedsession.cpp
     appleseedsession.h
     appleseedtranslator.cpp
@@ -43,6 +45,9 @@ set (appleseed_maya_sources
     envlightnode.cpp
     envlightnode.h
     exceptions.h
+    exporters/alphamapexporter.cpp
+    exporters/alphamapexporter.h
+    exporters/alphamapexporterfwd.h
     exporters/arealightexporter.cpp
     exporters/arealightexporter.h
     exporters/cameraexporter.cpp

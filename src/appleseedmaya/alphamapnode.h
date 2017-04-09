@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2017 Esteban Tovagliari, The appleseedhq Organization
+// Copyright (c) 2017 Esteban Tovagliari, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,33 +26,46 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_TYPEIDS_H
-#define APPLESEED_MAYA_TYPEIDS_H
+#ifndef APPLESEED_MAYA_ALPHA_MAP_NODE_H
+#define APPLESEED_MAYA_ALPHA_MAP_NODE_H
+
+// Maya headers.
+#include <maya/MObject.h>
+#include <maya/MPxNode.h>
+#include <maya/MTypeId.h>
+
 
 //
-// Maya typeids assigned to appleseedhq.
-// Everytime a new appleseed Maya node is added, the enum should be updated.
+// AlphaMapNode
+//
+//  To support correctly Maya scene archiving we use a custom node to store
+//  alpha map related attributes instead of using extension attributes in
+//  shape nodes. This way we can archive alpha maps when the scene is archived.
 //
 
-enum AppleseedMayaTypeIds
+class AlphaMapNode
+  : public MPxNode
 {
-    FirstTypeId                     = 0x001279c0,   // 1210816
+  public:
+    static const MString nodeName;
+    static const MTypeId id;
 
-    RenderGlobalsNodeTypeId         = FirstTypeId,  // 1210816
-    SkyDomeLightNodeTypeId          = 0x001279c1,   // 1210817
-    PhysicalSkyLightNodeTypeId      = 0x001279c2,   // 1210818
-    AsDisneyMaterialNodeTypeId      = 0x001279c3,   // 1210819
-    AsGlassMaterialNodeTypeId       = 0x001279c4,   // 1210820
-    AsCarPaintMaterialNodeTypeId    = 0x001279c5,   // 1210821
-    AsVoronoi3DNodeTypeId           = 0x001279c6,   // 1210822
-    AsVoronoi2DNodeTypeId           = 0x001279c7,   // 1210823
-    AsColorTransformNodeTypeId      = 0x001279c8,   // 1210824
-    AsProjectionNodeTypeId          = 0x001279c9,   // 1210825
-    AsNoise3DTypeId                 = 0x001279ca,   // 1210826
-    AsNoise2DTypeId                 = 0x001279cb,   // 1210827
-    AlphaMapNodeTypeId              = 0x001279cc,   // 1210828
+    static void* creator();
+    static MStatus initialize();
 
-    LastTypeId                      = 0x00127a3f    // 1210943
+    virtual MStatus compute(const MPlug& plug, MDataBlock& dataBlock);
+
+    virtual MStringArray getFilesToArchive(
+        bool    shortName,
+        bool    unresolvedName,
+        bool    markCouldBeImageSequence) const;
+
+    virtual void getExternalContent(MExternalContentInfoTable& table) const;
+    virtual void setExternalContent(const MExternalContentLocationTable& table);
+
+  private:
+    static MObject m_message;
+    static MObject m_map;
 };
 
-#endif  // !APPLESEED_MAYA_TYPEIDS_H
+#endif  // !APPLESEED_MAYA_ALPHA_MAP_NODE_H

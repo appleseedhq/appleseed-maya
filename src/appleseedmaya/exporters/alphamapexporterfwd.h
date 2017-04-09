@@ -26,33 +26,13 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_TYPEIDS_H
-#define APPLESEED_MAYA_TYPEIDS_H
+#ifndef APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTER_FWD_H
+#define APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTER_FWD_H
 
-//
-// Maya typeids assigned to appleseedhq.
-// Everytime a new appleseed Maya node is added, the enum should be updated.
-//
+// Boost headers.
+#include "boost/shared_ptr.hpp"
 
-enum AppleseedMayaTypeIds
-{
-    FirstTypeId                     = 0x001279c0,   // 1210816
+class AlphaMapExporter;
+typedef boost::shared_ptr<AlphaMapExporter> AlphaMapExporterPtr;
 
-    RenderGlobalsNodeTypeId         = FirstTypeId,  // 1210816
-    SkyDomeLightNodeTypeId          = 0x001279c1,   // 1210817
-    PhysicalSkyLightNodeTypeId      = 0x001279c2,   // 1210818
-    AsDisneyMaterialNodeTypeId      = 0x001279c3,   // 1210819
-    AsGlassMaterialNodeTypeId       = 0x001279c4,   // 1210820
-    AsCarPaintMaterialNodeTypeId    = 0x001279c5,   // 1210821
-    AsVoronoi3DNodeTypeId           = 0x001279c6,   // 1210822
-    AsVoronoi2DNodeTypeId           = 0x001279c7,   // 1210823
-    AsColorTransformNodeTypeId      = 0x001279c8,   // 1210824
-    AsProjectionNodeTypeId          = 0x001279c9,   // 1210825
-    AsNoise3DTypeId                 = 0x001279ca,   // 1210826
-    AsNoise2DTypeId                 = 0x001279cb,   // 1210827
-    AlphaMapNodeTypeId              = 0x001279cc,   // 1210828
-
-    LastTypeId                      = 0x00127a3f    // 1210943
-};
-
-#endif  // !APPLESEED_MAYA_TYPEIDS_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTER_FWD_H

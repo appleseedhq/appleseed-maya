@@ -49,6 +49,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/alphamapexporter.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/logger.h"
 
@@ -60,10 +61,7 @@ namespace asr = renderer;
 namespace
 {
 
-void meshObjectTopologyHash(
-    const asr::MeshObject&          mesh,
-    const asf::StringDictionary&    materialMappings,
-    MurmurHash&                     hash)
+void meshObjectTopologyHash(const asr::MeshObject& mesh, MurmurHash& hash)
 {
     hash.append(mesh.get_tex_coords_count());
     for(int i = 0, e = mesh.get_tex_coords_count(); i < e; ++i)
@@ -76,20 +74,11 @@ void meshObjectTopologyHash(
     hash.append(mesh.get_material_slot_count());
     for(int i = 0, e = mesh.get_material_slot_count(); i < e; ++i)
         hash.append(mesh.get_material_slot(i));
-
-    hash.append(materialMappings.size());
-    asf::StringDictionary::const_iterator it(materialMappings.begin());
-    asf::StringDictionary::const_iterator e(materialMappings.end());
-    for(;it != e; ++it)
-        hash.append(it.value());
 }
 
-void staticMeshObjectHash(
-    const asr::MeshObject&          mesh,
-    const asf::StringDictionary&    materialMappings,
-    MurmurHash&                     hash)
+void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
 {
-    meshObjectTopologyHash(mesh, materialMappings, hash);
+    meshObjectTopologyHash(mesh, hash);
 
     hash.append(mesh.get_vertex_count());
     for(int i = 0, e = mesh.get_vertex_count(); i < e; ++i)
@@ -106,10 +95,11 @@ void staticMeshObjectHash(
 
 void meshObjectHash(
     const asr::MeshObject&          mesh,
-    const asf::StringDictionary&    materialMappings,
+    const asf::StringDictionary&    frontMaterialMappings,
+    const asf::StringDictionary&    backMaterialMappings,
     MurmurHash&                     hash)
 {
-    staticMeshObjectHash(mesh, materialMappings, hash);
+    staticMeshObjectHash(mesh, hash);
 
     hash.append(mesh.get_motion_segment_count());
     for(int j = 0, je = mesh.get_motion_segment_count(); j < je; ++j)
@@ -123,6 +113,10 @@ void meshObjectHash(
         for(int i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
             mesh.get_vertex_tangent_pose(i, j);
     }
+
+    hash.append(mesh.get_parameters());
+    hash.append(frontMaterialMappings);
+    hash.append(backMaterialMappings);
 }
 
 } // unnamed.
@@ -164,7 +158,8 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
 {
     const int instanceNumber = dagPath().isInstanced() ? dagPath().instanceNumber() : 0;
 
-    MFnDependencyNode depNodeFn(dagPath().node());
+    MStatus status;
+    MFnDependencyNode depNodeFn(dagPath().node(), &status);
     MPlug plug = depNodeFn.findPlug("instObjGroups");
     plug = plug.elementByLogicalIndex(instanceNumber);
 
@@ -176,7 +171,12 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
         services.createShadingEngineExporter(shadingEngine);
         depNodeFn.setObject(shadingEngine);
         MString materialName = depNodeFn.name() + MString("_material");
-        m_materialMappings.insert("default", materialName.asChar());
+        m_frontMaterialMappings.insert("default", materialName.asChar());
+
+        bool doubleSided = false;
+        AttributeUtils::get(depNodeFn, "asDoubleSided", doubleSided);
+        if (doubleSided)
+            m_backMaterialMappings.insert("default", materialName.asChar());
     }
     else
     {
@@ -190,21 +190,45 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
             depNodeFn.setObject(shadingEngines[i]);
             MString materialName = depNodeFn.name() + MString("_material");
 
+            bool doubleSided = false;
+            AttributeUtils::get(depNodeFn, "asDoubleSided", doubleSided);
+
             if (i == 0)
-                m_materialMappings.insert("default", materialName.asChar());
+            {
+                m_frontMaterialMappings.insert("default", materialName.asChar());
+
+                if (doubleSided)
+                    m_backMaterialMappings.insert("default", materialName.asChar());
+            }
             else
             {
                 std::string slotName = asf::get_numbered_string("slot#", i);
-                m_materialMappings.insert(slotName.c_str(), materialName.asChar());
+                m_frontMaterialMappings.insert(slotName.c_str(), materialName.asChar());
+
+                if (doubleSided)
+                    m_backMaterialMappings.insert(slotName.c_str(), materialName.asChar());
             }
         }
     }
 
-    if (m_materialMappings.empty())
+    if (m_frontMaterialMappings.empty())
     {
         RENDERER_LOG_WARNING(
             "Found mesh %s with no materials.",
             appleseedName().asChar());
+    }
+
+    // Create alpha map exporter.
+    depNodeFn.setObject(dagPath().node());
+    plug = depNodeFn.findPlug("asAlphaMap", &status);
+
+    MPlugArray connections;
+    plug.connectedTo(connections, true, false);
+
+    if (connections.length() != 0)
+    {
+        MObject alphaMapNode = connections[0].node();
+        m_alphaMapExporter = services.createAlphaMapExporter(alphaMapNode);
     }
 }
 
@@ -244,7 +268,7 @@ void MeshExporter::exportShapeMotionStep(float time)
             asr::compute_smooth_vertex_tangents(*m_mesh);
 
         MurmurHash meshHash;
-        staticMeshObjectHash(*m_mesh, m_materialMappings, meshHash);
+        staticMeshObjectHash(*m_mesh, meshHash);
 
 //#define APPLESEED_MAYA_OBJ_MESH_EXPORT
 #ifdef APPLESEED_MAYA_OBJ_MESH_EXPORT
@@ -326,6 +350,29 @@ void MeshExporter::flushEntities()
             asr::compute_smooth_vertex_tangents(*m_mesh);
     }
 
+    // Handle alpha maps.
+    if (m_alphaMapExporter)
+    {
+        m_mesh->get_parameters().insert(
+            "alpha_map",
+            m_alphaMapExporter->textureInstanceName());
+
+        // Make material assignments double sided if we have an alpha map.
+        m_backMaterialMappings = m_frontMaterialMappings;
+    }
+
+    // Compute the object hash for auto-instancing.
+    /*
+    if (sessionMode() != AppleseedSession::ProgressiveRenderSession)
+    {
+        meshObjectHash(
+            *m_mesh,
+            m_frontMaterialMappings,
+            m_backMaterialMappings,
+            m_shapeHash);
+    }
+    */
+
     RENDERER_LOG_DEBUG("Flushing mesh object %s", m_mesh->get_name());
     if (m_objectAssembly.get())
         m_objectAssembly->objects().insert(m_mesh.releaseAs<asr::Object>());
@@ -341,16 +388,18 @@ void MeshExporter::meshAttributesToParams(renderer::ParamArray& params)
     int mediumPriority = 0;
     if (AttributeUtils::get(node(), "asMediumPriority", mediumPriority))
         params.insert("medium_priority", mediumPriority);
+
+    // todo: handle alpha maps here.
 }
 
 void MeshExporter::createMaterialSlots()
 {
     // Create material slots.
-    if (!m_materialMappings.empty())
+    if (!m_frontMaterialMappings.empty())
     {
-        m_mesh->reserve_material_slots(m_materialMappings.size());
-        asf::StringDictionary::const_iterator it(m_materialMappings.begin());
-        asf::StringDictionary::const_iterator e(m_materialMappings.end());
+        m_mesh->reserve_material_slots(m_frontMaterialMappings.size());
+        asf::StringDictionary::const_iterator it(m_frontMaterialMappings.begin());
+        asf::StringDictionary::const_iterator e(m_frontMaterialMappings.end());
         for(;it != e; ++it)
             m_mesh->push_material_slot(it.key());
     }
@@ -491,7 +540,6 @@ void MeshExporter::exportGeometry()
 
 void MeshExporter::exportMeshKey()
 {
-
     MStatus status;
     MFnMesh meshFn(dagPath());
 

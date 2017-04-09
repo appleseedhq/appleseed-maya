@@ -39,6 +39,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/exceptions.h"
+#include "appleseedmaya/exporters/alphamapexporter.h"
 #include "appleseedmaya/exporters/arealightexporter.h"
 #include "appleseedmaya/exporters/cameraexporter.h"
 #include "appleseedmaya/exporters/envlightexporter.h"
@@ -182,4 +183,12 @@ ShadingNodeExporter* NodeExporterFactory::createShadingNodeExporter(
         throw NoExporterForNode();
 
     return it->second(object, shaderGroup);
+}
+
+AlphaMapExporter*NodeExporterFactory::createAlphaMapExporter(
+    const MObject&                  object,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+{
+    return new AlphaMapExporter(object, project, sessionMode);
 }

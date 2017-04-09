@@ -39,7 +39,7 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         logger.debug('Built custom appleseed AETemplate.')
 
     def __buildVisibilitySection(self):
-        self.beginLayout('Visibility' , collapse=1)
+        self.beginLayout('Visibility', collapse=1)
         self.addControl('asVisibilityCamera'  , label='Camera')
         self.addControl('asVisibilityLight'   , label='Light')
         self.addControl('asVisibilityShadow'  , label='Shadow')
@@ -48,34 +48,69 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         self.addControl('asVisibilityGlossy'  , label='Glossy')
         self.endLayout()
 
+    @staticmethod
+    def meshAlphaMapCreateNew(node, attr):
+        logger.debug("Alpha Map create new: %s.%s" % (node, attr))
+        alphaMap = mc.createNode("appleseedAlphaMap")
+        mc.connectAttr(alphaMap + ".shape", node + '.' + attr)
+
+    def __meshAlphaCreateNewPyCmd(self, attr):
+        (nodeName, attrName) = attr.split('.')
+        thisClass = 'appleseedMaya.aetemplate.AEappleseedNodeTemplate'
+        return "%s.meshAlphaMapCreateNew('%s', '%s')" % (thisClass, nodeName, attrName)
+
+    def meshAlphaMapNew(self, attr):
+        py_cmd = self.__meshAlphaCreateNewPyCmd(attr)
+        pm.attrNavigationControlGrp(
+            'asAlphaMap',
+            label='Alpha Map',
+            createNew='python("%s")' % py_cmd,
+            at=attr)
+
+    def meshAlphaMapUpdate(self, attr):
+        py_cmd = self.__meshAlphaCreateNewPyCmd(attr)
+        pm.attrNavigationControlGrp(
+            'asAlphaMap',
+            edit=True,
+            createNew='python("%s")' % py_cmd,
+            at=attr)
+
     def buildBody(self, nodeName):
         self.thisNode = pm.PyNode(nodeName)
 
         if self.thisNode.type() == 'areaLight':
-            self.beginLayout('Appleseed' , collapse=1)
+            self.beginLayout('Appleseed', collapse=1)
             self.addControl('asIntensityScale', label='Intensity Scale')
             self.addControl('asExposure'      , label='Exposure')
             self.addControl('asNormalize'     , label='Normalize')
             self.__buildVisibilitySection()
             self.endLayout()
 
-        if self.thisNode.type() == 'bump2d':
-            self.beginLayout('Appleseed' , collapse=1)
-            self.addControl('asNormalMapMode'   , label='Map Mode')
+        elif self.thisNode.type() == 'bump2d':
+            self.beginLayout('Appleseed', collapse=1)
+            self.addControl('asNormalMapMode', label='Map Mode')
             self.addSeparator()
-            self.addControl('asNormalMapFlipR'  , label='Flip Red Channel')
-            self.addControl('asNormalMapFlipG'  , label='Flip Green Channel')
-            self.addControl('asNormalMapSwapRG' , label='Swap R/G Channels')
+            self.addControl('asNormalMapFlipR' , label='Flip Red Channel')
+            self.addControl('asNormalMapFlipG' , label='Flip Green Channel')
+            self.addControl('asNormalMapSwapRG', label='Swap R/G Channels')
             self.endLayout()
 
-        if self.thisNode.type() == 'camera':
-            self.beginLayout('Appleseed' , collapse=1)
+        elif self.thisNode.type() == 'camera':
+            self.beginLayout('Appleseed', collapse=1)
             self.endLayout()
 
-        if self.thisNode.type() == 'mesh':
-            self.beginLayout('Appleseed' , collapse=1)
+        elif self.thisNode.type() == 'mesh':
+            self.beginLayout('Appleseed', collapse=1)
             self.__buildVisibilitySection()
+            self.callCustom(self.meshAlphaMapNew, self.meshAlphaMapUpdate, 'asAlphaMap')
+            #self.addControl('asAlphaMap', label='Alpha Map')
             self.addControl('asMediumPriority', label='Medium Priority')
+            self.endLayout()
+
+        elif self.thisNode.type() == 'shadingEngine':
+            self.beginLayout('Appleseed', collapse=1)
+            self.addControl('asDoubleSided', label='Double Sided')
+            self.addControl('asShadingSamples', label='Shading Samples')
             self.endLayout()
 
 def appleseedAETemplateCallback(nodeName):

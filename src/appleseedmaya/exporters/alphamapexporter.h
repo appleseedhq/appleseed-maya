@@ -26,56 +26,56 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTER_H
 
-// Standard headers.
-#include <vector>
+// Forward declaration header.
+#include "alphamapexporterfwd.h"
+
+// Maya headers.
+#include <maya/MObject.h>
+#include "appleseedmaya/appleseedsession.h"
 
 // appleseed.renderer headers.
-#include "renderer/api/scene.h"
-#include "renderer/api/utility.h"
+#include "renderer/api/texture.h"
 
 // appleseed.maya headers.
-#include "appleseedmaya/exporters/dagnodeexporter.h"
-#include "appleseedmaya/murmurhash.h"
+#include "appleseedmaya/utils.h"
 
-class ShapeExporter
-  : public DagNodeExporter
+// Forward declarations.
+namespace renderer { class Assembly; }
+namespace renderer { class Project; }
+
+class AlphaMapExporter
+  : public NonCopyable
 {
   public:
 
-    ~ShapeExporter();
+    // Destructor.
+    ~AlphaMapExporter();
 
-    const renderer::TransformSequence& transformSequence() const;
+    // Create appleseed entities.
+    void createEntities();
 
-    void instanceCreated() const;
+    // Flush entities to the renderer.
+    void flushEntities();
 
-    virtual void exportTransformMotionStep(float time);
+    const char* textureInstanceName() const;
 
-    virtual void flushEntities() = 0;
+  private:
+    friend class NodeExporterFactory;
 
-  protected:
-
-    ShapeExporter(
-      const MDagPath&               path,
+    AlphaMapExporter(
+      const MObject&                object,
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);
 
-    void shapeAttributesToParams(renderer::ParamArray& params);
-
-    void createObjectInstance(const MString& objectName);
-
-    renderer::TransformSequence                     m_transformSequence;
-    MurmurHash                                      m_shapeHash;
-    mutable size_t                                  m_numInstances;
-    foundation::StringDictionary                    m_frontMaterialMappings;
-    foundation::StringDictionary                    m_backMaterialMappings;
-    AppleseedEntityPtr<renderer::Assembly>          m_objectAssembly;
-    AppleseedEntityPtr<renderer::AssemblyInstance>  m_objectAssemblyInstance;
-    AppleseedEntityPtr<renderer::ObjectInstance>    m_objectInstance;
+    MObject                                         m_object;
+    AppleseedSession::SessionMode                   m_sessionMode;
+    renderer::Project&                              m_project;
+    renderer::Assembly&                             m_mainAssembly;
+    AppleseedEntityPtr<renderer::Texture>           m_texture;
+    AppleseedEntityPtr<renderer::TextureInstance>   m_textureInstance;
 };
 
-typedef boost::shared_ptr<ShapeExporter> ShapeExporterPtr;
-
-#endif  // !APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTER_H

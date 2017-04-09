@@ -38,6 +38,7 @@
 #include "renderer/api/scene.h"
 
 // appleseed.maya headers.
+#include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/shadingnetworkexporter.h"
 
 namespace asf = foundation;
@@ -95,14 +96,18 @@ void ShadingEngineExporter::createEntities(const AppleseedSession::Options& opti
     MFnDependencyNode depNodeFn(m_object);
     const MString appleseedName = depNodeFn.name();
 
-    // Create a surface shader.
-    /*
-    MString surfaceShaderName = appleseedName + MString("_surface_shader");
-    m_surfaceShader.reset(
-        asr::PhysicalSurfaceShaderFactory().create(
-            surfaceShaderName.asChar(),
-            asr::ParamArray()));
-    */
+    // Create a surface shader if needed.
+    int numSamples = 1;
+    AttributeUtils::get(depNodeFn, "asShadingSamples", numSamples);
+
+    if (numSamples > 1)
+    {
+        MString surfaceShaderName = appleseedName + MString("_surface_shader");
+        m_surfaceShader.reset(
+            asr::PhysicalSurfaceShaderFactory().create(
+                surfaceShaderName.asChar(),
+                asr::ParamArray().insert("lighting_samples", numSamples)));
+    }
 
     // Create the material.
     MString materialName = appleseedName + MString("_material");

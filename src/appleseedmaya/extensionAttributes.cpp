@@ -34,6 +34,7 @@
 #include <maya/MFnDependencyNode.h>
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MFnMatrixAttribute.h>
+#include <maya/MFnMessageAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnStringData.h>
 #include <maya/MFnTypedAttribute.h>
@@ -144,8 +145,13 @@ void addMeshExtensionAttributes()
 
     addVisibilityExtensionAttributes(nodeClass, modifier);
 
+    MFnMessageAttribute msgAttrFn;
+    MObject attr = msgAttrFn.create("asAlphaMap", "asAlphaMap", &status);
+    AttributeUtils::makeInput(msgAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
     MFnNumericAttribute numAttrFn;
-    MObject attr = createNumericAttribute<int>(
+    attr = createNumericAttribute<int>(
         numAttrFn,
         "asMediumPriority",
         "asMediumPriority",
@@ -255,6 +261,35 @@ void addBump2dExtensionAttributes()
 
 void addShadingEngineExtensionAttrs()
 {
+    MNodeClass nodeClass("shadingEngine");
+    MDGModifier modifier;
+
+    MStatus status;
+
+    MFnNumericAttribute numAttrFn;
+
+    MObject attr = createNumericAttribute<bool>(
+        numAttrFn,
+        "asDoubleSided",
+        "asDoubleSided",
+        MFnNumericData::kBoolean,
+        false,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    attr = createNumericAttribute<int>(
+        numAttrFn,
+        "asShadingSamples",
+        "asShadingSamples",
+        MFnNumericData::kInt,
+        1,
+        status);
+    numAttrFn.setMin(1);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    modifier.doIt();
 }
 
 } // unnamed.
@@ -265,6 +300,5 @@ MStatus addExtensionAttributes()
     addAreaLightExtensionAttributes();
     addBump2dExtensionAttributes();
     addShadingEngineExtensionAttrs();
-
     return MS::kSuccess;
 }

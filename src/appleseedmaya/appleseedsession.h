@@ -39,6 +39,7 @@
 #include <maya/MString.h>
 
 // appleseed.maya headers.
+#include "appleseedmaya/exporters/alphamapexporterfwd.h"
 #include "appleseedmaya/exporters/shadingengineexporterfwd.h"
 #include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
 #include "appleseedmaya/utils.h"
@@ -125,6 +126,9 @@ class Services
         const ShadingNetworkContext   context,
         const MObject&                object,
         const MPlug&                  outputPlug) const = 0;
+
+    virtual AlphaMapExporterPtr createAlphaMapExporter(
+        const MObject&                object) const = 0;
 
   protected:
 

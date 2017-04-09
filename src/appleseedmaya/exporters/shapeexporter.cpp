@@ -81,15 +81,14 @@ void ShapeExporter::flushEntities()
     m_transformSequence.optimize();
 
     // Check if we need to create an assembly for this object.
-    if (sessionMode() == AppleseedSession::ProgressiveRenderSession ||
-       m_numInstances > 0 || m_transformSequence.size() > 1)
+    const bool needsAssembly = m_numInstances > 0 || m_transformSequence.size() > 1;
+    if (sessionMode() == AppleseedSession::ProgressiveRenderSession || needsAssembly)
     {
         const MString assemblyName = appleseedName() + MString("_assembly");
         m_objectAssembly.reset(
             asr::AssemblyFactory().create(assemblyName.asChar(), asr::ParamArray()));
 
         mainAssembly().assemblies().insert(m_objectAssembly.release());
-
         const MString assemblyInstanceName = assemblyName + MString("_instance");
 
         asr::ParamArray params;
@@ -133,8 +132,8 @@ void ShapeExporter::createObjectInstance(const MString& objectName)
             params,
             objectName.asChar(),
             objectInstanceTransform,
-            m_materialMappings,
-            m_materialMappings));
+            m_frontMaterialMappings,
+            m_backMaterialMappings));
 
     objectAssembly->object_instances().insert(m_objectInstance.release());
 }

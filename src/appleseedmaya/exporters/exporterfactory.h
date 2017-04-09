@@ -38,6 +38,7 @@
 
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/exporters/alphamapexporterfwd.h"
 #include "appleseedmaya/exporters/dagnodeexporterfwd.h"
 #include "appleseedmaya/exporters/shadingengineexporterfwd.h"
 #include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
@@ -92,6 +93,11 @@ class NodeExporterFactory
     static ShadingNodeExporter* createShadingNodeExporter(
         const MObject&                  object,
         renderer::ShaderGroup&          shaderGroup);
+
+    static AlphaMapExporter* createAlphaMapExporter(
+        const MObject&                  object,
+        renderer::Project&              project,
+        AppleseedSession::SessionMode   sessionMode);
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_NODEEXPORTER_FACTORY_H

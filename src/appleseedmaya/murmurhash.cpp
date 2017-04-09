@@ -29,6 +29,12 @@
 // Interface header.
 #include "appleseedmaya/murmurhash.h"
 
+// appleseed.renderer headers.
+#include "renderer/utility/paramarray.h"
+
+// appleseed.foundation headers.
+#include "foundation/utility/containers/dictionary.h"
+
 namespace asf = foundation;
 
 uint64_t rotl64(uint64_t x, int8_t r)
@@ -167,13 +173,7 @@ std::string MurmurHash::toString() const
     return s.str();
 }
 
-std::ostream& operator<<(std::ostream& o, const MurmurHash& hash)
-{
-    o << hash.toString();
-    return o;
-}
-
-void MurmurHash::append(const foundation::StringDictionary& dictionary)
+void MurmurHash::append(const asf::StringDictionary& dictionary)
 {
     asf::StringDictionary::const_iterator it(dictionary.begin());
     asf::StringDictionary::const_iterator e(dictionary.end());
@@ -182,4 +182,23 @@ void MurmurHash::append(const foundation::StringDictionary& dictionary)
         append(it.key());
         append(it.value());
     }
+}
+
+void MurmurHash::append(const asf::Dictionary& dictionary)
+{
+    append(dictionary.strings());
+
+    asf::DictionaryDictionary::const_iterator it(dictionary.dictionaries().begin());
+    asf::DictionaryDictionary::const_iterator e(dictionary.dictionaries().end());
+    for(; it != e; ++it)
+    {
+        append(it.key());
+        append(it.value());
+    }
+}
+
+std::ostream& operator<<(std::ostream& o, const MurmurHash& hash)
+{
+    o << hash.toString();
+    return o;
 }

@@ -76,6 +76,7 @@
 // appleseed.maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exceptions.h"
+#include "appleseedmaya/exporters/alphamapexporter.h"
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/exporters/shadingengineexporter.h"
@@ -163,6 +164,26 @@ struct SessionImpl
                     *m_self.mainAssembly(),
                     m_self.m_sessionMode));
             m_self.m_shadingNetworkExporters[context][depNodeFn.name()] = exporter;
+            return exporter;
+        }
+
+        virtual AlphaMapExporterPtr createAlphaMapExporter(
+            const MObject&                  object) const
+        {
+            MFnDependencyNode depNodeFn(object);
+
+            AlphaMapExporterMap::iterator it =
+                m_self.m_alphaMapExporters.find(depNodeFn.name());
+
+            if (it != m_self.m_alphaMapExporters.end())
+                return it->second;
+
+            AlphaMapExporterPtr exporter(
+                NodeExporterFactory::createAlphaMapExporter(
+                    object,
+                    *m_self.m_project,
+                    m_self.m_sessionMode));
+            m_self.m_alphaMapExporters[depNodeFn.name()] = exporter;
             return exporter;
         }
 
@@ -386,7 +407,12 @@ struct SessionImpl
 
         checkUserAborted();
 
-        // Create appleseed entities.
+        RENDERER_LOG_DEBUG("Creating alpha map entities");
+        for(AlphaMapExporterMap::const_iterator it = m_alphaMapExporters.begin(), e = m_alphaMapExporters.end(); it != e; ++it)
+            it->second->createEntities();
+
+        checkUserAborted();
+
         RENDERER_LOG_DEBUG("Creating shading network entities");
         for(size_t i = 0; i < NumShadingNetworkContexts; ++i)
         {
@@ -427,7 +453,14 @@ struct SessionImpl
             convertObjectsToInstances();
         }
 
-        // Flush entities to the renderer.
+        checkUserAborted();
+
+        RENDERER_LOG_DEBUG("Flushing alpha map entities");
+        for(AlphaMapExporterMap::const_iterator it = m_alphaMapExporters.begin(), e = m_alphaMapExporters.end(); it != e; ++it)
+            it->second->flushEntities();
+
+        checkUserAborted();
+
         RENDERER_LOG_DEBUG("Flushing shading network entities");
         for(size_t i = 0; i < NumShadingNetworkContexts; ++i)
         {
@@ -705,6 +738,7 @@ struct SessionImpl
     typedef std::map<MString, ShadingEngineExporterPtr, MStringCompareLess>     ShadingEngineExporterMap;
     typedef std::map<MString, ShadingNetworkExporterPtr, MStringCompareLess>    ShadingNetworkExporterMap;
     typedef boost::array<ShadingNetworkExporterMap, NumShadingNetworkContexts>  ShadingNetworkExporterMapArray;
+    typedef std::map<MString, AlphaMapExporterPtr, MStringCompareLess>          AlphaMapExporterMap;
 
     AppleseedSession::SessionMode                           m_sessionMode;
     AppleseedSession::Options                               m_options;
@@ -720,6 +754,7 @@ struct SessionImpl
     DagExporterMap                                          m_dagExporters;
     ShadingEngineExporterMap                                m_shadingEngineExporters;
     ShadingNetworkExporterMapArray                          m_shadingNetworkExporters;
+    AlphaMapExporterMap                                     m_alphaMapExporters;
 
     boost::scoped_ptr<asr::MasterRenderer>                  m_renderer;
     RendererController                                      m_rendererController;

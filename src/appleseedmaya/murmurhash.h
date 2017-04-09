@@ -39,8 +39,9 @@
 // Maya headers.
 #include <maya/MString.h>
 
-// appleseed.foundation headers.
-#include "foundation/utility/containers/dictionary.h"
+// Forward declarations.
+namespace foundation { class StringDictionary; }
+namespace foundation { class Dictionary; }
 
 //
 // MurmurHash.
@@ -92,6 +93,8 @@ class MurmurHash
     }
 
     void append(const foundation::StringDictionary& dictionary);
+
+    void append(const foundation::Dictionary& dictionary);
 
   private:
 
