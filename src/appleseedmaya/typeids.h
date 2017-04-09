@@ -44,10 +44,12 @@ enum AppleseedMayaTypeIds
     AsDisneyMaterialNodeTypeId      = 0x001279c3,   // 1210819
     AsGlassMaterialNodeTypeId       = 0x001279c4,   // 1210820
     AsCarPaintMaterialNodeTypeId    = 0x001279c5,   // 1210821
-    AsVoronoiNodeTypeId             = 0x001279c6,   // 1210822
-    AsColorTransformNodeTypeId      = 0x001279c7,   // 1210823
-    AsProjectionNodeTypeId          = 0x001279c8,   // 1210824
-    AsNoiseTypeId                   = 0x001279c9,   // 1210825
+    AsVoronoi3DNodeTypeId           = 0x001279c6,   // 1210822
+    AsVoronoi2DNodeTypeId           = 0x001279c7,   // 1210823
+    AsColorTransformNodeTypeId      = 0x001279c8,   // 1210824
+    AsProjectionNodeTypeId          = 0x001279c9,   // 1210825
+    AsNoise3DTypeId                 = 0x001279ca,   // 1210826
+    AsNoise2DTypeId                 = 0x001279cb,   // 1210827
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };
