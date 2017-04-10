@@ -208,7 +208,21 @@ Other Textures:
 
 - [x] AS Disney Material
 - [x] AS Glass
+- [ ] AS Car Paint
+
+##### Textures
+
+- [x] AS Voronoi3D
+- [ ] AS Voronoi2D
+- [ ] AS Noise3D
+- [ ] AS Noise2D
 
 ##### Manifolds
 
 - [ ] AS Projection
+
+##### Utility
+
+- [ ] AS Color Transform
+- [ ] AS Color Balance
+
