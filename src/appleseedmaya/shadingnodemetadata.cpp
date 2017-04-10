@@ -103,6 +103,9 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
     paramName = paramInfo.get("name");
     mayaAttributeName = paramName;
     mayaAttributeShortName = paramName;
+    mayaAttributeConnectable = true;
+    mayaAttributeHidden = false;
+    mayaAttributeKeyable = true;
 
     paramType = paramInfo.get("type");
     validDefault = paramInfo.get<bool>("validdefault");
@@ -183,6 +186,9 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
 
         metadata.getValue("as_maya_attribute_name", mayaAttributeName);
         metadata.getValue("as_maya_attribute_short_name", mayaAttributeShortName);
+        metadata.getValue("as_maya_attribute_connectable", mayaAttributeConnectable);
+        metadata.getValue("as_maya_attribute_hidden", mayaAttributeHidden);
+        metadata.getValue("as_maya_attribute_keyable", mayaAttributeKeyable);
     }
 }
 

@@ -98,6 +98,15 @@ MStatus initializeAttribute(MFnAttribute& attr, const OSLParamInfo& p)
     if (p.label.length() != 0)
         attr.setNiceNameOverride(p.label);
 
+    if (p.mayaAttributeConnectable == false)
+        attr.setConnectable(false);
+
+    if (p.mayaAttributeHidden == true)
+        attr.setHidden(true);
+
+    if (p.mayaAttributeKeyable == false)
+        attr.setKeyable(false);
+
     if (p.isOutput)
         return AttributeUtils::makeOutput(attr);
     else
