@@ -56,9 +56,97 @@ def buildRenderNodeTreeListerContentCallback(tl, postCommand, filterString):
     melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
         tl,
         postCommand,
-        "Appleseed/Textures",
-        "appleseed/texture",
+        "Appleseed/Displacement",
+        "appleseed/displacement",
+        "-asShader",
+        ""
+    )
+    logger.debug("buildRenderNodeTreeListerContentCallback: mel = %s" % melCmd)
+    mel.eval(melCmd)
+
+    melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
+        tl,
+        postCommand,
+        "Appleseed/Volume",
+        "appleseed/volume",
+        "-asShader",
+        ""
+    )
+    logger.debug("buildRenderNodeTreeListerContentCallback: mel = %s" % melCmd)
+    mel.eval(melCmd)
+
+    melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
+        tl,
+        postCommand,
+        "Appleseed/Textures/3d",
+        "appleseed/texture/3d",
+        "-as3DTexture",
+        ""
+    )
+    logger.debug("buildRenderNodeTreeListerContentCallback: mel = %s" % melCmd)
+    mel.eval(melCmd)
+
+    melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
+        tl,
+        postCommand,
+        "Appleseed/Textures/2d",
+        "appleseed/texture/2d",
+        "-as2DTexture",
+        ""
+    )
+    logger.debug("buildRenderNodeTreeListerContentCallback: mel = %s" % melCmd)
+    mel.eval(melCmd)
+
+    melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
+        tl,
+        postCommand,
+        "Appleseed/Textures/Environment",
+        "appleseed/texture/environment",
+        "-asEnvTexture",
+        ""
+    )
+    logger.debug("buildRenderNodeTreeListerContentCallback: mel = %s" % melCmd)
+    mel.eval(melCmd)
+
+    melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
+        tl,
+        postCommand,
+        "Appleseed/Textures/Other",
+        "appleseed/texture/other",
+        "-asTexture",
+        ""
+    )
+    logger.debug("buildRenderNodeTreeListerContentCallback: mel = %s" % melCmd)
+    mel.eval(melCmd)
+
+    melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
+        tl,
+        postCommand,
+        "Appleseed/Utility",
+        "appleseed/utility",
         "-asUtility",
+        ""
+    )
+    logger.debug("buildRenderNodeTreeListerContentCallback: mel = %s" % melCmd)
+    mel.eval(melCmd)
+
+    melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
+        tl,
+        postCommand,
+        "Appleseed/Lights",
+        "appleseed/light",
+        "-asLight",
+        ""
+    )
+    logger.debug("buildRenderNodeTreeListerContentCallback: mel = %s" % melCmd)
+    mel.eval(melCmd)
+
+    melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
+        tl,
+        postCommand,
+        "Appleseed/PostProcess",
+        "appleseed/postprocess",
+        "-asPostProcess",
         ""
     )
     logger.debug("buildRenderNodeTreeListerContentCallback: mel = %s" % melCmd)
@@ -69,8 +157,25 @@ def createRenderNode(nodeType=None, postCommand=None):
     for cl in pm.getClassification(nodeType):
         if "appleseed/surface" in cl.lower():
             nodeClass = "shader"
-        if "appleseed/texture" in cl.lower():
-            nodeClass = "texture"
+        if "appleseed/displacement" in cl.lower():
+            nodeClass = "shader"
+        if "appleseed/volume" in cl.lower():
+            nodeClass = "shader"
+        if "appleseed/light" in cl.lower():
+            nodeClass = "light"
+
+        if "appleseed/texture/2d" in cl.lower():
+            nodeClass = "texture/2d"
+        if "appleseed/texture/3d" in cl.lower():
+            nodeClass = "texture/3d"
+        if "appleseed/texture/environment" in cl.lower():
+            nodeClass = "texture/environment"
+        if "appleseed/texture/other" in cl.lower():
+            nodeClass = "texture/other"
+        if "appleseed/utility" in cl.lower():
+            nodeClass = "utility"
+        if "appleseed/postprocess" in cl.lower():
+            nodeClass = "postprocess"
 
     if nodeClass == "shader":
         mat = pm.shadingNode(nodeType, asShader=True)
