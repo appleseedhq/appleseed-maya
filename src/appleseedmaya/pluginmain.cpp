@@ -56,6 +56,9 @@
 #include "appleseedmaya/physicalskylightnode.h"
 #include "appleseedmaya/skydomelightnode.h"
 
+// Constants.
+const char* gDrawRegistrantId = "appleseedMaya";
+
 APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
 {
     MFnPlugin fnPlugin(
@@ -102,7 +105,7 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
 
     status = MHWRender::MDrawRegistry::registerDrawOverrideCreator(
         PhysicalSkyLightNode::drawDbClassification,
-        PhysicalSkyLightNode::drawRegistrantId,
+        gDrawRegistrantId,
         PhysicalSkyLightDrawOverride::creator);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
@@ -121,7 +124,7 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
 
     status = MHWRender::MDrawRegistry::registerDrawOverrideCreator(
         SkyDomeLightNode::drawDbClassification,
-        SkyDomeLightNode::drawRegistrantId,
+        gDrawRegistrantId,
         SkyDomeLightDrawOverride::creator);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
@@ -287,7 +290,7 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
 
     status = MHWRender::MDrawRegistry::deregisterDrawOverrideCreator(
             PhysicalSkyLightNode::drawDbClassification,
-            PhysicalSkyLightNode::drawRegistrantId);
+            gDrawRegistrantId);
     APPLESEED_MAYA_CHECK_MSTATUS_MSG(
         status,
         "appleseedMaya: failed to deregister sky light locator draw override");
@@ -301,7 +304,7 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
     {
         status = MHWRender::MDrawRegistry::deregisterDrawOverrideCreator(
                 SkyDomeLightNode::drawDbClassification,
-                SkyDomeLightNode::drawRegistrantId);
+                gDrawRegistrantId);
         APPLESEED_MAYA_CHECK_MSTATUS_MSG(
             status,
             "appleseedMaya: failed to deregister dome light locator draw override");

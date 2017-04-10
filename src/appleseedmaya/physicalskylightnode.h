@@ -45,10 +45,14 @@ class PhysicalSkyLightNode
     static const MString nodeName;
     static const MTypeId id;
     static const MString drawDbClassification;
-    static const MString drawRegistrantId;
 
     static void* creator();
     static MStatus initialize();
+
+    virtual bool isBounded() const;
+    virtual MBoundingBox boundingBox() const;
+
+    virtual MStatus compute(const MPlug& plug, MDataBlock& data);
 
   private:
     static MObject m_sunTheta;

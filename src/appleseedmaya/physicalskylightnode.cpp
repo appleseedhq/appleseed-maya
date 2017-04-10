@@ -37,12 +37,12 @@
 // appleseed.maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/config.h"
+#include "appleseedmaya/envlightdraw.h"
 #include "appleseedmaya/typeids.h"
 
 const MString PhysicalSkyLightNode::nodeName("appleseedPhysicalSkyLight");
 const MTypeId PhysicalSkyLightNode::id(PhysicalSkyLightNodeTypeId);
 const MString PhysicalSkyLightNode::drawDbClassification("drawdb/geometry/appleseedPhysicalSkyLight");
-const MString PhysicalSkyLightNode::drawRegistrantId("appleseedPhysicalSkyLight");
 
 MObject PhysicalSkyLightNode::m_sunTheta;
 MObject PhysicalSkyLightNode::m_sunPhi;
@@ -63,8 +63,6 @@ void* PhysicalSkyLightNode::creator()
 
 MStatus PhysicalSkyLightNode::initialize()
 {
-    EnvLightNode::initialize();
-
     MFnMessageAttribute msgAttrFn;
     MFnNumericAttribute numAttrFn;
     MFnUnitAttribute unitAttrFn;
@@ -226,6 +224,22 @@ MStatus PhysicalSkyLightNode::initialize()
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
 
     return status;
+}
+
+bool PhysicalSkyLightNode::isBounded() const
+{
+    return true;
+}
+
+MBoundingBox PhysicalSkyLightNode::boundingBox() const
+{
+    const float size = displaySize();
+    return sphereAndLogoBoundingBox(size);
+}
+
+MStatus PhysicalSkyLightNode::compute(const MPlug& plug, MDataBlock& dataBlock)
+{
+    return MS::kUnknownParameter;
 }
 
 PhysicalSkyLightData::PhysicalSkyLightData()

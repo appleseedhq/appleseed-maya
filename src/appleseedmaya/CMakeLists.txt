@@ -42,6 +42,8 @@ set (appleseed_maya_sources
     attributeutils.cpp
     attributeutils.h
     config.h
+    envlightdraw.cpp
+    envlightdraw.h
     envlightnode.cpp
     envlightnode.h
     exceptions.h

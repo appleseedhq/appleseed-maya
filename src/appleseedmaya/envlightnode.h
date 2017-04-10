@@ -61,8 +61,6 @@ class EnvLightNode
 
   protected:
 
-    static void initialize();
-
     float displaySize() const;
 
     static MObject m_message;

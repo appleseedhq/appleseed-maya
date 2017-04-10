@@ -46,15 +46,19 @@ class SkyDomeLightNode
     static const MString nodeName;
     static const MTypeId id;
     static const MString drawDbClassification;
-    static const MString drawRegistrantId;
 
     static void* creator();
     static MStatus initialize();
 
+    virtual MStatus compute(const MPlug& plug, MDataBlock& data);
+
+    virtual bool isBounded() const;
+    virtual MBoundingBox boundingBox() const;
+
     virtual MStringArray getFilesToArchive(
-        bool                            shortName,
-        bool                            unresolvedName,
-        bool                            markCouldBeImageSequence) const;
+        bool shortName,
+        bool unresolvedName,
+        bool markCouldBeImageSequence) const;
 
     virtual void getExternalContent(MExternalContentInfoTable& table) const;
     virtual void setExternalContent(const MExternalContentLocationTable& table);

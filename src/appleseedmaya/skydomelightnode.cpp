@@ -39,12 +39,12 @@
 // appleseed.maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/config.h"
+#include "appleseedmaya/envlightdraw.h"
 #include "appleseedmaya/typeids.h"
 
 const MString SkyDomeLightNode::nodeName("appleseedSkyDomeLight");
 const MTypeId SkyDomeLightNode::id(SkyDomeLightNodeTypeId);
 const MString SkyDomeLightNode::drawDbClassification("drawdb/geometry/appleseedSkyDomeLight");
-const MString SkyDomeLightNode::drawRegistrantId("appleseedSkyDomeLight");
 
 MObject SkyDomeLightNode::m_map;
 MObject SkyDomeLightNode::m_intensity;
@@ -59,8 +59,6 @@ void* SkyDomeLightNode::creator()
 
 MStatus SkyDomeLightNode::initialize()
 {
-    EnvLightNode::initialize();
-
     MFnNumericAttribute numAttrFn;
     MFnMessageAttribute msgAttrFn;
     MFnTypedAttribute typedAttrFn;
@@ -145,6 +143,22 @@ MStatus SkyDomeLightNode::initialize()
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add sky dome light attribute");
 
     return status;
+}
+
+bool SkyDomeLightNode::isBounded() const
+{
+    return true;
+}
+
+MBoundingBox SkyDomeLightNode::boundingBox() const
+{
+    const float size = displaySize();
+    return sphereAndLogoBoundingBox(size);
+}
+
+MStatus SkyDomeLightNode::compute(const MPlug& plug, MDataBlock& dataBlock)
+{
+    return MS::kUnknownParameter;
 }
 
 SkyDomeLightData::SkyDomeLightData()
