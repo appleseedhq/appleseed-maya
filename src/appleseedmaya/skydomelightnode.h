@@ -30,17 +30,24 @@
 #define APPLESEED_MAYA_SKY_DOME_LIGHT_NODE_H
 
 // Maya headers.
+#include <maya/MColor.h>
+#include <maya/MDrawContext.h>
+#include <maya/MDrawRegistry.h>
+#include <maya/MHWGeometryUtilities.h>
+#include <maya/MObject.h>
+#include <maya/MPointArray.h>
+#include <maya/MPxDrawOverride.h>
+#include <maya/MPxLocatorNode.h>
 #include <maya/MString.h>
 #include <maya/MTypeId.h>
-
-// appleseed.maya headers.
-#include "appleseedmaya/envlightnode.h"
+#include <maya/MUserData.h>
+#include <maya/MViewport2Renderer.h>
 
 // Forward declarations.
 class MObject;
 
 class SkyDomeLightNode
-  : public EnvLightNode
+  : public MPxLocatorNode
 {
   public:
     static const MString nodeName;
@@ -55,10 +62,16 @@ class SkyDomeLightNode
     virtual bool isBounded() const;
     virtual MBoundingBox boundingBox() const;
 
+    virtual void draw(
+        M3dView&                view,
+        const MDagPath&         path,
+        M3dView::DisplayStyle   style,
+        M3dView::DisplayStatus  status);
+
     virtual MStringArray getFilesToArchive(
-        bool shortName,
-        bool unresolvedName,
-        bool markCouldBeImageSequence) const;
+        bool                    shortName,
+        bool                    unresolvedName,
+        bool                    markCouldBeImageSequence) const;
 
     virtual void getExternalContent(MExternalContentInfoTable& table) const;
     virtual void setExternalContent(const MExternalContentLocationTable& table);
@@ -69,30 +82,45 @@ class SkyDomeLightNode
     static MObject m_exposure;
     static MObject m_horizontalShift;
     static MObject m_verticalShift;
+    static MObject m_message;
+    static MObject m_displaySize;
 };
 
 class SkyDomeLightData
-  : public EnvLightData
+  : public MUserData
 {
   public:
 
     SkyDomeLightData();
+
+    float   m_size;
+    MColor  m_color;
 };
 
 class SkyDomeLightDrawOverride
-  : public EnvLightDrawOverride
+  : public MHWRender::MPxDrawOverride
 {
   public:
 
-    static MHWRender::MPxDrawOverride *creator(const MObject& obj);
+    static MHWRender::MPxDrawOverride* creator(const MObject& obj);
 
     SkyDomeLightDrawOverride(const MObject& obj);
 
-    virtual MUserData *prepareForDraw(
+    virtual MHWRender::DrawAPI supportedDrawAPIs() const;
+
+    virtual MBoundingBox boundingBox(
+        const MDagPath&                 objPath,
+        const MDagPath&                 cameraPath) const;
+
+    virtual MUserData* prepareForDraw(
         const MDagPath&                 objPath,
         const MDagPath&                 cameraPath,
         const MHWRender::MFrameContext& frameContext,
         MUserData*                      oldData);
+
+    static void draw(
+        const MHWRender::MDrawContext&  context,
+        const MUserData*                data);
 };
 
 #endif  // !APPLESEED_MAYA_SKY_DOME_LIGHT_NODE_H

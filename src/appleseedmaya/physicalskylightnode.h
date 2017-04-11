@@ -30,16 +30,21 @@
 #define APPLESEED_MAYA_PHYSICAL_SKY_LIGHT_NODE_H
 
 // Maya headers.
+#include <maya/MColor.h>
+#include <maya/MDrawContext.h>
+#include <maya/MDrawRegistry.h>
+#include <maya/MHWGeometryUtilities.h>
 #include <maya/MObject.h>
+#include <maya/MPointArray.h>
+#include <maya/MPxDrawOverride.h>
 #include <maya/MPxLocatorNode.h>
 #include <maya/MString.h>
 #include <maya/MTypeId.h>
-
-// appleseed.maya headers.
-#include "appleseedmaya/envlightnode.h"
+#include <maya/MUserData.h>
+#include <maya/MViewport2Renderer.h>
 
 class PhysicalSkyLightNode
-  : public EnvLightNode
+  : public MPxLocatorNode
 {
   public:
     static const MString nodeName;
@@ -51,6 +56,12 @@ class PhysicalSkyLightNode
 
     virtual bool isBounded() const;
     virtual MBoundingBox boundingBox() const;
+
+    virtual void draw(
+        M3dView&                view,
+        const MDagPath&         path,
+        M3dView::DisplayStyle   style,
+        M3dView::DisplayStatus  status);
 
     virtual MStatus compute(const MPlug& plug, MDataBlock& data);
 
@@ -66,30 +77,45 @@ class PhysicalSkyLightNode
     static MObject m_groundAlbedo;
     static MObject m_sunEnable;
     static MObject m_radianceMultiplier;
+    static MObject m_message;
+    static MObject m_displaySize;
 };
 
 class PhysicalSkyLightData
-  : public EnvLightData
+  : public MUserData
 {
   public:
 
     PhysicalSkyLightData();
+
+    float   m_size;
+    MColor  m_color;
 };
 
 class PhysicalSkyLightDrawOverride
-  : public EnvLightDrawOverride
+  : public MHWRender::MPxDrawOverride
 {
   public:
 
-    static MHWRender::MPxDrawOverride *creator(const MObject& obj);
+    static MHWRender::MPxDrawOverride* creator(const MObject& obj);
 
     PhysicalSkyLightDrawOverride(const MObject& obj);
 
-    virtual MUserData *prepareForDraw(
+    virtual MHWRender::DrawAPI supportedDrawAPIs() const;
+
+    virtual MBoundingBox boundingBox(
+        const MDagPath&                 objPath,
+        const MDagPath&                 cameraPath) const;
+
+    virtual MUserData* prepareForDraw(
         const MDagPath&                 objPath,
         const MDagPath&                 cameraPath,
         const MHWRender::MFrameContext& frameContext,
         MUserData*                      oldData);
+
+    static void draw(
+        const MHWRender::MDrawContext&  context,
+        const MUserData*                data);
 };
 
 #endif  // !APPLESEED_MAYA_PHYSICAL_SKY_LIGHT_NODE_H

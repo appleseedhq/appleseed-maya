@@ -34,6 +34,7 @@
 
 // Maya headers.
 #include <maya/MFloatArray.h>
+#include <maya/MGL.h>
 #include <maya/MIntArray.h>
 #include <maya/MPointArray.h>
 
@@ -47,6 +48,7 @@ namespace
 {
 
 bool g_initialized = false;
+
 const size_t NumSubdivisions = 16;
 MPointArray g_sphereVertices;
 MFloatArray g_sphereUs;
@@ -211,7 +213,6 @@ void drawSphereWireframe(const float scale)
 {
     initializeGeom();
 
-    /*
     for (size_t j = 0; j < NumSubdivisions; ++j)
     {
         glBegin(GL_LINE_LOOP);
@@ -239,14 +240,12 @@ void drawSphereWireframe(const float scale)
         }
         glEnd();
     }
-    */
 }
 
 void drawAppleseedLogo(const float scale)
 {
     initializeGeom();
 
-    /*
     size_t index = 0;
     for (size_t j = 0, je = g_logoStripSizes.length(); j < je; ++j)
     {
@@ -262,6 +261,5 @@ void drawAppleseedLogo(const float scale)
         }
         glEnd();
     }
-    */
 }
 

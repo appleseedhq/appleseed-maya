@@ -44,8 +44,6 @@ set (appleseed_maya_sources
     config.h
     envlightdraw.cpp
     envlightdraw.h
-    envlightnode.cpp
-    envlightnode.h
     exceptions.h
     exporters/alphamapexporter.cpp
     exporters/alphamapexporter.h

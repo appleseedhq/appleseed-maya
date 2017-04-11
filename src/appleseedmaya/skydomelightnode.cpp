@@ -51,6 +51,8 @@ MObject SkyDomeLightNode::m_intensity;
 MObject SkyDomeLightNode::m_exposure;
 MObject SkyDomeLightNode::m_horizontalShift;
 MObject SkyDomeLightNode::m_verticalShift;
+MObject SkyDomeLightNode::m_message;
+MObject SkyDomeLightNode::m_displaySize;
 
 void* SkyDomeLightNode::creator()
 {
@@ -152,7 +154,8 @@ bool SkyDomeLightNode::isBounded() const
 
 MBoundingBox SkyDomeLightNode::boundingBox() const
 {
-    const float size = displaySize();
+    float size = 1.0f;
+    AttributeUtils::get(thisMObject(), "size", size);
     return sphereAndLogoBoundingBox(size);
 }
 
@@ -161,8 +164,36 @@ MStatus SkyDomeLightNode::compute(const MPlug& plug, MDataBlock& dataBlock)
     return MS::kUnknownParameter;
 }
 
+void SkyDomeLightNode::draw(
+    M3dView&                view,
+    const MDagPath&         path,
+    M3dView::DisplayStyle   style,
+    M3dView::DisplayStatus  status)
+{
+    float size = 1.0f;
+    AttributeUtils::get(thisMObject(), "size", size);
+
+    view.beginGL();
+    glPushAttrib(GL_CURRENT_BIT);
+
+    if (status == M3dView::kActive)
+        view.setDrawColor(13, M3dView::kActiveColors);
+    else
+        view.setDrawColor(13, M3dView::kDormantColors);
+
+    if (style == M3dView::kFlatShaded || style == M3dView::kGouraudShaded)
+        drawSphereWireframe(size);
+    else
+        drawSphereWireframe(size);
+
+    drawAppleseedLogo(size);
+
+    glPopAttrib();
+    view.endGL();
+}
+
 SkyDomeLightData::SkyDomeLightData()
-  : EnvLightData()
+  : MUserData(false) // don't delete after draw
 {
 }
 
@@ -211,11 +242,25 @@ MHWRender::MPxDrawOverride *SkyDomeLightDrawOverride::creator(const MObject& obj
 }
 
 SkyDomeLightDrawOverride::SkyDomeLightDrawOverride(const MObject& obj)
-  : EnvLightDrawOverride(obj)
+  : MHWRender::MPxDrawOverride(obj, SkyDomeLightDrawOverride::draw)
 {
 }
 
-MUserData *SkyDomeLightDrawOverride::prepareForDraw(
+MHWRender::DrawAPI SkyDomeLightDrawOverride::supportedDrawAPIs() const
+{
+    return MHWRender::kOpenGL | MHWRender::kOpenGLCoreProfile;
+}
+
+MBoundingBox SkyDomeLightDrawOverride::boundingBox(
+    const MDagPath&                 objPath,
+    const MDagPath&                 cameraPath) const
+{
+    float size = 1.0f;
+    AttributeUtils::get(objPath.node(), "size", size);
+    return sphereAndLogoBoundingBox(size);
+}
+
+MUserData* SkyDomeLightDrawOverride::prepareForDraw(
     const MDagPath&                 objPath,
     const MDagPath&                 cameraPath,
     const MHWRender::MFrameContext& frameContext,
@@ -227,6 +272,63 @@ MUserData *SkyDomeLightDrawOverride::prepareForDraw(
     if (!data)
         data = new SkyDomeLightData();
 
-    initializeData(objPath, *data);
+    data->m_size = 1.0f;
+    AttributeUtils::get(objPath.node(), "size", data->m_size);
+    data->m_color = MHWRender::MGeometryUtilities::wireframeColor(objPath);
     return data;
+}
+
+void SkyDomeLightDrawOverride::draw(
+    const MHWRender::MDrawContext&  context,
+    const MUserData*                data)
+{
+    const SkyDomeLightData *drawData = dynamic_cast<const SkyDomeLightData*>(data);
+    if (!drawData)
+        return;
+
+    MStatus status;
+
+    const MMatrix transform = context.getMatrix(MHWRender::MDrawContext::kWorldViewMtx, &status);
+    if (status != MStatus::kSuccess)
+        return;
+
+    const MMatrix projection = context.getMatrix(MHWRender::MDrawContext::kProjectionMtx, &status);
+    if (status != MStatus::kSuccess)
+        return;
+
+    const unsigned int displayStyle = context.getDisplayStyle();
+
+    MHWRender::MRenderer *renderer = MHWRender::MRenderer::theRenderer();
+    if (!renderer)
+        return;
+
+    if (renderer->drawAPIIsOpenGL())
+    {
+        float color [3] ={ drawData->m_color.r, drawData->m_color.g, drawData->m_color.b};
+        glColor3fv(color);
+
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadMatrixd(transform.matrix[0]);
+
+        glMatrixMode (GL_PROJECTION);
+        glPushMatrix();
+        glLoadMatrixd(projection.matrix[0]);
+
+        glPushAttrib(GL_CURRENT_BIT);
+
+        if (displayStyle & MHWRender::MDrawContext::kGouraudShaded)
+            drawSphereWireframe(drawData->m_size);
+
+        if (displayStyle & MHWRender::MDrawContext::kWireFrame)
+            drawSphereWireframe(drawData->m_size);
+
+        drawAppleseedLogo(drawData->m_size);
+
+        glPopAttrib();
+
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+    }
 }

@@ -55,6 +55,8 @@ MObject PhysicalSkyLightNode::m_horizonShift;
 MObject PhysicalSkyLightNode::m_groundAlbedo;
 MObject PhysicalSkyLightNode::m_sunEnable;
 MObject PhysicalSkyLightNode::m_radianceMultiplier;
+MObject PhysicalSkyLightNode::m_message;
+MObject PhysicalSkyLightNode::m_displaySize;
 
 void* PhysicalSkyLightNode::creator()
 {
@@ -233,8 +235,37 @@ bool PhysicalSkyLightNode::isBounded() const
 
 MBoundingBox PhysicalSkyLightNode::boundingBox() const
 {
-    const float size = displaySize();
+    float size = 1.0f;
+    AttributeUtils::get(thisMObject(), "size", size);
     return sphereAndLogoBoundingBox(size);
+}
+
+void PhysicalSkyLightNode::draw(
+    M3dView&                view,
+    const MDagPath&         path,
+    M3dView::DisplayStyle   style,
+    M3dView::DisplayStatus  status)
+{
+    float size = 1.0f;
+    AttributeUtils::get(thisMObject(), "size", size);
+
+    view.beginGL();
+    glPushAttrib(GL_CURRENT_BIT);
+
+    if (status == M3dView::kActive)
+        view.setDrawColor(13, M3dView::kActiveColors);
+    else
+        view.setDrawColor(13, M3dView::kDormantColors);
+
+    if (style == M3dView::kFlatShaded || style == M3dView::kGouraudShaded)
+        drawSphereWireframe(size);
+    else
+        drawSphereWireframe(size);
+
+    drawAppleseedLogo(size);
+
+    glPopAttrib();
+    view.endGL();
 }
 
 MStatus PhysicalSkyLightNode::compute(const MPlug& plug, MDataBlock& dataBlock)
@@ -243,21 +274,35 @@ MStatus PhysicalSkyLightNode::compute(const MPlug& plug, MDataBlock& dataBlock)
 }
 
 PhysicalSkyLightData::PhysicalSkyLightData()
-  : EnvLightData()
+  : MUserData(false) // don't delete after draw
 {
 }
 
-MHWRender::MPxDrawOverride *PhysicalSkyLightDrawOverride::creator(const MObject& obj)
+MHWRender::MPxDrawOverride* PhysicalSkyLightDrawOverride::creator(const MObject& obj)
 {
     return new PhysicalSkyLightDrawOverride(obj);
 }
 
 PhysicalSkyLightDrawOverride::PhysicalSkyLightDrawOverride(const MObject& obj)
-  : EnvLightDrawOverride(obj)
+  : MHWRender::MPxDrawOverride(obj, PhysicalSkyLightDrawOverride::draw)
 {
 }
 
-MUserData *PhysicalSkyLightDrawOverride::prepareForDraw(
+MHWRender::DrawAPI PhysicalSkyLightDrawOverride::supportedDrawAPIs() const
+{
+    return MHWRender::kOpenGL | MHWRender::kOpenGLCoreProfile;
+}
+
+MBoundingBox PhysicalSkyLightDrawOverride::boundingBox(
+    const MDagPath&                 objPath,
+    const MDagPath&                 cameraPath) const
+{
+    float size = 1.0f;
+    AttributeUtils::get(objPath.node(), "size", size);
+    return sphereAndLogoBoundingBox(size);
+}
+
+MUserData* PhysicalSkyLightDrawOverride::prepareForDraw(
     const MDagPath&                 objPath,
     const MDagPath&                 cameraPath,
     const MHWRender::MFrameContext& frameContext,
@@ -269,6 +314,63 @@ MUserData *PhysicalSkyLightDrawOverride::prepareForDraw(
     if (!data)
         data = new PhysicalSkyLightData();
 
-    initializeData(objPath, *data);
+    data->m_size = 1.0f;
+    AttributeUtils::get(objPath.node(), "size", data->m_size);
+    data->m_color = MHWRender::MGeometryUtilities::wireframeColor(objPath);
     return data;
+}
+
+void PhysicalSkyLightDrawOverride::draw(
+    const MHWRender::MDrawContext&  context,
+    const MUserData*                data)
+{
+    const PhysicalSkyLightData *drawData = dynamic_cast<const PhysicalSkyLightData*>(data);
+    if (!drawData)
+        return;
+
+    MStatus status;
+
+    const MMatrix transform = context.getMatrix(MHWRender::MDrawContext::kWorldViewMtx, &status);
+    if (status != MStatus::kSuccess)
+        return;
+
+    const MMatrix projection = context.getMatrix(MHWRender::MDrawContext::kProjectionMtx, &status);
+    if (status != MStatus::kSuccess)
+        return;
+
+    const unsigned int displayStyle = context.getDisplayStyle();
+
+    MHWRender::MRenderer *renderer = MHWRender::MRenderer::theRenderer();
+    if (!renderer)
+        return;
+
+    if (renderer->drawAPIIsOpenGL())
+    {
+        float color [3] ={ drawData->m_color.r, drawData->m_color.g, drawData->m_color.b};
+        glColor3fv(color);
+
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadMatrixd(transform.matrix[0]);
+
+        glMatrixMode (GL_PROJECTION);
+        glPushMatrix();
+        glLoadMatrixd(projection.matrix[0]);
+
+        glPushAttrib(GL_CURRENT_BIT);
+
+        if (displayStyle & MHWRender::MDrawContext::kGouraudShaded)
+            drawSphereWireframe(drawData->m_size);
+
+        if (displayStyle & MHWRender::MDrawContext::kWireFrame)
+            drawSphereWireframe(drawData->m_size);
+
+        drawAppleseedLogo(drawData->m_size);
+
+        glPopAttrib();
+
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+    }
 }
