@@ -158,7 +158,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] ramp
 - [x] substance (Use node image file output)
 - [ ] substance output
-- [ ] water
+- [x] water
 
 #### 3D textures
 
