@@ -213,7 +213,7 @@ Other Textures:
 ##### Textures
 
 - [x] AS Voronoi3D
-- [ ] AS Voronoi2D
+- [x] AS Voronoi2D
 - [ ] AS Noise3D
 - [ ] AS Noise2D
 
