@@ -82,9 +82,9 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] quat prod
 - [ ] quat sub
 - [ ] quat to euler
-- [ ] remap color
-- [ ] remap hsv
-- [ ] remap value
+- [x] remap color
+- [x] remap hsv
+- [x] remap value
 - [x] reverse
 - [x] rgb to hsv
 - [x] sampler info
