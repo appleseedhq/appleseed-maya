@@ -1,52 +1,52 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <templates>
-	<using package='maya'/>
-	<template name='NEasVoronoi2D'>
-		<attribute name='outColor' type='maya.float3'>
-			<label>Out Color</label>
-		</attribute>
-		<attribute name='outAlpha' type='maya.float'>
-			<label>Out Alpha</label>
-		</attribute>
-		<attribute name='color' type='maya.float3'>
-			<label>Color</label>
-		</attribute>
-		<attribute name='color2' type='maya.float3'>
-			<label>Color 2</label>
-		</attribute>
-		<attribute name='contrast' type='maya.float'>
-			<label>Contrast</label>
-		</attribute>
-		<attribute name='amplitude' type='maya.float'>
-			<label>Amplitude</label>
-		</attribute>
-		<attribute name='persistence' type='maya.float'>
-			<label>Persistence</label>
-		</attribute>
-		<attribute name='density' type='maya.float'>
-			<label>Density</label>
-		</attribute>
-		<attribute name='jittering' type='maya.float'>
-			<label>Jittering</label>
-		</attribute>
-		<attribute name='Minkowski_p' type='maya.float'>
-			<label>Minkowski P</label>
-		</attribute>
-		<attribute name='coverage' type='maya.float'>
-			<label>Coverage</label>
-		</attribute>
-	</template>
-	<view name='NEDefault' template='NEasVoronoi2D'>
-		<property name='outColor'/>
-		<property name='outAlpha'/>
-		<property name='color'/>
-		<property name='color2'/>
-		<property name='contrast'/>
-		<property name='amplitude'/>
-		<property name='persistence'/>
-		<property name='density'/>
-		<property name='jittering'/>
-		<property name='Minkowski_p'/>
-		<property name='coverage'/>
-	</view>
+    <using package='maya'/>
+    <template name='NEasVoronoi2D'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='outAlpha' type='maya.float'>
+            <label>Out Alpha</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='color2' type='maya.float3'>
+            <label>Color 2</label>
+        </attribute>
+        <attribute name='contrast' type='maya.float'>
+            <label>Contrast</label>
+        </attribute>
+        <attribute name='amplitude' type='maya.float'>
+            <label>Amplitude</label>
+        </attribute>
+        <attribute name='persistence' type='maya.float'>
+            <label>Persistence</label>
+        </attribute>
+        <attribute name='density' type='maya.float'>
+            <label>Density</label>
+        </attribute>
+        <attribute name='jittering' type='maya.float'>
+            <label>Jittering</label>
+        </attribute>
+        <attribute name='Minkowski_p' type='maya.float'>
+            <label>Minkowski P</label>
+        </attribute>
+        <attribute name='coverage' type='maya.float'>
+            <label>Coverage</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasVoronoi2D'>
+        <property name='outColor'/>
+        <property name='outAlpha'/>
+        <property name='color'/>
+        <property name='color2'/>
+        <property name='contrast'/>
+        <property name='amplitude'/>
+        <property name='persistence'/>
+        <property name='density'/>
+        <property name='jittering'/>
+        <property name='Minkowski_p'/>
+        <property name='coverage'/>
+    </view>
 </templates>
