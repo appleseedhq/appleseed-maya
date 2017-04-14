@@ -82,9 +82,9 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] quat prod
 - [ ] quat sub
 - [ ] quat to euler
-- [ ] remap color
-- [ ] remap hsv
-- [ ] remap value
+- [x] remap color
+- [x] remap hsv
+- [x] remap value
 - [x] reverse
 - [x] rgb to hsv
 - [x] sampler info
@@ -158,7 +158,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [x] ramp
 - [x] substance (Use node image file output)
 - [ ] substance output
-- [ ] water
+- [x] water
 
 #### 3D textures
 
@@ -213,7 +213,7 @@ Other Textures:
 ##### Textures
 
 - [x] AS Voronoi3D
-- [ ] AS Voronoi2D
+- [x] AS Voronoi2D
 - [ ] AS Noise3D
 - [ ] AS Noise2D
 
