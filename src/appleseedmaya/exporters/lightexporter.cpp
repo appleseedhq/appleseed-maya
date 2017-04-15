@@ -60,6 +60,9 @@ DagNodeExporter *LightExporter::create(
     asr::Project&                   project,
     AppleseedSession::SessionMode   sessionMode)
 {
+    if (areObjectAndParentsRenderable(path) == false)
+        return 0;
+
     return new LightExporter(path, project, sessionMode);
 }
 
