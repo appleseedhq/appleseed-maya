@@ -233,7 +233,10 @@ class AppleseedRenderGlobalsMainTab(object):
             logger.debug("Updating env lights menu")
 
             uiName = self.__uis["envLight"]
-            assert pm.optionMenu(uiName, exists=True)
+
+            # Return if the menu does not exist yet.
+            if not pm.optionMenu(uiName, exists=True):
+                return
 
             # Remove the callback.
             pm.optionMenu(uiName, edit=True, changeCommand="")
