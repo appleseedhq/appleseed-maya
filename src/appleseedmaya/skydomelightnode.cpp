@@ -176,10 +176,24 @@ void SkyDomeLightNode::draw(
     view.beginGL();
     glPushAttrib(GL_CURRENT_BIT);
 
-    if (status == M3dView::kActive)
-        view.setDrawColor(13, M3dView::kActiveColors);
-    else
-        view.setDrawColor(13, M3dView::kDormantColors);
+    switch (status)
+    {
+      case M3dView::kActive:
+        view.setDrawColor(18, M3dView::kActiveColors);
+      break;
+
+      case M3dView::kActiveAffected:
+        view.setDrawColor(19, M3dView::kActiveColors);
+      break;
+
+      case M3dView::kLead:
+        view.setDrawColor(22, M3dView::kActiveColors);
+      break;
+
+      default:
+        view.setDrawColor(3, M3dView::kActiveColors);
+      break;
+    }
 
     if (style == M3dView::kFlatShaded || style == M3dView::kGouraudShaded)
         drawSphereWireframe(size);
@@ -190,11 +204,6 @@ void SkyDomeLightNode::draw(
 
     glPopAttrib();
     view.endGL();
-}
-
-SkyDomeLightData::SkyDomeLightData()
-  : MUserData(false) // don't delete after draw
-{
 }
 
 MStringArray SkyDomeLightNode::getFilesToArchive(
@@ -234,6 +243,11 @@ void SkyDomeLightNode::setExternalContent(const MExternalContentLocationTable& t
 {
    setExternalContentForFileAttr(m_map, table);
    MPxNode::setExternalContent(table);
+}
+
+SkyDomeLightData::SkyDomeLightData()
+  : MUserData(false) // don't delete after draw
+{
 }
 
 MHWRender::MPxDrawOverride *SkyDomeLightDrawOverride::creator(const MObject& obj)
