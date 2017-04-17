@@ -183,7 +183,10 @@ struct SessionImpl
                     object,
                     *m_self.m_project,
                     m_self.m_sessionMode));
-            m_self.m_alphaMapExporters[depNodeFn.name()] = exporter;
+
+            if (exporter)
+                m_self.m_alphaMapExporters[depNodeFn.name()] = exporter;
+
             return exporter;
         }
 

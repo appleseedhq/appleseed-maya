@@ -77,7 +77,7 @@ void RampExporter::registerExporter()
         &RampExporter::create);
 }
 
-ShadingNodeExporter *RampExporter::create(
+ShadingNodeExporter* RampExporter::create(
     const MObject&      object,
     asr::ShaderGroup&   shaderGroup)
 {

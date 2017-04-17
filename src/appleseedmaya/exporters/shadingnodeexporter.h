@@ -54,7 +54,7 @@ class ShadingNodeExporter
 
     static void registerExporters();
 
-    static ShadingNodeExporter *create(
+    static ShadingNodeExporter* create(
         const MObject&                  object,
         renderer::ShaderGroup&          shaderGroup);
 
@@ -102,11 +102,11 @@ class ShadingNodeExporter
 
     const OSLShaderInfo& getShaderInfo() const;
 
-    ShadingNodeExporter *findExporterForNode(
+    ShadingNodeExporter* findExporterForNode(
         ShadingNodeExporterMap&         exporters,
         const MObject&                  node);
 
-    ShadingNodeExporter *getSrcPlugAndExporter(
+    ShadingNodeExporter* getSrcPlugAndExporter(
         const MPlug&                    plug,
         ShadingNodeExporterMap&         exporters,
         MPlug&                          srcPlug);

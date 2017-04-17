@@ -56,7 +56,7 @@ class MeshExporter
 
     static void registerExporter();
 
-    static DagNodeExporter *create(
+    static DagNodeExporter* create(
       const MDagPath&               path,
       renderer::Project&            project,
       AppleseedSession::SessionMode sessionMode);

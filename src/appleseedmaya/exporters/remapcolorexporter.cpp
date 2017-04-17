@@ -79,7 +79,7 @@ void RemapColorExporter::registerExporter()
         &RemapColorExporter::create);
 }
 
-ShadingNodeExporter *RemapColorExporter::create(
+ShadingNodeExporter* RemapColorExporter::create(
     const MObject&      object,
     asr::ShaderGroup&   shaderGroup)
 {

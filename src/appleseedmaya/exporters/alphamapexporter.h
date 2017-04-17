@@ -51,6 +51,11 @@ class AlphaMapExporter
 {
   public:
 
+    static AlphaMapExporter* create(
+      const MObject&                object,
+      renderer::Project&            project,
+      AppleseedSession::SessionMode sessionMode);
+
     // Destructor.
     ~AlphaMapExporter();
 
@@ -63,7 +68,6 @@ class AlphaMapExporter
     const char* textureInstanceName() const;
 
   private:
-    friend class NodeExporterFactory;
 
     AlphaMapExporter(
       const MObject&                object,

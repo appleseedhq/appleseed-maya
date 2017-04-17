@@ -42,6 +42,21 @@
 namespace asf = foundation;
 namespace asr = renderer;
 
+AlphaMapExporter* AlphaMapExporter::create(
+    const MObject&                  object,
+    asr::Project&                   project,
+    AppleseedSession::SessionMode   sessionMode)
+{
+    MString map;
+    AttributeUtils::get(object, "map", map);
+
+    // Ignore alpha maps without image files.
+    if (map.length() == 0)
+        return 0;
+
+    return new AlphaMapExporter(object, project, sessionMode);
+}
+
 AlphaMapExporter::AlphaMapExporter(
     const MObject&                  object,
     asr::Project&                   project,

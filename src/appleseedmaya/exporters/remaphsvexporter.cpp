@@ -79,7 +79,7 @@ void RemapHsvExporter::registerExporter()
         &RemapHsvExporter::create);
 }
 
-ShadingNodeExporter *RemapHsvExporter::create(
+ShadingNodeExporter* RemapHsvExporter::create(
     const MObject&      object,
     asr::ShaderGroup&   shaderGroup)
 {

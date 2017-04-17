@@ -39,7 +39,7 @@ class RemapColorExporter
 
     static void registerExporter();
 
-    static ShadingNodeExporter *create(
+    static ShadingNodeExporter* create(
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);
 

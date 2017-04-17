@@ -356,9 +356,6 @@ void MeshExporter::flushEntities()
         m_mesh->get_parameters().insert(
             "alpha_map",
             m_alphaMapExporter->textureInstanceName());
-
-        // Make material assignments double sided if we have an alpha map.
-        m_backMaterialMappings = m_frontMaterialMappings;
     }
 
     // Compute the object hash for auto-instancing.
@@ -388,8 +385,6 @@ void MeshExporter::meshAttributesToParams(renderer::ParamArray& params)
     int mediumPriority = 0;
     if (AttributeUtils::get(node(), "asMediumPriority", mediumPriority))
         params.insert("medium_priority", mediumPriority);
-
-    // todo: handle alpha maps here.
 }
 
 void MeshExporter::createMaterialSlots()

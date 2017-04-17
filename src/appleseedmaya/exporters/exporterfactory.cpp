@@ -43,6 +43,7 @@
 #include "appleseedmaya/exporters/arealightexporter.h"
 #include "appleseedmaya/exporters/cameraexporter.h"
 #include "appleseedmaya/exporters/envlightexporter.h"
+#include "appleseedmaya/exporters/fileexporter.h"
 #include "appleseedmaya/exporters/lightexporter.h"
 #include "appleseedmaya/exporters/meshexporter.h"
 #include "appleseedmaya/exporters/place3dtextureexporter.h"
@@ -87,14 +88,16 @@ MStatus NodeExporterFactory::initialize(const MString& pluginPath)
 {
     AreaLightExporter::registerExporter();
     CameraExporter::registerExporter();
-    PhysicalSkyLightExporter::registerExporter();
-    SkyDomeLightExporter::registerExporter();
     LightExporter::registerExporter();
     MeshExporter::registerExporter();
+    PhysicalSkyLightExporter::registerExporter();
+    SkyDomeLightExporter::registerExporter();
 #ifdef APPLESEED_MAYA_WITH_XGEN
     XGenExporter::registerExporter();
 #endif
+
     ShadingNodeExporter::registerExporters();
+    FileExporter::registerExporter();
     Place3dTextureExporter::registerExporter();
     RampExporter::registerExporter();
     RemapColorExporter::registerExporter();
@@ -190,5 +193,5 @@ AlphaMapExporter*NodeExporterFactory::createAlphaMapExporter(
     asr::Project&                   project,
     AppleseedSession::SessionMode   sessionMode)
 {
-    return new AlphaMapExporter(object, project, sessionMode);
+    return AlphaMapExporter::create(object, project, sessionMode);
 }

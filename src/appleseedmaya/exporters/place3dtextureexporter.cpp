@@ -54,7 +54,7 @@ void Place3dTextureExporter::registerExporter()
         &Place3dTextureExporter::create);
 }
 
-ShadingNodeExporter *Place3dTextureExporter::create(
+ShadingNodeExporter* Place3dTextureExporter::create(
     const MObject&           object,
     asr::ShaderGroup&        shaderGroup)
 {

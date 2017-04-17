@@ -79,7 +79,7 @@ void ShadingNodeExporter::registerExporters()
     }
 }
 
-ShadingNodeExporter *ShadingNodeExporter::create(
+ShadingNodeExporter* ShadingNodeExporter::create(
     const MObject&                      object,
     asr::ShaderGroup&                   shaderGroup)
 {
@@ -138,7 +138,7 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
                 if (otherPlug.isChild())
                 {
                     MPlug srcPlug;
-                    ShadingNodeExporter *srcNodeExporter = getSrcPlugAndExporter(plug, exporters, srcPlug);
+                    ShadingNodeExporter* srcNodeExporter = getSrcPlugAndExporter(plug, exporters, srcPlug);
                     if (!srcNodeExporter)
                     {
                         MFnDependencyNode srcDepNodeFn(srcPlug.node());
@@ -265,7 +265,7 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
         if (plug.isConnected())
         {
             MPlug srcPlug;
-            ShadingNodeExporter *srcNodeExporter = getSrcPlugAndExporter(plug, exporters, srcPlug);
+            ShadingNodeExporter* srcNodeExporter = getSrcPlugAndExporter(plug, exporters, srcPlug);
             if (!srcNodeExporter)
             {
                 MFnDependencyNode srcDepNodeFn(srcPlug.node());
@@ -301,7 +301,7 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
         {
             // Find the node on the other side.
             MPlug srcPlug;
-            ShadingNodeExporter *srcNodeExporter = getSrcPlugAndExporter(plug, exporters, srcPlug);
+            ShadingNodeExporter* srcNodeExporter = getSrcPlugAndExporter(plug, exporters, srcPlug);
             if (!srcNodeExporter)
                 return;
 
@@ -704,7 +704,7 @@ const OSLShaderInfo& ShadingNodeExporter::getShaderInfo() const
     return *shaderInfo;
 }
 
-ShadingNodeExporter *ShadingNodeExporter::findExporterForNode(
+ShadingNodeExporter* ShadingNodeExporter::findExporterForNode(
     ShadingNodeExporterMap&             exporters,
     const MObject&                      node)
 {
@@ -718,7 +718,7 @@ ShadingNodeExporter *ShadingNodeExporter::findExporterForNode(
     return 0;
 }
 
-ShadingNodeExporter *ShadingNodeExporter::getSrcPlugAndExporter(
+ShadingNodeExporter* ShadingNodeExporter::getSrcPlugAndExporter(
     const MPlug&                        plug,
     ShadingNodeExporterMap&             exporters,
     MPlug&                              srcPlug)
@@ -775,7 +775,7 @@ void ShadingNodeExporter::createInputFloatCompoundAdaptorShader(
         if (childPlug.isConnected())
         {
             MPlug srcPlug;
-            ShadingNodeExporter *srcNodeExporter = getSrcPlugAndExporter(childPlug, exporters, srcPlug);
+            ShadingNodeExporter* srcNodeExporter = getSrcPlugAndExporter(childPlug, exporters, srcPlug);
             if (!srcNodeExporter)
             {
                 MFnDependencyNode srcDepNodeFn(srcPlug.node());
