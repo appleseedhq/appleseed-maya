@@ -427,6 +427,14 @@ void ShadingNodeExporter::exportShaderParameters(
             continue;
         }
 
+        // Skip params with shader globals defaults.
+        if (!paramInfo.validDefault)
+            continue;
+
+        // Skip output attributes.
+        if (paramInfo.isOutput)
+            continue;
+
         exportParameterValue(plug, paramInfo, shaderParams);
     }
 }
@@ -436,14 +444,6 @@ void ShadingNodeExporter::exportParameterValue(
     const OSLParamInfo&                 paramInfo,
     renderer::ParamArray&               shaderParams) const
 {
-    // Skip params with shader globals defaults.
-    if (!paramInfo.validDefault)
-        return;
-
-    // Skip output attributes.
-    if (paramInfo.isOutput)
-        return;
-
     if (paramInfo.isArray)
         exportArrayValue(plug, paramInfo, shaderParams);
     else
