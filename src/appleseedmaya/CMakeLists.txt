@@ -52,13 +52,15 @@ set (appleseed_maya_sources
     exporters/arealightexporter.h
     exporters/cameraexporter.cpp
     exporters/cameraexporter.h
-    exporters/envlightexporter.cpp
-    exporters/envlightexporter.h
     exporters/dagnodeexporter.cpp
     exporters/dagnodeexporter.h
     exporters/dagnodeexporterfwd.h
+    exporters/envlightexporter.cpp
+    exporters/envlightexporter.h
     exporters/exporterfactory.cpp
     exporters/exporterfactory.h
+    exporters/fileexporter.cpp
+    exporters/fileexporter.h
     exporters/instanceexporter.cpp
     exporters/instanceexporter.h
     exporters/lightexporter.cpp
