@@ -45,6 +45,7 @@
 #include "appleseedmaya/exporters/envlightexporter.h"
 #include "appleseedmaya/exporters/fileexporter.h"
 #include "appleseedmaya/exporters/lightexporter.h"
+#include "appleseedmaya/exporters/mandelbrotexporter.h"
 #include "appleseedmaya/exporters/meshexporter.h"
 #include "appleseedmaya/exporters/place3dtextureexporter.h"
 #include "appleseedmaya/exporters/rampexporter.h"
@@ -103,6 +104,7 @@ MStatus NodeExporterFactory::initialize(const MString& pluginPath)
     RemapColorExporter::registerExporter();
     RemapHsvExporter::registerExporter();
     RemapValueExporter::registerExporter();
+    MandelbrotExporter::registerExporter();
 
     return MS::kSuccess;
 }

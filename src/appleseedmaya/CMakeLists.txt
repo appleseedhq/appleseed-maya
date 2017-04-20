@@ -65,6 +65,8 @@ set (appleseed_maya_sources
     exporters/instanceexporter.h
     exporters/lightexporter.cpp
     exporters/lightexporter.h
+    exporters/mandelbrotexporter.cpp
+    exporters/mandelbrotexporter.h
     exporters/meshexporter.cpp
     exporters/meshexporter.h
     exporters/place3dtextureexporter.cpp
