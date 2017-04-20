@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_MANDELBROT_EXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_MANDELBROT_EXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_MANDELBROTEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_MANDELBROTEXPORTER_H
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/shadingnodeexporter.h"
@@ -55,4 +55,4 @@ class MandelbrotExporter
         renderer::ParamArray&   shaderParams) const;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_MANDELBROT_EXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_MANDELBROTEXPORTER_H
