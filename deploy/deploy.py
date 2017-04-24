@@ -34,8 +34,32 @@ import argparse
 import platform
 from distutils.dir_util import copy_tree
 
+def get_maya_version(build_dir):
+    maya_include_dir = None
 
-def copy_plugins(args):
+    # Find the Maya include dir from CMake's cache.
+    f = open(os.path.join(build_dir, 'CMakeCache.txt'), 'r')
+    lines = f.readlines()
+    f.close()
+
+    token = 'MAYA_INCLUDE_DIR:PATH=/usr/autodesk/maya2017/include'
+    for line in lines:
+        if line.startswith(token):
+            maya_include_dir = line.split('=')[1].strip()
+            break
+
+    # Find the Maya version from Maya's MTypes.h header.
+    f = open(os.path.join(maya_include_dir, 'maya', 'MTypes.h'), 'r')
+    lines = f.readlines()
+    f.close()
+
+    for line in lines:
+        if '#define' in line:
+            if 'MAYA_API_VERSION' in line:
+                tokens = line.split()
+                return tokens[-1][:4]
+
+def copy_plugins(args, maya_version):
     if platform.system().lower() in ['linux']:
         plugin_ext = '.so'
     elif platform.system().lower() in ['windows']:
@@ -44,31 +68,36 @@ def copy_plugins(args):
         print 'Error: Unsupported platform'
         sys.exit(0)
 
-    plugins_dir = os.path.join(args.directory, 'plug-ins')
+    plugins_dir = os.path.join(args.directory, 'plug-ins', maya_version)
     if not os.path.exists(plugins_dir):
         os.makedirs(plugins_dir)
 
     print 'Copying appleseedMaya plugin'
     shutil.copy(
-        os.path.join(args.build_path, 'src', 'appleseedmaya', 'appleseedMaya' + plugin_ext),
+        os.path.join(args.build_dir, 'src', 'appleseedmaya', 'appleseedMaya' + plugin_ext),
         plugins_dir
     )
 
 def main():
-    parser = argparse.ArgumentParser(description='deploy maya plugin')
+    parser = argparse.ArgumentParser(description='Deploy Maya plugin')
 
-    parser.add_argument('-b', '--build-path', metavar='build-path', help='set the path to the build directory')
+    parser.add_argument('-b', '--build-dir', metavar='build-dir', help='set the path to the build directory')
     parser.add_argument('directory', help='destination directory')
     args = parser.parse_args()
 
     print 'Deploying appleseedMaya to %s...' % args.directory
+    this_dir = os.path.dirname(os.path.realpath(__file__))
+    root_dir = os.path.join(this_dir, '..')
 
-    deploy_dir = os.path.dirname(os.path.realpath(__file__))
+    print 'Creating deploy directory...'
+    if not os.path.exists(args.directory):
+        os.makedirs(args.directory)
 
-    print 'Copying module file'
-    shutil.copy(os.path.join(deploy_dir, 'appleseedMaya.mod'), args.directory)
+    maya_version = get_maya_version(args.build_dir)
+    print 'Maya version = %s' % maya_version
 
-    root_dir = os.path.join(deploy_dir, '..')
+    print 'Copying module file...'
+    shutil.copy(os.path.join(this_dir, 'appleseedMaya.mod'), args.directory)
 
     print 'Copying icons...'
     copy_tree(os.path.join(root_dir, 'icons'), os.path.join(args.directory, 'icons'))
@@ -83,7 +112,7 @@ def main():
     copy_tree(os.path.join(root_dir, 'scripts'), os.path.join(args.directory, 'scripts'))
 
     print 'Copying plugins...'
-    copy_plugins(args)
+    copy_plugins(args, maya_version)
 
 if __name__ == '__main__':
     main()
