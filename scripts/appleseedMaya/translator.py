@@ -88,13 +88,29 @@ def appleseedTranslatorOptions(parent, action, initialSettings, resultCallback):
 
         mc.separator(style="single")
 
+        def exportAnimChanged(value):
+            mc.intSliderGrp(
+                "as_exportOpts_startFrame",
+                edit=True,
+                enable=value)
+
+            mc.intSliderGrp(
+                "as_exportOpts_endFrame",
+                edit=True,
+                enable=value)
+
+            mc.intSliderGrp(
+                "as_exportOpts_stepFrame",
+                edit=True,
+                enable=value)
+
         exportAnim = defaults["exportAnim"]
         mc.checkBoxGrp(
             "as_exportOpts_exportAnim",
             numberOfCheckBoxes=1,
             label=" ",
             label1="Animation",
-            #cc=cllback...
+            cc=exportAnimChanged,
             value1=exportAnim)
 
         mc.intSliderGrp(
@@ -103,7 +119,7 @@ def appleseedTranslatorOptions(parent, action, initialSettings, resultCallback):
             field=True,
             min=1,
             max=1000,
-            #enable=exportAnim,
+            enable=exportAnim,
             value=defaults["startFrame"])
 
         mc.intSliderGrp(
@@ -112,7 +128,7 @@ def appleseedTranslatorOptions(parent, action, initialSettings, resultCallback):
             field=True,
             min=1,
             max=1000,
-            #enable=exportAnim,
+            enable=exportAnim,
             value=defaults["endFrame"])
 
         mc.intSliderGrp(
@@ -121,7 +137,7 @@ def appleseedTranslatorOptions(parent, action, initialSettings, resultCallback):
             field=True,
             min=1,
             max=100,
-            #enable=exportAnim,
+            enable=exportAnim,
             value=defaults["stepFrame"])
 
     elif action == "query":
