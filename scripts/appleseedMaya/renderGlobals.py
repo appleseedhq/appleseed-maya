@@ -214,6 +214,12 @@ class AppleseedRenderGlobalsMainTab(object):
         attr = pm.Attribute("appleseedRenderGlobals." + attrName)
         pm.connectControl(ui, attr, index=connectIndex)
 
+    def __limitBouncesChanged(self, value):
+        self.__uis["bounces"].setEnable(value)
+        self.__uis["specularBounces"].setEnable(value)
+        self.__uis["glossyBounces"].setEnable(value)
+        self.__uis["diffuseBounces"].setEnable(value)
+
     def __environmentLightSelected(self, envLight):
         logger.debug("Environment light selected: %s" % envLight)
 
@@ -302,25 +308,34 @@ class AppleseedRenderGlobalsMainTab(object):
                 with pm.frameLayout(label="Lighting", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
                         self.__addControl(
-                            ui=pm.checkBoxGrp(label="Global Illumination"),
-                            attrName="gi")
+                            ui=pm.checkBoxGrp(label="Limit Bounces", changeCommand=self.__limitBouncesChanged),
+                            attrName="limitBounces")
+                        limitBounces = mc.getAttr("appleseedRenderGlobals.limitBounces")
+
                         self.__addControl(
-                            ui=pm.checkBoxGrp(label="Caustics"),
-                            attrName="caustics")
-                        self.__addControl(
-                            ui=pm.intFieldGrp(label="GI Bounces", numberOfFields = 1),
+                            ui=pm.intFieldGrp(label="Global Bounces", numberOfFields = 1, enable=limitBounces),
                             attrName="bounces")
-
                         self.__addControl(
-                            ui=pm.floatFieldGrp(label="Max Ray Intensity", numberOfFields = 1),
-                            attrName="maxRayIntensity")
-
+                            ui=pm.intFieldGrp(label="Specular Bounces", numberOfFields = 1, enable=limitBounces),
+                            attrName="specularBounces")
+                        self.__addControl(
+                            ui=pm.intFieldGrp(label="Glossy Bounces", numberOfFields = 1, enable=limitBounces),
+                            attrName="glossyBounces")
+                        self.__addControl(
+                            ui=pm.intFieldGrp(label="Diffuse Bounces", numberOfFields = 1, enable=limitBounces),
+                            attrName="diffuseBounces")
                         self.__addControl(
                             ui=pm.floatFieldGrp(label="Light Samples", numberOfFields = 1),
                             attrName="lightSamples")
                         self.__addControl(
                             ui=pm.floatFieldGrp(label="Environment Samples", numberOfFields = 1),
                             attrName="envSamples")
+                        self.__addControl(
+                            ui=pm.checkBoxGrp(label="Caustics"),
+                            attrName="caustics")
+                        self.__addControl(
+                            ui=pm.floatFieldGrp(label="Max Ray Intensity", numberOfFields = 1),
+                            attrName="maxRayIntensity")
 
                 with pm.frameLayout(label="Environment", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
