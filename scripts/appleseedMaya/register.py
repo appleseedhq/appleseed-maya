@@ -126,31 +126,21 @@ def register():
             logger.debug("Registering AE template %s" % templateModule)
             mel.eval('python("import appleseedMaya.aetemplate.%s")' % templateModule)
 
-    # Hypershader callbacks
-    pm.callbacks(
-        addCallback=hyperShadePanelBuildCreateMenuCallback,
-        hook="hyperShadePanelBuildCreateMenu",
-        owner="appleseed"
-    )
-    pm.callbacks(
-        addCallback=hyperShadePanelBuildCreateSubMenuCallback,
-        hook="hyperShadePanelBuildCreateSubMenu",
-        owner="appleseed"
-    )
-    pm.callbacks(
-        addCallback=buildRenderNodeTreeListerContentCallback,
-        hook='buildRenderNodeTreeListerContent',
-        owner="appleseed"
-    )
-
-    pm.callbacks(
-        addCallback=createRenderNodeCallback,
-        hook='createRenderNodeCommand',
-        owner="appleseed")
-    pm.callbacks(
-        addCallback=connectNodeToNodeOverrideCallback,
-        hook='connectNodeToNodeOverrideCallback',
-        owner="appleseed")
+    # Hypershade callbacks
+    hypershadeCallbacks = [
+        ("hyperShadePanelBuildCreateMenu"       , hyperShadePanelBuildCreateMenuCallback),
+        ("hyperShadePanelBuildCreateSubMenu"    , hyperShadePanelBuildCreateSubMenuCallback),
+        ("hyperShadePanelPluginChange"          , hyperShadePanelPluginChangeCallback),
+        ("createRenderNodeSelectNodeCategories" , createRenderNodeSelectNodeCategoriesCallback),
+        ("createRenderNodePluginChange"         , createRenderNodePluginChangeCallback),
+        ("renderNodeClassification"             , renderNodeClassificationCallback),
+        ("createRenderNodeCommand"              , createRenderNodeCallback),
+        ("nodeCanBeUsedAsMaterial"              , nodeCanBeUsedAsMaterialCallback),
+        ("buildRenderNodeTreeListerContent"     , buildRenderNodeTreeListerContentCallback)
+    ]
+    for h, c in hypershadeCallbacks:
+        logger.debug("Adding {0} callback.".format(h))
+        pm.callbacks(addCallback=c, hook=h, owner="appleseed")
 
     # Appleseed translator.
     createTranslatorMelProcedures()
