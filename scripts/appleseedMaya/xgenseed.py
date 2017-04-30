@@ -39,13 +39,13 @@ def appleseedExport(self, objs, filename, lod, materialNS):
     pass
 
 # Export Init callback. Must fill in some arrays on self
-def xgseedArchiveExportInit( selfid ):
+def xgseedArchiveExportInit(selfid):
     logger.debug("xgenseed archive export init.")
 
     self = xgenseedutil.castSelf(selfid)
     self.batch_plugins.append("appleseedMaya")
 
-# Export Info callback. Must fill in som arrays on self
+# Export Info callback. Must fill in some arrays on self
 def xgseedArchiveExportInfo(selfid):
     logger.debug("xgenseed archive export info.")
 
@@ -60,4 +60,10 @@ def xgseedArchiveExport(selfid):
     logger.debug("xgenseed archive export")
 
     self = xgenseedutil.castSelf(selfid)
-    appleseedExport(self, self.invokeArgs[0], self.invokeArgs[1], self.invokeArgs[2], self.invokeArgs[3])
+    appleseedExport(
+        self=self,
+        objs=self.invokeArgs[0],
+        filename=self.invokeArgs[1],
+        lod=self.invokeArgs[2],
+        materialNS=self.invokeArgs[3]
+    )

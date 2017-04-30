@@ -59,6 +59,7 @@ namespace asr = renderer;
 
 namespace
 {
+
 asf::auto_release_ptr<asr::Project> g_project;
 asr::Assembly*                      g_mainAssembly;
 asr::Material*                      g_material;
