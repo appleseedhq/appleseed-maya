@@ -412,9 +412,6 @@ void RenderGlobalsNode::applyGlobalsToProject(
     {
         finalParams.insert_path("pt.dl_light_samples", lightSamples);
         iprParams.insert_path("pt.dl_light_samples", lightSamples);
-
-        finalParams.insert_path("drt.dl_light_samples", lightSamples);
-        iprParams.insert_path("drt.dl_light_samples", lightSamples);
     }
 
     float envSamples;
@@ -422,9 +419,6 @@ void RenderGlobalsNode::applyGlobalsToProject(
     {
         finalParams.insert_path("pt.ibl_env_samples", envSamples);
         iprParams.insert_path("pt.ibl_env_samples", envSamples);
-
-        finalParams.insert_path("drt.ibl_env_samples", envSamples);
-        iprParams.insert_path("drt.ibl_env_samples", envSamples);
     }
 
     int threads;
