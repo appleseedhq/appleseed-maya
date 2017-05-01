@@ -96,8 +96,6 @@ set (appleseed_maya_sources
     hypershaderenderer.h
     idlejobqueue.cpp
     idlejobqueue.h
-    imageutils.cpp
-    imageutils.h
     logger.cpp
     logger.h
     murmurhash.cpp

@@ -34,6 +34,8 @@
 #include <maya/MImage.h>
 
 // appleseed.foundation headers.
+#include "foundation/image/image.h"
+#include "foundation/image/tile.h"
 #include "foundation/math/vector.h"
 #include "foundation/utility/iostreamop.h"
 
@@ -51,8 +53,8 @@
 #include "renderer/api/scene.h"
 
 // appleseed.maya headers.
-#include "appleseedmaya/imageutils.h"
 #include "appleseedmaya/logger.h"
+#include "appleseedmaya/utils.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -60,11 +62,222 @@ namespace asr = renderer;
 namespace
 {
 
-asf::auto_release_ptr<asr::Project> g_project;
-asr::Assembly*                      g_mainAssembly;
-asr::Material*                      g_material;
-asr::MasterRenderer*                g_renderer;
-asr::DefaultRendererController      g_rendererController;
+class SwatchProject
+  : public NonCopyable
+{
+  public:
+
+    SwatchProject()
+    {
+    }
+
+    void initialize()
+    {
+        assert(m_project.get() == 0);
+
+        m_project = asr::ProjectFactory::create("project");
+        m_project->add_default_configurations();
+
+        const size_t NumThreads = 2;
+
+        // Insert some config params needed by the final renderer.
+        asr::Configuration* cfg = m_project->configurations().get_by_name("final");
+        asr::ParamArray* cfg_params = &cfg->get_parameters();
+        cfg_params->insert("sample_renderer", "generic");
+        cfg_params->insert("sample_generator", "generic");
+        cfg_params->insert("tile_renderer", "generic");
+        cfg_params->insert("frame_renderer", "generic");
+        cfg_params->insert("lighting_engine", "pt");
+        cfg_params->insert("pixel_renderer", "uniform");
+        cfg_params->insert("sampling_mode", "qmc");
+        cfg_params->insert_path("uniform_pixel_renderer.samples", "4");
+        cfg_params->insert("rendering_threads", NumThreads);
+
+        // While testing...
+        cfg_params->insert_path("shading_engine.override_shading.mode", "facing_ratio");
+
+        // Create some basic project entities.
+
+        // Create the scene
+        asf::auto_release_ptr<asr::Scene> scene = asr::SceneFactory::create();
+        m_project->set_scene(scene);
+
+        // Create the camera.
+        asf::auto_release_ptr<asr::Camera> camera = asr::PinholeCameraFactory().create(
+            "camera",
+            asr::ParamArray()
+                .insert("film_dimensions", "0.0359999 0.0359999")
+                .insert("focal_length", "0.035"));
+        camera->transform_sequence().set_transform(
+            0.0f,
+            asf::Transformd(asf::Matrix4d::make_translation(asf::Vector3d(0.0, 0.0, 2.65))));
+        m_project->get_scene()->cameras().insert(camera);
+
+        // Create the frame.
+        const size_t TileSize = 32;
+        asf::auto_release_ptr<asr::Frame> frame(
+            asr::FrameFactory::create(
+                "beauty",
+                asr::ParamArray()
+                    .insert("resolution", "128 128")
+                    .insert("camera", "camera")
+                    .insert("pixel_format", "uint8")
+                    .insert("color_space", "srgb")
+                    .insert("tile_size", asf::Vector2i(TileSize, TileSize))));
+        m_project->set_frame(frame);
+
+        // Create the environment.
+        asf::auto_release_ptr<asr::EnvironmentEDF> environmentEDF(asr::ConstantEnvironmentEDFFactory().create(
+            "environmentEDF",
+            asr::ParamArray().insert("radiance", "0.2")));
+        m_project->get_scene()->environment_edfs().insert(environmentEDF);
+
+        asf::auto_release_ptr<asr::EnvironmentShader> environmentShader(asr::EDFEnvironmentShaderFactory().create(
+            "environmentShader",
+            asr::ParamArray()
+                .insert("environment_edf", "environmentEDF")
+                .insert("alpha_value", "1.0")));
+        m_project->get_scene()->environment_shaders().insert(environmentShader);
+
+        asf::auto_release_ptr<asr::Environment> environment(asr::EnvironmentFactory().create(
+            "environment",
+            asr::ParamArray().insert("environment_shader", "environmentShader")));
+        m_project->get_scene()->set_environment(environment);
+
+        // Create the main assembly.
+        asf::auto_release_ptr<asr::Assembly> assembly = asr::AssemblyFactory().create("assembly", asr::ParamArray());
+        m_mainAssembly = assembly.get();
+        m_project->get_scene()->assemblies().insert(assembly);
+
+        // Create the light.
+        asf::auto_release_ptr<asr::Light> light = asr::DirectionalLightFactory().create(
+            "light",
+            asr::ParamArray().insert("irradiance", "2.0"));
+        m_mainAssembly->lights().insert(light);
+
+        // Create the material.
+        asf::auto_release_ptr<asr::Material> material = asr::OSLMaterialFactory().create(
+            "material",
+            asr::ParamArray());
+        m_material = material.get();
+        m_mainAssembly->materials().insert(material);
+
+        // Instance the main assembly.
+        asf::auto_release_ptr<asr::AssemblyInstance> assemblyInstance = asr::AssemblyInstanceFactory::create(
+            "assembly_inst",
+            asr::ParamArray(),
+            "assembly");
+        m_project->get_scene()->assembly_instances().insert(assemblyInstance);
+
+        // Create the master renderer.
+        m_renderer =
+            new asr::MasterRenderer(
+                m_project.ref(),
+                m_project->configurations().get_by_name("final")->get_inherited_parameters(),
+                &m_rendererController);
+    }
+
+    void createMaterialSceneGeometry()
+    {
+        // Create the geometry.
+        asf::auto_release_ptr<asr::MeshObject> sphere = asr::create_primitive_mesh(
+            "sphere",
+            asr::ParamArray()
+                .insert("primitive", "sphere")
+                .insert("radius", "1.0")
+                .insert("resolution_u", "30")
+                .insert("resolution_v", "15"));
+        m_mainAssembly->objects().insert(asf::auto_release_ptr<asr::Object>(sphere.release()));
+
+        asf::StringDictionary materials;
+        materials.insert("default", m_material->get_name());
+
+        asf::auto_release_ptr<asr::ObjectInstance> objInstance = asr::ObjectInstanceFactory().create(
+            "sphereInstance",
+            asr::ParamArray(),
+            "sphere",
+            asf::Transformd::make_identity(),
+            materials,
+            materials);
+        m_mainAssembly->object_instances().insert(objInstance);
+    }
+
+    void uninitialize()
+    {
+        m_project.reset();
+        delete m_renderer;
+    }
+
+    void removeAllShaderGroups()
+    {
+        m_mainAssembly->shader_groups().clear();
+        m_material->get_parameters().remove_path("osl_surface");
+    }
+
+    void render(const size_t resolution)
+    {
+        // Disable logging while rendering the swatch.
+        ScopedSetLoggerVerbosity logLevel(asf::LogMessage::Error);
+
+        // Recreate the frame.
+        asr::ParamArray frameParams = m_project->get_frame()->get_parameters();
+        frameParams.insert("resolution", asf::Vector2i(resolution, resolution));
+        asf::auto_release_ptr<asr::Frame> frame(asr::FrameFactory::create("beauty", frameParams));
+        m_project->set_frame(frame);
+
+        // Render.
+        m_renderer->render();
+    }
+
+    void copySwatchImage(MImage& dstImage) const
+    {
+        const asf::Image& srcImage = m_project->get_frame()->image();
+        const asf::CanvasProperties& props = srcImage.properties();
+
+        unsigned int width = props.m_canvas_width;
+        unsigned int height = props.m_canvas_height;
+        dstImage.create(width, height);
+
+        for (size_t ty = 0; ty < props.m_tile_count_y; ++ty)
+        {
+            for (size_t tx = 0; tx < props.m_tile_count_x; ++tx)
+            {
+                // todo: do we need to flip the image vertically
+                // like in the render view?
+                const size_t x0 = props.m_tile_width * tx;
+                const size_t y0 = props.m_tile_height * ty;
+
+                const asf::Tile& tile = srcImage.tile(tx, ty);
+                const uint8_t *src = tile.get_storage();
+
+                for (size_t j = 0, je = tile.get_height(); j < je; ++j)
+                {
+                    // For swatches, we assume 4 8 bit channels.
+                    const size_t y = y0 + j;
+                    uint8_t *dst = dstImage.pixels() + (y * width * 4) + (x0 * 4);
+
+                    for (size_t i = 0, ie = tile.get_width(); i < ie; ++i)
+                    {
+                        // Maya docs say RGBA, but it is actually BGRA?.
+                        *dst++ = src[2];
+                        *dst++ = src[1];
+                        *dst++ = src[0];
+                        *dst++ = src[3];
+                        src += 4;
+                    }
+                }
+            }
+        }
+    }
+
+    asf::auto_release_ptr<asr::Project> m_project;
+    asr::Assembly*                      m_mainAssembly;
+    asr::Material*                      m_material;
+    asr::MasterRenderer*                m_renderer;
+    asr::DefaultRendererController      m_rendererController;
+};
+
+SwatchProject g_materialSwatchProject;
 
 }
 
@@ -73,150 +286,14 @@ const MString SwatchRenderer::fullName("swatch/AppleseedRenderSwatch");
 
 void SwatchRenderer::initialize()
 {
-    assert(g_project.get() == 0);
-
-    g_project = asr::ProjectFactory::create("project");
-    g_project->add_default_configurations();
-
-    const size_t NumThreads = 2;
-
-    // Insert some config params needed by the interactive renderer.
-    asr::Configuration *cfg = g_project->configurations().get_by_name("interactive");
-    asr::ParamArray *cfg_params = &cfg->get_parameters();
-    cfg_params->insert("sample_renderer", "generic");
-    cfg_params->insert("sample_generator", "generic");
-    cfg_params->insert("tile_renderer", "generic");
-    cfg_params->insert("frame_renderer", "progressive");
-    cfg_params->insert("lighting_engine", "pt");
-    cfg_params->insert("pixel_renderer", "uniform");
-    cfg_params->insert("sampling_mode", "qmc");
-    cfg_params->insert_path("progressive_frame_renderer.max_fps", "5");
-    cfg_params->insert("rendering_threads", NumThreads);
-
-    // Insert some config params needed by the final renderer.
-    cfg = g_project->configurations().get_by_name("final");
-    cfg_params = &cfg->get_parameters();
-    cfg_params->insert("sample_renderer", "generic");
-    cfg_params->insert("sample_generator", "generic");
-    cfg_params->insert("tile_renderer", "generic");
-    cfg_params->insert("frame_renderer", "generic");
-    cfg_params->insert("lighting_engine", "pt");
-    cfg_params->insert("pixel_renderer", "uniform");
-    cfg_params->insert("sampling_mode", "qmc");
-    cfg_params->insert_path("uniform_pixel_renderer.samples", "4");
-    cfg_params->insert("rendering_threads", NumThreads);
-
-    // Create some basic project entities.
-
-    // Create the scene
-    asf::auto_release_ptr<asr::Scene> scene = asr::SceneFactory::create();
-    g_project->set_scene(scene);
-
-    // Create the camera.
-    asf::auto_release_ptr<asr::Camera> camera = asr::PinholeCameraFactory().create(
-        "camera",
-        asr::ParamArray()
-            .insert("film_dimensions", "0.0359999 0.0359999")
-            .insert("focal_length", "0.035"));
-    camera->transform_sequence().set_transform(
-        0.0f,
-        asf::Transformd(asf::Matrix4d::make_translation(asf::Vector3d(0.0, 0.0, 2.65))));
-    g_project->get_scene()->cameras().insert(camera);
-
-    // Create the frame.
-    const size_t TileSize = 32;
-    asf::auto_release_ptr<asr::Frame> frame(
-        asr::FrameFactory::create(
-            "beauty",
-            asr::ParamArray()
-                .insert("resolution", "128 128")
-                .insert("camera", "camera")
-                .insert("pixel_format", "uint8")
-                .insert("color_space", "srgb")
-                .insert("tile_size", asf::Vector2i(TileSize, TileSize))));
-    g_project->set_frame(frame);
-
-    // Create the environment.
-    asf::auto_release_ptr<asr::EnvironmentEDF> environmentEDF(asr::ConstantEnvironmentEDFFactory().create(
-        "environmentEDF",
-        asr::ParamArray().insert("radiance", "0.2")));
-    g_project->get_scene()->environment_edfs().insert(environmentEDF);
-
-    asf::auto_release_ptr<asr::EnvironmentShader> environmentShader(asr::EDFEnvironmentShaderFactory().create(
-        "environmentShader",
-        asr::ParamArray()
-            .insert("environment_edf", "environmentEDF")
-            .insert("alpha_value", "1.0")));
-    g_project->get_scene()->environment_shaders().insert(environmentShader);
-
-    asf::auto_release_ptr<asr::Environment> environment(asr::EnvironmentFactory().create(
-        "environment",
-        asr::ParamArray().insert("environment_shader", "environmentShader")));
-    g_project->get_scene()->set_environment(environment);
-
-    // Create the main assembly.
-    asf::auto_release_ptr<asr::Assembly> assembly = asr::AssemblyFactory().create("assembly", asr::ParamArray());
-    g_mainAssembly = assembly.get();
-    g_project->get_scene()->assemblies().insert(assembly);
-
-    // Create the light.
-    asf::auto_release_ptr<asr::Light> light = asr::DirectionalLightFactory().create(
-        "light",
-        asr::ParamArray().insert("irradiance", "2.0"));
-    g_mainAssembly->lights().insert(light);
-
-    // Create the material.
-    asf::auto_release_ptr<asr::Material> material = asr::OSLMaterialFactory().create(
-        "material",
-        asr::ParamArray());
-    g_material = material.get();
-    g_mainAssembly->materials().insert(material);
-
-    // Create the geometry.
-    asf::auto_release_ptr<asr::MeshObject> sphere = asr::create_primitive_mesh(
-        "sphere",
-        asr::ParamArray()
-            .insert("primitive", "sphere")
-            .insert("radius", "1.0")
-            .insert("resolution_u", "30")
-            .insert("resolution_v", "15"));
-    g_mainAssembly->objects().insert(asf::auto_release_ptr<asr::Object>(sphere.release()));
-
-    asf::StringDictionary materials;
-    materials.insert("default", g_material->get_name());
-
-    asf::auto_release_ptr<asr::ObjectInstance> objInstance = asr::ObjectInstanceFactory().create(
-        "sphereInstance",
-        asr::ParamArray(),
-        "sphere",
-        asf::Transformd::make_identity(),
-        materials,
-        materials);
-    g_mainAssembly->object_instances().insert(objInstance);
-
-    // Instance the main assembly.
-    asf::auto_release_ptr<asr::AssemblyInstance> assemblyInstance = asr::AssemblyInstanceFactory::create("assembly_inst", asr::ParamArray(), "assembly");
-    g_project->get_scene()->assembly_instances().insert(assemblyInstance);
-
-    // While testing...
-    cfg_params->insert_path(
-        "shading_engine.override_shading.mode",
-        "facing_ratio");
-
-    // Create the master renderer.
-    g_renderer =
-        new asr::MasterRenderer(
-            g_project.ref(),
-            g_project->configurations().get_by_name("final")->get_inherited_parameters(),
-            &g_rendererController);
-
+    g_materialSwatchProject.initialize();
+    g_materialSwatchProject.createMaterialSceneGeometry();
     RENDERER_LOG_INFO("Initialized swatch renderer.");
 }
 
 void SwatchRenderer::uninitialize()
 {
-    delete g_renderer;
-    g_project.reset();
+    g_materialSwatchProject.uninitialize();
     RENDERER_LOG_INFO("Uninitialized swatch renderer.");
 }
 
@@ -250,25 +327,11 @@ bool SwatchRenderer::doIteration()
         classification.asChar(),
         resolution());
 
-    // Disable logging while rendering the swatch.
-    ScopedSetLoggerVerbosity logLevel(asf::LogMessage::Error);
-
-    // Remove all shadergroups.
-    g_mainAssembly->shader_groups().clear();
-    g_material->get_parameters().remove_path("osl_surface");
+    g_materialSwatchProject.removeAllShaderGroups();
 
     // todo: export node() here...
 
-    image().create(resolution(), resolution());
-
-    // Recreate the frame.
-    asr::ParamArray frameParams = g_project->get_frame()->get_parameters();
-    frameParams.insert("resolution", asf::Vector2i(resolution(), resolution()));
-    asf::auto_release_ptr<asr::Frame> frame(asr::FrameFactory::create("beauty", frameParams));
-    g_project->set_frame(frame);
-
-    g_renderer->render();
-
-    ImageUtils::copySwatchImage(g_project->get_frame()->image(), image());
+    g_materialSwatchProject.render(resolution());
+    g_materialSwatchProject.copySwatchImage(image());
     return true;
 }
