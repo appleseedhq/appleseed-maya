@@ -124,11 +124,12 @@ void AreaLightExporter::createEntities(const AppleseedSession::Options& options)
 
     asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
 
-    // Rotate x -90 degrees to match Maya's default light orientation.
+    // Rotate to match Maya's default light orientation and UVs.
     m = m * asf::Matrix4d::make_rotation_x(asf::deg_to_rad(-90.0));
+    m = m * asf::Matrix4d::make_rotation_y(asf::deg_to_rad(180.0));
+    params.clear();
 
     const MString objectInstanceName = appleseedName() + MString("_instance");
-    params.clear();
     visibilityAttributesToParams(params);
     m_objectInstance.reset(
         asr::ObjectInstanceFactory::create(
