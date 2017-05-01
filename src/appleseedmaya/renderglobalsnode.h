@@ -62,12 +62,16 @@ class RenderGlobalsNode
     static MObject      m_diagnosticShader;
     static MStringArray m_diagnosticShaderKeys;
 
-    static MObject m_gi;
-    static MObject m_caustics;
-    static MObject m_bounces;
-    static MObject m_maxRayIntensity;
+    static MObject m_limitBounces;
+    static MObject m_globalBounces;
+    static MObject m_specularBounces;
+    static MObject m_glossyBounces;
+    static MObject m_diffuseBounces;
+
     static MObject m_lightSamples;
     static MObject m_envSamples;
+    static MObject m_caustics;
+    static MObject m_maxRayIntensity;
 
     static MObject m_envLightNode;
     static MObject m_backgroundEmitsLight;

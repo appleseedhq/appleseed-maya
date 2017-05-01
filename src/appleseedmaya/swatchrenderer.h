@@ -47,12 +47,14 @@ class SwatchRenderer
         MObject renderNode,
         int     imageResolution);
 
+    virtual bool doIteration();
+
+  private:
+
     SwatchRenderer(
         MObject dependNode,
         MObject renderNode,
         int     imageResolution);
-
-    virtual bool doIteration();
 };
 
 #endif  // !APPLESEED_MAYA_SWATCH_RENDERER_H

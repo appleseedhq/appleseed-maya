@@ -61,12 +61,15 @@ MObject RenderGlobalsNode::m_tileSize;
 MStringArray RenderGlobalsNode::m_diagnosticShaderKeys;
 MObject RenderGlobalsNode::m_diagnosticShader;
 
-MObject RenderGlobalsNode::m_gi;
-MObject RenderGlobalsNode::m_caustics;
-MObject RenderGlobalsNode::m_bounces;
-MObject RenderGlobalsNode::m_maxRayIntensity;
+MObject RenderGlobalsNode::m_limitBounces;
+MObject RenderGlobalsNode::m_globalBounces;
+MObject RenderGlobalsNode::m_specularBounces;
+MObject RenderGlobalsNode::m_glossyBounces;
+MObject RenderGlobalsNode::m_diffuseBounces;
 MObject RenderGlobalsNode::m_lightSamples;
 MObject RenderGlobalsNode::m_envSamples;
+MObject RenderGlobalsNode::m_caustics;
+MObject RenderGlobalsNode::m_maxRayIntensity;
 
 MObject RenderGlobalsNode::m_backgroundEmitsLight;
 MObject RenderGlobalsNode::m_envLightNode;
@@ -155,50 +158,64 @@ MStatus RenderGlobalsNode::initialize()
         status,
         "appleseedMaya: Failed to add render globals diagnostic shader attribute");
 
-    // GI.
-    m_gi = numAttrFn.create("gi", "gi", MFnNumericData::kBoolean, true, &status);
+    // Limit bounces.
+    m_limitBounces = numAttrFn.create("limitBounces", "limitBounces", MFnNumericData::kBoolean, false, &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
-        "appleseedMaya: Failed to create render globals gi attribute");
+        "appleseedMaya: Failed to create render globals limitBounces attribute");
 
-    status = addAttribute(m_gi);
+    status = addAttribute(m_limitBounces);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
-        "appleseedMaya: Failed to add render globals gi attribute");
+        "appleseedMaya: Failed to add render globals limitBounces attribute");
 
-    // Caustics.
-    m_caustics = numAttrFn.create("caustics", "caustics", MFnNumericData::kBoolean, false, &status);
-    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
-        status,
-        "appleseedMaya: Failed to create render globals caustics attribute");
-
-    status = addAttribute(m_caustics);
-    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
-        status,
-        "appleseedMaya: Failed to add render globals caustics attribute");
-
-    // GI Bounces.
-    m_bounces = numAttrFn.create("bounces", "bounces", MFnNumericData::kInt, 8, &status);
+    // Global Bounces.
+    m_globalBounces = numAttrFn.create("bounces", "bounces", MFnNumericData::kInt, 8, &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: Failed to create render globals bounces attribute");
 
     numAttrFn.setMin(0);
-    status = addAttribute(m_bounces);
+    status = addAttribute(m_globalBounces);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: Failed to add render globals bounces attribute");
 
-    // Max Ray Intensity.
-    m_maxRayIntensity = numAttrFn.create("maxRayIntensity", "maxRayIntensity", MFnNumericData::kFloat, 0.0f, &status);
+    // Specular Bounces.
+    m_specularBounces = numAttrFn.create("specularBounces", "specularBounces", MFnNumericData::kInt, 8, &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
-        "appleseedMaya: Failed to create render globals maxRayIntensity attribute");
-    numAttrFn.setMin(0.0f);
-    status = addAttribute(m_maxRayIntensity);
+        "appleseedMaya: Failed to create render globals specular bounces attribute");
+
+    numAttrFn.setMin(0);
+    status = addAttribute(m_specularBounces);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
-        "appleseedMaya: Failed to add render globals maxRayIntensity attribute");
+        "appleseedMaya: Failed to add render globals specular bounces attribute");
+
+    // Glossy Bounces.
+    m_glossyBounces = numAttrFn.create("glossyBounces", "glossyBounces", MFnNumericData::kInt, 8, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals glossy bounces attribute");
+
+    numAttrFn.setMin(0);
+    status = addAttribute(m_glossyBounces);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals glossy bounces attribute");
+
+    // Diffuse Bounces.
+    m_diffuseBounces = numAttrFn.create("diffuseBounces", "diffuseBounces", MFnNumericData::kInt, 8, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals diffuse bounces attribute");
+
+    numAttrFn.setMin(0);
+    status = addAttribute(m_diffuseBounces);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals diffuse bounces attribute");
 
     // Light Samples.
     m_lightSamples = numAttrFn.create("lightSamples", "lightSamples", MFnNumericData::kFloat, 1.0f, &status);
@@ -221,6 +238,28 @@ MStatus RenderGlobalsNode::initialize()
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: Failed to add render globals envSamples attribute");
+
+    // Caustics.
+    m_caustics = numAttrFn.create("caustics", "caustics", MFnNumericData::kBoolean, false, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals caustics attribute");
+
+    status = addAttribute(m_caustics);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals caustics attribute");
+
+    // Max Ray Intensity.
+    m_maxRayIntensity = numAttrFn.create("maxRayIntensity", "maxRayIntensity", MFnNumericData::kFloat, 0.0f, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals maxRayIntensity attribute");
+    numAttrFn.setMin(0.0f);
+    status = addAttribute(m_maxRayIntensity);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals maxRayIntensity attribute");
 
     // Background emits light.
     m_backgroundEmitsLight = numAttrFn.create("bgLight", "bgLight", MFnNumericData::kBoolean, true, &status);
@@ -311,29 +350,38 @@ void RenderGlobalsNode::applyGlobalsToProject(
         }
     }
 
-    bool gi;
-    if (AttributeUtils::get(MPlug(globals, m_gi), gi))
-    {
-        if (gi)
-        {
-            finalParams.insert_path("lighting_engine", "pt");
-            iprParams.insert_path("lighting_engine", "pt");
-        }
-        else
-        {
-            finalParams.insert_path("lighting_engine", "drt");
-            iprParams.insert_path("lighting_engine", "drt");
-        }
-    }
+    bool limitBounces = false;
+    AttributeUtils::get(MPlug(globals, m_limitBounces), limitBounces);
 
-    int bounces = 0;
-    AttributeUtils::get(MPlug(globals, m_bounces), bounces);
+    if (limitBounces)
     {
-        finalParams.insert_path("pt.max_path_length", bounces);
-        iprParams.insert_path("pt.max_path_length", bounces);
+        int bounces = -1;
+        if (AttributeUtils::get(MPlug(globals, m_globalBounces), bounces))
+        {
+            finalParams.insert_path("pt.max_path_length", bounces);
+            iprParams.insert_path("pt.max_path_length", bounces);
+        }
 
-        finalParams.insert_path("drt.max_path_length", bounces);
-        iprParams.insert_path("drt.max_path_length", bounces);
+        bounces = -1;
+        if (AttributeUtils::get(MPlug(globals, m_specularBounces), bounces))
+        {
+            finalParams.insert_path("pt.max_specular_bounces", bounces);
+            iprParams.insert_path("pt.max_specular_bounces", bounces);
+        }
+
+        bounces = -1;
+        if (AttributeUtils::get(MPlug(globals, m_glossyBounces), bounces))
+        {
+            finalParams.insert_path("pt.max_glossy_bounces", bounces);
+            iprParams.insert_path("pt.max_glossy_bounces", bounces);
+        }
+
+        bounces = -1;
+        if (AttributeUtils::get(MPlug(globals, m_diffuseBounces), bounces))
+        {
+            finalParams.insert_path("pt.max_diffuse_bounces", bounces);
+            iprParams.insert_path("pt.max_diffuse_bounces", bounces);
+        }
     }
 
     bool caustics;
@@ -364,9 +412,6 @@ void RenderGlobalsNode::applyGlobalsToProject(
     {
         finalParams.insert_path("pt.dl_light_samples", lightSamples);
         iprParams.insert_path("pt.dl_light_samples", lightSamples);
-
-        finalParams.insert_path("drt.dl_light_samples", lightSamples);
-        iprParams.insert_path("drt.dl_light_samples", lightSamples);
     }
 
     float envSamples;
@@ -374,9 +419,6 @@ void RenderGlobalsNode::applyGlobalsToProject(
     {
         finalParams.insert_path("pt.ibl_env_samples", envSamples);
         iprParams.insert_path("pt.ibl_env_samples", envSamples);
-
-        finalParams.insert_path("drt.ibl_env_samples", envSamples);
-        iprParams.insert_path("drt.ibl_env_samples", envSamples);
     }
 
     int threads;
