@@ -32,12 +32,16 @@
 // Maya headers.
 #include <maya/MFnDependencyNode.h>
 #include <maya/MImage.h>
+#include <maya/MPlug.h>
 
 // appleseed.foundation headers.
 #include "foundation/image/image.h"
 #include "foundation/image/tile.h"
 #include "foundation/math/vector.h"
+#include "foundation/math/matrix.h"
+#include "foundation/math/transform.h"
 #include "foundation/utility/iostreamop.h"
+#include "foundation/utility/string.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/camera.h"
@@ -93,8 +97,8 @@ class SwatchProject
         cfg_params->insert_path("uniform_pixel_renderer.samples", "4");
         cfg_params->insert("rendering_threads", NumThreads);
 
-        // While testing...
-        cfg_params->insert_path("shading_engine.override_shading.mode", "facing_ratio");
+        // While testing.
+        cfg_params->insert_path("shading_engine.override_shading.mode", "uv");
 
         // Create some basic project entities.
 
@@ -113,19 +117,6 @@ class SwatchProject
             asf::Transformd(asf::Matrix4d::make_translation(asf::Vector3d(0.0, 0.0, 2.65))));
         m_project->get_scene()->cameras().insert(camera);
 
-        // Create the frame.
-        const size_t TileSize = 32;
-        asf::auto_release_ptr<asr::Frame> frame(
-            asr::FrameFactory::create(
-                "beauty",
-                asr::ParamArray()
-                    .insert("resolution", "128 128")
-                    .insert("camera", "camera")
-                    .insert("pixel_format", "uint8")
-                    .insert("color_space", "srgb")
-                    .insert("tile_size", asf::Vector2i(TileSize, TileSize))));
-        m_project->set_frame(frame);
-
         // Create the environment.
         asf::auto_release_ptr<asr::EnvironmentEDF> environmentEDF(asr::ConstantEnvironmentEDFFactory().create(
             "environmentEDF",
@@ -139,21 +130,28 @@ class SwatchProject
                 .insert("alpha_value", "1.0")));
         m_project->get_scene()->environment_shaders().insert(environmentShader);
 
-        asf::auto_release_ptr<asr::Environment> environment(asr::EnvironmentFactory().create(
+        asf::auto_release_ptr<asr::Environment> environment = asr::EnvironmentFactory().create(
             "environment",
-            asr::ParamArray().insert("environment_shader", "environmentShader")));
+            asr::ParamArray().insert("environment_shader", "environmentShader"));
         m_project->get_scene()->set_environment(environment);
+
+        // Create the frame.
+        const size_t TileSize = 32;
+        asf::auto_release_ptr<asr::Frame> frame(
+            asr::FrameFactory::create(
+                "beauty",
+                asr::ParamArray()
+                    .insert("resolution", "128 128")
+                    .insert("camera", "camera")
+                    .insert("pixel_format", "uint8")
+                    .insert("color_space", "srgb")
+                    .insert("tile_size", asf::Vector2i(TileSize, TileSize))));
+        m_project->set_frame(frame);
 
         // Create the main assembly.
         asf::auto_release_ptr<asr::Assembly> assembly = asr::AssemblyFactory().create("assembly", asr::ParamArray());
         m_mainAssembly = assembly.get();
         m_project->get_scene()->assemblies().insert(assembly);
-
-        // Create the light.
-        asf::auto_release_ptr<asr::Light> light = asr::DirectionalLightFactory().create(
-            "light",
-            asr::ParamArray().insert("irradiance", "2.0"));
-        m_mainAssembly->lights().insert(light);
 
         // Create the material.
         asf::auto_release_ptr<asr::Material> material = asr::OSLMaterialFactory().create(
@@ -177,8 +175,20 @@ class SwatchProject
                 &m_rendererController);
     }
 
+    void uninitialize()
+    {
+        m_project.reset();
+        delete m_renderer;
+    }
+
     void createMaterialSceneGeometry()
     {
+        // Create the light.
+        asf::auto_release_ptr<asr::Light> light = asr::DirectionalLightFactory().create(
+            "light",
+            asr::ParamArray().insert("irradiance", "2.0"));
+        m_mainAssembly->lights().insert(light);
+
         // Create the geometry.
         asf::auto_release_ptr<asr::MeshObject> sphere = asr::create_primitive_mesh(
             "sphere",
@@ -202,10 +212,37 @@ class SwatchProject
         m_mainAssembly->object_instances().insert(objInstance);
     }
 
-    void uninitialize()
+    void createTextureSceneGeometry()
     {
-        m_project.reset();
-        delete m_renderer;
+        // Create the geometry.
+        const float size = 2.345f;
+        asr::ParamArray params;
+        params.insert("primitive", "grid");
+        params.insert("resolution_u", 1);
+        params.insert("resolution_v", 1);
+        params.insert("width", size);
+        params.insert("height", size);
+
+        asf::auto_release_ptr<asr::MeshObject> plane = asr::create_primitive_mesh(
+            "plane",
+            params);
+        m_mainAssembly->objects().insert(
+            asf::auto_release_ptr<asr::Object>(plane.release()));
+
+        asf::StringDictionary materials;
+        materials.insert("default", m_material->get_name());
+
+        // Rotate x 90 degrees.
+        asf::Matrix4d m = asf::Matrix4d::make_rotation_x(asf::deg_to_rad(90.0));
+
+        asf::auto_release_ptr<asr::ObjectInstance> objInstance = asr::ObjectInstanceFactory().create(
+            "planeInstance",
+            asr::ParamArray(),
+            "plane",
+            asf::Transformd(m),
+            materials,
+            asf::StringDictionary());
+        m_mainAssembly->object_instances().insert(objInstance);
     }
 
     void removeAllShaderGroups()
@@ -214,7 +251,7 @@ class SwatchProject
         m_material->get_parameters().remove_path("osl_surface");
     }
 
-    void render(const size_t resolution)
+    void render(const size_t resolution, MImage& dstImage)
     {
         // Disable logging while rendering the swatch.
         ScopedSetLoggerVerbosity logLevel(asf::LogMessage::Error);
@@ -227,16 +264,16 @@ class SwatchProject
 
         // Render.
         m_renderer->render();
+        copySwatchImage(dstImage);
     }
+
+  private:
 
     void copySwatchImage(MImage& dstImage) const
     {
         const asf::Image& srcImage = m_project->get_frame()->image();
         const asf::CanvasProperties& props = srcImage.properties();
-
         unsigned int width = props.m_canvas_width;
-        unsigned int height = props.m_canvas_height;
-        dstImage.create(width, height);
 
         for (size_t ty = 0; ty < props.m_tile_count_y; ++ty)
         {
@@ -278,6 +315,7 @@ class SwatchProject
 };
 
 SwatchProject g_materialSwatchProject;
+SwatchProject g_textureSwatchProject;
 
 }
 
@@ -288,12 +326,17 @@ void SwatchRenderer::initialize()
 {
     g_materialSwatchProject.initialize();
     g_materialSwatchProject.createMaterialSceneGeometry();
+
+    g_textureSwatchProject.initialize();
+    g_textureSwatchProject.createTextureSceneGeometry();
+
     RENDERER_LOG_INFO("Initialized swatch renderer.");
 }
 
 void SwatchRenderer::uninitialize()
 {
     g_materialSwatchProject.uninitialize();
+    g_textureSwatchProject.uninitialize();
     RENDERER_LOG_INFO("Uninitialized swatch renderer.");
 }
 
@@ -327,11 +370,25 @@ bool SwatchRenderer::doIteration()
         classification.asChar(),
         resolution());
 
-    g_materialSwatchProject.removeAllShaderGroups();
+    // Allocate the pixels.
+    image().create(resolution(), resolution());
 
-    // todo: export node() here...
+    if (asf::ends_with(classification.asChar(), ":swatch/AppleseedRenderSwatch:texture"))
+    {
+        // Texture swatch.
+        g_textureSwatchProject.removeAllShaderGroups();
 
-    g_materialSwatchProject.render(resolution());
-    g_materialSwatchProject.copySwatchImage(image());
+        // todo: export node() here...
+        g_textureSwatchProject.render(resolution(), image());
+    }
+    else
+    {
+        // Material swatch.
+        g_materialSwatchProject.removeAllShaderGroups();
+
+        // todo: export node() here...
+        g_materialSwatchProject.render(resolution(), image());
+    }
+
     return true;
 }

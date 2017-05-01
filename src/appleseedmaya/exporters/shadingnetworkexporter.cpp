@@ -50,6 +50,32 @@
 namespace asf = foundation;
 namespace asr = renderer;
 
+namespace
+{
+
+MStatus logUnknownAttributeFound(
+    const MPlug&    outputPlug,
+    const MString&  nodeTypeName)
+{
+    MStatus status;
+    const MString attrName =
+        outputPlug.partialName(
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,   // use long names.
+            &status);
+    RENDERER_LOG_DEBUG(
+        "Skipping unknown attribute %s of shading node %s",
+        attrName.asChar(),
+        nodeTypeName.asChar());
+    return status;
+}
+
+}
+
 ShadingNetworkExporter::ShadingNetworkExporter(
     const ShadingNetworkContext   context,
     const MObject&                object,
@@ -117,22 +143,7 @@ void ShadingNetworkExporter::flushEntities()
                         "in_input");
                 }
                 else
-                {
-                    MStatus status;
-                    const MString attrName =
-                        m_outputPlug.partialName(
-                            false,
-                            false,
-                            false,
-                            false,
-                            false,
-                            true,   // use long names.
-                            &status);
-                    RENDERER_LOG_DEBUG(
-                        "Skipping unknown attribute %s of shading node %s",
-                        attrName.asChar(),
-                        depNodeFn.typeName().asChar());
-                }
+                    logUnknownAttributeFound(m_outputPlug, depNodeFn.typeName());
             }
         }
         break;
@@ -141,9 +152,38 @@ void ShadingNetworkExporter::flushEntities()
             // Nothing to do here...
         break;
 
+        case TextureSwatchNetworkContext:
+        {
+            // Create the texture to surface adaptor.
+            m_shaderGroup->add_shader(
+                "surface",
+                "as_maya_texture2Surface",
+                "texture2Surface",
+                asr::ParamArray());
+
+            // Connect the texture to the surface adaptor.
+            MFnDependencyNode depNodeFn(m_object);
+            const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+            if (shaderInfo)
+            {
+                if (const OSLParamInfo *srcParamInfo = shaderInfo->findParam(m_outputPlug))
+                {
+                    m_shaderGroup->add_connection(
+                        depNodeFn.name().asChar(),
+                        srcParamInfo->paramName.asChar(),
+                        "texture2Surface",
+                        srcParamInfo->paramType == "color"
+                            ? "in_color"
+                            : "in_scalar");
+                }
+                else
+                    logUnknownAttributeFound(m_outputPlug, depNodeFn.typeName());
+            }
+        }
+        break;
+
         default:
             assert(false);
-            RENDERER_LOG_ERROR("Unknown shading network context.");
         break;
     }
 
