@@ -110,6 +110,12 @@ ShadingNodeTemplateBuilder::ShadingNodeTemplateBuilder(const OSLShaderInfo& shad
     ss << "}\n";
 
     m_melTemplate = ss.str().c_str();
+
+    /*
+    #ifndef NDEBUG
+        logAETemplate();
+    #endif
+    */
 }
 
 MStatus ShadingNodeTemplateBuilder::registerAETemplate() const

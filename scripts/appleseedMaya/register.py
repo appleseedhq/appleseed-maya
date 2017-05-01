@@ -37,7 +37,7 @@ import maya.OpenMaya as om
 
 # appleseedMaya imports.
 from aetemplate import appleseedAETemplateCallback
-from hyperShadeCallbacks import *
+from hypershadeCallbacks import *
 from logger import logger
 from menu import createMenu, deleteMenu
 from renderer import createRenderMelProcedures
@@ -46,10 +46,19 @@ from renderGlobals import (
     addRenderGlobalsScriptJobs,
     removeRenderGlobalsScriptJobs)
 from translator import createTranslatorMelProcedures
-from util import appleseedIconsPath
 
 
 thisDir = os.path.normpath(os.path.dirname(__file__))
+
+asXGenCallbacks = [
+    ("RenderAPIRendererTabUIInit"   , "appleseedMaya.xgenseedui.xgseedUI"),
+    ("RenderAPIRendererTabUIRefresh", "appleseedMaya.xgenseedui.xgseedRefresh"),
+    ("PostDescriptionCreate"        , "appleseedMaya.xgenseedui.xgseedOnCreateDescription"),
+    ("ArchiveExport"                , "appleseedMaya.xgenseed.xgseedArchiveExport"),
+    ("ArchiveExportInfo"            , "appleseedMaya.xgenseed.xgseedArchiveExportInfo"),
+    ("ArchiveExportInit"            , "appleseedMaya.xgenseed.xgseedArchiveExportInit")
+]
+
 
 def register():
     logger.info("Registering appleseed renderer.")
@@ -127,7 +136,7 @@ def register():
             mel.eval('python("import appleseedMaya.aetemplate.%s")' % templateModule)
 
     # Hypershade callbacks
-    hypershadeCallbacks = [
+    asHypershadeCallbacks = [
         ("hyperShadePanelBuildCreateMenu"       , hyperShadePanelBuildCreateMenuCallback),
         ("hyperShadePanelBuildCreateSubMenu"    , hyperShadePanelBuildCreateSubMenuCallback),
         ("hyperShadePanelPluginChange"          , hyperShadePanelPluginChangeCallback),
@@ -138,7 +147,7 @@ def register():
         ("nodeCanBeUsedAsMaterial"              , nodeCanBeUsedAsMaterialCallback),
         ("buildRenderNodeTreeListerContent"     , buildRenderNodeTreeListerContentCallback)
     ]
-    for h, c in hypershadeCallbacks:
+    for h, c in asHypershadeCallbacks:
         logger.debug("Adding {0} callback.".format(h))
         pm.callbacks(addCallback=c, hook=h, owner="appleseed")
 
@@ -146,28 +155,25 @@ def register():
     createTranslatorMelProcedures()
 
     # Logos.
-    if appleseedIconsPath():
-        pm.renderer(
-            "appleseed",
-            edit=True,
-            logoImageName=os.path.join(appleseedIconsPath(), "appleseed.png")
-        )
+    pm.renderer(
+        "appleseed",
+        edit=True,
+        logoImageName="appleseed.png"
+    )
 
-        mel.eval('''
-            global proc appleseedLogoCallback()
-            {
-                evalDeferred("showHelp -absolute \\\"http://appleseedhq.net\\\"");
-            }
-            '''
-        )
+    mel.eval('''
+        global proc appleseedLogoCallback()
+        {
+            evalDeferred("showHelp -absolute \\\"http://appleseedhq.net\\\"");
+        }
+        '''
+    )
 
-        pm.renderer(
-            "appleseed",
-            edit=True,
-            logoCallbackProcedure="appleseedLogoCallback"
-        )
-    else:
-        logger.info("appleseedMaya: skipping logo registration. Logo not found")
+    pm.renderer(
+        "appleseed",
+        edit=True,
+        logoCallbackProcedure="appleseedLogoCallback"
+    )
 
     # Menu
     if om.MGlobal.mayaState() == om.MGlobal.kInteractive:
@@ -176,14 +182,9 @@ def register():
     # XGen
     try:
         import xgenm as xg
+        for h, c in asXGenCallbacks:
+            xg.registerCallback(h, c)
 
-        xg.registerCallback("RenderAPIRendererTabUIInit"   , "appleseedMaya.xgenseedui.xgseedUI" )
-        xg.registerCallback("RenderAPIRendererTabUIRefresh", "appleseedMaya.xgenseedui.xgseedRefresh" )
-        xg.registerCallback("PostDescriptionCreate"        , "appleseedMaya.xgenseedui.xgseedOnCreateDescription" )
-
-        xg.registerCallback("ArchiveExport"    , "appleseedMaya.xgenseed.xgseedArchiveExport")
-        xg.registerCallback("ArchiveExportInfo", "appleseedMaya.xgenseed.xgseedArchiveExportInfo")
-        xg.registerCallback("ArchiveExportInit", "appleseedMaya.xgenseed.xgseedArchiveExportInit")
         logger.info("appleseedMaya: initialized xgenseed")
     except Exception as e:
         logger.info("appleseedMaya: could not initialize xgenseed. error = %s" % e)
@@ -195,13 +196,9 @@ def unregister():
     try:
         import xgenm as xg
 
-        xg.deregisterCallback("RenderAPIRendererTabUIInit"   , "appleseedMaya.xgenseedui.xgseedUI" )
-        xg.deregisterCallback("RenderAPIRendererTabUIRefresh", "appleseedMaya.xgenseedui.xgseedRefresh" )
-        xg.deregisterCallback("PostDescriptionCreate"        , "appleseedMaya.xgenseedui.xgseedOnCreateDescription" )
+        for h, c in asXGenCallbacks:
+            xg.deregisterCallback(h, c)
 
-        xg.deregisterCallback("ArchiveExport"    , "appleseedMaya.xgenseed.xgseedArchiveExport")
-        xg.deregisterCallback("ArchiveExportInfo", "appleseedMaya.xgenseed.xgseedArchiveExportInfo")
-        xg.deregisterCallback("ArchiveExportInit", "appleseedMaya.xgenseed.xgseedArchiveExportInit")
         logger.info("appleseedMaya: uninitialized xgenseed")
     except Exception as e:
         logger.info("appleseedMaya: could not uninitialize xgenseed. error = %s" % e)

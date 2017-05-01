@@ -195,9 +195,6 @@ bool doRegisterShader(
 
             // Build and register an AE template for the node.
             ShadingNodeTemplateBuilder aeBuilder(shaderInfo);
-            #ifndef NDEBUG
-                aeBuilder.logAETemplate();
-            #endif
             aeBuilder.registerAETemplate();
         }
 

@@ -35,7 +35,7 @@ import maya.mel as mel
 
 # appleseedMaya imports.
 from logger import logger
-from util import appleseedIconsPath, createLocator
+from util import createLocator
 
 
 def showAbout():
@@ -46,9 +46,7 @@ def showAbout():
 
     mc.columnLayout(rs=20, columnOffset=['both', 22], width=300)
     mc.text('', height=10)
-
-    if appleseedIconsPath():
-        mc.image(image=os.path.join(appleseedIconsPath(), 'appleseed-logo-256.png'))
+    mc.image(image='appleseed-logo-256.png')
 
     mc.text('todo: add info here...')
 

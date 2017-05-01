@@ -92,6 +92,8 @@ set (appleseed_maya_sources
     exporters/shapeexporter.h
     extensionAttributes.cpp
     extensionAttributes.h
+    hypershaderenderer.cpp
+    hypershaderenderer.h
     idlejobqueue.cpp
     idlejobqueue.h
     imageutils.cpp
@@ -140,14 +142,6 @@ if (WITH_PYTHON_BRIDGE)
         ${appleseed_maya_sources}
         python.cpp
         python.h
-    )
-endif ()
-
-if (${MAYA_API_VERSION} EQUAL 201600 OR ${MAYA_API_VERSION} GREATER 201600)
-    set (appleseed_maya_sources
-        ${appleseed_maya_sources}
-        hypershaderenderer.cpp
-        hypershaderenderer.h
     )
 endif ()
 

@@ -72,17 +72,17 @@ class LogTarget
             break;
 
             case asf::LogMessage::Info:
-                MGlobal::displayInfo(message);
+                MGlobal::displayInfo(MString("[Info]") + message);
             break;
 
             case asf::LogMessage::Warning:
-                MGlobal::displayWarning(message);
+                MGlobal::displayWarning(MString("[Warning]") + message);
             break;
 
             case asf::LogMessage::Error:
             case asf::LogMessage::Fatal:
             default:
-                MGlobal::displayError(message);
+                MGlobal::displayError(MString("[Error]") + message);
             break;
         }
     }

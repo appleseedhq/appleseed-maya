@@ -34,6 +34,7 @@
 #include <maya/MStatus.h>
 
 // appleseed.maya headers.
+#include "appleseedmaya/logger.h"
 #include "appleseedmaya/version.h"
 
 // Windows dll exports
@@ -59,6 +60,17 @@
     }\
 }
 
+// Check status, log and display an error if it is not success.
+#define APPLESEED_MAYA_CHECK_MSTATUS_MSG_LOG(stat, msg) \
+{\
+    MStatus s_ = (stat);\
+    if (s_ != MStatus::kSuccess) \
+    {\
+        RENDERER_LOG_ERROR("status error string = %s", s_.errorString().asChar());\
+        MGlobal::displayError(MString(msg));\
+    }\
+}
+
 // Check status. If it is not success, display an error and return status.
 #define APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(stat, msg) \
 {\
@@ -70,25 +82,15 @@
     }\
 }
 
-// Check status and display an error if it is not success. Return status.
-#define APPLESEED_MAYA_RET_MSTATUS_ERROR_MSG(stat, msg) \
+// Check status. If it is not success, display an error, log and return status.
+#define APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG_LOG(stat, msg) \
 {\
     MStatus s_ = (stat);\
     if (s_ != MStatus::kSuccess)\
     {\
         MGlobal::displayError(MString(msg));\
-    }\
-    return s_;\
-}
-
-// If cond is false, display an error and return MStatus::kFailure.
-#define APPLESEED_MAYA_ENFORCE_RET_FAILURE_MSG(cond, msg) \
-{\
-    bool cond_ = (cond);\
-    if (!cond_)\
-    {\
-        MGlobal::displayError(MString(msg));\
-        return MStatus::kFailure;\
+        RENDERER_LOG_ERROR("status error string = %s", status.errorString().asChar());\
+        return s_;\
     }\
 }
 

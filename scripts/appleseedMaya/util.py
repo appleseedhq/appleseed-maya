@@ -32,25 +32,6 @@ import os
 # Maya imports.
 import maya.cmds as mc
 
-__g_appleseedIconsLocationInit = False
-__g_appleseedIconsLocation = None
-
-# It seems Maya cannot find the icons using relative paths,
-# even if XBMLANGPATH is set correctly.
-# Find our icon in XBMLANGPATH manually.
-
-def appleseedIconsPath():
-    global __g_appleseedIconsLocationInit
-    global __g_appleseedIconsLocation
-
-    if not __g_appleseedIconsLocationInit:
-        __g_appleseedIconsLocationInit = True
-        for iconPath in os.environ.get('XBMLANGPATH').split(os.pathsep):
-            if os.path.exists(os.path.join(iconPath, "appleseed.png")):
-                __g_appleseedIconsLocation = iconPath
-
-    return __g_appleseedIconsLocation
-
 def createLocator(locatorType):
     xformName = mc.createNode("transform", name=locatorType + "1")
     shapeName = xformName.replace(locatorType, locatorType + "Shape")
