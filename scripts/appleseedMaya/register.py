@@ -59,6 +59,26 @@ asXGenCallbacks = [
     ("ArchiveExportInit"            , "appleseedMaya.xgenseed.xgseedArchiveExportInit")
 ]
 
+def appleseedRenderSettingsBuiltCallback(renderer):
+    logger.debug("appleseedRenderSettingsBuiltCallback called!")
+    pm.renderer(
+        "appleseed",
+        edit=True,
+        addGlobalsTab=(
+            "Common",
+            "createMayaSoftwareCommonGlobalsTab",
+            "appleseedUpdateCommonTabProcedure"
+            )
+        )
+    pm.renderer(
+        "appleseed",
+        edit=True,
+        addGlobalsTab=(
+            "Appleseed",
+            "appleseedCreateAppleseedTabProcedure",
+            "appleseedUpdateAppleseedTabProcedure"
+            )
+        )
 
 def register():
     logger.info("Registering appleseed renderer.")
@@ -101,24 +121,11 @@ def register():
 
     mel.eval('registerUpdateRendererUIProc("evalDeferred -lp appleseedCurrentRendererChanged");')
 
-    pm.renderer(
-        "appleseed",
-        edit=True,
-        addGlobalsTab=(
-            "Common",
-            "createMayaSoftwareCommonGlobalsTab",
-            "appleseedUpdateCommonTabProcedure"
-            )
-        )
-    pm.renderer(
-        "appleseed",
-        edit=True,
-        addGlobalsTab=(
-            "Appleseed",
-            "appleseedCreateAppleseedTabProcedure",
-            "appleseedUpdateAppleseedTabProcedure"
-            )
-        )
+    appleseedRenderSettingsBuiltCallback("appleseed")
+    pm.callbacks(
+        addCallback=appleseedRenderSettingsBuiltCallback,
+        hook="renderSettingsBuilt",
+        owner="appleseed")
 
     # AE templates.
     pm.callbacks(
