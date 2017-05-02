@@ -75,12 +75,11 @@ void FileExporter::exportParameterValue(
     if (paramInfo.paramName == "in_fileTextureName")
     {
         MStatus status;
-
         const MString textureFileName =
             MRenderUtil::exactFileTextureName(node(), &status);
 
-        shaderParams.insert(
-            paramInfo.paramName.asChar(), textureFileName.asChar());
+        const MString value = MString("string ") + textureFileName;
+        shaderParams.insert("in_fileTextureName", value.asChar());
         return;
     }
 

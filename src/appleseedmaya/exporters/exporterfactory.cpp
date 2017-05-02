@@ -97,7 +97,10 @@ MStatus NodeExporterFactory::initialize(const MString& pluginPath)
     XGenExporter::registerExporter();
 #endif
 
+    // Register generic shading node exporters.
     ShadingNodeExporter::registerExporters();
+
+    // Register custom shading node exporters.
     FileExporter::registerExporter();
     Place3dTextureExporter::registerExporter();
     RampExporter::registerExporter();
