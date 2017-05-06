@@ -85,9 +85,17 @@ def createAsRenderNode(nodeType=None, postCommand=None):
                 mc.setAttr(shadingGroup + ".asDoubleSided", 1)
 
             logger.debug("Created shading node {0} asShader".format(mat))
-        elif "rendernode/appleseed/texture" in cl.lower():
+        elif "rendernode/appleseed/texture/2d" in cl.lower():
             mat = mc.shadingNode(nodeType, asTexture=True)
-            logger.debug("Created shading node {0} asTexture".format(mat))
+            placeTex = mc.shadingNode("place2dTexture", asUtility=True)
+            mc.connectAttr(placeTex + ".outUV", mat + ".uv")
+            mc.connectAttr(placeTex + ".outUvFilterSize", mat + ".uvFilterSize")
+            logger.debug("Created shading node {0} asTexture2D".format(mat))
+        elif "rendernode/appleseed/texture/3d" in cl.lower():
+            mat = mc.shadingNode(nodeType, asTexture=True)
+            placeTex = mc.shadingNode("place3dTexture", asUtility=True)
+            mc.connectAttr(placeTex + ".wim[0]", mat + ".placementMatrix")
+            logger.debug("Created shading node {0} asTexture3D".format(mat))
         else:
             mat = mc.shadingNode(nodeType, asUtility=True)
             logger.debug("Created shading node {0} asUtility".format(mat))
