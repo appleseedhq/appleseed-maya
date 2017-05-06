@@ -1,0 +1,24 @@
+
+<templates>
+    <using package='maya'/>
+    <template name='NEasColorTransform'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='inputSpace' type='maya.enum'>
+            <label>Input Space</label>
+        </attribute>
+        <attribute name='outputSpace' type='maya.enum'>
+            <label>Output Space</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasColorTransform'>
+        <property name='outColor'/>
+        <property name='color'/>
+        <property name='inputSpace'/>
+        <property name='outputSpace'/>
+    </view>
+</templates>
