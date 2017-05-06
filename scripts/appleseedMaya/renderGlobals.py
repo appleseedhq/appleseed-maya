@@ -64,8 +64,8 @@ def createRenderTabsMelProcedures():
         {
             updateMayaSoftwareCommonGlobalsTab();
 
-            python("from appleseedMaya.renderGlobals import postUpdateCommonTab");
-            python("postUpdateCommonTab()");
+            python("from appleseedMaya.renderGlobals import appleseedPostUpdateCommonTab");
+            python("appleseedPostUpdateCommonTab()");
         }
         '''
     )
@@ -118,6 +118,8 @@ def __nodeRemoved(node, data):
         g_appleseedMainTab.updateEnvLightControl()
 
 def addRenderGlobalsScriptJobs():
+    logger.debug("Adding render globals script jobs")
+
     global g_nodeAddedCallbackID
     assert g_nodeAddedCallbackID == None
     g_nodeAddedCallbackID = om.MDGMessage.addNodeAddedCallback(__nodeAdded)
@@ -137,7 +139,11 @@ def removeRenderGlobalsScriptJobs():
     om.MMessage.removeCallback(g_nodeRemovedCallbackID)
     g_nodeRemovedCallbackID = None
 
+    logger.debug("Removed render globals script jobs")
+
 def imageFormatChanged():
+    logger.debug("imageFormatChanged called")
+
     # Since we only support two file formats atm., we can hardcode things.
     # 32 is the format code for png, 51 is custom image format.
     # We also update the extension attribute (used in the file names preview).
@@ -155,6 +161,8 @@ def imageFormatChanged():
 def currentRendererChanged():
     if mel.eval("currentRenderer()") != "appleseed":
         return
+
+    logger.debug("currentRendererChanged called")
 
     # Make sure our render globals node exists.
     createGlobalNodes()
@@ -202,7 +210,7 @@ def currentRendererChanged():
     # Update the image format controls now.
     imageFormatChanged()
 
-def postUpdateCommonTab():
+def appleseedPostUpdateCommonTab():
     imageFormatChanged()
 
 class AppleseedRenderGlobalsMainTab(object):

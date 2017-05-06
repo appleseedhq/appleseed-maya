@@ -32,6 +32,7 @@ import fnmatch
 
 # Maya imports.
 import pymel.core as pm
+import maya.cmds as mc
 import maya.mel as mel
 import maya.OpenMaya as om
 
@@ -60,7 +61,7 @@ asXGenCallbacks = [
 ]
 
 def appleseedRenderSettingsBuiltCallback(renderer):
-    logger.debug("appleseedRenderSettingsBuiltCallback called!")
+    logger.debug("appleseedRenderSettingsBuilt called!")
     pm.renderer(
         "appleseed",
         edit=True,
@@ -85,9 +86,9 @@ def register():
 
     # Register render.
     pm.renderer("appleseed", rendererUIName="Appleseed")
+    createRenderMelProcedures()
 
     # Final Render procedures.
-    createRenderMelProcedures()
     pm.renderer(
         "appleseed",
         edit=True,
@@ -121,7 +122,24 @@ def register():
 
     mel.eval('registerUpdateRendererUIProc("evalDeferred -lp appleseedCurrentRendererChanged");')
 
-    appleseedRenderSettingsBuiltCallback("appleseed")
+    pm.renderer(
+        "appleseed",
+        edit=True,
+        addGlobalsTab=(
+            "Common",
+            "createMayaSoftwareCommonGlobalsTab",
+            "appleseedUpdateCommonTabProcedure"
+            )
+        )
+    pm.renderer(
+        "appleseed",
+        edit=True,
+        addGlobalsTab=(
+            "Appleseed",
+            "appleseedCreateAppleseedTabProcedure",
+            "appleseedUpdateAppleseedTabProcedure"
+            )
+        )
     pm.callbacks(
         addCallback=appleseedRenderSettingsBuiltCallback,
         hook="renderSettingsBuilt",
