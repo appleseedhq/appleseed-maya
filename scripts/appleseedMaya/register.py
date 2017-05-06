@@ -44,6 +44,7 @@ from menu import createMenu, deleteMenu
 from renderer import createRenderMelProcedures
 from renderGlobals import (
     createRenderTabsMelProcedures,
+    renderSettingsBuiltCallback,
     addRenderGlobalsScriptJobs,
     removeRenderGlobalsScriptJobs)
 from translator import createTranslatorMelProcedures
@@ -59,27 +60,6 @@ asXGenCallbacks = [
     ("ArchiveExportInfo"            , "appleseedMaya.xgenseed.xgseedArchiveExportInfo"),
     ("ArchiveExportInit"            , "appleseedMaya.xgenseed.xgseedArchiveExportInit")
 ]
-
-def appleseedRenderSettingsBuiltCallback(renderer):
-    logger.debug("appleseedRenderSettingsBuilt called!")
-    pm.renderer(
-        "appleseed",
-        edit=True,
-        addGlobalsTab=(
-            "Common",
-            "createMayaSoftwareCommonGlobalsTab",
-            "appleseedUpdateCommonTabProcedure"
-            )
-        )
-    pm.renderer(
-        "appleseed",
-        edit=True,
-        addGlobalsTab=(
-            "Appleseed",
-            "appleseedCreateAppleseedTabProcedure",
-            "appleseedUpdateAppleseedTabProcedure"
-            )
-        )
 
 def register():
     logger.info("Registering appleseed renderer.")
@@ -114,36 +94,18 @@ def register():
 
     # Globals
     createRenderTabsMelProcedures()
-    addRenderGlobalsScriptJobs()
+    renderSettingsBuiltCallback('appleseed')
 
     pm.renderer("appleseed", edit=True, addGlobalsNode="defaultRenderGlobals")
     pm.renderer("appleseed", edit=True, addGlobalsNode="defaultResolution")
     pm.renderer("appleseed", edit=True, addGlobalsNode="appleseedRenderGlobals")
 
-    mel.eval('registerUpdateRendererUIProc("evalDeferred -lp appleseedCurrentRendererChanged");')
-
-    pm.renderer(
-        "appleseed",
-        edit=True,
-        addGlobalsTab=(
-            "Common",
-            "createMayaSoftwareCommonGlobalsTab",
-            "appleseedUpdateCommonTabProcedure"
-            )
-        )
-    pm.renderer(
-        "appleseed",
-        edit=True,
-        addGlobalsTab=(
-            "Appleseed",
-            "appleseedCreateAppleseedTabProcedure",
-            "appleseedUpdateAppleseedTabProcedure"
-            )
-        )
     pm.callbacks(
-        addCallback=appleseedRenderSettingsBuiltCallback,
+        addCallback=renderSettingsBuiltCallback,
         hook="renderSettingsBuilt",
         owner="appleseed")
+
+    addRenderGlobalsScriptJobs()
 
     # AE templates.
     pm.callbacks(
