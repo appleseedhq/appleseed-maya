@@ -153,9 +153,11 @@ bool doRegisterShader(
             }
         }
 
+        /*
         RENDERER_LOG_DEBUG(
             "Registered OSL shader %s",
             shaderInfo.shaderName.asChar());
+        */
 
         gShadersInfo[shaderInfo.mayaName] = shaderInfo;
 
@@ -255,9 +257,11 @@ void registerShadersInDirectory(
                     const bfs::path& shaderPath = it->path();
                     if (shaderPath.extension() == ".oso")
                     {
+                        /*
                         RENDERER_LOG_DEBUG(
                             "Found OSL shader %s.",
                             shaderPath.string().c_str());
+                        */
 
                         registerShader(shaderPath, pluginFn, query);
                     }

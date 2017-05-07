@@ -37,7 +37,7 @@ from logger import logger
 from appleseedMaya.renderGlobals import createGlobalNodes
 
 
-def appleseedTranslatorOptions(parent, action, initialSettings, resultCallback):
+def translatorOptions(parent, action, initialSettings, resultCallback):
     defaults = {
         "activeCamera" : "<Current>",
         "exportAnim"   : False,
@@ -183,11 +183,11 @@ def createTranslatorMelProcedures():
     mel.eval('''
         global proc appleseedTranslatorOpts(string $parent, string $action, string $initialSettings, string $resultCallback)
         {
-            python("from appleseedMaya.renderGlobals import createGlobalNodes");
-            python("createGlobalNodes()");
+            python("import appleseedMaya.renderGlobals");
+            python("appleseedMaya.renderGlobals.createGlobalNodes()");
 
-            python("from appleseedMaya.translator import appleseedTranslatorOptions");
-            string $pythonCmd = "appleseedTranslatorOptions(";
+            python("import appleseedMaya.translator");
+            string $pythonCmd = "appleseedMaya.translator.translatorOptions(";
             $pythonCmd = $pythonCmd + "\\\"" + $parent + "\\\", ";
             $pythonCmd = $pythonCmd + "\\\"" + $action + "\\\", ";
             $pythonCmd = $pythonCmd + "\\\"" + $initialSettings + "\\\", ";

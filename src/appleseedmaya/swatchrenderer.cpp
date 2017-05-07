@@ -324,19 +324,30 @@ const MString SwatchRenderer::fullName("swatch/AppleseedRenderSwatch");
 
 void SwatchRenderer::initialize()
 {
-    g_materialSwatchProject.initialize();
-    g_materialSwatchProject.createMaterialSceneGeometry();
+    {
+        // Disable logging from appleseed.
+        ScopedSetLoggerVerbosity logLevel(asf::LogMessage::Error);
 
-    g_textureSwatchProject.initialize();
-    g_textureSwatchProject.createTextureSceneGeometry();
+        g_materialSwatchProject.initialize();
+        g_materialSwatchProject.createMaterialSceneGeometry();
+
+        g_textureSwatchProject.initialize();
+        g_textureSwatchProject.createTextureSceneGeometry();
+    }
 
     RENDERER_LOG_INFO("Initialized swatch renderer.");
 }
 
 void SwatchRenderer::uninitialize()
 {
-    g_materialSwatchProject.uninitialize();
-    g_textureSwatchProject.uninitialize();
+    {
+        // Disable logging from appleseed.
+        ScopedSetLoggerVerbosity logLevel(asf::LogMessage::Error);
+
+        g_materialSwatchProject.uninitialize();
+        g_textureSwatchProject.uninitialize();
+    }
+
     RENDERER_LOG_INFO("Uninitialized swatch renderer.");
 }
 
@@ -363,12 +374,14 @@ bool SwatchRenderer::doIteration()
     const MString typeName = depNodeFn.typeName();
     const MString classification = MFnDependencyNode::classification(typeName);
 
+    /*
     RENDERER_LOG_DEBUG(
         "Rendering swatch for node %s of type %s and classification %s. res = %d",
         name.asChar(),
         typeName.asChar(),
         classification.asChar(),
         resolution());
+    */
 
     // Allocate the pixels.
     image().create(resolution(), resolution());
