@@ -375,6 +375,29 @@ MStatus ShadingNode::initialize()
             status = initializeAttribute(numAttrFn, p);
             CHECK_STATUS_AND_HANDLE_ERROR
         }
+        else if (p.paramType == "float[2]")
+        {
+            MFnNumericAttribute numAttrFn;
+
+            if (p.mayaAttributeName == "uvCoord")
+            {
+                MObject child1 = numAttrFn.create("uCoord", "u", MFnNumericData::kFloat);
+                MObject child2 = numAttrFn.create("vCoord", "v", MFnNumericData::kFloat);
+                attr = numAttrFn.create("uvCoord", "uv", child1, child2);
+            }
+            else if (p.mayaAttributeName == "uvFilterSize")
+            {
+                MObject child1 = numAttrFn.create("uvFilterSizeX", "fsx", MFnNumericData::kFloat);
+                MObject child2 = numAttrFn.create("uvFilterSizeY", "fsy", MFnNumericData::kFloat);
+                attr = numAttrFn.create("uvFilterSize", "fs", child1, child2);
+            }
+
+            if (!attr.isNull())
+            {
+                status = AttributeUtils::makeInput(numAttrFn);
+                CHECK_STATUS_AND_HANDLE_ERROR
+            }
+        }
         else
         {
             RENDERER_LOG_WARNING(

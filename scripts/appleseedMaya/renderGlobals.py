@@ -51,40 +51,55 @@ def createGlobalNodes():
     logger.debug("Created appleseed render global node")
 
 def createRenderTabsMelProcedures():
-    mel.eval('''
-        global proc appleseedCurrentRendererChanged()
-        {
-            python("from appleseedMaya.renderGlobals import currentRendererChanged");
-            python("currentRendererChanged()");
-        }
-        '''
-    )
+    pm.mel.source('createMayaSoftwareCommonGlobalsTab.mel')
+
     mel.eval('''
         global proc appleseedUpdateCommonTabProcedure()
         {
             updateMayaSoftwareCommonGlobalsTab();
 
-            python("from appleseedMaya.renderGlobals import postUpdateCommonTab");
-            python("postUpdateCommonTab()");
+            python("import appleseedMaya.renderGlobals");
+            python("appleseedMaya.renderGlobals.postUpdateCommonTab()");
         }
         '''
     )
     mel.eval('''
         global proc appleseedCreateAppleseedTabProcedure()
         {
-            python("from appleseedMaya.renderGlobals import g_appleseedMainTab");
-            python("g_appleseedMainTab.create()");
+            python("import appleseedMaya.renderGlobals");
+            python("appleseedMaya.renderGlobals.g_appleseedMainTab.create()");
         }
         '''
     )
     mel.eval('''
         global proc appleseedUpdateAppleseedTabProcedure()
         {
-            python("from appleseedMaya.renderGlobals import g_appleseedMainTab");
-            python("g_appleseedMainTab.update()");
+            python("import appleseedMaya.renderGlobals");
+            python("appleseedMaya.renderGlobals.g_appleseedMainTab.update()");
         }
         '''
     )
+
+def renderSettingsBuiltCallback(renderer):
+    logger.debug("appleseedRenderSettingsBuilt called!")
+    pm.renderer(
+        "appleseed",
+        edit=True,
+        addGlobalsTab=(
+            "Common",
+            "createMayaSoftwareCommonGlobalsTab",
+            "appleseedUpdateCommonTabProcedure"
+            )
+        )
+    pm.renderer(
+        "appleseed",
+        edit=True,
+        addGlobalsTab=(
+            "Appleseed",
+            "appleseedCreateAppleseedTabProcedure",
+            "appleseedUpdateAppleseedTabProcedure"
+            )
+        )
 
 g_nodeAddedCallbackID = None
 g_nodeRemovedCallbackID = None
@@ -118,6 +133,8 @@ def __nodeRemoved(node, data):
         g_appleseedMainTab.updateEnvLightControl()
 
 def addRenderGlobalsScriptJobs():
+    logger.debug("Adding render globals script jobs")
+
     global g_nodeAddedCallbackID
     assert g_nodeAddedCallbackID == None
     g_nodeAddedCallbackID = om.MDGMessage.addNodeAddedCallback(__nodeAdded)
@@ -125,6 +142,13 @@ def addRenderGlobalsScriptJobs():
     global g_nodeRemovedCallbackID
     assert g_nodeRemovedCallbackID == None
     g_nodeRemovedCallbackID = om.MDGMessage.addNodeRemovedCallback(__nodeRemoved)
+
+    mc.scriptJob(
+        attributeChange=[
+            "defaultRenderGlobals.currentRenderer",
+            "import appleseedMaya.renderGlobals; appleseedMaya.renderGlobals.currentRendererChanged()"
+        ]
+    )
 
 def removeRenderGlobalsScriptJobs():
     global g_nodeAddedCallbackID
@@ -137,7 +161,11 @@ def removeRenderGlobalsScriptJobs():
     om.MMessage.removeCallback(g_nodeRemovedCallbackID)
     g_nodeRemovedCallbackID = None
 
+    logger.debug("Removed render globals script jobs")
+
 def imageFormatChanged():
+    logger.debug("imageFormatChanged called")
+
     # Since we only support two file formats atm., we can hardcode things.
     # 32 is the format code for png, 51 is custom image format.
     # We also update the extension attribute (used in the file names preview).
@@ -155,6 +183,8 @@ def imageFormatChanged():
 def currentRendererChanged():
     if mel.eval("currentRenderer()") != "appleseed":
         return
+
+    logger.debug("currentRendererChanged called")
 
     # Make sure our render globals node exists.
     createGlobalNodes()
@@ -196,7 +226,7 @@ def currentRendererChanged():
         replacePrevious=True,
         attributeChange=[
             "appleseedRenderGlobals.imageFormat",
-            "from appleseedMaya.renderGlobals import imageFormatChanged; imageFormatChanged()"]
+            "import appleseedMaya.renderGlobals; appleseedMaya.renderGlobals.imageFormatChanged()"]
     )
 
     # Update the image format controls now.

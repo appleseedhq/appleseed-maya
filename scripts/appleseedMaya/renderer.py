@@ -33,8 +33,8 @@ def createRenderMelProcedures():
     mel.eval('''
         global proc appleseedRenderProcedure(int $width, int $height, int $doShadows, int $doGlowPass, string $camera, string $option)
         {
-            python("from appleseedMaya.renderGlobals import createGlobalNodes");
-            python("createGlobalNodes()");
+            python("import appleseedMaya.renderGlobals");
+            python("appleseedMaya.renderGlobals.createGlobalNodes()");
             appleseedRender -w $width -h $height -c $camera;
         }
         '''
@@ -43,8 +43,8 @@ def createRenderMelProcedures():
     mel.eval('''
         global proc appleseedBatchRenderProcedure(string $options)
         {
-            python("from appleseedMaya.renderGlobals import createGlobalNodes");
-            python("createGlobalNodes()");
+            python("import appleseedMaya.renderGlobals");
+            python("appleseedMaya.renderGlobals.createGlobalNodes()");
             appleseedRender -batch $options;
         }
         '''
@@ -61,8 +61,8 @@ def createRenderMelProcedures():
     mel.eval('''
         global proc appleseedIprRenderProcedure(int $width, int $height, int $doShadows, int $doGlowPass, string $camera)
         {
-            python("from appleseedMaya.renderGlobals import createGlobalNodes");
-            python("createGlobalNodes()");
+            python("import appleseedMaya.renderGlobals");
+            python("appleseedMaya.renderGlobals.createGlobalNodes()");
             appleseedProgressiveRender -w $width -h $height -c $camera -action "render";
         }
         '''
@@ -71,8 +71,8 @@ def createRenderMelProcedures():
     mel.eval('''
         global proc appleseedStartIprRenderProcedure(string $editor, int $resolutionX, int $resolutionY, string $camera)
         {
-            python("from appleseedMaya.renderGlobals import createGlobalNodes");
-            python("createGlobalNodes()");
+            python("import appleseedMaya.renderGlobals");
+            python("appleseedMaya.renderGlobals.createGlobalNodes()");
             appleseedProgressiveRender -w $resolutionX -h $resolutionY -c $camera -action "start";
         }
         '''
