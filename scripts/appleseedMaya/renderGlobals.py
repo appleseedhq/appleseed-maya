@@ -346,23 +346,26 @@ class AppleseedRenderGlobalsMainTab(object):
                             ui=pm.intFieldGrp(label="Global Bounces", numberOfFields = 1, enable=limitBounces),
                             attrName="bounces")
                         self.__addControl(
-                            ui=pm.intFieldGrp(label="Specular Bounces", numberOfFields = 1, enable=limitBounces),
-                            attrName="specularBounces")
+                            ui=pm.intFieldGrp(label="Diffuse Bounces", numberOfFields = 1, enable=limitBounces),
+                            attrName="diffuseBounces")
                         self.__addControl(
                             ui=pm.intFieldGrp(label="Glossy Bounces", numberOfFields = 1, enable=limitBounces),
                             attrName="glossyBounces")
                         self.__addControl(
-                            ui=pm.intFieldGrp(label="Diffuse Bounces", numberOfFields = 1, enable=limitBounces),
-                            attrName="diffuseBounces")
+                            ui=pm.intFieldGrp(label="Specular Bounces", numberOfFields = 1, enable=limitBounces),
+                            attrName="specularBounces")
+
                         self.__addControl(
                             ui=pm.floatFieldGrp(label="Light Samples", numberOfFields = 1),
                             attrName="lightSamples")
                         self.__addControl(
                             ui=pm.floatFieldGrp(label="Environment Samples", numberOfFields = 1),
                             attrName="envSamples")
+
                         self.__addControl(
                             ui=pm.checkBoxGrp(label="Caustics"),
                             attrName="caustics")
+
                         self.__addControl(
                             ui=pm.floatFieldGrp(label="Max Ray Intensity", numberOfFields = 1),
                             attrName="maxRayIntensity")

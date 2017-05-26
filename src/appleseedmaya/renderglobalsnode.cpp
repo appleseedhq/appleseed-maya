@@ -358,8 +358,8 @@ void RenderGlobalsNode::applyGlobalsToProject(
         int bounces = -1;
         if (AttributeUtils::get(MPlug(globals, m_globalBounces), bounces))
         {
-            finalParams.insert_path("pt.max_path_length", bounces);
-            iprParams.insert_path("pt.max_path_length", bounces);
+            finalParams.insert_path("pt.max_bounces", bounces);
+            iprParams.insert_path("pt.max_bounces", bounces);
         }
 
         bounces = -1;
