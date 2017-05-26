@@ -391,7 +391,13 @@ MStatus ShadingNode::initialize()
                 MObject child2 = numAttrFn.create("uvFilterSizeY", "fsy", MFnNumericData::kFloat);
                 attr = numAttrFn.create("uvFilterSize", "fs", child1, child2);
             }
+            else
+            {
+                MObject child1 = numAttrFn.create(p.mayaAttributeName + "X", p.mayaAttributeShortName + "x", MFnNumericData::kFloat);
+                MObject child2 = numAttrFn.create(p.mayaAttributeName + "Y", p.mayaAttributeShortName + "y", MFnNumericData::kFloat);
 
+                attr = numAttrFn.create(p.mayaAttributeName, p.mayaAttributeShortName, child1, child2);
+            }
             if (!attr.isNull())
             {
                 status = AttributeUtils::makeInput(numAttrFn);
