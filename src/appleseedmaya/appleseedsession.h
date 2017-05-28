@@ -44,15 +44,6 @@
 #include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
 #include "appleseedmaya/utils.h"
 
-struct MotionBlurTimes
-{
-    std::set<float> m_cameraTimes;
-    std::set<float> m_transformTimes;
-    std::set<float> m_deformTimes;
-
-    std::set<float> m_allTimes;
-};
-
 namespace AppleseedSession
 {
 
@@ -69,22 +60,7 @@ enum SessionMode
 
 struct Options
 {
-    Options()
-        : m_selectionOnly(false)
-        , m_width(-1)
-        , m_height(-1)
-        , m_renderRegion(false)
-        , m_xmin(-1)
-        , m_ymin(-1)
-        , m_xmax(-1)
-        , m_ymax(-1)
-        , m_colorspace("linear_rgb")
-        , m_sequence(false)
-        , m_firstFrame(1)
-        , m_lastFrame(1)
-        , m_frameStep(1)
-    {
-    }
+    Options();
 
     // Common options.
     MString     m_camera;
@@ -111,6 +87,26 @@ struct Options
     int         m_firstFrame;
     int         m_lastFrame;
     int         m_frameStep;
+};
+
+struct MotionBlurTimes
+{
+    MotionBlurTimes();
+
+    void initializeToCurrentFrame();
+
+    void mergeTimes();
+
+    float normalizedFrame(float frame) const;
+
+    float            m_shutterOpenTime;
+    float            m_shutterCloseTime;
+
+    std::set<float>  m_cameraTimes;
+    std::set<float>  m_transformTimes;
+    std::set<float>  m_deformTimes;
+
+    std::set<float>  m_allTimes;
 };
 
 class Services

@@ -58,6 +58,8 @@ MObject RenderGlobalsNode::m_pixelSamples;
 MObject RenderGlobalsNode::m_passes;
 MObject RenderGlobalsNode::m_tileSize;
 
+MObject RenderGlobalsNode::m_lightingEngine;
+
 MStringArray RenderGlobalsNode::m_diagnosticShaderKeys;
 MObject RenderGlobalsNode::m_diagnosticShader;
 
@@ -126,13 +128,25 @@ MStatus RenderGlobalsNode::initialize()
         status,
         "appleseedMaya: Failed to add render globals tileSize attribute");
 
-    // Diagnostic shader override.
+    // Lighting engine.
     MFnEnumAttribute enumAttrFn;
+    m_lightingEngine = enumAttrFn.create("lightingEngine", "lightingEngine", 0, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals lighting engine attribute");
+
+    enumAttrFn.addField("Path Tracing", 0);
+
+    status = addAttribute(m_lightingEngine);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals lighting engine attribute");
+
+    // Diagnostic shader override.
     m_diagnosticShader = enumAttrFn.create("diagnostics", "diagnostics", 0, &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: Failed to create render globals diagnostic shader attribute");
-
     {
         size_t menuIndex = 0;
         enumAttrFn.addField("No Override", menuIndex++);
@@ -314,8 +328,8 @@ MStatus RenderGlobalsNode::compute(const MPlug& plug, MDataBlock& dataBlock)
 }
 
 void RenderGlobalsNode::applyGlobalsToProject(
-  const MObject&    globals,
-  asr::Project&     project)
+    const MObject&                      globals,
+    asr::Project&                       project)
 {
     asr::ParamArray& finalParams = project.configurations().get_by_name("final")->get_parameters();
     asr::ParamArray& iprParams   = project.configurations().get_by_name("interactive")->get_parameters();
@@ -350,6 +364,14 @@ void RenderGlobalsNode::applyGlobalsToProject(
         }
     }
 
+    int lightingEngine;
+    if (AttributeUtils::get(MPlug(globals, m_lightingEngine), lightingEngine))
+    {
+        if (lightingEngine == 0)
+            finalParams.insert_path("lighting_engine", "pt");
+    }
+
+    // Path tracing params.
     bool limitBounces = false;
     AttributeUtils::get(MPlug(globals, m_limitBounces), limitBounces);
 
@@ -435,4 +457,12 @@ void RenderGlobalsNode::applyGlobalsToProject(
             iprParams.insert_path("rendering_threads", threads);
         }
     }
+}
+
+void RenderGlobalsNode::collectMotionBlurTimes(
+    const MObject&                      globals,
+    AppleseedSession::MotionBlurTimes&  motionBlurTimes)
+{
+    // todo: implement this...
+    motionBlurTimes.initializeToCurrentFrame();
 }
