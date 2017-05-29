@@ -52,9 +52,9 @@ class AreaLightExporter
     static void registerExporter();
 
     static DagNodeExporter* create(
-      const MDagPath&               path,
-      renderer::Project&            project,
-      AppleseedSession::SessionMode sessionMode);
+      const MDagPath&                               path,
+      renderer::Project&                            project,
+      AppleseedSession::SessionMode                 sessionMode);
 
     ~AreaLightExporter();
 
@@ -62,16 +62,18 @@ class AreaLightExporter
 
     virtual void createExporters(const AppleseedSession::Services& services);
 
-    virtual void createEntities(const AppleseedSession::Options& options);
+    virtual void createEntities(
+        const AppleseedSession::Options&            options,
+        const AppleseedSession::MotionBlurTimes&    motionBlurTimes);
 
     virtual void flushEntities();
 
   private:
 
     AreaLightExporter(
-      const MDagPath&               path,
-      renderer::Project&            project,
-      AppleseedSession::SessionMode sessionMode);
+      const MDagPath&                               path,
+      renderer::Project&                            project,
+      AppleseedSession::SessionMode                 sessionMode);
 
     AppleseedEntityPtr<renderer::MeshObject>        m_lightMesh;
     AppleseedEntityPtr<renderer::ObjectInstance>    m_objectInstance;

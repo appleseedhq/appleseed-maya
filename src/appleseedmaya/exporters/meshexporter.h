@@ -57,15 +57,17 @@ class MeshExporter
     static void registerExporter();
 
     static DagNodeExporter* create(
-      const MDagPath&               path,
-      renderer::Project&            project,
-      AppleseedSession::SessionMode sessionMode);
+      const MDagPath&                               path,
+      renderer::Project&                            project,
+      AppleseedSession::SessionMode                 sessionMode);
 
     ~MeshExporter();
 
     virtual void createExporters(const AppleseedSession::Services& services);
 
-    virtual void createEntities(const AppleseedSession::Options& options);
+    virtual void createEntities(
+        const AppleseedSession::Options&            options,
+        const AppleseedSession::MotionBlurTimes&    motionBlurTimes);
 
     virtual void exportShapeMotionStep(float time);
 
@@ -74,9 +76,9 @@ class MeshExporter
   private:
 
     MeshExporter(
-      const MDagPath&               path,
-      renderer::Project&            project,
-      AppleseedSession::SessionMode sessionMode);
+      const MDagPath&                               path,
+      renderer::Project&                            project,
+      AppleseedSession::SessionMode                 sessionMode);
 
     void meshAttributesToParams(renderer::ParamArray& params);
 
@@ -92,6 +94,8 @@ class MeshExporter
     bool                                        m_exportTangents;
     std::vector<std::string>                    m_fileNames;
     MIntArray                                   m_perFaceAssignments;
+    bool                                        m_isDeforming;
+    size_t                                      m_numMeshKeys;
     size_t                                      m_shapeExportStep;
     AlphaMapExporterPtr                         m_alphaMapExporter;
 };

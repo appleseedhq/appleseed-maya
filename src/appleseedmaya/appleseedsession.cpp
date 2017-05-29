@@ -508,7 +508,7 @@ struct SessionImpl
 
         RENDERER_LOG_DEBUG("Creating dag entities");
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
-            it->second->createEntities(m_options);
+            it->second->createEntities(m_options, motionBlurTimes);
 
         RENDERER_LOG_DEBUG("Exporting motion steps");
         std::set<float>::const_iterator frameIt(motionBlurTimes.m_allTimes.begin());
@@ -917,8 +917,8 @@ MStatus projectExport(
 
     if (options.m_sequence)
     {
-        std::string fname = fileName.asChar();
-        if (fname.find('#') == std::string::npos)
+        std::string fname_template = fileName.asChar();
+        if (fname_template.find('#') == std::string::npos)
         {
             RENDERER_LOG_ERROR("No frame placeholders in filename.");
             return MS::kFailure;
@@ -933,7 +933,7 @@ MStatus projectExport(
             }
 
             MGlobal::viewFrame(frame);
-            fname = asf::get_numbered_string(fname, frame);
+            const std::string fname = asf::get_numbered_string(fname_template, frame);
             try
             {
                 beginSession(fname.c_str(), options, computation);

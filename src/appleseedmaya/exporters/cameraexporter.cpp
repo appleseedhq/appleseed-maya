@@ -55,9 +55,9 @@ void CameraExporter::registerExporter()
 }
 
 DagNodeExporter *CameraExporter::create(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
 {
     if (isRenderable(path))
         return new CameraExporter(path, project, sessionMode);
@@ -66,9 +66,9 @@ DagNodeExporter *CameraExporter::create(
 }
 
 CameraExporter::CameraExporter(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
   : DagNodeExporter(path, project, sessionMode)
 {
 }
@@ -79,7 +79,9 @@ CameraExporter::~CameraExporter()
         scene().cameras().remove(m_camera.get());
 }
 
-void CameraExporter::createEntities(const AppleseedSession::Options& options)
+void CameraExporter::createEntities(
+    const AppleseedSession::Options&            options,
+    const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
 {
     MFnCamera camera(dagPath());
 
@@ -156,6 +158,7 @@ void CameraExporter::exportCameraMotionStep(float time)
 
 void CameraExporter::flushEntities()
 {
+    m_camera->transform_sequence().optimize();
     scene().cameras().insert(m_camera.release());
 }
 

@@ -56,9 +56,9 @@ void LightExporter::registerExporter()
 }
 
 DagNodeExporter *LightExporter::create(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
 {
     if (areObjectAndParentsRenderable(path) == false)
         return 0;
@@ -67,9 +67,9 @@ DagNodeExporter *LightExporter::create(
 }
 
 LightExporter::LightExporter(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
   : DagNodeExporter(path, project, sessionMode)
 {
 }
@@ -88,7 +88,9 @@ bool LightExporter::supportsMotionBlur() const
     return false;
 }
 
-void LightExporter::createEntities(const AppleseedSession::Options& options)
+void LightExporter::createEntities(
+    const AppleseedSession::Options&            options,
+    const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
 {
     asr::LightFactoryRegistrar lightFactories;
     const asr::ILightFactory *lightFactory = 0;

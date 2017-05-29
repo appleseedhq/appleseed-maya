@@ -94,10 +94,10 @@ void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
 }
 
 void meshObjectHash(
-    const asr::MeshObject&          mesh,
-    const asf::StringDictionary&    frontMaterialMappings,
-    const asf::StringDictionary&    backMaterialMappings,
-    MurmurHash&                     hash)
+    const asr::MeshObject&                      mesh,
+    const asf::StringDictionary&                frontMaterialMappings,
+    const asf::StringDictionary&                backMaterialMappings,
+    MurmurHash&                                 hash)
 {
     staticMeshObjectHash(mesh, hash);
 
@@ -127,9 +127,9 @@ void MeshExporter::registerExporter()
 }
 
 DagNodeExporter *MeshExporter::create(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
 {
     if (areObjectAndParentsRenderable(path) == false)
         return 0;
@@ -138,9 +138,9 @@ DagNodeExporter *MeshExporter::create(
 }
 
 MeshExporter::MeshExporter(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
   : ShapeExporter(path, project, sessionMode)
 {
 }
@@ -165,6 +165,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
 
     if (plug.isConnected())
     {
+        // We have only one material for the mesh.
         MPlugArray connections;
         plug.connectedTo(connections, false, true);
         MObject shadingEngine = connections[0].node();
@@ -180,6 +181,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
     }
     else
     {
+        // The mesh has per-face materials.
         MFnMesh fnMesh(dagPath().node());
         MObjectArray shadingEngines;
         fnMesh.getConnectedShaders(instanceNumber, shadingEngines, m_perFaceAssignments);
@@ -218,7 +220,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
             appleseedName().asChar());
     }
 
-    // Create alpha map exporter.
+    // Create an alpha map exporter if needed.
     depNodeFn.setObject(dagPath().node());
     plug = depNodeFn.findPlug("asAlphaMap", &status);
 
@@ -232,7 +234,9 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
     }
 }
 
-void MeshExporter::createEntities(const AppleseedSession::Options& options)
+void MeshExporter::createEntities(
+    const AppleseedSession::Options&            options,
+    const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
 {
     shapeAttributesToParams(m_meshParams);
     meshAttributesToParams(m_meshParams);
@@ -242,6 +246,8 @@ void MeshExporter::createEntities(const AppleseedSession::Options& options)
     m_exportNormals = meshFn.numNormals() != 0;
     m_exportTangents = true; // todo: add a control for this...
 
+    m_numMeshKeys = motionBlurTimes.m_deformTimes.size();
+    m_isDeforming = (m_numMeshKeys > 1) && isAnimated(node());
     m_shapeExportStep = 0;
 
     if (sessionMode() != AppleseedSession::ExportSession)
@@ -255,6 +261,10 @@ void MeshExporter::createEntities(const AppleseedSession::Options& options)
 
 void MeshExporter::exportShapeMotionStep(float time)
 {
+    // Do not export extra motion steps for static meshes.
+    if (!m_isDeforming && m_shapeExportStep > 0)
+        return;
+
     if (sessionMode() == AppleseedSession::ExportSession)
     {
         MString objectName = appleseedName();
@@ -540,8 +550,10 @@ void MeshExporter::exportMeshKey()
 
     if (m_shapeExportStep == 1)
     {
-        // todo: reserve motion steps here...
-        //m_mesh->set_motion_segment_count(x);
+        assert(m_isDeforming);
+        assert(m_numMeshKeys > 1);
+
+        m_mesh->set_motion_segment_count(m_numMeshKeys - 1);
     }
 
     // Vertices.
