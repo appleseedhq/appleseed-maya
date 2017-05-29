@@ -93,7 +93,15 @@ struct MotionBlurTimes
 {
     MotionBlurTimes();
 
+    void clear();
+
     void initializeToCurrentFrame();
+
+    void initializeFrameSet(
+        const size_t        numSamples,
+        const float         shutterOpenTime,
+        const float         shutterCloseTime,
+        std::set<float>&    times);
 
     void mergeTimes();
 

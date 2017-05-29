@@ -51,7 +51,7 @@ def createGlobalNodes():
     logger.debug("Created appleseed render global node")
 
 def createRenderTabsMelProcedures():
-    pm.mel.source('createMayaSoftwareCommonGlobalsTab.mel')
+    pm.mel.source("createMayaSoftwareCommonGlobalsTab.mel")
 
     mel.eval('''
         global proc appleseedUpdateCommonTabProcedure()
@@ -250,6 +250,13 @@ class AppleseedRenderGlobalsMainTab(object):
         self.__uis["glossyBounces"].setEnable(value)
         self.__uis["diffuseBounces"].setEnable(value)
 
+    def __motionBlurChanged(self, value):
+        self.__uis["mbCameraSamples"].setEnable(value)
+        self.__uis["mbTransformSamples"].setEnable(value)
+        self.__uis["mbDeformSamples"].setEnable(value)
+        self.__uis["shutterOpen"].setEnable(value)
+        self.__uis["shutterClose"].setEnable(value)
+
     def __environmentLightSelected(self, envLight):
         logger.debug("Environment light selected: %s" % envLight)
 
@@ -390,6 +397,29 @@ class AppleseedRenderGlobalsMainTab(object):
                         self.__addControl(
                             ui=pm.checkBoxGrp(label="Background Emits Light"),
                             attrName="bgLight")
+
+                with pm.frameLayout(label="Motion Blur", collapsable=True, collapse=True):
+                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
+                        self.__addControl(
+                            ui=pm.checkBoxGrp(label="Motion Blur", changeCommand=self.__motionBlurChanged),
+                            attrName="motionBlur")
+
+                        enableMotionBlur = mc.getAttr("appleseedRenderGlobals.motionBlur")
+                        self.__addControl(
+                            ui=pm.intFieldGrp(label="Camera Samples", numberOfFields = 1, enable=enableMotionBlur),
+                            attrName="mbCameraSamples")
+                        self.__addControl(
+                            ui=pm.intFieldGrp(label="Transformation Samples", numberOfFields = 1, enable=enableMotionBlur),
+                            attrName="mbTransformSamples")
+                        self.__addControl(
+                            ui=pm.intFieldGrp(label="Deformation Samples", numberOfFields = 1, enable=enableMotionBlur),
+                            attrName="mbDeformSamples")
+                        self.__addControl(
+                            ui=pm.floatFieldGrp(label="Shutter Open", numberOfFields = 1, enable=enableMotionBlur),
+                            attrName="shutterOpen")
+                        self.__addControl(
+                            ui=pm.floatFieldGrp(label="Shutter Close", numberOfFields = 1, enable=enableMotionBlur),
+                            attrName="shutterClose")
 
                 with pm.frameLayout(label="System", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):

@@ -85,6 +85,13 @@ class RenderGlobalsNode
     static MObject m_envLightNode;
     static MObject m_backgroundEmitsLight;
 
+    static MObject m_motionBlur;
+    static MObject m_mbCameraSamples;
+    static MObject m_mbTransformSamples;
+    static MObject m_mbDeformSamples;
+    static MObject m_shutterOpen;
+    static MObject m_shutterClose;
+
     static MObject m_renderingThreads;
 
     static MObject m_imageFormat;

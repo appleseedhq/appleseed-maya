@@ -108,9 +108,7 @@ void CameraExporter::createEntities(const AppleseedSession::Options& options)
         const float imageAspect = static_cast<float>(options.m_width) / options.m_height;
 
         // Handle film fits.
-        // Reference:
-        //   http://around-the-corner.typepad.com/adn/2012/11/maya-stereoscopic.html
-
+        // Reference: http://around-the-corner.typepad.com/adn/2012/11/maya-stereoscopic.html
         MFnCamera::FilmFit filmFit = camera.filmFit();
         const float filmAspect = horizontalFilmAperture / verticalFilmAperture;
 
@@ -153,7 +151,7 @@ void CameraExporter::exportCameraMotionStep(float time)
     asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
     asf::Matrix4d invM = convert(dagPath().inclusiveMatrixInverse());
     asf::Transformd xform(m, invM);
-    m_camera->transform_sequence().set_transform(0.0, xform);
+    m_camera->transform_sequence().set_transform(time, xform);
 }
 
 void CameraExporter::flushEntities()

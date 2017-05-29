@@ -30,6 +30,7 @@
 #include "appleseedmaya/renderglobalsnode.h"
 
 // Maya headers.
+#include <maya/MAnimControl.h>
 #include <maya/MFnDependencyNode.h>
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MFnMessageAttribute.h>
@@ -37,6 +38,7 @@
 
 // appleseed.foundation headers.
 #include "foundation/utility/api/specializedapiarrays.h"
+#include "foundation/math/scalar.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/project.h"
@@ -75,6 +77,13 @@ MObject RenderGlobalsNode::m_maxRayIntensity;
 
 MObject RenderGlobalsNode::m_backgroundEmitsLight;
 MObject RenderGlobalsNode::m_envLightNode;
+
+MObject RenderGlobalsNode::m_motionBlur;
+MObject RenderGlobalsNode::m_mbCameraSamples;
+MObject RenderGlobalsNode::m_mbTransformSamples;
+MObject RenderGlobalsNode::m_mbDeformSamples;
+MObject RenderGlobalsNode::m_shutterOpen;
+MObject RenderGlobalsNode::m_shutterClose;
 
 MObject RenderGlobalsNode::m_renderingThreads;
 
@@ -286,6 +295,70 @@ MStatus RenderGlobalsNode::initialize()
         status,
         "appleseedMaya: Failed to add render globals bgLight attribute");
 
+    // Motion blur enable.
+    m_motionBlur = numAttrFn.create("motionBlur", "motionBlur", MFnNumericData::kBoolean, false, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals motion blur attribute");
+
+    status = addAttribute(m_motionBlur);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals motion blur attribute");
+
+    m_mbCameraSamples = numAttrFn.create("mbCameraSamples", "mbCameraSamples", MFnNumericData::kInt, 2, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals mb camera samples attribute");
+
+    numAttrFn.setMin(1);
+    status = addAttribute(m_mbCameraSamples);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals mb camera samples attribute");
+
+    m_mbTransformSamples = numAttrFn.create("mbTransformSamples", "mbTransformSamples", MFnNumericData::kInt, 2, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals mb transform samples attribute");
+
+    numAttrFn.setMin(1);
+    status = addAttribute(m_mbTransformSamples);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals mb transform samples attribute");
+
+    m_mbDeformSamples = numAttrFn.create("mbDeformSamples", "mbDeformSamples", MFnNumericData::kInt, 2, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals mb deform samples attribute");
+
+    numAttrFn.setMin(1);
+    status = addAttribute(m_mbDeformSamples);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals mb deform samples attribute");
+
+    // Shutter Open.
+    m_shutterOpen = numAttrFn.create("shutterOpen", "shutterOpen", MFnNumericData::kFloat, -0.25f, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals shutterOpen attribute");
+    status = addAttribute(m_shutterOpen);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals shutterOpen attribute");
+
+    // Shutter Close.
+    m_shutterClose = numAttrFn.create("shutterClose", "shutterClose", MFnNumericData::kFloat, 0.25f, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals shutterClose attribute");
+    status = addAttribute(m_shutterClose);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals shutterClose attribute");
+
     // Rendering threads.
     m_renderingThreads = numAttrFn.create("threads", "threads", MFnNumericData::kInt, 0, &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
@@ -463,6 +536,63 @@ void RenderGlobalsNode::collectMotionBlurTimes(
     const MObject&                      globals,
     AppleseedSession::MotionBlurTimes&  motionBlurTimes)
 {
-    // todo: implement this...
-    motionBlurTimes.initializeToCurrentFrame();
+    bool enableMotionBlur = false;
+    AttributeUtils::get(MPlug(globals, m_motionBlur), enableMotionBlur);
+
+    float shutterOpenTime = 0.0f;
+    AttributeUtils::get(MPlug(globals, m_shutterOpen), shutterOpenTime);
+
+    float shutterCloseTime = 0.0f;
+    AttributeUtils::get(MPlug(globals, m_shutterClose), shutterCloseTime);
+
+    if (shutterOpenTime >= shutterCloseTime)
+        enableMotionBlur = false;
+
+    if (enableMotionBlur)
+    {
+        const float now = static_cast<float>(MAnimControl::currentTime().value());
+
+        motionBlurTimes.clear();
+        motionBlurTimes.m_shutterOpenTime = now + shutterOpenTime;
+        motionBlurTimes.m_shutterCloseTime = now + shutterCloseTime;
+
+        int cameraSamples = 1;
+        if (AttributeUtils::get(MPlug(globals, m_mbCameraSamples), cameraSamples))
+        {
+            motionBlurTimes.initializeFrameSet(
+                cameraSamples,
+                motionBlurTimes.m_shutterOpenTime,
+                motionBlurTimes.m_shutterCloseTime,
+                motionBlurTimes.m_cameraTimes);
+        }
+
+        int xformSamples = 1;
+        if (AttributeUtils::get(MPlug(globals, m_mbTransformSamples), xformSamples))
+        {
+            motionBlurTimes.initializeFrameSet(
+                xformSamples,
+                motionBlurTimes.m_shutterOpenTime,
+                motionBlurTimes.m_shutterCloseTime,
+                motionBlurTimes.m_transformTimes);
+        }
+
+        int deformSamples = 1;
+        if (AttributeUtils::get(MPlug(globals, m_mbDeformSamples), deformSamples))
+        {
+            if (!asf::is_pow2(deformSamples))
+                deformSamples = asf::next_pow2(deformSamples);
+
+            motionBlurTimes.initializeFrameSet(
+                deformSamples,
+                motionBlurTimes.m_shutterOpenTime,
+                motionBlurTimes.m_shutterCloseTime,
+                motionBlurTimes.m_deformTimes);
+        }
+
+        motionBlurTimes.mergeTimes();
+    }
+    else
+    {
+        motionBlurTimes.initializeToCurrentFrame();
+    }
 }

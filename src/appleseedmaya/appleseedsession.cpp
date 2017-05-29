@@ -56,6 +56,7 @@
 #include <maya/MRenderUtil.h>
 
 // appleseed.foundation headers.
+#include "foundation/math/scalar.h"
 #include "foundation/platform/timers.h"
 #include "foundation/utility/autoreleaseptr.h"
 #include "foundation/utility/iostreamop.h"
@@ -118,15 +119,43 @@ MotionBlurTimes::MotionBlurTimes()
 {
 }
 
+void MotionBlurTimes::clear()
+{
+    m_cameraTimes.clear();
+    m_transformTimes.clear();
+    m_deformTimes.clear();
+    m_allTimes.clear();
+}
+
 void MotionBlurTimes::initializeToCurrentFrame()
 {
     const float now = static_cast<float>(MAnimControl::currentTime().value());
     m_shutterOpenTime = now;
     m_shutterCloseTime = now;
+
+    clear();
     m_cameraTimes.insert(now);
     m_transformTimes.insert(now);
     m_deformTimes.insert(now);
     m_allTimes.insert(now);
+}
+
+void MotionBlurTimes::initializeFrameSet(
+    const size_t        numSamples,
+    const float         shutterOpenTime,
+    const float         shutterCloseTime,
+    std::set<float>&    times)
+{
+    times.clear();
+
+    if (numSamples == 1)
+        times.insert(shutterOpenTime);
+    else
+    {
+        const size_t one = 1;
+        for (size_t i = 1; i <= numSamples; ++i)
+            times.insert(asf::fit(i, one, numSamples, shutterOpenTime, shutterCloseTime));
+    }
 }
 
 void MotionBlurTimes::mergeTimes()
@@ -360,27 +389,19 @@ struct SessionImpl
         AppleseedSession::MotionBlurTimes motionBlurTimes;
         // Only do motion blur for non progressive renders.
         if (m_sessionMode != AppleseedSession::ProgressiveRenderSession)
-        {
-            RenderGlobalsNode::collectMotionBlurTimes(
-                globalsNode,
-                motionBlurTimes);
-        }
+            RenderGlobalsNode::collectMotionBlurTimes(globalsNode, motionBlurTimes);
         else
             motionBlurTimes.initializeToCurrentFrame();
 
         exportScene(motionBlurTimes);
 
         // Set the shutter open and close times in all cameras.
-        // We use relative times, open and close are always 0 and 1.
-        const float shutter_open_time =  0.0f;
-        const float shutter_close_time = 1.0f;
-
         asr::CameraContainer& cameras = m_project->get_scene()->cameras();
         for (size_t i = 0, e = cameras.size(); i < e; ++i)
         {
             cameras.get_by_index(i)->get_parameters()
-                .insert("shutter_open_time", shutter_open_time)
-                .insert("shutter_close_time", shutter_close_time);
+                .insert("shutter_open_time", motionBlurTimes.normalizedFrame(motionBlurTimes.m_shutterOpenTime))
+                .insert("shutter_close_time", motionBlurTimes.normalizedFrame(motionBlurTimes.m_shutterCloseTime));
         }
 
         asr::ParamArray params = m_project->get_frame()->get_parameters();
