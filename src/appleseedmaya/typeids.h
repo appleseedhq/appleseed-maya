@@ -51,6 +51,7 @@ enum AppleseedMayaTypeIds
     AsNoise3DTypeId                 = 0x001279ca,   // 1210826
     AsNoise2DTypeId                 = 0x001279cb,   // 1210827
     AlphaMapNodeTypeId              = 0x001279cc,   // 1210828
+    AsLuminance                     = 0x001279cd,   // 1210829
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };
