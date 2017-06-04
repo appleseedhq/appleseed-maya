@@ -73,7 +73,9 @@ class DagNodeExporter
     virtual void createExporters(const AppleseedSession::Services& services);
 
     // Create appleseed entities.
-    virtual void createEntities(const AppleseedSession::Options& options) = 0;
+    virtual void createEntities(
+        const AppleseedSession::Options&            options,
+        const AppleseedSession::MotionBlurTimes&    motionBlurTimes) = 0;
 
     // Motion blur.
     virtual void collectMotionBlurSteps(MotionBlurTimes& motionTimes) const;
@@ -87,9 +89,9 @@ class DagNodeExporter
   protected:
 
     DagNodeExporter(
-      const MDagPath&               path,
-      renderer::Project&            project,
-      AppleseedSession::SessionMode sessionMode);
+      const MDagPath&                               path,
+      renderer::Project&                            project,
+      AppleseedSession::SessionMode                 sessionMode);
 
     // Return the Maya dependency node.
     MObject node() const;
@@ -116,6 +118,8 @@ class DagNodeExporter
 
     static bool isObjectRenderable(const MDagPath& path);
     static bool areObjectAndParentsRenderable(const MDagPath& path);
+
+    static bool isAnimated(MObject object, bool checkParent=false);
 
   private:
 

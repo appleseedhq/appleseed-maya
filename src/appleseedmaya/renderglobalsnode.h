@@ -35,6 +35,9 @@
 #include <maya/MPxNode.h>
 #include <maya/MTypeId.h>
 
+// appleseed.maya headers.
+#include "appleseedmaya/appleseedsession.h"
+
 // Forward declarations.
 namespace renderer { class Project; }
 
@@ -51,13 +54,19 @@ class RenderGlobalsNode
     virtual MStatus compute(const MPlug& plug, MDataBlock& dataBlock);
 
     static void applyGlobalsToProject(
-      const MObject&      globals,
-      renderer::Project&  project);
+        const MObject&                      globals,
+        renderer::Project&                  project);
+
+    static void collectMotionBlurTimes(
+        const MObject&                      globals,
+        AppleseedSession::MotionBlurTimes&  motionBlurTimes);
 
   private:
     static MObject m_pixelSamples;
     static MObject m_passes;
     static MObject m_tileSize;
+
+    static MObject m_lightingEngine;
 
     static MObject      m_diagnosticShader;
     static MStringArray m_diagnosticShaderKeys;
@@ -75,6 +84,13 @@ class RenderGlobalsNode
 
     static MObject m_envLightNode;
     static MObject m_backgroundEmitsLight;
+
+    static MObject m_motionBlur;
+    static MObject m_mbCameraSamples;
+    static MObject m_mbTransformSamples;
+    static MObject m_mbDeformSamples;
+    static MObject m_shutterOpen;
+    static MObject m_shutterClose;
 
     static MObject m_renderingThreads;
 

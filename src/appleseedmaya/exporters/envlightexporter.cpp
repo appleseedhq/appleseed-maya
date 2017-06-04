@@ -46,9 +46,9 @@ namespace asf = foundation;
 namespace asr = renderer;
 
 EnvLightExporter::EnvLightExporter(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
   : DagNodeExporter(path, project, sessionMode)
 {
 }
@@ -62,7 +62,9 @@ EnvLightExporter::~EnvLightExporter()
     }
 }
 
-void EnvLightExporter::createEntities(const AppleseedSession::Options& options)
+void EnvLightExporter::createEntities(
+    const AppleseedSession::Options&            options,
+    const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
 {
     asr::EnvironmentShaderFactoryRegistrar factoryRegistrar;
     const asr::IEnvironmentShaderFactory *factory = factoryRegistrar.lookup("edf_environment_shader");
@@ -100,9 +102,9 @@ void PhysicalSkyLightExporter::registerExporter()
 }
 
 DagNodeExporter *PhysicalSkyLightExporter::create(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
 {
     if (areObjectAndParentsRenderable(path) == false)
         return 0;
@@ -111,10 +113,10 @@ DagNodeExporter *PhysicalSkyLightExporter::create(
 }
 
 PhysicalSkyLightExporter::PhysicalSkyLightExporter(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
-  : EnvLightExporter(path, project, sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
+  : EnvLightExporter(path, project,             sessionMode)
 {
 }
 
@@ -127,7 +129,9 @@ PhysicalSkyLightExporter::~PhysicalSkyLightExporter()
     }
 }
 
-void PhysicalSkyLightExporter::createEntities(const AppleseedSession::Options& options)
+void PhysicalSkyLightExporter::createEntities(
+    const AppleseedSession::Options&            options,
+    const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
 {
     asr::ParamArray params;
     MAngle angle;
@@ -164,7 +168,7 @@ void PhysicalSkyLightExporter::createEntities(const AppleseedSession::Options& o
         appleseedName().asChar(),
         params);
 
-    EnvLightExporter::createEntities(options);
+    EnvLightExporter::createEntities(options, motionBlurTimes);
 }
 
 void PhysicalSkyLightExporter::flushEntities()
@@ -183,9 +187,9 @@ void SkyDomeLightExporter::registerExporter()
 }
 
 DagNodeExporter *SkyDomeLightExporter::create(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
 {
     if (areObjectAndParentsRenderable(path) == false)
         return 0;
@@ -194,10 +198,10 @@ DagNodeExporter *SkyDomeLightExporter::create(
 }
 
 SkyDomeLightExporter::SkyDomeLightExporter(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
-  : EnvLightExporter(path, project, sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
+  : EnvLightExporter(path, project,             sessionMode)
 {
 }
 
@@ -213,7 +217,9 @@ SkyDomeLightExporter::~SkyDomeLightExporter()
     }
 }
 
-void SkyDomeLightExporter::createEntities(const AppleseedSession::Options& options)
+void SkyDomeLightExporter::createEntities(
+    const AppleseedSession::Options&            options,
+    const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
 {
     asr::ParamArray params;
 
@@ -253,7 +259,7 @@ void SkyDomeLightExporter::createEntities(const AppleseedSession::Options& optio
         appleseedName().asChar(),
         params);
 
-    EnvLightExporter::createEntities(options);
+    EnvLightExporter::createEntities(options, motionBlurTimes);
 }
 
 void SkyDomeLightExporter::flushEntities()
