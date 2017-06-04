@@ -143,8 +143,6 @@ void addMeshExtensionAttributes()
     MNodeClass nodeClass("mesh");
     MDGModifier modifier;
 
-    addVisibilityExtensionAttributes(nodeClass, modifier);
-
     MFnMessageAttribute msgAttrFn;
     MObject attr = msgAttrFn.create("asAlphaMap", "asAlphaMap", &status);
     AttributeUtils::makeInput(msgAttrFn);
@@ -161,6 +159,37 @@ void addMeshExtensionAttributes()
     AttributeUtils::makeInput(numAttrFn);
     modifier.addExtensionAttribute(nodeClass, attr);
 
+    attr = createNumericAttribute<bool>(
+        numAttrFn,
+        "asExportUVs",
+        "asExportUVs",
+        MFnNumericData::kBoolean,
+        true,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    attr = createNumericAttribute<bool>(
+        numAttrFn,
+        "asExportNormals",
+        "asExportNormals",
+        MFnNumericData::kBoolean,
+        true,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    attr = createNumericAttribute<bool>(
+        numAttrFn,
+        "asSmoothTangents",
+        "asSmoothTangents",
+        MFnNumericData::kBoolean,
+        false,
+        status);
+    AttributeUtils::makeInput(numAttrFn);
+    modifier.addExtensionAttribute(nodeClass, attr);
+
+    addVisibilityExtensionAttributes(nodeClass, modifier);
     modifier.doIt();
 }
 

@@ -61,7 +61,7 @@ namespace asr = renderer;
 namespace
 {
 
-void meshObjectTopologyHash(const asr::MeshObject& mesh, MurmurHash& hash)
+void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
 {
     hash.append(mesh.get_tex_coords_count());
     for(int i = 0, e = mesh.get_tex_coords_count(); i < e; ++i)
@@ -74,11 +74,6 @@ void meshObjectTopologyHash(const asr::MeshObject& mesh, MurmurHash& hash)
     hash.append(mesh.get_material_slot_count());
     for(int i = 0, e = mesh.get_material_slot_count(); i < e; ++i)
         hash.append(mesh.get_material_slot(i));
-}
-
-void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
-{
-    meshObjectTopologyHash(mesh, hash);
 
     hash.append(mesh.get_vertex_count());
     for(int i = 0, e = mesh.get_vertex_count(); i < e; ++i)
@@ -242,9 +237,34 @@ void MeshExporter::createEntities(
     meshAttributesToParams(m_meshParams);
 
     MFnMesh meshFn(dagPath());
+
     m_exportUVs = meshFn.numUVs() != 0;
+    if (m_exportUVs)
+        AttributeUtils::get(node(), "asExportUVs", m_exportUVs);
+
     m_exportNormals = meshFn.numNormals() != 0;
-    m_exportTangents = true; // todo: add a control for this...
+    if (m_exportNormals)
+        AttributeUtils::get(node(), "asExportNormals", m_exportNormals);
+
+    m_smoothTangents = false;
+    if (m_exportUVs)
+        AttributeUtils::get(node(), "asSmoothTangents", m_smoothTangents);
+
+    MStatus status;
+    MPlug plug = meshFn.findPlug("referenceObject", &status);
+    m_exportReference = plug.isConnected();
+
+    if (m_exportReference)
+    {
+        RENDERER_LOG_INFO(
+            "Found reference geometry for mesh %s.",
+            m_mesh->get_name());
+
+        // We don't support PRef and NRef yet...
+        m_exportReference = false;
+    }
+
+    if (plug.isConnected())
 
     m_numMeshKeys = motionBlurTimes.m_deformTimes.size();
     m_isDeforming = (m_numMeshKeys > 1) && isAnimated(node());
@@ -256,6 +276,7 @@ void MeshExporter::createEntities(
         m_mesh = asr::MeshObjectFactory::create(objectName.asChar(), m_meshParams);
         createMaterialSlots();
         fillTopology();
+        exportGeometry();
     }
 }
 
@@ -274,8 +295,11 @@ void MeshExporter::exportShapeMotionStep(float time)
         exportGeometry();
 
         // Compute smooth tangents if needed.
-        if (m_exportUVs && m_exportTangents)
+        if (m_smoothTangents)
+        {
+            assert(m_exportUVs);
             asr::compute_smooth_vertex_tangents(*m_mesh);
+        }
 
         MurmurHash meshHash;
         staticMeshObjectHash(*m_mesh, meshHash);
@@ -309,12 +333,22 @@ void MeshExporter::exportShapeMotionStep(float time)
         }
 
         m_fileNames.push_back(fileName);
+
+        if (m_exportReference && m_shapeExportStep == 0)
+        {
+            // todo: export PRef and possibly NRef here.
+        }
     }
     else
     {
-        if (m_shapeExportStep == 0)
-            exportGeometry();
-        else
+        if (m_exportReference && m_shapeExportStep == 0)
+        {
+            // todo: export PRef and possibly NRef here.
+        }
+
+        // We already exported the first mesh key when
+        // we exported the topology.
+        if (m_shapeExportStep > 0)
             exportMeshKey();
     }
 
@@ -356,8 +390,11 @@ void MeshExporter::flushEntities()
     else
     {
         // Compute smooth tangents if needed.
-        if (m_exportUVs && m_exportTangents)
+        if (m_smoothTangents)
+        {
+            assert(m_exportUVs);
             asr::compute_smooth_vertex_tangents(*m_mesh);
+        }
     }
 
     // Handle alpha maps.
@@ -474,8 +511,6 @@ void MeshExporter::fillTopology()
                     triangleVertexOffset[2] = j;
             }
 
-            // Reverse the direction of the triangle.
-            std::swap(triangleVertexOffset[0], triangleVertexOffset[2]);
 
             asr::Triangle triangle(
                 faceVertexIndices[triangleVertexOffset[0]],
@@ -553,6 +588,7 @@ void MeshExporter::exportMeshKey()
         assert(m_isDeforming);
         assert(m_numMeshKeys > 1);
 
+        // Reserve number of keys.
         m_mesh->set_motion_segment_count(m_numMeshKeys - 1);
     }
 
