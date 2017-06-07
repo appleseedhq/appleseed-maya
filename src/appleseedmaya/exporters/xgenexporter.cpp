@@ -50,17 +50,17 @@ void XGenExporter::registerExporter()
 }
 
 DagNodeExporter *XGenExporter::create(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
 {
     return new XGenExporter(path, project, sessionMode);
 }
 
 XGenExporter::XGenExporter(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
   : DagNodeExporter(path, project, sessionMode)
 {
 }
@@ -79,7 +79,9 @@ void XGenExporter::createExporters(const AppleseedSession::Services& services)
     // todo: implement this.
 }
 
-void XGenExporter::createEntities(const AppleseedSession::Options& options)
+void XGenExporter::createEntities(
+    const AppleseedSession::Options&            options,
+    const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
 {
     const MString assemblyName = appleseedName() + MString("_assembly");
     asr::ParamArray params;

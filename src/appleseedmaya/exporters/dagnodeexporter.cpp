@@ -30,7 +30,11 @@
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
 // Maya headers.
+#include <maya/MAnimUtil.h>
 #include <maya/MFnDagNode.h>
+#include <maya/MFnExpression.h>
+#include <maya/MGlobal.h>
+#include <maya/MItDependencyGraph.h>
 
 // appleseed.renderer headers.
 #include "renderer/api/project.h"
@@ -204,4 +208,101 @@ bool DagNodeExporter::areObjectAndParentsRenderable(const MDagPath& path)
     }
 
     return true;
+}
+
+// This comes from Alembic's Maya AbcExport plugin.
+namespace
+{
+
+struct NodesToCheckStruct
+{
+    MObject node;
+    bool    checkParent;
+};
+
+}
+
+bool DagNodeExporter::isAnimated(MObject object, bool checkParent)
+{
+    MStatus stat;
+    MItDependencyGraph iter(object, MFn::kInvalid,
+        MItDependencyGraph::kUpstream,
+        MItDependencyGraph::kDepthFirst,
+        MItDependencyGraph::kPlugLevel,
+        &stat);
+
+    if (stat!= MS::kSuccess)
+        MGlobal::displayError("Unable to create DG iterator ");
+
+    // MAnimUtil::isAnimated(node) will search the history of the node
+    // for any animation curve nodes. It will return true for those nodes
+    // that have animation curve in their history.
+    // The average time complexity is O(n^2) where n is the number of history
+    // nodes. But we can improve the best case by split the loop into two.
+    std::vector<NodesToCheckStruct> nodesToCheckAnimCurve;
+
+    NodesToCheckStruct nodeStruct;
+    for (; !iter.isDone(); iter.next())
+    {
+        MObject node = iter.thisNode();
+
+        if (node.hasFn(MFn::kPluginDependNode) ||
+                node.hasFn( MFn::kConstraint ) ||
+                node.hasFn(MFn::kPointConstraint) ||
+                node.hasFn(MFn::kAimConstraint) ||
+                node.hasFn(MFn::kOrientConstraint) ||
+                node.hasFn(MFn::kScaleConstraint) ||
+                node.hasFn(MFn::kGeometryConstraint) ||
+                node.hasFn(MFn::kNormalConstraint) ||
+                node.hasFn(MFn::kTangentConstraint) ||
+                node.hasFn(MFn::kParentConstraint) ||
+                node.hasFn(MFn::kPoleVectorConstraint) ||
+                node.hasFn(MFn::kParentConstraint) ||
+                node.hasFn(MFn::kTime) ||
+                node.hasFn(MFn::kJoint) ||
+                node.hasFn(MFn::kGeometryFilt) ||
+                node.hasFn(MFn::kTweak) ||
+                node.hasFn(MFn::kPolyTweak) ||
+                node.hasFn(MFn::kSubdTweak) ||
+                node.hasFn(MFn::kCluster) ||
+                node.hasFn(MFn::kFluid) ||
+                node.hasFn(MFn::kPolyBoolOp))
+        {
+            return true;
+        }
+
+        if (node.hasFn(MFn::kExpression))
+        {
+            MFnExpression fn(node, &stat);
+            if (stat == MS::kSuccess && fn.isAnimated())
+                return true;
+        }
+
+        // skip shading nodes
+        if (!node.hasFn(MFn::kShadingEngine))
+        {
+            MPlug plug = iter.thisPlug();
+            MFnAttribute attr(plug.attribute(), &stat);
+            bool checkNodeParent = false;
+            if (stat == MS::kSuccess && attr.isWorldSpace())
+                checkNodeParent = true;
+
+            nodeStruct.node = node;
+            nodeStruct.checkParent = checkParent || checkNodeParent;
+            nodesToCheckAnimCurve.push_back(nodeStruct);
+        }
+        else
+        {
+            // and don't traverse the rest of their subgraph
+            iter.prune();
+        }
+    }
+
+    for (size_t i = 0; i < nodesToCheckAnimCurve.size(); ++i)
+    {
+        if (MAnimUtil::isAnimated(nodesToCheckAnimCurve[i].node, nodesToCheckAnimCurve[i].checkParent))
+            return true;
+    }
+
+    return false;
 }

@@ -105,6 +105,13 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
             self.callCustom(self.meshAlphaMapNew, self.meshAlphaMapUpdate, 'asAlphaMap')
             #self.addControl('asAlphaMap', label='Alpha Map')
             self.addControl('asMediumPriority', label='Medium Priority')
+
+            self.beginLayout('Export', collapse=1)
+            self.addControl('asExportUVs', label='Export UVs')
+            self.addControl('asExportNormals' , label='Export Normals')
+            self.addControl('asSmoothTangents', label='Smooth Tangents')
+            self.endLayout()
+
             self.endLayout()
 
         elif self.thisNode.type() == 'shadingEngine':

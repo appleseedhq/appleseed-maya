@@ -55,9 +55,9 @@ void CameraExporter::registerExporter()
 }
 
 DagNodeExporter *CameraExporter::create(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
 {
     if (isRenderable(path))
         return new CameraExporter(path, project, sessionMode);
@@ -66,9 +66,9 @@ DagNodeExporter *CameraExporter::create(
 }
 
 CameraExporter::CameraExporter(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
   : DagNodeExporter(path, project, sessionMode)
 {
 }
@@ -79,7 +79,9 @@ CameraExporter::~CameraExporter()
         scene().cameras().remove(m_camera.get());
 }
 
-void CameraExporter::createEntities(const AppleseedSession::Options& options)
+void CameraExporter::createEntities(
+    const AppleseedSession::Options&            options,
+    const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
 {
     MFnCamera camera(dagPath());
 
@@ -108,9 +110,7 @@ void CameraExporter::createEntities(const AppleseedSession::Options& options)
         const float imageAspect = static_cast<float>(options.m_width) / options.m_height;
 
         // Handle film fits.
-        // Reference:
-        //   http://around-the-corner.typepad.com/adn/2012/11/maya-stereoscopic.html
-
+        // Reference: http://around-the-corner.typepad.com/adn/2012/11/maya-stereoscopic.html
         MFnCamera::FilmFit filmFit = camera.filmFit();
         const float filmAspect = horizontalFilmAperture / verticalFilmAperture;
 
@@ -153,11 +153,12 @@ void CameraExporter::exportCameraMotionStep(float time)
     asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
     asf::Matrix4d invM = convert(dagPath().inclusiveMatrixInverse());
     asf::Transformd xform(m, invM);
-    m_camera->transform_sequence().set_transform(0.0, xform);
+    m_camera->transform_sequence().set_transform(time, xform);
 }
 
 void CameraExporter::flushEntities()
 {
+    m_camera->transform_sequence().optimize();
     scene().cameras().insert(m_camera.release());
 }
 

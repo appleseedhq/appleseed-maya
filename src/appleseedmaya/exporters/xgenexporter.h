@@ -50,15 +50,17 @@ class XGenExporter
     static void registerExporter();
 
     static DagNodeExporter* create(
-      const MDagPath&               path,
-      renderer::Project&            project,
-      AppleseedSession::SessionMode sessionMode);
+      const MDagPath&                               path,
+      renderer::Project&                            project,
+      AppleseedSession::SessionMode                 sessionMode);
 
     ~XGenExporter();
 
     virtual void createExporters(const AppleseedSession::Services& services);
 
-    virtual void createEntities(const AppleseedSession::Options& options);
+    virtual void createEntities(
+        const AppleseedSession::Options&            options,
+        const AppleseedSession::MotionBlurTimes&    motionBlurTimes);
 
     virtual void exportTransformMotionStep(float time);
 
@@ -67,9 +69,9 @@ class XGenExporter
   private:
 
     XGenExporter(
-      const MDagPath&               path,
-      renderer::Project&            project,
-      AppleseedSession::SessionMode sessionMode);
+      const MDagPath&                               path,
+      renderer::Project&                            project,
+      AppleseedSession::SessionMode                 sessionMode);
 
     renderer::TransformSequence                     m_transformSequence;
     AppleseedEntityPtr<renderer::Assembly>          m_assembly;

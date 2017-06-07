@@ -61,7 +61,7 @@ namespace asr = renderer;
 namespace
 {
 
-void meshObjectTopologyHash(const asr::MeshObject& mesh, MurmurHash& hash)
+void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
 {
     hash.append(mesh.get_tex_coords_count());
     for(int i = 0, e = mesh.get_tex_coords_count(); i < e; ++i)
@@ -74,11 +74,6 @@ void meshObjectTopologyHash(const asr::MeshObject& mesh, MurmurHash& hash)
     hash.append(mesh.get_material_slot_count());
     for(int i = 0, e = mesh.get_material_slot_count(); i < e; ++i)
         hash.append(mesh.get_material_slot(i));
-}
-
-void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
-{
-    meshObjectTopologyHash(mesh, hash);
 
     hash.append(mesh.get_vertex_count());
     for(int i = 0, e = mesh.get_vertex_count(); i < e; ++i)
@@ -94,10 +89,10 @@ void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
 }
 
 void meshObjectHash(
-    const asr::MeshObject&          mesh,
-    const asf::StringDictionary&    frontMaterialMappings,
-    const asf::StringDictionary&    backMaterialMappings,
-    MurmurHash&                     hash)
+    const asr::MeshObject&                      mesh,
+    const asf::StringDictionary&                frontMaterialMappings,
+    const asf::StringDictionary&                backMaterialMappings,
+    MurmurHash&                                 hash)
 {
     staticMeshObjectHash(mesh, hash);
 
@@ -127,9 +122,9 @@ void MeshExporter::registerExporter()
 }
 
 DagNodeExporter *MeshExporter::create(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
 {
     if (areObjectAndParentsRenderable(path) == false)
         return 0;
@@ -138,9 +133,9 @@ DagNodeExporter *MeshExporter::create(
 }
 
 MeshExporter::MeshExporter(
-    const MDagPath&                 path,
-    asr::Project&                   project,
-    AppleseedSession::SessionMode   sessionMode)
+    const MDagPath&                             path,
+    asr::Project&                               project,
+    AppleseedSession::SessionMode               sessionMode)
   : ShapeExporter(path, project, sessionMode)
 {
 }
@@ -165,6 +160,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
 
     if (plug.isConnected())
     {
+        // We have only one material for the mesh.
         MPlugArray connections;
         plug.connectedTo(connections, false, true);
         MObject shadingEngine = connections[0].node();
@@ -180,6 +176,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
     }
     else
     {
+        // The mesh has per-face materials.
         MFnMesh fnMesh(dagPath().node());
         MObjectArray shadingEngines;
         fnMesh.getConnectedShaders(instanceNumber, shadingEngines, m_perFaceAssignments);
@@ -218,7 +215,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
             appleseedName().asChar());
     }
 
-    // Create alpha map exporter.
+    // Create an alpha map exporter if needed.
     depNodeFn.setObject(dagPath().node());
     plug = depNodeFn.findPlug("asAlphaMap", &status);
 
@@ -232,16 +229,45 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
     }
 }
 
-void MeshExporter::createEntities(const AppleseedSession::Options& options)
+void MeshExporter::createEntities(
+    const AppleseedSession::Options&            options,
+    const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
 {
     shapeAttributesToParams(m_meshParams);
     meshAttributesToParams(m_meshParams);
 
     MFnMesh meshFn(dagPath());
-    m_exportUVs = meshFn.numUVs() != 0;
-    m_exportNormals = meshFn.numNormals() != 0;
-    m_exportTangents = true; // todo: add a control for this...
 
+    m_exportUVs = meshFn.numUVs() != 0;
+    if (m_exportUVs)
+        AttributeUtils::get(node(), "asExportUVs", m_exportUVs);
+
+    m_exportNormals = meshFn.numNormals() != 0;
+    if (m_exportNormals)
+        AttributeUtils::get(node(), "asExportNormals", m_exportNormals);
+
+    m_smoothTangents = false;
+    if (m_exportUVs)
+        AttributeUtils::get(node(), "asSmoothTangents", m_smoothTangents);
+
+    MStatus status;
+    MPlug plug = meshFn.findPlug("referenceObject", &status);
+    m_exportReference = plug.isConnected();
+
+    if (m_exportReference)
+    {
+        RENDERER_LOG_INFO(
+            "Found reference geometry for mesh %s.",
+            m_mesh->get_name());
+
+        // We don't support PRef and NRef yet...
+        m_exportReference = false;
+    }
+
+    if (plug.isConnected())
+
+    m_numMeshKeys = motionBlurTimes.m_deformTimes.size();
+    m_isDeforming = (m_numMeshKeys > 1) && isAnimated(node());
     m_shapeExportStep = 0;
 
     if (sessionMode() != AppleseedSession::ExportSession)
@@ -250,11 +276,16 @@ void MeshExporter::createEntities(const AppleseedSession::Options& options)
         m_mesh = asr::MeshObjectFactory::create(objectName.asChar(), m_meshParams);
         createMaterialSlots();
         fillTopology();
+        exportGeometry();
     }
 }
 
 void MeshExporter::exportShapeMotionStep(float time)
 {
+    // Do not export extra motion steps for static meshes.
+    if (!m_isDeforming && m_shapeExportStep > 0)
+        return;
+
     if (sessionMode() == AppleseedSession::ExportSession)
     {
         MString objectName = appleseedName();
@@ -264,8 +295,11 @@ void MeshExporter::exportShapeMotionStep(float time)
         exportGeometry();
 
         // Compute smooth tangents if needed.
-        if (m_exportUVs && m_exportTangents)
+        if (m_smoothTangents)
+        {
+            assert(m_exportUVs);
             asr::compute_smooth_vertex_tangents(*m_mesh);
+        }
 
         MurmurHash meshHash;
         staticMeshObjectHash(*m_mesh, meshHash);
@@ -299,12 +333,22 @@ void MeshExporter::exportShapeMotionStep(float time)
         }
 
         m_fileNames.push_back(fileName);
+
+        if (m_exportReference && m_shapeExportStep == 0)
+        {
+            // todo: export PRef and possibly NRef here.
+        }
     }
     else
     {
-        if (m_shapeExportStep == 0)
-            exportGeometry();
-        else
+        if (m_exportReference && m_shapeExportStep == 0)
+        {
+            // todo: export PRef and possibly NRef here.
+        }
+
+        // We already exported the first mesh key when
+        // we exported the topology.
+        if (m_shapeExportStep > 0)
             exportMeshKey();
     }
 
@@ -346,8 +390,11 @@ void MeshExporter::flushEntities()
     else
     {
         // Compute smooth tangents if needed.
-        if (m_exportUVs && m_exportTangents)
+        if (m_smoothTangents)
+        {
+            assert(m_exportUVs);
             asr::compute_smooth_vertex_tangents(*m_mesh);
+        }
     }
 
     // Handle alpha maps.
@@ -464,8 +511,6 @@ void MeshExporter::fillTopology()
                     triangleVertexOffset[2] = j;
             }
 
-            // Reverse the direction of the triangle.
-            std::swap(triangleVertexOffset[0], triangleVertexOffset[2]);
 
             asr::Triangle triangle(
                 faceVertexIndices[triangleVertexOffset[0]],
@@ -540,8 +585,11 @@ void MeshExporter::exportMeshKey()
 
     if (m_shapeExportStep == 1)
     {
-        // todo: reserve motion steps here...
-        //m_mesh->set_motion_segment_count(x);
+        assert(m_isDeforming);
+        assert(m_numMeshKeys > 1);
+
+        // Reserve number of keys.
+        m_mesh->set_motion_segment_count(m_numMeshKeys - 1);
     }
 
     // Vertices.
