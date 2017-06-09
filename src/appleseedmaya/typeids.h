@@ -52,6 +52,14 @@ enum AppleseedMayaTypeIds
     AsNoise2DTypeId                 = 0x001279cb,   // 1210827
     AlphaMapNodeTypeId              = 0x001279cc,   // 1210828
     AsLuminance                     = 0x001279cd,   // 1210829
+    asColorCorrect                  = 0x001279ce,   // 1210830
+    asColorSpace                    = 0x001279cf,   // 1210831
+    asBlackbody                     = 0x001279d0,   // 1210832
+    asPhysicalLightSourceSPD        = 0x001279d1,   // 1210833
+    asToneMap                       = 0x001279d2,   // 1210834
+    asBlendColor                    = 0x001279d3,   // 1210835
+    asRandomizeTextures             = 0x001279d4,   // 1210836
+    asVaryColor                     = 0x001279d5,   // 1210837
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };
