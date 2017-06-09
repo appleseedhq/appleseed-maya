@@ -162,20 +162,20 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 
 #### 3D textures
 
-- [ ] brownian
+- [x] brownian
 - [x] cloud
-- [ ] crater
+- [x] crater
 - [ ] fluid texture 3d
-- [ ] granite
+- [x] granite
 - [ ] leather
 - [ ] mandelbrot 3d
-- [ ] marble
-- [ ] rock
-- [ ] snow
-- [ ] solid fractal
-- [ ] stucco
-- [ ] volume noise
-- [ ] wood
+- [x] marble
+- [x] rock
+- [x] snow
+- [x] solid fractal
+- [x] stucco
+- [x] volume noise
+- [x] wood
 
 #### Env textures
 
