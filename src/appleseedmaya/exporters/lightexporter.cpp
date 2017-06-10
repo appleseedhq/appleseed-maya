@@ -151,7 +151,7 @@ void LightExporter::createEntities(
 
         MAngle penumbraAngle(5.0f, MAngle::kDegrees);
         AttributeUtils::get(node(), "penumbraAngle", penumbraAngle);
-        const float outerAngle = coneAngle.asDegrees() + 2.0 * penumbraAngle.asDegrees();
+        const double outerAngle = coneAngle.asDegrees() + 2.0 * penumbraAngle.asDegrees();
         lightParams.insert("outer_angle", outerAngle);
     }
     else
