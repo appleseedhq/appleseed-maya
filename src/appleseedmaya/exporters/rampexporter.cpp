@@ -106,7 +106,7 @@ void RampExporter::exportParameterValue(
         std::vector<RampEntry> rampColors;
         rampColors.reserve(plug.numElements());
 
-        for(size_t i = 0, e = plug.numElements(); i < e; ++i)
+        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);

@@ -116,9 +116,9 @@ MStatus FinalRenderCommand::doIt(const MArgList& args)
         options.m_sequence = renderSettings.isAnimated();
         if (options.m_sequence)
         {
-            options.m_firstFrame = static_cast<float>(renderSettings.frameStart.as(MTime::uiUnit()));
-            options.m_lastFrame = static_cast<float>(renderSettings.frameEnd.as(MTime::uiUnit()));
-            options.m_frameStep = renderSettings.frameBy;
+            options.m_firstFrame = static_cast<int>(renderSettings.frameStart.as(MTime::uiUnit()));
+            options.m_lastFrame = static_cast<int>(renderSettings.frameEnd.as(MTime::uiUnit()));
+            options.m_frameStep = static_cast<int>(renderSettings.frameBy);
         }
     }
     else

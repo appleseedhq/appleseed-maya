@@ -93,6 +93,26 @@ MObject createNumericAttribute(
     return attr;
 }
 
+template <>
+MObject createNumericAttribute<bool>(
+    MFnNumericAttribute&    numAttrFn,
+    const OSLParamInfo&     p,
+    MFnNumericData::Type    type,
+    MStatus&                status)
+{
+    MObject attr = numAttrFn.create(
+        p.mayaAttributeName,
+        p.mayaAttributeShortName,
+        type,
+        0.0,
+        &status);
+
+    if (p.hasDefault)
+        numAttrFn.setDefault(p.defaultValue[0] == 0.0 ? false : true);
+
+    return attr;
+}
+
 MStatus initializeAttribute(MFnAttribute& attr, const OSLParamInfo& p)
 {
     if (p.label.length() != 0)
@@ -327,12 +347,12 @@ MStatus ShadingNode::initialize()
                     attr = enumAttrFn.create(
                         p.mayaAttributeName,
                         p.mayaAttributeShortName,
-                        defaultValue,
+                        static_cast<short>(defaultValue),
                         &status);
                     CHECK_STATUS_AND_HANDLE_ERROR
 
                     for (size_t i = 0, e = fields.size(); i < e; ++i)
-                        enumAttrFn.addField(fields[i].c_str(), i);
+                        enumAttrFn.addField(fields[i].c_str(), static_cast<short>(i));
 
                     status = initializeAttribute(enumAttrFn, p);
                     CHECK_STATUS_AND_HANDLE_ERROR

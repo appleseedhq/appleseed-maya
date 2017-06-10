@@ -258,7 +258,7 @@ class SwatchProject
 
         // Recreate the frame.
         asr::ParamArray frameParams = m_project->get_frame()->get_parameters();
-        frameParams.insert("resolution", asf::Vector2i(resolution, resolution));
+        frameParams.insert("resolution", asf::Vector2u(resolution, resolution));
         asf::auto_release_ptr<asr::Frame> frame(asr::FrameFactory::create("beauty", frameParams));
         m_project->set_frame(frame);
 
@@ -273,7 +273,7 @@ class SwatchProject
     {
         const asf::Image& srcImage = m_project->get_frame()->image();
         const asf::CanvasProperties& props = srcImage.properties();
-        unsigned int width = props.m_canvas_width;
+        size_t width = props.m_canvas_width;
 
         for (size_t ty = 0; ty < props.m_tile_count_y; ++ty)
         {

@@ -74,7 +74,7 @@ const MurmurHash& MurmurHash::operator=(const MurmurHash& other)
 
 void MurmurHash::append(const void* data, size_t bytes)
 {
-    const int nBlocks = bytes / 16;
+    const int nBlocks = static_cast<int>(bytes) / 16;
 
     const uint64_t c1 = 0x87c37b91114253d5;
     const uint64_t c2 = 0x4cf5ad432745937f;

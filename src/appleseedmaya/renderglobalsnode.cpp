@@ -157,7 +157,7 @@ MStatus RenderGlobalsNode::initialize()
         status,
         "appleseedMaya: Failed to create render globals diagnostic shader attribute");
     {
-        size_t menuIndex = 0;
+        short menuIndex = 0;
         enumAttrFn.addField("No Override", menuIndex++);
         m_diagnosticShaderKeys.append("no_override");
 

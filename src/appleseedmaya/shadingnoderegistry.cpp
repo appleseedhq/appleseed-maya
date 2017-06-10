@@ -316,7 +316,7 @@ MStatus registerShadingNodes(MObject plugin)
         asr::ShaderQueryFactory::create();
 
     // Iterate in reverse order to allow overriding of shaders.
-    for(int i = shaderPaths.size() - 1; i >= 0; --i)
+    for(int i = static_cast<int>(shaderPaths.size()) - 1; i >= 0; --i)
     {
         RENDERER_LOG_INFO(
             "Looking for OSL shaders in path %s.",

@@ -108,7 +108,7 @@ void RemapColorExporter::exportParameterValue(
         std::vector<RemapColorEntry> remapRed;
         remapRed.reserve(plug.numElements());
 
-        for(size_t i = 0, e = plug.numElements(); i < e; ++i)
+        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
@@ -154,7 +154,7 @@ void RemapColorExporter::exportParameterValue(
         std::vector<RemapColorEntry> remapGreen;
         remapGreen.reserve(plug.numElements());
 
-        for(size_t i = 0, e = plug.numElements(); i < e; ++i)
+        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
@@ -200,7 +200,7 @@ void RemapColorExporter::exportParameterValue(
         std::vector<RemapColorEntry> remapBlue;
         remapBlue.reserve(plug.numElements());
 
-        for(size_t i = 0, e = plug.numElements(); i < e; ++i)
+        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
