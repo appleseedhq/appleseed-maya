@@ -33,7 +33,7 @@
 #include <cassert>
 
 // Boost headers.
-#include <boost/shared_array.hpp>
+#include "boost/shared_array.hpp"
 
 // Maya headers.
 #include <maya/MRenderView.h>
@@ -171,6 +171,8 @@ class RenderViewTileCallback
             draw_vline(m_xmin, m_ymax - m_lineSize, m_ymax             );
             draw_vline(m_xmax, m_ymin             , m_ymin + m_lineSize);
             draw_vline(m_xmax, m_ymax - m_lineSize, m_ymax             );
+
+            MRenderView::refresh(m_xmin, m_xmax, m_ymin, m_ymax);
         }
 
         void draw_hline(
@@ -179,7 +181,6 @@ class RenderViewTileCallback
             const unsigned int  y) const
         {
             MRenderView::updatePixels(x0, x1, y, y, m_pixels, true);
-            MRenderView::refresh(x0, x1, y, y);
         }
 
         void draw_vline(
@@ -188,7 +189,6 @@ class RenderViewTileCallback
             const unsigned int  y1) const
         {
             MRenderView::updatePixels(x, x, y0, y1, m_pixels, true);
-            MRenderView::refresh(x, x, y0, y1);
         }
 
         const unsigned int  m_xmin;
