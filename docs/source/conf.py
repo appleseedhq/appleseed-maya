@@ -130,7 +130,7 @@ html_theme_options = {
     # Note the "1" or "True" value above as the third argument to indicate
     # an arbitrary url.
     'navbar_links': [
-        ("Features", "features"),
+        ("Features", "features/features"),
         ("Installation", "installation"),
         ("Reference", "shaders/shaders"),
         ("Tutorials", "tutorials/tutorials"),
