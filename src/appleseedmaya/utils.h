@@ -34,9 +34,6 @@
 #include <memory>
 #include <string>
 
-// Boost headers.
-#include <boost/function.hpp>
-
 // Maya headers.
 #include <maya/MComputation.h>
 #include <maya/MString.h>
@@ -242,5 +239,14 @@ inline void flip_pixel_interval(const T size, T& xmin, T& xmax)
     xmax = flip_pixel_coordinate(size, xmin);
     xmin = flip_pixel_coordinate(size, tmp);
 }
+
+template <typename T>
+struct ArrayDeleter
+{
+    void operator()(const T* p)
+    {
+        delete[] p;
+    }
+};
 
 #endif  // !APPLESEED_MAYA_UTILS_H

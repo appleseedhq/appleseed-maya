@@ -30,16 +30,15 @@
 #include "appleseedmaya/appleseedsession.h"
 
 // Standard headers.
+#include <array>
 #include <memory>
 #include <thread>
 #include <vector>
 
 // Boost headers.
-#include "boost/array.hpp"
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/convenience.hpp"
 #include "boost/filesystem/operations.hpp"
-#include "boost/scoped_ptr.hpp"
 
 // Maya headers.
 #include <maya/MAnimControl.h>
@@ -835,7 +834,7 @@ struct SessionImpl
     typedef std::map<MString, DagNodeExporterPtr, MStringCompareLess>           DagExporterMap;
     typedef std::map<MString, ShadingEngineExporterPtr, MStringCompareLess>     ShadingEngineExporterMap;
     typedef std::map<MString, ShadingNetworkExporterPtr, MStringCompareLess>    ShadingNetworkExporterMap;
-    typedef boost::array<ShadingNetworkExporterMap, NumShadingNetworkContexts>  ShadingNetworkExporterMapArray;
+    typedef std::array<ShadingNetworkExporterMap, NumShadingNetworkContexts>    ShadingNetworkExporterMapArray;
     typedef std::map<MString, AlphaMapExporterPtr, MStringCompareLess>          AlphaMapExporterMap;
 
     AppleseedSession::SessionMode                           m_sessionMode;
@@ -854,7 +853,7 @@ struct SessionImpl
     ShadingNetworkExporterMapArray                          m_shadingNetworkExporters;
     AlphaMapExporterMap                                     m_alphaMapExporters;
 
-    boost::scoped_ptr<asr::MasterRenderer>                  m_renderer;
+    std::unique_ptr<asr::MasterRenderer>                    m_renderer;
     RendererController                                      m_rendererController;
     asf::auto_release_ptr<RenderViewTileCallbackFactory>    m_tileCallbackFactory;
 
@@ -864,7 +863,7 @@ struct SessionImpl
 // Globals.
 bfs::path                       g_pluginPath;    // Plugin path.
 MTime                           g_savedTime;     // Saved time.
-boost::scoped_ptr<SessionImpl>  g_globalSession; // Global session.
+std::unique_ptr<SessionImpl>    g_globalSession; // Global session.
 
 } // unnamed
 

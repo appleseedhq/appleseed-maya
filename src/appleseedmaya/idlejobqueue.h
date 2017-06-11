@@ -29,8 +29,8 @@
 #ifndef APPLESEED_MAYA_IDLE_JOB_QUEUE_H
 #define APPLESEED_MAYA_IDLE_JOB_QUEUE_H
 
-// Boost headers.
-#include <boost/function.hpp>
+// Standard headers.
+#include <functional>
 
 // Forward declarations.
 class MStatus;
@@ -44,7 +44,7 @@ MStatus uninitialize();
 void start();
 void stop();
 
-void pushJob(boost::function<void()> job);
+void pushJob(std::function<void()> job);
 
 } // IdleJobQueue
 
