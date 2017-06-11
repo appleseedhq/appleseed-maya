@@ -265,8 +265,6 @@ void MeshExporter::createEntities(
         m_exportReference = false;
     }
 
-    if (plug.isConnected())
-
     m_numMeshKeys = motionBlurTimes.m_deformTimes.size();
     m_isDeforming = (m_numMeshKeys > 1) && isAnimated(node());
     m_shapeExportStep = 0;
