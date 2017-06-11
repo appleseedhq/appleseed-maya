@@ -115,7 +115,7 @@ void stop()
         g_callbackId = 0;
 
         // Perform any pending jobs.
-        //idleCallback(nullptr);
+        idleCallback(nullptr);
         assert(g_jobQueue.empty());
     }
 }
