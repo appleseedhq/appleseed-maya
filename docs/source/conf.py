@@ -130,18 +130,21 @@ html_theme_options = {
     # Note the "1" or "True" value above as the third argument to indicate
     # an arbitrary url.
     'navbar_links': [
-        ("Examples", "examples"),
-        ("AppleseedHQ", "http://appleseedhq.net", True),
+        ("Features", "features"),
+        ("Installation", "installation"),
+        ("Reference", "shaders/shaders"),
+        ("Tutorials", "tutorials/tutorials"),
+        ("AppleseedHQ", "http://appleseedhq.net", True)
     ],
 
     # Render the next and previous page links in navbar. (Default: true)
-    'navbar_sidebarrel': True,
+    'navbar_sidebarrel': False,
 
     # Render the current pages TOC in the navbar. (Default: true)
-    'navbar_pagenav': True,
+    'navbar_pagenav': False,
 
     # Tab name for the current pages TOC. (Default: "Page")
-    'navbar_pagenav_name': "Page",
+    # 'navbar_pagenav_name': "Page",
 
     # Global TOC depth for "site" navbar tab. (Default: 1)
     # Switching to -1 shows all levels.
@@ -158,7 +161,8 @@ html_theme_options = {
 
     # HTML navbar class (Default: "navbar") to attach to <div> element.
     # For black navbar, do "navbar navbar-inverse"
-    'navbar_class': "navbar navbar-inverse",
+    # 'navbar_class': "navbar navbar-inverse",
+    'navbar_class': "navbar navbar",
 
     # Fix navigation bar to top of page?
     # Values: "true" (default) or "false"
@@ -199,7 +203,7 @@ html_logo = "appleseed-logo.png"
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-html_favicon = "appleseed-favicon.png"
+html_favicon = "appleseed-favicon.ico"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -318,7 +322,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'appleseed-maya', 'appleseed-maya Documentation',
-   'The appleseedhq Organization', 'appleseed-maya', 'One line description of project.',
+   'The appleseedhq Organization', 'appleseed-maya', 'Physically based renderer',
    'Miscellaneous'),
 ]
 
@@ -406,4 +410,5 @@ epub_exclude_files = ['search.html']
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
+# intersphinx_mapping = {'http://docs.python.org/': None}
+# intersphinx_mapping = {'http://appleseedhq.net/docs.html': None}

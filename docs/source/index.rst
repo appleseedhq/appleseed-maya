@@ -11,7 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-
+   features.rst
+   installation.rst
+   shaders/shaders.rst
+   tutorials/tutorials.rst
 
 Indices and tables
 ==================
