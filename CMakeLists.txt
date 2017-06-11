@@ -41,7 +41,7 @@ set (CMAKE_MODULE_PATH
 )
 
 #--------------------------------------------------------------------------------------------------
-# Create the build configurations. 
+# Create the build configurations.
 #--------------------------------------------------------------------------------------------------
 
 set (CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
@@ -56,7 +56,7 @@ if (NOT CMAKE_BUILD_TYPE)
     set (CMAKE_BUILD_TYPE Debug
          CACHE STRING "Choose the type of build, options are: ${CMAKE_CONFIGURATION_TYPES}" FORCE)
     set_property (CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${CMAKE_CONFIGURATION_TYPES})
-endif ()  
+endif ()
 
 #--------------------------------------------------------------------------------------------------
 # Version.
@@ -73,6 +73,18 @@ set (appleseed_maya_version_patch    0)
 
 option (USE_STATIC_BOOST    "Use static Boost libraries" OFF)
 option (WITH_PYTHON_BRIDGE  "Build Python bridge"        OFF)
+
+
+#--------------------------------------------------------------------------------------------------
+# Compile flags.
+#--------------------------------------------------------------------------------------------------
+
+if (UNIX)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+    # Remove when C++11 support improves.
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+endif ()
 
 
 #--------------------------------------------------------------------------------------------------
