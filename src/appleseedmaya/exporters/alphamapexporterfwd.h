@@ -29,10 +29,10 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTER_FWD_H
 #define APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTER_FWD_H
 
-// Boost headers.
-#include "boost/shared_ptr.hpp"
+// Standard headers.
+#include <memory>
 
 class AlphaMapExporter;
-typedef boost::shared_ptr<AlphaMapExporter> AlphaMapExporterPtr;
+typedef std::shared_ptr<AlphaMapExporter> AlphaMapExporterPtr;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTER_FWD_H

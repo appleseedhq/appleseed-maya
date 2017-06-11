@@ -29,10 +29,10 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_FWD_H
 #define APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_FWD_H
 
-// Boost headers.
-#include "boost/shared_ptr.hpp"
+// Standard headers.
+#include <memory>
 
 class ShadingEngineExporter;
-typedef boost::shared_ptr<ShadingEngineExporter> ShadingEngineExporterPtr;
+typedef std::shared_ptr<ShadingEngineExporter> ShadingEngineExporterPtr;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_FWD_H

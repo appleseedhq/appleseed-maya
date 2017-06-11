@@ -33,10 +33,6 @@
 #include <algorithm>
 #include <list>
 
-// Boost headers.
-#include "boost/thread/locks.hpp"
-#include "boost/thread/mutex.hpp"
-
 // Maya headers.
 #include <maya/MDagPath.h>
 #include <maya/MEventMessage.h>
@@ -69,9 +65,9 @@ MStatus getDagPathByName(const MString& name, MDagPath& dag)
     return selList.getDagPath(0, dag);
 }
 
-boost::shared_ptr<Computation> Computation::create()
+std::shared_ptr<Computation> Computation::create()
 {
-    return boost::shared_ptr<Computation>(new Computation());
+    return std::shared_ptr<Computation>(new Computation());
 }
 
 Computation::Computation()

@@ -38,10 +38,9 @@
 #include <maya/MString.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// Boost headers.
-#include "boost/thread/mutex.hpp"
-
 // Standard headers.
+#include <cassert>
+#include <mutex>
 #include <queue>
 
 namespace
@@ -49,17 +48,17 @@ namespace
 
 MCallbackId g_callbackId;
 
-std::queue<boost::function<void ()>> g_jobQueue;
-boost::mutex g_jobQueueMutex;
+std::queue<std::function<void ()>> g_jobQueue;
+std::mutex g_jobQueueMutex;
 
 static void idleCallback(void* clientData)
 {
     while (true)
     {
-        boost::function<void ()> job;
+        std::function<void ()> job;
 
         {
-            boost::mutex::scoped_lock lock(g_jobQueueMutex);
+            std::lock_guard<std::mutex> lock(g_jobQueueMutex);
 
             if (g_jobQueue.empty())
                 break;
@@ -121,12 +120,12 @@ void stop()
     }
 }
 
-void pushJob(boost::function<void ()> job)
+void pushJob(std::function<void ()> job)
 {
     assert(job);
     assert(g_callbackId != 0);
 
-    boost::mutex::scoped_lock lock(g_jobQueueMutex);
+    std::lock_guard<std::mutex> lock(g_jobQueueMutex);
     g_jobQueue.push(job);
 }
 

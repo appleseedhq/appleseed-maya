@@ -31,11 +31,8 @@
 
 // Standard headers.
 #include <cstring>
+#include <memory>
 #include <string>
-
-// Boost headers.
-#include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
 
 // Maya headers.
 #include <maya/MComputation.h>
@@ -213,7 +210,7 @@ class Computation
 {
   public:
 
-    static boost::shared_ptr<Computation> create();
+    static std::shared_ptr<Computation> create();
 
     ~Computation();
 
@@ -227,7 +224,7 @@ class Computation
     MComputation m_computation;
 };
 
-typedef boost::shared_ptr<Computation> ComputationPtr;
+typedef std::shared_ptr<Computation> ComputationPtr;
 
 template <typename T>
 T flip_pixel_coordinate(const T size, const T x)
@@ -242,5 +239,14 @@ inline void flip_pixel_interval(const T size, T& xmin, T& xmax)
     xmax = flip_pixel_coordinate(size, xmin);
     xmin = flip_pixel_coordinate(size, tmp);
 }
+
+template <typename T>
+struct ArrayDeleter
+{
+    void operator()(const T* p)
+    {
+        delete[] p;
+    }
+};
 
 #endif  // !APPLESEED_MAYA_UTILS_H

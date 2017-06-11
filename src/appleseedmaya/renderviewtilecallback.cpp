@@ -31,9 +31,7 @@
 
 // Standard headers.
 #include <cassert>
-
-// Boost headers.
-#include "boost/shared_array.hpp"
+#include <memory>
 
 // Maya headers.
 #include <maya/MRenderView.h>
@@ -209,7 +207,7 @@ class RenderViewTileCallback
             const size_t                    ymin,
             const size_t                    xmax,
             const size_t                    ymax,
-            boost::shared_array<RV_PIXEL>   pixels,
+            std::shared_ptr<RV_PIXEL>       pixels,
             RendererController&             rendererController,
             ComputationPtr                  computation)
           : m_xmin(static_cast<unsigned int>(xmin))
@@ -238,7 +236,7 @@ class RenderViewTileCallback
         const unsigned int              m_ymin;
         const unsigned int              m_xmax;
         const unsigned int              m_ymax;
-        boost::shared_array<RV_PIXEL>   m_pixels;
+        std::shared_ptr<RV_PIXEL>       m_pixels;
         RendererController&             m_rendererController;
         ComputationPtr                  m_computation;
     };
@@ -266,7 +264,7 @@ class RenderViewTileCallback
 
         const size_t w = xmax - xmin + 1;
         const size_t h = ymax - ymin + 1;
-        boost::shared_array<RV_PIXEL> pixels(new RV_PIXEL[w * h]);
+        std::shared_ptr<RV_PIXEL> pixels(new RV_PIXEL[w * h], ArrayDeleter<RV_PIXEL>());
         RV_PIXEL* p = pixels.get();
 
         // Copy and flip the tile verticaly (Maya's renderview is y up).
