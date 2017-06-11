@@ -29,10 +29,10 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_FWD_H
 #define APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_FWD_H
 
-// Boost headers.
-#include "boost/shared_ptr.hpp"
+// Standard headers.
+#include <memory>
 
 class DagNodeExporter;
-typedef boost::shared_ptr<DagNodeExporter> DagNodeExporterPtr;
+typedef std::shared_ptr<DagNodeExporter> DagNodeExporterPtr;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_FWD_H

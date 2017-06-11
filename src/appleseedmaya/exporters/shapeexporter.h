@@ -76,6 +76,6 @@ class ShapeExporter
     AppleseedEntityPtr<renderer::ObjectInstance>    m_objectInstance;
 };
 
-typedef boost::shared_ptr<ShapeExporter> ShapeExporterPtr;
+typedef std::shared_ptr<ShapeExporter> ShapeExporterPtr;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H

@@ -97,7 +97,7 @@ if (USE_STATIC_BOOST)
     set (Boost_USE_STATIC_LIBS TRUE)
 endif ()
 
-set (BOOST_NEEDED_LIBS system thread filesystem)
+set (BOOST_NEEDED_LIBS system filesystem)
 
 if (WITH_PYTHON_BRIDGE)
     set (BOOST_NEEDED_LIBS ${BOOST_NEEDED_LIBS} python)

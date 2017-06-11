@@ -31,11 +31,11 @@
 
 // Standard headers.
 #include <cstring>
+#include <memory>
 #include <string>
 
 // Boost headers.
 #include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
 
 // Maya headers.
 #include <maya/MComputation.h>
@@ -213,7 +213,7 @@ class Computation
 {
   public:
 
-    static boost::shared_ptr<Computation> create();
+    static std::shared_ptr<Computation> create();
 
     ~Computation();
 
@@ -227,7 +227,7 @@ class Computation
     MComputation m_computation;
 };
 
-typedef boost::shared_ptr<Computation> ComputationPtr;
+typedef std::shared_ptr<Computation> ComputationPtr;
 
 template <typename T>
 T flip_pixel_coordinate(const T size, const T x)

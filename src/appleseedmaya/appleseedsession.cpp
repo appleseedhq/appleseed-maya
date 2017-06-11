@@ -30,6 +30,8 @@
 #include "appleseedmaya/appleseedsession.h"
 
 // Standard headers.
+#include <memory>
+#include <thread>
 #include <vector>
 
 // Boost headers.
@@ -37,9 +39,7 @@
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/convenience.hpp"
 #include "boost/filesystem/operations.hpp"
-#include "boost/shared_ptr.hpp"
 #include "boost/scoped_ptr.hpp"
-#include "boost/thread/thread.hpp"
 
 // Maya headers.
 #include <maya/MAnimControl.h>
@@ -749,7 +749,7 @@ struct SessionImpl
                 static_cast<asr::ITileCallbackFactory*>(m_tileCallbackFactory.get())));
 
         // Non blocking mode.
-        boost::thread thread(&SessionImpl::renderFunc, this);
+        std::thread thread(&SessionImpl::renderFunc, this);
         m_renderThread.swap(thread);
     }
 
@@ -858,7 +858,7 @@ struct SessionImpl
     RendererController                                      m_rendererController;
     asf::auto_release_ptr<RenderViewTileCallbackFactory>    m_tileCallbackFactory;
 
-    boost::thread                                           m_renderThread;
+    std::thread                                             m_renderThread;
 };
 
 // Globals.

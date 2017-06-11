@@ -32,14 +32,14 @@
 // Standard headers.
 #include <map>
 
-// Boost headers.
-#include "boost/shared_ptr.hpp"
+// Standard headers.
+#include <memory>
 
 // appleseed.maya headers.
 #include "appleseedmaya/utils.h"
 
 class ShadingNodeExporter;
-typedef boost::shared_ptr<ShadingNodeExporter> ShadingNodeExporterPtr;
+typedef std::shared_ptr<ShadingNodeExporter> ShadingNodeExporterPtr;
 
 typedef std::map<MString, ShadingNodeExporter*, MStringCompareLess> ShadingNodeExporterMap;
 

@@ -29,8 +29,8 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_FWD_H
 #define APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_FWD_H
 
-// Boost headers.
-#include "boost/shared_ptr.hpp"
+// Standard headers.
+#include <memory>
 
 enum ShadingNetworkContext
 {
@@ -44,6 +44,6 @@ enum ShadingNetworkContext
 };
 
 class ShadingNetworkExporter;
-typedef boost::shared_ptr<ShadingNetworkExporter> ShadingNetworkExporterPtr;
+typedef std::shared_ptr<ShadingNetworkExporter> ShadingNetworkExporterPtr;
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_FWD_H
