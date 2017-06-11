@@ -174,8 +174,8 @@ float MotionBlurTimes::normalizedFrame(float frame) const
     return (frame - m_shutterOpenTime) / (m_shutterCloseTime - m_shutterOpenTime);
 }
 
-Services::Services() {}
-Services::~Services() {}
+Services::Services() = default;
+Services::~Services() = default;
 
 } // namespace AppleseedSession.
 
