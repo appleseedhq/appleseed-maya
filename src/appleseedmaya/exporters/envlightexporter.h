@@ -42,7 +42,6 @@ class EnvLightExporter
   : public DagNodeExporter
 {
   public:
-
     ~EnvLightExporter();
 
     virtual void exportTransformMotionStep(float time);

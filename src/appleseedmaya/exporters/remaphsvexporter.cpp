@@ -36,6 +36,7 @@
 
 // Maya headers.
 #include <maya/MFnDependencyNode.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/utility.h"
@@ -108,7 +109,7 @@ void RemapHsvExporter::exportParameterValue(
         std::vector<RemapHsvEntry> remapHue;
         remapHue.reserve(plug.numElements());
 
-        for(size_t i = 0, e = plug.numElements(); i < e; ++i)
+        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
@@ -154,7 +155,7 @@ void RemapHsvExporter::exportParameterValue(
         std::vector<RemapHsvEntry> remapSaturation;
         remapSaturation.reserve(plug.numElements());
 
-        for(size_t i = 0, e = plug.numElements(); i < e; ++i)
+        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
@@ -200,7 +201,7 @@ void RemapHsvExporter::exportParameterValue(
         std::vector<RemapHsvEntry> remapValue;
         remapValue.reserve(plug.numElements());
 
-        for(size_t i = 0, e = plug.numElements(); i < e; ++i)
+        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);

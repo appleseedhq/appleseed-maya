@@ -42,7 +42,6 @@
 #define MNoPluginEntry
 #define MNoVersionString
 #include <maya/MFnPlugin.h>
-
 #include <maya/MFnDependencyNode.h>
 #include <maya/MGlobal.h>
 #include <maya/MObject.h>
@@ -50,6 +49,7 @@
 #include <maya/MStatus.h>
 #include <maya/MStringArray.h>
 #include <maya/MTypeId.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
@@ -316,7 +316,7 @@ MStatus registerShadingNodes(MObject plugin)
         asr::ShaderQueryFactory::create();
 
     // Iterate in reverse order to allow overriding of shaders.
-    for(int i = shaderPaths.size() - 1; i >= 0; --i)
+    for(int i = static_cast<int>(shaderPaths.size()) - 1; i >= 0; --i)
     {
         RENDERER_LOG_INFO(
             "Looking for OSL shaders in path %s.",

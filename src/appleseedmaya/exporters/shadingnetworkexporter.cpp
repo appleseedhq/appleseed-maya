@@ -35,6 +35,7 @@
 // Maya headers.
 #include <maya/MItDependencyGraph.h>
 #include <maya/MFnDependencyNode.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
@@ -208,7 +209,7 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
     if (shaderInfo)
     {
         // Look for nodes connected to the shader and create exporters for them.
-        for(int i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
+        for(size_t i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
         {
             const OSLParamInfo& paramInfo = shaderInfo->paramInfo[i];
 
@@ -237,7 +238,7 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
             // Look for nodes connected to child or elements plugs of this plug.
             if (plug.isCompound() && plug.numConnectedChildren() != 0)
             {
-                for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
+                for(unsigned int i = 0, e = plug.numChildren(); i < e; ++i)
                 {
                     MPlug childPlug = plug.child(i, &status);
                     if (status)
@@ -251,7 +252,7 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
             }
             else if (plug.isArray() && plug.numConnectedElements() != 0)
             {
-                for(size_t i = 0, e = plug.numElements(); i < e; ++i)
+                for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
                 {
                     MPlug elementPlug = plug.elementByPhysicalIndex(i, &status);
                     if (status)

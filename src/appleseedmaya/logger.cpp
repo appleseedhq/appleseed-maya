@@ -36,6 +36,7 @@
 // Maya headers.
 #include <maya/MGlobal.h>
 #include <maya/MStatus.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/log.h"

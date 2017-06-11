@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2017 Esteban Tovagliari, The appleseedhq Organization
+// Copyright (c) 2017 Francois Beaune, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,38 +26,5 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H
-
-// Standard headers.
-#include <string>
-
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/shapeexporter.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/scene.h"
-
-// Forward declarations.
-namespace renderer { class Project; }
-
-class InstanceExporter
-  : public ShapeExporter
-{
-  public:
-
-    InstanceExporter(
-      const MDagPath&                     path,
-      AppleseedSession::SessionMode       sessionMode,
-      const ShapeExporter&                master,
-      renderer::Project&                  project,
-      const renderer::TransformSequence&  transformSequence);
-
-    virtual void flushEntities();
-
-  private:
-
-    MString m_masterShapeName;
-};
-
-#endif  // !APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H
+#undef fsin
+#undef fcos

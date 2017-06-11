@@ -35,6 +35,7 @@
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MFnMessageAttribute.h>
 #include <maya/MFnNumericAttribute.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/api/specializedapiarrays.h"
@@ -157,7 +158,7 @@ MStatus RenderGlobalsNode::initialize()
         status,
         "appleseedMaya: Failed to create render globals diagnostic shader attribute");
     {
-        size_t menuIndex = 0;
+        short menuIndex = 0;
         enumAttrFn.addField("No Override", menuIndex++);
         m_diagnosticShaderKeys.append("no_override");
 

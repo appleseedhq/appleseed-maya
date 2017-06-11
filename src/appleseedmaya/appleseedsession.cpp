@@ -54,6 +54,7 @@
 #include <maya/MObject.h>
 #include <maya/MObjectArray.h>
 #include <maya/MRenderUtil.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/math/scalar.h"

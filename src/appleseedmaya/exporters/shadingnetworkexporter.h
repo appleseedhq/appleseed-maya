@@ -40,6 +40,7 @@
 #include <maya/MObject.h>
 #include <maya/MPlug.h>
 #include <maya/MString.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/shadergroup.h"

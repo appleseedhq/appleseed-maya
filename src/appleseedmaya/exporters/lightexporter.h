@@ -30,7 +30,7 @@
 #define APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H
 
 // Standard headers.
-#include<string>
+#include <string>
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"

@@ -31,6 +31,7 @@
 
 // Maya headers.
 #include <maya/MBoundingBox.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 MBoundingBox sphereAndLogoBoundingBox(float size);
 

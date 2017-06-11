@@ -33,10 +33,11 @@
 #include <cassert>
 
 // Boost headers.
-#include <boost/shared_array.hpp>
+#include "boost/shared_array.hpp"
 
 // Maya headers.
 #include <maya/MRenderView.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/image/canvasproperties.h"
@@ -95,10 +96,10 @@ class RenderViewTileCallback
         const size_t        width,
         const size_t        height)
     {
-        int xmin = x;
-        int ymin = y;
-        int xmax = x + width  - 1;
-        int ymax = y + height - 1;
+        int xmin = static_cast<int>(x);
+        int ymin = static_cast<int>(y);
+        int xmax = static_cast<int>(x + width  - 1);
+        int ymax = static_cast<int>(y + height - 1);
 
         if (!intersect_with_data_window(xmin, ymin, xmax, ymax))
             return;
@@ -143,11 +144,11 @@ class RenderViewTileCallback
             RV_PIXEL*           highlightPixels,
             RendererController& rendererController,
             ComputationPtr      computation)
-          : m_xmin(xmin)
-          , m_ymin(ymin)
-          , m_xmax(xmax)
-          , m_ymax(ymax)
-          , m_lineSize(lineSize)
+          : m_xmin(static_cast<unsigned int>(xmin))
+          , m_ymin(static_cast<unsigned int>(ymin))
+          , m_xmax(static_cast<unsigned int>(xmax))
+          , m_ymax(static_cast<unsigned int>(ymax))
+          , m_lineSize(static_cast<unsigned int>(lineSize))
           , m_pixels(highlightPixels)
           , m_rendererController(rendererController)
           , m_computation(computation)
@@ -171,31 +172,31 @@ class RenderViewTileCallback
             draw_vline(m_xmin, m_ymax - m_lineSize, m_ymax             );
             draw_vline(m_xmax, m_ymin             , m_ymin + m_lineSize);
             draw_vline(m_xmax, m_ymax - m_lineSize, m_ymax             );
+
+            MRenderView::refresh(m_xmin, m_xmax, m_ymin, m_ymax);
         }
 
         void draw_hline(
-            const size_t    x0,
-            const size_t    x1,
-            const size_t    y) const
+            const unsigned int  x0,
+            const unsigned int  x1,
+            const unsigned int  y) const
         {
             MRenderView::updatePixels(x0, x1, y, y, m_pixels, true);
-            MRenderView::refresh(x0, x1, y, y);
         }
 
         void draw_vline(
-            const size_t    x,
-            const size_t    y0,
-            const size_t    y1) const
+            const unsigned int  x,
+            const unsigned int  y0,
+            const unsigned int  y1) const
         {
             MRenderView::updatePixels(x, x, y0, y1, m_pixels, true);
-            MRenderView::refresh(x, x, y0, y1);
         }
 
-        const size_t        m_xmin;
-        const size_t        m_ymin;
-        const size_t        m_xmax;
-        const size_t        m_ymax;
-        const size_t        m_lineSize;
+        const unsigned int  m_xmin;
+        const unsigned int  m_ymin;
+        const unsigned int  m_xmax;
+        const unsigned int  m_ymax;
+        const unsigned int  m_lineSize;
         RV_PIXEL*           m_pixels;
         RendererController& m_rendererController;
         ComputationPtr      m_computation;
@@ -211,10 +212,10 @@ class RenderViewTileCallback
             boost::shared_array<RV_PIXEL>   pixels,
             RendererController&             rendererController,
             ComputationPtr                  computation)
-          : m_xmin(xmin)
-          , m_ymin(ymin)
-          , m_xmax(xmax)
-          , m_ymax(ymax)
+          : m_xmin(static_cast<unsigned int>(xmin))
+          , m_ymin(static_cast<unsigned int>(ymin))
+          , m_xmax(static_cast<unsigned int>(xmax))
+          , m_ymax(static_cast<unsigned int>(ymax))
           , m_pixels(pixels)
           , m_rendererController(rendererController)
           , m_computation(computation)
@@ -233,10 +234,10 @@ class RenderViewTileCallback
             MRenderView::refresh(m_xmin, m_xmax, m_ymin, m_ymax);
         }
 
-        const size_t                    m_xmin;
-        const size_t                    m_ymin;
-        const size_t                    m_xmax;
-        const size_t                    m_ymax;
+        const unsigned int              m_xmin;
+        const unsigned int              m_ymin;
+        const unsigned int              m_xmax;
+        const unsigned int              m_ymax;
         boost::shared_array<RV_PIXEL>   m_pixels;
         RendererController&             m_rendererController;
         ComputationPtr                  m_computation;
@@ -252,13 +253,13 @@ class RenderViewTileCallback
         assert(tile.get_channel_count() == 4);
 
         const asf::CanvasProperties& props = frame->image().properties();
-        const int x0 = tile_x * props.m_tile_width;
-        const int y0 = tile_y * props.m_tile_height;
+        const int x0 = static_cast<int>(tile_x * props.m_tile_width);
+        const int y0 = static_cast<int>(tile_y * props.m_tile_height);
 
         int xmin = x0;
         int ymin = y0;
-        int xmax = xmin + tile.get_width() - 1;
-        int ymax = ymin + tile.get_height() - 1;
+        int xmax = xmin + static_cast<int>(tile.get_width()) - 1;
+        int ymax = ymin + static_cast<int>(tile.get_height()) - 1;
 
         if (!intersect_with_data_window(xmin, ymin, xmax, ymax))
             return;
@@ -351,25 +352,25 @@ void RenderViewTileCallbackFactory::renderViewStart(const renderer::Frame& frame
 {
     const asf::CanvasProperties& frameProps = frame.image().properties();
 
-    const size_t width = frameProps.m_canvas_width;
-    const size_t height = frameProps.m_canvas_height;
+    const int width = static_cast<int>(frameProps.m_canvas_width);
+    const int height = static_cast<int>(frameProps.m_canvas_height);
     m_displayWindow = asf::AABB2i(asf::Vector2i(0, 0), asf::Vector2i(width - 1, height - 1));
 
     if (frame.has_crop_window())
     {
         m_dataWindow = frame.get_crop_window();
 
-        size_t ymin = m_dataWindow.min.y;
-        size_t ymax = m_dataWindow.max.y;
+        int ymin = m_dataWindow.min.y;
+        int ymax = m_dataWindow.max.y;
         flip_pixel_interval(height, ymin, ymax);
 
         MRenderView::startRegionRender(
-            width,
-            height,
-            m_dataWindow.min.x,
-            m_dataWindow.max.x,
-            ymin,
-            ymax,
+            static_cast<unsigned int>(width),
+            static_cast<unsigned int>(height),
+            static_cast<unsigned int>(m_dataWindow.min.x),
+            static_cast<unsigned int>(m_dataWindow.max.x),
+            static_cast<unsigned int>(ymin),
+            static_cast<unsigned int>(ymax),
             false,
             true);
     }

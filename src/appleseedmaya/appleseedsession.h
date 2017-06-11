@@ -30,13 +30,14 @@
 #define APPLESEED_MAYA_SESSION_H
 
 // Standard headers.
-#include<set>
+#include <set>
 
 // Maya headers.
 #include <maya/MObject.h>
 #include <maya/MPlug.h>
 #include <maya/MStatus.h>
 #include <maya/MString.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/alphamapexporterfwd.h"

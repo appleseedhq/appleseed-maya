@@ -31,6 +31,7 @@
 
 // Maya headers.
 #include <maya/MPxFileTranslator.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // Forward declarations.
 class MFileObject;

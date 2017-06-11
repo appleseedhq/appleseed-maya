@@ -30,6 +30,7 @@
 #include <maya/MGlobal.h>
 #include <maya/MFnPlugin.h>
 #include <maya/MSwatchRenderRegister.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/alphamapnode.h"

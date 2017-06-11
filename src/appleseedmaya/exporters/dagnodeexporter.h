@@ -38,6 +38,7 @@
 #include <maya/MObject.h>
 #include <maya/MObjectArray.h>
 #include <maya/MString.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/math/matrix.h"

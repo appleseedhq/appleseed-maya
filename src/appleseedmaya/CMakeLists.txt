@@ -98,6 +98,7 @@ set (appleseed_maya_sources
     idlejobqueue.h
     logger.cpp
     logger.h
+    mayaheaderscleanup.h
     murmurhash.cpp
     murmurhash.h
     physicalskylightnode.h
@@ -159,6 +160,15 @@ target_link_libraries (appleseedMaya
     ${OPENGL_gl_LIBRARY}
     ${PYTHON_LIBRARIES}
 )
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    # Work around a linking issue caused by Autodesk modifying some definitions in ILMBase's half library:
+    # https://groups.google.com/d/msg/vfx-platform-discuss/0gjGDNkYdCo/DRb0-yDmBQAJ
+    target_link_libraries (appleseedMaya
+        debug       ${APPLESEED_DEPS_STAGE_DIR}/ilmbase-debug/lib/Half.lib
+        optimized   ${APPLESEED_DEPS_STAGE_DIR}/ilmbase-release/lib/Half.lib
+    )
+endif ()
 
 set_target_properties (appleseedMaya PROPERTIES PREFIX "")
 

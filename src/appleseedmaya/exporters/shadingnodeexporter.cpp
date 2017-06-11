@@ -37,6 +37,7 @@
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MStringArray.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/string.h"
@@ -414,7 +415,7 @@ void ShadingNodeExporter::exportShaderParameters(
     MStatus status;
     MFnDependencyNode depNodeFn(m_object);
 
-    for(int i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
+    for(size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
         MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
@@ -572,7 +573,7 @@ void ShadingNodeExporter::exportArrayValue(
         assert(plug.isCompound());
 
         ss << "float[] ";
-        for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
+        for(unsigned int i = 0, e = plug.numChildren(); i < e; ++i)
         {
             MPlug childPlug = plug.child(i, &status);
             if (status)
@@ -592,7 +593,7 @@ void ShadingNodeExporter::exportArrayValue(
         assert(plug.isCompound());
 
         ss << "int[] ";
-        for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
+        for(unsigned int i = 0, e = plug.numChildren(); i < e; ++i)
         {
             MPlug childPlug = plug.child(i, &status);
             if (status)
@@ -660,7 +661,7 @@ bool ShadingNodeExporter::hasChildrenConnections(
 
     if (plug.numConnectedChildren() != 0)
     {
-        for(size_t i = 0, e = plug.numChildren(); i < e; ++i)
+        for(unsigned int i = 0, e = plug.numChildren(); i < e; ++i)
         {
             MStatus status;
             MPlug childPlug = plug.child(i, &status);
@@ -682,7 +683,7 @@ bool ShadingNodeExporter::hasElementConnections(
 
     if (plug.numConnectedElements() != 0)
     {
-        for(size_t i = 0, e = plug.numElements(); i < e; ++i)
+        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MStatus status;
             MPlug elementPlug = plug.elementByPhysicalIndex(i, &status);
@@ -769,7 +770,7 @@ void ShadingNodeExporter::createInputFloatCompoundAdaptorShader(
     std::vector<size_t>  dstParamIndices;
 
     // For each child attribute.
-    for (size_t i = 0, e = plug.numChildren(); i < e; ++i)
+    for (unsigned int i = 0, e = plug.numChildren(); i < e; ++i)
     {
         MPlug childPlug = plug.child(i);
         if (childPlug.isConnected())
@@ -847,7 +848,7 @@ bool ShadingNodeExporter::createOutputFloatCompoundAdaptorShader(
     if (layerAndParamNameFromPlug(parentPlug, srcLayerName, srcParamName) == false)
         return false;
 
-    for (size_t i = 0, e = parentPlug.numChildren(); i < e; ++i)
+    for (unsigned int i = 0, e = parentPlug.numChildren(); i < e; ++i)
     {
         if (plug == parentPlug.child(i))
         {

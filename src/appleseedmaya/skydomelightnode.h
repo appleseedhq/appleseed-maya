@@ -42,6 +42,7 @@
 #include <maya/MTypeId.h>
 #include <maya/MUserData.h>
 #include <maya/MViewport2Renderer.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // Forward declarations.
 class MObject;

@@ -31,6 +31,7 @@
 
 // Maya headers.
 #include <maya/MStatus.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 MStatus addExtensionAttributes();
 

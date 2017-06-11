@@ -33,6 +33,7 @@
 #include <maya/MFnDependencyNode.h>
 #include <maya/MPlug.h>
 #include <maya/MPlugArray.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"

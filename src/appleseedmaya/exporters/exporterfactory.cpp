@@ -36,6 +36,7 @@
 // Maya headers.
 #include <maya/MFnDagNode.h>
 #include <maya/MFnDependencyNode.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/exceptions.h"

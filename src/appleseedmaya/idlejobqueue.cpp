@@ -29,28 +29,47 @@
 // Interface header.
 #include "appleseedmaya/idlejobqueue.h"
 
-// tbb headers.
-#include "tbb/concurrent_queue.h"
+// appleseed.maya headers.
+#include "appleseedmaya/logger.h"
 
 // Maya headers.
 #include <maya/MEventMessage.h>
 #include <maya/MStatus.h>
 #include <maya/MString.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
-// appleseed.maya headers.
-#include "appleseedmaya/logger.h"
+// Boost headers.
+#include "boost/thread/mutex.hpp"
+
+// Standard headers.
+#include <queue>
 
 namespace
 {
 
-tbb::concurrent_queue<boost::function<void()> > g_jobQueue;
 MCallbackId g_callbackId;
 
-static void idleCallback(void *clientData)
+std::queue<boost::function<void ()>> g_jobQueue;
+boost::mutex g_jobQueueMutex;
+
+static void idleCallback(void* clientData)
 {
-    boost::function<void()> job;
-    if (g_jobQueue.try_pop(job))
+    while (true)
+    {
+        boost::function<void ()> job;
+
+        {
+            boost::mutex::scoped_lock lock(g_jobQueueMutex);
+
+            if (g_jobQueue.empty())
+                break;
+
+            job = g_jobQueue.front();
+            g_jobQueue.pop();
+        }
+
         job();
+    }
 }
 
 } // unnamed.
@@ -97,10 +116,7 @@ void stop()
         g_callbackId = 0;
 
         // Perform any pending jobs.
-        boost::function<void()> job;
-        while (g_jobQueue.try_pop(job))
-            job();
-
+        idleCallback(nullptr);
         assert(g_jobQueue.empty());
     }
 }
@@ -110,6 +126,7 @@ void pushJob(boost::function<void ()> job)
     assert(job);
     assert(g_callbackId != 0);
 
+    boost::mutex::scoped_lock lock(g_jobQueueMutex);
     g_jobQueue.push(job);
 }
 

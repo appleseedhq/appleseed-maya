@@ -34,6 +34,7 @@
 
 // Maya headers.
 #include <maya/MObject.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/material.h"

@@ -35,6 +35,7 @@
 
 // Maya headers.
 #include <maya/MIntArray.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "renderer/api/material.h"

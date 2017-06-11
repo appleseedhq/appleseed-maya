@@ -34,12 +34,13 @@
 
 // Maya headers.
 #include <maya/MObject.h>
-#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/texture.h"
 
 // appleseed.maya headers.
+#include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/utils.h"
 
 // Forward declarations.

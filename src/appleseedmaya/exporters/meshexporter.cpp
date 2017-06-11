@@ -43,6 +43,7 @@
 #include <maya/MItDependencyGraph.h>
 #include <maya/MItMeshPolygon.h>
 #include <maya/MPointArray.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/string.h"
@@ -64,27 +65,27 @@ namespace
 void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
 {
     hash.append(mesh.get_tex_coords_count());
-    for(int i = 0, e = mesh.get_tex_coords_count(); i < e; ++i)
+    for(size_t i = 0, e = mesh.get_tex_coords_count(); i < e; ++i)
         hash.append(mesh.get_tex_coords(i));
 
     hash.append(mesh.get_triangle_count());
-    for(int i = 0, e = mesh.get_triangle_count(); i < e; ++i)
+    for(size_t i = 0, e = mesh.get_triangle_count(); i < e; ++i)
         hash.append(mesh.get_triangle(i));
 
     hash.append(mesh.get_material_slot_count());
-    for(int i = 0, e = mesh.get_material_slot_count(); i < e; ++i)
+    for(size_t i = 0, e = mesh.get_material_slot_count(); i < e; ++i)
         hash.append(mesh.get_material_slot(i));
 
     hash.append(mesh.get_vertex_count());
-    for(int i = 0, e = mesh.get_vertex_count(); i < e; ++i)
+    for(size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
         hash.append(mesh.get_vertex(i));
 
     hash.append(mesh.get_vertex_normal_count());
-    for(int i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
+    for(size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
         hash.append(mesh.get_vertex_normal(i));
 
     hash.append(mesh.get_vertex_tangent_count());
-    for(int i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
+    for(size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
         hash.append(mesh.get_vertex_tangent(i));
 }
 
@@ -97,15 +98,15 @@ void meshObjectHash(
     staticMeshObjectHash(mesh, hash);
 
     hash.append(mesh.get_motion_segment_count());
-    for(int j = 0, je = mesh.get_motion_segment_count(); j < je; ++j)
+    for(size_t j = 0, je = mesh.get_motion_segment_count(); j < je; ++j)
     {
-        for(int i = 0, e = mesh.get_vertex_count(); i < e; ++i)
+        for(size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
             mesh.get_vertex_pose(i, j);
 
-        for(int i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
+        for(size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
             mesh.get_vertex_normal_pose(i, j);
 
-        for(int i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
+        for(size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
             mesh.get_vertex_tangent_pose(i, j);
     }
 
@@ -181,7 +182,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
         MObjectArray shadingEngines;
         fnMesh.getConnectedShaders(instanceNumber, shadingEngines, m_perFaceAssignments);
 
-        for(size_t i = 0, e = shadingEngines.length(); i < e; ++i)
+        for(unsigned int i = 0, e = shadingEngines.length(); i < e; ++i)
         {
             services.createShadingEngineExporter(shadingEngines[i]);
             depNodeFn.setObject(shadingEngines[i]);
@@ -375,7 +376,7 @@ void MeshExporter::flushEntities()
             asf::Dictionary fileNames;
             MString key;
 
-            for(int i = 0, e = m_fileNames.size(); i < e; ++i)
+            for(size_t i = 0, e = m_fileNames.size(); i < e; ++i)
             {
                 key.set(static_cast<double>(i));
                 fileNames.insert(key.asChar(), m_fileNames[i].c_str());
@@ -475,18 +476,18 @@ void MeshExporter::fillTopology()
         faceNormalIndices.clear();
 
         faceIt.getVertices(faceVertexIndices);
-        for(size_t i = 0, e = faceVertexIndices.length(); i < e; ++i)
+        for(unsigned int i = 0, e = faceVertexIndices.length(); i < e; ++i)
         {
             if (m_exportUVs)
             {
                 int uvIndex;
-                status = faceIt.getUVIndex(i, uvIndex);
+                status = faceIt.getUVIndex(static_cast<int>(i), uvIndex);
                 faceUVIndices.append(uvIndex);
             }
 
             if (m_exportNormals)
             {
-                unsigned int normalIndex = faceIt.normalIndex(i, &status);
+                unsigned int normalIndex = faceIt.normalIndex(static_cast<int>(i), &status);
                 faceNormalIndices.append(normalIndex);
             }
         }
@@ -494,14 +495,14 @@ void MeshExporter::fillTopology()
         // Match the triangle indices to the face indices.
         int numTris;
         faceIt.numTriangles(numTris);
-        for(size_t i = 0; i < numTris; ++i)
+        for(int i = 0; i < numTris; ++i)
         {
             trianglePoints.clear();
             triangleVertexIndices.clear();
             faceIt.getTriangle(i, trianglePoints, triangleVertexIndices);
 
             int triangleVertexOffset[3] = {-1, -1, -1};
-            for(size_t j = 0, je = faceVertexIndices.length(); j < je; ++j)
+            for(unsigned int j = 0, je = faceVertexIndices.length(); j < je; ++j)
             {
                 if (faceVertexIndices[j] == triangleVertexIndices[0])
                     triangleVertexOffset[0] = j;
@@ -560,7 +561,7 @@ void MeshExporter::exportGeometry()
         m_mesh->reserve_tex_coords(meshFn.numUVs());
         MFloatArray u, v;
         status = meshFn.getUVs(u, v);
-        for(size_t i = 0, e = meshFn.numUVs(); i < e; ++i)
+        for(int i = 0, e = meshFn.numUVs(); i < e; ++i)
             m_mesh->push_tex_coords(asr::GVector2(u[i], v[i]));
     }
 
@@ -570,7 +571,7 @@ void MeshExporter::exportGeometry()
         m_mesh->reserve_vertex_normals(meshFn.numNormals());
         const float *p = meshFn.getRawNormals(&status);
 
-        for(size_t i = 0, e = meshFn.numNormals(); i < e; ++i, p += 3)
+        for(int i = 0, e = meshFn.numNormals(); i < e; ++i, p += 3)
         {
             asr::GVector3 n(p[0], p[1], p[2]);
             m_mesh->push_vertex_normal(asf::safe_normalize(n, Y));

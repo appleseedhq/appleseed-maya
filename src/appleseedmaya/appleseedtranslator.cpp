@@ -37,6 +37,7 @@
 // Maya headers.
 #include <maya/MCommonRenderSettingsData.h>
 #include <maya/MRenderUtil.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/string.h"

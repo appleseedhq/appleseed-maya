@@ -34,6 +34,7 @@
 #include <maya/MFnDagNode.h>
 #include <maya/MPlug.h>
 #include <maya/MStatus.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers
 #include "foundation/math/vector.h"
@@ -104,15 +105,15 @@ void CameraExporter::createEntities(
             cameraFactory = cameraFactories.lookup("pinhole_camera");
 
         // Maya's aperture is given in inches so convert to cm and then to meters.
-        float horizontalFilmAperture = camera.horizontalFilmAperture() * 2.54f * 0.01f;
-        float verticalFilmAperture = camera.verticalFilmAperture() * 2.54f * 0.01f;
+        double horizontalFilmAperture = camera.horizontalFilmAperture() * 2.54 * 0.01;
+        double verticalFilmAperture = camera.verticalFilmAperture() * 2.54 * 0.01;
 
-        const float imageAspect = static_cast<float>(options.m_width) / options.m_height;
+        const double imageAspect = static_cast<double>(options.m_width) / options.m_height;
 
         // Handle film fits.
         // Reference: http://around-the-corner.typepad.com/adn/2012/11/maya-stereoscopic.html
         MFnCamera::FilmFit filmFit = camera.filmFit();
-        const float filmAspect = horizontalFilmAperture / verticalFilmAperture;
+        const double filmAspect = horizontalFilmAperture / verticalFilmAperture;
 
         if (filmFit == MFnCamera::kFillFilmFit)
         {
@@ -134,10 +135,10 @@ void CameraExporter::createEntities(
 
         cameraParams.insert(
             "film_dimensions",
-            asf::Vector2f(horizontalFilmAperture, verticalFilmAperture));
+            asf::Vector2d(horizontalFilmAperture, verticalFilmAperture));
 
-        // Maya's apperture is given in mm so we convert it to meters.
-        cameraParams.insert("focal_length", camera.focalLength() * 0.001f);
+        // Maya's aperture is given in mm so we convert it to meters.
+        cameraParams.insert("focal_length", camera.focalLength() * 0.001);
 
         if (dofEnabled)
         {

@@ -42,6 +42,7 @@
 #include <maya/MEventMessage.h>
 #include <maya/MObject.h>
 #include <maya/MSelectionList.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/exceptions.h"
