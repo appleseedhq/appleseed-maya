@@ -1,6 +1,6 @@
 ## appleseed-maya
 
-appleseed-maya is an appleseed plugin for [Autodesk® Maya®](http://www.autodesk.com/products/maya/overview).
+appleseed-maya is an appleseed plugin for [Autodesk® Maya®](http://www.autodesk.com/products/maya/overview) 2017 and later.
 
 ### Setup
 
@@ -32,7 +32,7 @@ appleseed-maya is an appleseed plugin for [Autodesk® Maya®](http://www.autodes
 
 ### Maya shading nodes status
 
-List of Maya hypershade nodes and their status. Not all will be supported.
+List of Maya Hypershade nodes and their status. Not all will be supported.
 
 #### Utilities
 
@@ -225,4 +225,3 @@ Other Textures:
 
 - [x] AS Color Transform
 - [x] AS Luminance
-
