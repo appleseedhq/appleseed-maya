@@ -149,7 +149,7 @@ List of Maya hypershade nodes and their status. Not all will be supported.
 - [ ] fluid texture 2d
 - [x] fractal
 - [x] grid
-- [ ] mandelbrot
+- [x] mandelbrot (**partial**)
 - [x] mountain
 - [x] movie
 - [x] noise
@@ -223,6 +223,6 @@ Other Textures:
 
 ##### Utility
 
-- [ ] AS Color Transform
-- [ ] AS Color Balance
+- [x] AS Color Transform
+- [x] AS Luminance
 
