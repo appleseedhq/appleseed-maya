@@ -62,7 +62,7 @@ DagNodeExporter *LightExporter::create(
     AppleseedSession::SessionMode               sessionMode)
 {
     if (areObjectAndParentsRenderable(path) == false)
-        return 0;
+        return nullptr;
 
     return new LightExporter(path, project, sessionMode);
 }
@@ -94,7 +94,7 @@ void LightExporter::createEntities(
     const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
 {
     asr::LightFactoryRegistrar lightFactories;
-    const asr::ILightFactory *lightFactory = 0;
+    const asr::ILightFactory *lightFactory = nullptr;
     asr::ParamArray lightParams;
 
     MFnDependencyNode depNodeFn(node());

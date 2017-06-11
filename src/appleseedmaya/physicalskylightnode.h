@@ -55,16 +55,16 @@ class PhysicalSkyLightNode
     static void* creator();
     static MStatus initialize();
 
-    virtual bool isBounded() const;
-    virtual MBoundingBox boundingBox() const;
+    bool isBounded() const override;
+    MBoundingBox boundingBox() const override;
 
-    virtual void draw(
+    void draw(
         M3dView&                view,
         const MDagPath&         path,
         M3dView::DisplayStyle   style,
-        M3dView::DisplayStatus  status);
+        M3dView::DisplayStatus  status) override;
 
-    virtual MStatus compute(const MPlug& plug, MDataBlock& data);
+    MStatus compute(const MPlug& plug, MDataBlock& data) override;
 
   private:
     static MObject m_sunTheta;
@@ -102,17 +102,17 @@ class PhysicalSkyLightDrawOverride
 
     PhysicalSkyLightDrawOverride(const MObject& obj);
 
-    virtual MHWRender::DrawAPI supportedDrawAPIs() const;
+    MHWRender::DrawAPI supportedDrawAPIs() const override;
 
-    virtual MBoundingBox boundingBox(
+    MBoundingBox boundingBox(
         const MDagPath&                 objPath,
-        const MDagPath&                 cameraPath) const;
+        const MDagPath&                 cameraPath) const override;
 
-    virtual MUserData* prepareForDraw(
+    MUserData* prepareForDraw(
         const MDagPath&                 objPath,
         const MDagPath&                 cameraPath,
         const MHWRender::MFrameContext& frameContext,
-        MUserData*                      oldData);
+        MUserData*                      oldData) override;
 
     static void draw(
         const MHWRender::MDrawContext&  context,

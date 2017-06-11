@@ -43,10 +43,10 @@ class Place3dTextureExporter
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);
 
-    virtual bool layerAndParamNameFromPlug(
+    bool layerAndParamNameFromPlug(
         const MPlug&             plug,
         MString&                 layerName,
-        MString&                 paramName);
+        MString&                 paramName) override;
 
   private:
 
@@ -54,9 +54,9 @@ class Place3dTextureExporter
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);
 
-    virtual void exportShaderParameters(
+    void exportShaderParameters(
         const OSLShaderInfo&    shaderInfo,
-        renderer::ParamArray&   shaderParams) const;
+        renderer::ParamArray&   shaderParams) const override;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_PLACE3DTEXTURE_EXPORTER_H

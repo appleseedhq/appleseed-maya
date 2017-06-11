@@ -52,7 +52,7 @@ class RenderGlobalsNode
     static void* creator();
     static MStatus initialize();
 
-    virtual MStatus compute(const MPlug& plug, MDataBlock& dataBlock);
+    MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override;
 
     static void applyGlobalsToProject(
         const MObject&                      globals,

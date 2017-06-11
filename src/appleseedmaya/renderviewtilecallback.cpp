@@ -83,7 +83,7 @@ class RenderViewTileCallback
         }
     }
 
-    virtual void release()
+    void release() override
     {
         delete this;
     }
@@ -112,8 +112,8 @@ class RenderViewTileCallback
         IdleJobQueue::pushJob(highlightJob);
     }
 
-    virtual void post_render(
-        const asr::Frame*   frame)
+    void post_render(
+        const asr::Frame*   frame) override
     {
         const asf::CanvasProperties& frame_props = frame->image().properties();
 

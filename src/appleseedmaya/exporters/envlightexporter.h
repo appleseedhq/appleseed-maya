@@ -42,11 +42,11 @@ class EnvLightExporter
   : public DagNodeExporter
 {
   public:
-    ~EnvLightExporter();
+    ~EnvLightExporter() override;
 
-    virtual void exportTransformMotionStep(float time);
+    void exportTransformMotionStep(float time) override;
 
-    virtual void flushEntities();
+    void flushEntities() override;
 
   protected:
 
@@ -55,9 +55,9 @@ class EnvLightExporter
       renderer::Project&                            project,
       AppleseedSession::SessionMode                 sessionMode);
 
-    virtual void createEntities(
+    void createEntities(
         const AppleseedSession::Options&            options,
-        const AppleseedSession::MotionBlurTimes&    motionBlurTimes);
+        const AppleseedSession::MotionBlurTimes&    motionBlurTimes) override;
 
     AppleseedEntityPtr<renderer::EnvironmentEDF>    m_envLight;
     AppleseedEntityPtr<renderer::EnvironmentShader> m_envShader;
@@ -75,13 +75,13 @@ class PhysicalSkyLightExporter
       renderer::Project&                            project,
       AppleseedSession::SessionMode                 sessionMode);
 
-    ~PhysicalSkyLightExporter();
+    ~PhysicalSkyLightExporter() override;
 
-    virtual void createEntities(
+    void createEntities(
         const AppleseedSession::Options&            options,
-        const AppleseedSession::MotionBlurTimes&    motionBlurTimes);
+        const AppleseedSession::MotionBlurTimes&    motionBlurTimes) override;
 
-    virtual void flushEntities();
+    void flushEntities() override;
 
   private:
 
@@ -105,13 +105,13 @@ class SkyDomeLightExporter
       renderer::Project&                            project,
       AppleseedSession::SessionMode                 sessionMode);
 
-    virtual ~SkyDomeLightExporter();
+    ~SkyDomeLightExporter() override;
 
-    virtual void createEntities(
+    void createEntities(
         const AppleseedSession::Options&            options,
-        const AppleseedSession::MotionBlurTimes&    motionBlurTimes);
+        const AppleseedSession::MotionBlurTimes&    motionBlurTimes) override;
 
-    virtual void flushEntities();
+    void flushEntities() override;
 
     private:
 

@@ -56,17 +56,17 @@ class AreaLightExporter
       renderer::Project&                            project,
       AppleseedSession::SessionMode                 sessionMode);
 
-    ~AreaLightExporter();
+    ~AreaLightExporter() override;
 
-    bool supportsMotionBlur() const;
+    bool supportsMotionBlur() const override;
 
-    virtual void createExporters(const AppleseedSession::Services& services);
+    void createExporters(const AppleseedSession::Services& services) override;
 
-    virtual void createEntities(
+    void createEntities(
         const AppleseedSession::Options&            options,
-        const AppleseedSession::MotionBlurTimes&    motionBlurTimes);
+        const AppleseedSession::MotionBlurTimes&    motionBlurTimes) override;
 
-    virtual void flushEntities();
+    void flushEntities() override;
 
   private:
 

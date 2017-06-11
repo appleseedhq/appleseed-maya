@@ -63,7 +63,7 @@ DagNodeExporter *CameraExporter::create(
     if (isRenderable(path))
         return new CameraExporter(path, project, sessionMode);
 
-    return 0;
+    return nullptr;
 }
 
 CameraExporter::CameraExporter(
@@ -87,7 +87,7 @@ void CameraExporter::createEntities(
     MFnCamera camera(dagPath());
 
     asr::CameraFactoryRegistrar cameraFactories;
-    const asr::ICameraFactory *cameraFactory = 0;
+    const asr::ICameraFactory *cameraFactory = nullptr;
     asr::ParamArray cameraParams;
 
     if (camera.isOrtho())

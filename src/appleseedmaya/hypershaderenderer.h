@@ -43,30 +43,30 @@ class HypershadeRenderer
 
     HypershadeRenderer();
 
-    virtual bool isSafeToUnload();
+    bool isSafeToUnload() override;
 
-    virtual MStatus startAsync(const JobParams& params);
-    virtual MStatus stopAsync();
-    virtual bool isRunningAsync();
+    MStatus startAsync(const JobParams& params) override;
+    MStatus stopAsync() override;
+    bool isRunningAsync() override;
 
-    virtual MStatus beginSceneUpdate();
-    virtual MStatus endSceneUpdate();
-    virtual MStatus destroyScene();
+    MStatus beginSceneUpdate() override;
+    MStatus endSceneUpdate() override;
+    MStatus destroyScene() override;
 
-    virtual MStatus setProperty(const MUuid& id, const MString& name, bool value);
-    virtual MStatus setProperty(const MUuid& id, const MString& name, int value);
-    virtual MStatus setProperty(const MUuid& id, const MString& name, float value);
-    virtual MStatus setProperty(const MUuid& id, const MString& name, const MString& value);
+    MStatus setProperty(const MUuid& id, const MString& name, bool value) override;
+    MStatus setProperty(const MUuid& id, const MString& name, int value) override;
+    MStatus setProperty(const MUuid& id, const MString& name, float value) override;
+    MStatus setProperty(const MUuid& id, const MString& name, const MString& value) override;
 
-    virtual MStatus setShader(const MUuid& id, const MUuid& shaderId);
-    virtual MStatus setResolution(unsigned int width, unsigned int height);
+    MStatus setShader(const MUuid& id, const MUuid& shaderId) override;
+    MStatus setResolution(unsigned int width, unsigned int height) override;
 
-    virtual MStatus translateMesh(const MUuid& id, const MObject& node);
-    virtual MStatus translateLightSource(const MUuid& id, const MObject& node);
-    virtual MStatus translateCamera(const MUuid& id, const MObject& node);
-    virtual MStatus translateEnvironment(const MUuid& id, EnvironmentType type);
-    virtual MStatus translateTransform(const MUuid& id, const MUuid& childId, const MMatrix& matrix);
-    virtual MStatus translateShader(const MUuid& id, const MObject& node);
+    MStatus translateMesh(const MUuid& id, const MObject& node) override;
+    MStatus translateLightSource(const MUuid& id, const MObject& node) override;
+    MStatus translateCamera(const MUuid& id, const MObject& node) override;
+    MStatus translateEnvironment(const MUuid& id, EnvironmentType type) override;
+    MStatus translateTransform(const MUuid& id, const MUuid& childId, const MMatrix& matrix) override;
+    MStatus translateShader(const MUuid& id, const MObject& node) override;
 };
 
 #endif  // !APPLESEED_MAYA_HYPERSHADE_RENDERER_H

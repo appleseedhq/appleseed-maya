@@ -152,7 +152,7 @@ MStatus initializeNumericAttribute(MFnNumericAttribute& attr, const OSLParamInfo
 }
 
 // Stores the current shader info of the shader being registered.
-const OSLShaderInfo *g_currentShaderInfo = 0;
+const OSLShaderInfo *g_currentShaderInfo = nullptr;
 
 } // unnamed.
 
@@ -177,7 +177,7 @@ MStatus ShadingNode::initialize()
 
     assert(g_currentShaderInfo);
     const OSLShaderInfo *shaderInfo = g_currentShaderInfo;
-    g_currentShaderInfo = 0;
+    g_currentShaderInfo = nullptr;
 
     // todo: lots of refactoring possibilities here...
     for(size_t i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)

@@ -362,14 +362,14 @@ const OSLShaderInfo *getShaderInfo(const MString& nodeName)
     OSLShaderInfoMap::const_iterator it = gShadersInfo.find(nodeName);
 
     if (it == gShadersInfo.end())
-        return 0;
+        return nullptr;
 
     return &it->second;
 }
 
 bool isShaderSupported(const MString& nodeName)
 {
-    return getShaderInfo(nodeName) != 0;
+    return getShaderInfo(nodeName) != nullptr;
 }
 
 } // namespace ShadingNodeRegistry
