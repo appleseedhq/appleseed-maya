@@ -54,15 +54,15 @@ class LightExporter
       renderer::Project&                            project,
       AppleseedSession::SessionMode                 sessionMode);
 
-    ~LightExporter();
+    ~LightExporter() override;
 
-    bool supportsMotionBlur() const;
+    bool supportsMotionBlur() const override;
 
-    virtual void createEntities(
+    void createEntities(
         const AppleseedSession::Options&            options,
-        const AppleseedSession::MotionBlurTimes&    motionBlurTimes);
+        const AppleseedSession::MotionBlurTimes&    motionBlurTimes) override;
 
-    virtual void flushEntities();
+    void flushEntities() override;
 
   private:
 

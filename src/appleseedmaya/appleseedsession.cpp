@@ -174,8 +174,8 @@ float MotionBlurTimes::normalizedFrame(float frame) const
     return (frame - m_shutterOpenTime) / (m_shutterCloseTime - m_shutterOpenTime);
 }
 
-Services::Services() {}
-Services::~Services() {}
+Services::Services() = default;
+Services::~Services() = default;
 
 } // namespace AppleseedSession.
 
@@ -203,7 +203,7 @@ struct SessionImpl
         {
         }
 
-        virtual ShadingEngineExporterPtr createShadingEngineExporter(const MObject& object) const
+        ShadingEngineExporterPtr createShadingEngineExporter(const MObject& object) const override
         {
             MFnDependencyNode depNodeFn(object);
 
@@ -222,10 +222,10 @@ struct SessionImpl
             return exporter;
         }
 
-        virtual ShadingNetworkExporterPtr createShadingNetworkExporter(
+        ShadingNetworkExporterPtr createShadingNetworkExporter(
             const ShadingNetworkContext   context,
             const MObject&                object,
-            const MPlug&                  outputPlug) const
+            const MPlug&                  outputPlug) const override
         {
             MFnDependencyNode depNodeFn(object);
 
@@ -246,8 +246,8 @@ struct SessionImpl
             return exporter;
         }
 
-        virtual AlphaMapExporterPtr createAlphaMapExporter(
-            const MObject&                  object) const
+        AlphaMapExporterPtr createAlphaMapExporter(
+            const MObject&                  object) const override
         {
             MFnDependencyNode depNodeFn(object);
 

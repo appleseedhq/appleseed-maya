@@ -48,7 +48,7 @@ class SwatchRenderer
         MObject renderNode,
         int     imageResolution);
 
-    virtual bool doIteration();
+    bool doIteration() override;
 
   private:
 

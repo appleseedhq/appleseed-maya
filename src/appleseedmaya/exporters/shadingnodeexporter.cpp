@@ -716,7 +716,7 @@ ShadingNodeExporter* ShadingNodeExporter::findExporterForNode(
     if (it != exporters.end())
         return it->second;
 
-    return 0;
+    return nullptr;
 }
 
 ShadingNodeExporter* ShadingNodeExporter::getSrcPlugAndExporter(
@@ -729,7 +729,7 @@ ShadingNodeExporter* ShadingNodeExporter::getSrcPlugAndExporter(
     plug.connectedTo(inputConnections, true, false, &status);
 
     if (!status || inputConnections.length() == 0)
-        return 0;
+        return nullptr;
 
     srcPlug = inputConnections[0];
     return findExporterForNode(exporters, srcPlug.node());

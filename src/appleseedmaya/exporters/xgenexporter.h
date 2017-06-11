@@ -54,17 +54,17 @@ class XGenExporter
       renderer::Project&                            project,
       AppleseedSession::SessionMode                 sessionMode);
 
-    ~XGenExporter();
+    ~XGenExporter() override;
 
-    virtual void createExporters(const AppleseedSession::Services& services);
+    void createExporters(const AppleseedSession::Services& services) override;
 
-    virtual void createEntities(
+    void createEntities(
         const AppleseedSession::Options&            options,
-        const AppleseedSession::MotionBlurTimes&    motionBlurTimes);
+        const AppleseedSession::MotionBlurTimes&    motionBlurTimes) override;
 
-    virtual void exportTransformMotionStep(float time);
+    void exportTransformMotionStep(float time) override;
 
-    virtual void flushEntities();
+    void flushEntities() override;
 
   private:
 
