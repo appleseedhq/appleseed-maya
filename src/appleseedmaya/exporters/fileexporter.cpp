@@ -31,7 +31,7 @@
 
 // Maya headers.
 #include <maya/MRenderUtil.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // appleseed.renderer headers.
 #include "renderer/utility/paramarray.h"

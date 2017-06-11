@@ -42,7 +42,7 @@
 #include <maya/MStatus.h>
 #include <maya/MString.h>
 #include <maya/MVector.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace AttributeUtils
 {

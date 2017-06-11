@@ -39,7 +39,7 @@
 #include <maya/MFnStringData.h>
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MNodeClass.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/attributeutils.h"

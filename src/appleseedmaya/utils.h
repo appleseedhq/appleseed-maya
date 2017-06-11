@@ -40,7 +40,7 @@
 // Maya headers.
 #include <maya/MComputation.h>
 #include <maya/MString.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"

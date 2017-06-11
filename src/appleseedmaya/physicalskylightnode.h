@@ -42,7 +42,7 @@
 #include <maya/MTypeId.h>
 #include <maya/MUserData.h>
 #include <maya/MViewport2Renderer.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 class PhysicalSkyLightNode
   : public MPxLocatorNode

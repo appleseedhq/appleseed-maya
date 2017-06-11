@@ -31,7 +31,7 @@
 
 // Maya headers.
 #include <maya/MPxNode.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 class OSLParamInfo;

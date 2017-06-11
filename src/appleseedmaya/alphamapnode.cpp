@@ -33,7 +33,7 @@
 #include <maya/MFileObject.h>
 #include <maya/MFnMessageAttribute.h>
 #include <maya/MFnTypedAttribute.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/attributeutils.h"

@@ -34,7 +34,7 @@
 
 // Maya headers.
 #include <maya/MFnDagNode.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // appleseed.foundation headers.
 #include "foundation/math/scalar.h"

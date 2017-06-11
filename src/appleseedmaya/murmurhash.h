@@ -38,7 +38,7 @@
 
 // Maya headers.
 #include <maya/MString.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 namespace foundation { class StringDictionary; }

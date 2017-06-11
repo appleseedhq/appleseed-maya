@@ -33,7 +33,7 @@
 #include <maya/MFnDependencyNode.h>
 #include <maya/MImage.h>
 #include <maya/MPlug.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // appleseed.foundation headers.
 #include "foundation/image/image.h"

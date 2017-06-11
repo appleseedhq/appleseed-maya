@@ -34,7 +34,7 @@
 #include <maya/MStringArray.h>
 #include <maya/MPxNode.h>
 #include <maya/MTypeId.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"

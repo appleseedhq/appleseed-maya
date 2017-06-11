@@ -33,7 +33,7 @@
 #include <maya/MFileObject.h>
 #include <maya/MFnDagNode.h>
 #include <maya/MGlobal.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"

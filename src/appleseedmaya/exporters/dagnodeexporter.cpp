@@ -35,7 +35,7 @@
 #include <maya/MFnExpression.h>
 #include <maya/MGlobal.h>
 #include <maya/MItDependencyGraph.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/project.h"

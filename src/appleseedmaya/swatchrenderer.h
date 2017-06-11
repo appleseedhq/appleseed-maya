@@ -31,7 +31,7 @@
 
 // Maya headers.
 #include <maya/MSwatchRenderBase.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 class SwatchRenderer
   : public MSwatchRenderBase

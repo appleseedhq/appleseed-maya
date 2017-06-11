@@ -33,6 +33,7 @@ configure_file (${PROJECT_SOURCE_DIR}/src/appleseedmaya/version.h.in
 include_directories (${PROJECT_SOURCE_DIR}/src)
 
 set (appleseed_maya_sources
+    _endmayaheaders.h
     alphamapnode.cpp
     alphamapnode.h
     appleseedsession.cpp
@@ -98,7 +99,6 @@ set (appleseed_maya_sources
     idlejobqueue.h
     logger.cpp
     logger.h
-    mayaheaderscleanup.h
     murmurhash.cpp
     murmurhash.h
     physicalskylightnode.h

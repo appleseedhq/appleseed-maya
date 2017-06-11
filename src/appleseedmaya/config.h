@@ -32,7 +32,7 @@
 // Maya headers.
 #include <maya/MGlobal.h>
 #include <maya/MStatus.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/logger.h"
