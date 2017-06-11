@@ -30,7 +30,7 @@
 #define APPLESEED_MAYA_SESSION_H
 
 // Standard headers.
-#include<set>
+#include <set>
 
 // Maya headers.
 #include <maya/MObject.h>

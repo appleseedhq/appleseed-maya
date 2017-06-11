@@ -30,7 +30,7 @@
 #define APPLESEED_MAYA_EXPORTERS_XGENEXPORTER_H
 
 // Standard headers.
-#include<string>
+#include <string>
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
