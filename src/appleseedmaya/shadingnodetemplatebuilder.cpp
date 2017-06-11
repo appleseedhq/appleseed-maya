@@ -37,6 +37,7 @@
 // Maya headers.
 #include <maya/MGlobal.h>
 #include <maya/MStatus.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/shadingnodemetadata.h"

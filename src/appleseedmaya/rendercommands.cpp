@@ -41,6 +41,7 @@
 #include <maya/MRenderView.h>
 #include <maya/MSelectionList.h>
 #include <maya/MSyntax.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"

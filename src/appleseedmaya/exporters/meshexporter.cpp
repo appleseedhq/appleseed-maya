@@ -43,6 +43,7 @@
 #include <maya/MItDependencyGraph.h>
 #include <maya/MItMeshPolygon.h>
 #include <maya/MPointArray.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/string.h"

@@ -37,6 +37,7 @@
 #include <maya/MGL.h>
 #include <maya/MIntArray.h>
 #include <maya/MPointArray.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/math/scalar.h"

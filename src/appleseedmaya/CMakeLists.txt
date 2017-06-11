@@ -98,6 +98,7 @@ set (appleseed_maya_sources
     idlejobqueue.h
     logger.cpp
     logger.h
+    mayaheaderscleanup.h
     murmurhash.cpp
     murmurhash.h
     physicalskylightnode.h

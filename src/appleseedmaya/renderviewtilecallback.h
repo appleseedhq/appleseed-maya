@@ -34,6 +34,7 @@
 
 // Maya headers.
 #include <maya/MComputation.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/math/aabb.h"

@@ -31,6 +31,7 @@
 
 // Maya headers.
 #include <maya/MPxCommand.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 class FinalRenderCommand
   : public MPxCommand

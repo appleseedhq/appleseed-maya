@@ -37,6 +37,7 @@
 
 // Maya headers.
 #include <maya/MRenderView.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/image/canvasproperties.h"

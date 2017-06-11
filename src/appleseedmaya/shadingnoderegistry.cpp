@@ -42,7 +42,6 @@
 #define MNoPluginEntry
 #define MNoVersionString
 #include <maya/MFnPlugin.h>
-
 #include <maya/MFnDependencyNode.h>
 #include <maya/MGlobal.h>
 #include <maya/MObject.h>
@@ -50,6 +49,7 @@
 #include <maya/MStatus.h>
 #include <maya/MStringArray.h>
 #include <maya/MTypeId.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"

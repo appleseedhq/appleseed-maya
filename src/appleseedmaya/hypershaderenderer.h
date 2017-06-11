@@ -31,6 +31,7 @@
 
 // Maya headers.
 #include <maya/MPxRenderer.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 class HypershadeRenderer
   : public MPxRenderer

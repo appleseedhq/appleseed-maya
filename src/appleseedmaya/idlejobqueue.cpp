@@ -36,6 +36,7 @@
 #include <maya/MEventMessage.h>
 #include <maya/MStatus.h>
 #include <maya/MString.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // Boost headers.
 #include "boost/thread/mutex.hpp"

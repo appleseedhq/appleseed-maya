@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2017 Esteban Tovagliari, The appleseedhq Organization
+// Copyright (c) 2017 Francois Beaune, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,37 +26,5 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SHADING_NODE_H
-#define APPLESEED_MAYA_SHADING_NODE_H
-
-// Maya headers.
-#include <maya/MPxNode.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// Forward declarations.
-class OSLParamInfo;
-class OSLShaderInfo;
-
-class ShadingNode
-  : public MPxNode
-{
-  public:
-
-    // Set the shader info of the current shader being registered.
-    static void setCurrentShaderInfo(const OSLShaderInfo *shaderInfo);
-
-    static void *creator();
-    static MStatus initialize();
-
-    ShadingNode();
-
-    virtual void postConstructor();
-
-  private:
-    static void report_error(
-        const OSLShaderInfo&    shaderInfo,
-        const OSLParamInfo&     paramInfo,
-        MStatus&                status);
-};
-
-#endif  // !APPLESEED_MAYA_SHADING_NODE_H
+#undef fsin
+#undef fcos

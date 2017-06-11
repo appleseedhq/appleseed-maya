@@ -34,6 +34,7 @@
 
 // Maya headers.
 #include <maya/MString.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/utils.h"

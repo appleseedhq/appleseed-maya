@@ -31,6 +31,7 @@
 
 // Maya headers.
 #include <maya/MFnDependencyNode.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/project.h"

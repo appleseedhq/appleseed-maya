@@ -31,6 +31,7 @@
 
 // Maya headers.
 #include <maya/MFnMatrixData.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 namespace
 {

@@ -36,6 +36,7 @@
 
 // Maya headers.
 #include <maya/MPlug.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"

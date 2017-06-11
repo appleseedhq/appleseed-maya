@@ -34,6 +34,7 @@
 #include <maya/MFnDagNode.h>
 #include <maya/MPlug.h>
 #include <maya/MStatus.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers
 #include "foundation/math/vector.h"

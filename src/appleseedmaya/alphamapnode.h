@@ -33,6 +33,7 @@
 #include <maya/MObject.h>
 #include <maya/MPxNode.h>
 #include <maya/MTypeId.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 
 //

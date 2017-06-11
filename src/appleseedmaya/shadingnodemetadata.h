@@ -35,6 +35,7 @@
 
 // Maya headers.
 #include <maya/MString.h>
+#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/containers/dictionary.h"
