@@ -46,6 +46,55 @@ set (appleseed_maya_sources
     envlightdraw.cpp
     envlightdraw.h
     exceptions.h
+    extensionattributes.cpp
+    extensionattributes.h
+    hypershaderenderer.cpp
+    hypershaderenderer.h
+    idlejobqueue.cpp
+    idlejobqueue.h
+    logger.cpp
+    logger.h
+    murmurhash.cpp
+    murmurhash.h
+    physicalskylightnode.h
+    physicalskylightnode.cpp
+    pluginmain.cpp
+    rendercommands.cpp
+    rendercommands.h
+    renderercontroller.h
+    renderglobalsnode.cpp
+    renderglobalsnode.h
+    renderviewtilecallback.cpp
+    renderviewtilecallback.h
+    shadingnode.cpp
+    shadingnode.h
+    shadingnodemetadata.cpp
+    shadingnodemetadata.h
+    shadingnoderegistry.cpp
+    shadingnoderegistry.h
+    shadingnodetemplatebuilder.cpp
+    shadingnodetemplatebuilder.h
+    skydomelightnode.cpp
+    skydomelightnode.h
+    swatchrenderer.cpp
+    swatchrenderer.h
+    typeids.h
+    utils.cpp
+    utils.h
+    version.h.in
+)
+if (WITH_PYTHON_BRIDGE)
+    set (appleseed_maya_sources
+        ${appleseed_maya_sources}
+        python.cpp
+        python.h
+    )
+endif ()
+source_group ("" FILES
+    ${appleseed_maya_sources}
+)
+
+set (appleseed_maya_exporters_sources
     exporters/alphamapexporter.cpp
     exporters/alphamapexporter.h
     exporters/alphamapexporterfwd.h
@@ -91,58 +140,20 @@ set (appleseed_maya_sources
     exporters/shadingnodeexporterfwd.h
     exporters/shapeexporter.cpp
     exporters/shapeexporter.h
-    extensionattributes.cpp
-    extensionattributes.h
-    hypershaderenderer.cpp
-    hypershaderenderer.h
-    idlejobqueue.cpp
-    idlejobqueue.h
-    logger.cpp
-    logger.h
-    murmurhash.cpp
-    murmurhash.h
-    physicalskylightnode.h
-    physicalskylightnode.cpp
-    pluginmain.cpp
-    rendercommands.cpp
-    rendercommands.h
-    renderercontroller.h
-    renderglobalsnode.cpp
-    renderglobalsnode.h
-    renderviewtilecallback.cpp
-    renderviewtilecallback.h
-    shadingnode.cpp
-    shadingnode.h
-    shadingnodemetadata.cpp
-    shadingnodemetadata.h
-    shadingnoderegistry.cpp
-    shadingnoderegistry.h
-    shadingnodetemplatebuilder.cpp
-    shadingnodetemplatebuilder.h
-    skydomelightnode.cpp
-    skydomelightnode.h
-    swatchrenderer.cpp
-    swatchrenderer.h
-    typeids.h
-    utils.cpp
-    utils.h
-    version.h.in
 )
 if (XGEN_FOUND)
-    set (appleseed_maya_sources
-        ${appleseed_maya_sources}
+    set (appleseed_maya_exporters_sources
+        ${appleseed_maya_exporters_sources}
         exporters/xgenexporter.cpp
         exporters/xgenexporter.h
     )
 endif ()
-
-if (WITH_PYTHON_BRIDGE)
-    set (appleseed_maya_sources
-        ${appleseed_maya_sources}
-        python.cpp
-        python.h
-    )
-endif ()
+list (APPEND appleseed_maya_sources
+    ${appleseed_maya_exporters_sources}
+)
+source_group ("exporters" FILES
+    ${appleseed_maya_exporters_sources}
+)
 
 add_library (appleseedMaya SHARED
     ${appleseed_maya_sources}
