@@ -69,21 +69,21 @@ namespace
             switch (category)
             {
                 case asf::LogMessage::Debug:
-                    MGlobal::displayInfo(MString("[Debug]") + MString(message));
+                    MGlobal::displayInfo(MString("[Debug] ") + MString(message));
                 break;
 
                 case asf::LogMessage::Info:
-                    MGlobal::displayInfo(MString("[Info]") + message);
+                    MGlobal::displayInfo(MString("[Info] ") + message);
                 break;
 
                 case asf::LogMessage::Warning:
-                    MGlobal::displayWarning(MString("[Warning]") + message);
+                    MGlobal::displayWarning(MString("[Warning] ") + message);
                 break;
 
                 case asf::LogMessage::Error:
                 case asf::LogMessage::Fatal:
                 default:
-                    MGlobal::displayError(MString("[Error]") + message);
+                    MGlobal::displayError(MString("[Error] ") + message);
                 break;
             }
         }
