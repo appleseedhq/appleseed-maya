@@ -77,7 +77,7 @@ class MurmurHash
         append(&x, sizeof(T));
     }
 
-    void append(const char *str)
+    void append(const char* str)
     {
         append(str, strlen(str));
     }
@@ -97,7 +97,7 @@ class MurmurHash
     void append(const foundation::Dictionary& dictionary);
 
   private:
-    void append(const void *data, size_t bytes);
+    void append(const void* data, size_t bytes);
 
     uint64_t m_h1;
     uint64_t m_h2;

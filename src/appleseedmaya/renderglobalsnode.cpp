@@ -163,7 +163,7 @@ MStatus RenderGlobalsNode::initialize()
         m_diagnosticShaderKeys.append("no_override");
 
         asr::SurfaceShaderFactoryRegistrar factoryRegistrar;
-        const asr::ISurfaceShaderFactory *factory = factoryRegistrar.lookup("diagnostic_surface_shader");
+        const asr::ISurfaceShaderFactory* factory = factoryRegistrar.lookup("diagnostic_surface_shader");
         assert(factory);
         asf::DictionaryArray metadata = factory->get_input_metadata();
         const asf::Dictionary& items = metadata[0].dictionary("items");

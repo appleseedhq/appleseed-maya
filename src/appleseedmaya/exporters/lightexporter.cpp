@@ -53,7 +53,7 @@ void LightExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("spotLight", &LightExporter::create);
 }
 
-DagNodeExporter *LightExporter::create(
+DagNodeExporter* LightExporter::create(
     const MDagPath&                             path,
     asr::Project&                               project,
     AppleseedSession::SessionMode               sessionMode)
@@ -91,7 +91,7 @@ void LightExporter::createEntities(
     const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
 {
     asr::LightFactoryRegistrar lightFactories;
-    const asr::ILightFactory *lightFactory = nullptr;
+    const asr::ILightFactory* lightFactory = nullptr;
     asr::ParamArray lightParams;
 
     MFnDependencyNode depNodeFn(node());

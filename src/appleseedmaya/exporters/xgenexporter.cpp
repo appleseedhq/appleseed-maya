@@ -50,7 +50,7 @@ void XGenExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("xgmDescription", &XGenExporter::create);
 }
 
-DagNodeExporter *XGenExporter::create(
+DagNodeExporter* XGenExporter::create(
     const MDagPath&                             path,
     asr::Project&                               project,
     AppleseedSession::SessionMode               sessionMode)

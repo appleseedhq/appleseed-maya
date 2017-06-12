@@ -52,7 +52,7 @@ void AreaLightExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("areaLight", &AreaLightExporter::create);
 }
 
-DagNodeExporter *AreaLightExporter::create(
+DagNodeExporter* AreaLightExporter::create(
     const MDagPath&                             path,
     asr::Project&                               project,
     AppleseedSession::SessionMode               sessionMode)

@@ -47,7 +47,7 @@ namespace ShadingNodeRegistry
 
     void getShaderNodeNames(MStringArray& nodeNames);
 
-    const OSLShaderInfo *getShaderInfo(const MString& nodeName);
+    const OSLShaderInfo* getShaderInfo(const MString& nodeName);
 
     bool isShaderSupported(const MString& nodeName);
 } // namespace ShadingNodeRegistry

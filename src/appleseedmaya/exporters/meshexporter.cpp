@@ -119,7 +119,7 @@ void MeshExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("mesh", &MeshExporter::create);
 }
 
-DagNodeExporter *MeshExporter::create(
+DagNodeExporter* MeshExporter::create(
     const MDagPath&                             path,
     asr::Project&                               project,
     AppleseedSession::SessionMode               sessionMode)
@@ -302,9 +302,9 @@ void MeshExporter::exportShapeMotionStep(float time)
 
 //#define APPLESEED_MAYA_OBJ_MESH_EXPORT
 #ifdef APPLESEED_MAYA_OBJ_MESH_EXPORT
-        const char *extension = ".obj";
+        const char* extension = ".obj";
 #else
-        const char *extension = ".binarymesh";
+        const char* extension = ".binarymesh";
 #endif
         const std::string fileName = std::string("_geometry/") + meshHash.toString() + extension;
 
@@ -546,7 +546,7 @@ void MeshExporter::exportGeometry()
     // Vertices.
     m_mesh->reserve_vertices(meshFn.numVertices());
     {
-        const float *p = meshFn.getRawPoints(&status);
+        const float* p = meshFn.getRawPoints(&status);
         for(size_t i = 0, e = meshFn.numVertices(); i < e; ++i, p += 3)
             m_mesh->push_vertex(asr::GVector3(p[0], p[1], p[2]));
     }
@@ -564,7 +564,7 @@ void MeshExporter::exportGeometry()
     {
         const asr::GVector3 Y(0.0f, 1.0f, 0.0f);
         m_mesh->reserve_vertex_normals(meshFn.numNormals());
-        const float *p = meshFn.getRawNormals(&status);
+        const float* p = meshFn.getRawNormals(&status);
 
         for(int i = 0, e = meshFn.numNormals(); i < e; ++i, p += 3)
         {
@@ -590,7 +590,7 @@ void MeshExporter::exportMeshKey()
 
     // Vertices.
     {
-        const float *p = meshFn.getRawPoints(&status);
+        const float* p = meshFn.getRawPoints(&status);
         for(size_t i = 0, e = meshFn.numVertices(); i < e; ++i, p += 3)
         {
             m_mesh->set_vertex_pose(
@@ -604,7 +604,7 @@ void MeshExporter::exportMeshKey()
     {
         const asr::GVector3 Y(0.0f, 1.0f, 0.0f);
         m_mesh->reserve_vertex_normals(meshFn.numNormals());
-        const float *p = meshFn.getRawNormals(&status);
+        const float* p = meshFn.getRawNormals(&status);
 
         for(size_t i = 0, e = meshFn.numNormals(); i < e; ++i, p += 3)
         {

@@ -59,11 +59,11 @@ namespace asr = renderer;
 namespace
 {
 
-const char *g_colorComponentNames[] = {"compR", "compG", "compB"};
-const char *g_vectorComponentNames[] = {"compX", "compY", "compZ"};
-const char *g_uvComponentNames[] = {"compU", "compV"};
+const char* g_colorComponentNames[] = {"compR", "compG", "compB"};
+const char* g_vectorComponentNames[] = {"compX", "compY", "compZ"};
+const char* g_uvComponentNames[] = {"compU", "compV"};
 
-const char *g_componentParamName = "comp";
+const char* g_componentParamName = "comp";
 
 }
 
@@ -338,7 +338,7 @@ bool ShadingNodeExporter::layerAndParamNameFromPlug(
     {
         MPlug parentPlug = plug.parent();
 
-        const OSLParamInfo *paramInfo = getShaderInfo().findParam(parentPlug);
+        const OSLParamInfo* paramInfo = getShaderInfo().findParam(parentPlug);
 
         if (!paramInfo)
             return false;
@@ -398,7 +398,7 @@ bool ShadingNodeExporter::layerAndParamNameFromPlug(
         return false;
     }
 
-    if (const OSLParamInfo *paramInfo = getShaderInfo().findParam(plug))
+    if (const OSLParamInfo* paramInfo = getShaderInfo().findParam(plug))
     {
         layerName = depNodeFn.name();
         paramName = paramInfo->paramName;
@@ -699,7 +699,7 @@ bool ShadingNodeExporter::hasElementConnections(
 const OSLShaderInfo& ShadingNodeExporter::getShaderInfo() const
 {
     MFnDependencyNode depNodeFn(m_object);
-    const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+    const OSLShaderInfo* shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
     assert(shaderInfo);
 
     return *shaderInfo;

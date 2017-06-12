@@ -68,7 +68,7 @@ void EnvLightExporter::createEntities(
     const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
 {
     asr::EnvironmentShaderFactoryRegistrar factoryRegistrar;
-    const asr::IEnvironmentShaderFactory *factory = factoryRegistrar.lookup("edf_environment_shader");
+    const asr::IEnvironmentShaderFactory* factory = factoryRegistrar.lookup("edf_environment_shader");
 
     MString envShaderName = appleseedName() + "_shader";
     m_envShader = factory->create(
@@ -102,7 +102,7 @@ void PhysicalSkyLightExporter::registerExporter()
         &PhysicalSkyLightExporter::create);
 }
 
-DagNodeExporter *PhysicalSkyLightExporter::create(
+DagNodeExporter* PhysicalSkyLightExporter::create(
     const MDagPath&                             path,
     asr::Project&                               project,
     AppleseedSession::SessionMode               sessionMode)
@@ -187,7 +187,7 @@ void SkyDomeLightExporter::registerExporter()
         &SkyDomeLightExporter::create);
 }
 
-DagNodeExporter *SkyDomeLightExporter::create(
+DagNodeExporter* SkyDomeLightExporter::create(
     const MDagPath&                             path,
     asr::Project&                               project,
     AppleseedSession::SessionMode               sessionMode)

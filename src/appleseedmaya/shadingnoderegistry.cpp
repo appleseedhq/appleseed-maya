@@ -299,7 +299,7 @@ MStatus registerShadingNodes(MObject plugin)
 
     // Paths from the environment.
     // TODO: maybe APPLESEED_SEARCHPATH is not the best var...?
-    if (const char *envSearchPath = getenv("APPLESEED_SEARCHPATH"))
+    if (const char* envSearchPath = getenv("APPLESEED_SEARCHPATH"))
     {
         const char pathSep = asf::SearchPaths::environment_path_separator();
         std::vector<std::string> paths;
@@ -357,7 +357,7 @@ void getShaderNodeNames(MStringArray& nodeNames)
         nodeNames.append(it->first);
 }
 
-const OSLShaderInfo *getShaderInfo(const MString& nodeName)
+const OSLShaderInfo* getShaderInfo(const MString& nodeName)
 {
     OSLShaderInfoMap::const_iterator it = gShadersInfo.find(nodeName);
 

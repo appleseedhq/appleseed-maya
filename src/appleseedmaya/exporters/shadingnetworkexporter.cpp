@@ -132,10 +132,10 @@ void ShadingNetworkExporter::flushEntities()
 
             // Connect the shader to the surface adaptor.
             MFnDependencyNode depNodeFn(m_object);
-            const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+            const OSLShaderInfo* shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
             if (shaderInfo)
             {
-                if (const OSLParamInfo *srcParamInfo = shaderInfo->findParam(m_outputPlug))
+                if (const OSLParamInfo* srcParamInfo = shaderInfo->findParam(m_outputPlug))
                 {
                     m_shaderGroup->add_connection(
                         depNodeFn.name().asChar(),
@@ -164,10 +164,10 @@ void ShadingNetworkExporter::flushEntities()
 
             // Connect the texture to the surface adaptor.
             MFnDependencyNode depNodeFn(m_object);
-            const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+            const OSLShaderInfo* shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
             if (shaderInfo)
             {
-                if (const OSLParamInfo *srcParamInfo = shaderInfo->findParam(m_outputPlug))
+                if (const OSLParamInfo* srcParamInfo = shaderInfo->findParam(m_outputPlug))
                 {
                     m_shaderGroup->add_connection(
                         depNodeFn.name().asChar(),
@@ -205,7 +205,7 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
         return;
     }
 
-    const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+    const OSLShaderInfo* shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
     if (shaderInfo)
     {
         // Look for nodes connected to the shader and create exporters for them.

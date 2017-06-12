@@ -334,8 +334,8 @@ struct SessionImpl
         m_project->add_default_configurations();
 
         // Insert some config params needed by the interactive renderer.
-        asr::Configuration *cfg = m_project->configurations().get_by_name("interactive");
-        asr::ParamArray *cfg_params = &cfg->get_parameters();
+        asr::Configuration* cfg = m_project->configurations().get_by_name("interactive");
+        asr::ParamArray* cfg_params = &cfg->get_parameters();
         cfg_params->insert("sample_renderer", "generic");
         cfg_params->insert("sample_generator", "generic");
         cfg_params->insert("tile_renderer", "generic");
@@ -708,7 +708,7 @@ struct SessionImpl
     {
         for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
         {
-            //const ShapeExporter *shape = dynamic_cast<const ShapeExporter*>(it->second.get());
+            //const ShapeExporter* shape = dynamic_cast<const ShapeExporter*>(it->second.get());
 
             //if (shape && shape->supportsInstancing())
             //{
@@ -738,7 +738,7 @@ struct SessionImpl
         m_rendererController.set_status(asr::IRendererController::ContinueRendering);
 
         // Create the master renderer.
-        asr::Configuration *cfg = m_project->configurations().get_by_name("final");
+        asr::Configuration* cfg = m_project->configurations().get_by_name("final");
         const asr::ParamArray& params = cfg->get_parameters();
 
         m_tileCallbackFactory.reset(
@@ -763,7 +763,7 @@ struct SessionImpl
         m_rendererController.set_status(asr::IRendererController::ContinueRendering);
 
         // Create the master renderer.
-        asr::Configuration *cfg = m_project->configurations().get_by_name("final");
+        asr::Configuration* cfg = m_project->configurations().get_by_name("final");
         const asr::ParamArray& params = cfg->get_parameters();
 
         m_renderer.reset(
@@ -783,7 +783,7 @@ struct SessionImpl
         m_rendererController->set_status(asr::IRendererController::ContinueRendering);
 
         // Create the master renderer.
-        asr::Configuration *cfg = m_project->configurations().get_by_name("interactive");
+        asr::Configuration* cfg = m_project->configurations().get_by_name("interactive");
         const asr::ParamArray &params = cfg->get_parameters();
 
         RenderViewTileCallbackFactory tileCallbackFactory;
@@ -809,7 +809,7 @@ struct SessionImpl
         return writeProject(m_fileName.asChar());
     }
 
-    bool writeProject(const char *filename) const
+    bool writeProject(const char* filename) const
     {
         return asr::ProjectFileWriter::write(
             *m_project,
@@ -818,15 +818,15 @@ struct SessionImpl
             asr::ProjectFileWriter::OmitWritingGeometryFiles);
     }
 
-    void writeMainImage(const char *filename) const
+    void writeMainImage(const char* filename) const
     {
         const asr::Frame* frame = m_project->get_frame();
         frame->write_main_image(filename);
     }
 
-    asr::Assembly *mainAssembly()
+    asr::Assembly* mainAssembly()
     {
-        asr::Scene *scene = m_project->get_scene();
+        asr::Scene* scene = m_project->get_scene();
         return scene->assemblies().get_by_name("assembly");
     }
 

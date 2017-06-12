@@ -98,7 +98,7 @@ MStatus initialize()
     asr::global_logger().add_target(&gLogTarget);
 
     asf::LogMessage::Category level = asf::LogMessage::Info;
-    if (const char *logLevel = getenv("APPLESEED_MAYA_LOG_LEVEL"))
+    if (const char* logLevel = getenv("APPLESEED_MAYA_LOG_LEVEL"))
     {
         if (strcmp(logLevel, "debug") == 0)
             level = asf::LogMessage::Debug;

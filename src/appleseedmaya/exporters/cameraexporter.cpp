@@ -55,7 +55,7 @@ void CameraExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("camera", &CameraExporter::create);
 }
 
-DagNodeExporter *CameraExporter::create(
+DagNodeExporter* CameraExporter::create(
     const MDagPath&                             path,
     asr::Project&                               project,
     AppleseedSession::SessionMode               sessionMode)
@@ -87,7 +87,7 @@ void CameraExporter::createEntities(
     MFnCamera camera(dagPath());
 
     asr::CameraFactoryRegistrar cameraFactories;
-    const asr::ICameraFactory *cameraFactory = nullptr;
+    const asr::ICameraFactory* cameraFactory = nullptr;
     asr::ParamArray cameraParams;
 
     if (camera.isOrtho())

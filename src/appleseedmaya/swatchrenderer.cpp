@@ -285,13 +285,13 @@ class SwatchProject
                 const size_t y0 = props.m_tile_height * ty;
 
                 const asf::Tile& tile = srcImage.tile(tx, ty);
-                const uint8_t *src = tile.get_storage();
+                const uint8_t* src = tile.get_storage();
 
                 for (size_t j = 0, je = tile.get_height(); j < je; ++j)
                 {
                     // For swatches, we assume 4 8 bit channels.
                     const size_t y = y0 + j;
-                    uint8_t *dst = dstImage.pixels() + (y * width * 4) + (x0 * 4);
+                    uint8_t* dst = dstImage.pixels() + (y * width * 4) + (x0 * 4);
 
                     for (size_t i = 0, ie = tile.get_width(); i < ie; ++i)
                     {

@@ -324,7 +324,7 @@ MUserData* PhysicalSkyLightDrawOverride::prepareForDraw(
     MUserData*                      oldData)
 {
     // Retrieve data cache (create if does not exist)
-    PhysicalSkyLightData *data =dynamic_cast<PhysicalSkyLightData*>(oldData);
+    PhysicalSkyLightData* data = dynamic_cast<PhysicalSkyLightData*>(oldData);
 
     if (!data)
         data = new PhysicalSkyLightData();
@@ -339,7 +339,7 @@ void PhysicalSkyLightDrawOverride::draw(
     const MHWRender::MDrawContext&  context,
     const MUserData*                data)
 {
-    const PhysicalSkyLightData *drawData = dynamic_cast<const PhysicalSkyLightData*>(data);
+    const PhysicalSkyLightData* drawData = dynamic_cast<const PhysicalSkyLightData*>(data);
     if (!drawData)
         return;
 
@@ -355,7 +355,7 @@ void PhysicalSkyLightDrawOverride::draw(
 
     const unsigned int displayStyle = context.getDisplayStyle();
 
-    MHWRender::MRenderer *renderer = MHWRender::MRenderer::theRenderer();
+    MHWRender::MRenderer* renderer = MHWRender::MRenderer::theRenderer();
     if (!renderer)
         return;
 

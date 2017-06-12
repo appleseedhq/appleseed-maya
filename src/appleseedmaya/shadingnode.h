@@ -42,9 +42,9 @@ class ShadingNode
 {
   public:
     // Set the shader info of the current shader being registered.
-    static void setCurrentShaderInfo(const OSLShaderInfo *shaderInfo);
+    static void setCurrentShaderInfo(const OSLShaderInfo* shaderInfo);
 
-    static void *creator();
+    static void* creator();
     static MStatus initialize();
 
     ShadingNode();

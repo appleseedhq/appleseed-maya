@@ -54,14 +54,14 @@ class OSLMetadataExtractor
   public:
     explicit OSLMetadataExtractor(const foundation::Dictionary& metadata);
 
-    bool exists(const char *key) const;
+    bool exists(const char* key) const;
 
-    bool getValue(const char *key, MString& value);
+    bool getValue(const char* key, MString& value);
 
-    bool getValue(const char *key, bool& value);
+    bool getValue(const char* key, bool& value);
 
     template <typename T>
-    bool getValue(const char *key, T& value) const
+    bool getValue(const char* key, T& value) const
     {
         if (exists(key))
         {
@@ -135,8 +135,8 @@ class OSLShaderInfo
         const renderer::ShaderQuery&    q,
         const MString&                  filename);
 
-    const OSLParamInfo *findParam(const MString& mayaAttrName) const;
-    const OSLParamInfo *findParam(const MPlug& plug) const;
+    const OSLParamInfo* findParam(const MString& mayaAttrName) const;
+    const OSLParamInfo* findParam(const MPlug& plug) const;
 
     MString shaderName;
     MString shaderType;

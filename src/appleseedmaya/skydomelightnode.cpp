@@ -251,7 +251,7 @@ SkyDomeLightData::SkyDomeLightData()
 {
 }
 
-MHWRender::MPxDrawOverride *SkyDomeLightDrawOverride::creator(const MObject& obj)
+MHWRender::MPxDrawOverride* SkyDomeLightDrawOverride::creator(const MObject& obj)
 {
     return new SkyDomeLightDrawOverride(obj);
 }
@@ -282,7 +282,7 @@ MUserData* SkyDomeLightDrawOverride::prepareForDraw(
     MUserData*                      oldData)
 {
     // Retrieve data cache (create if does not exist)
-    SkyDomeLightData *data =dynamic_cast<SkyDomeLightData*>(oldData);
+    SkyDomeLightData* data = dynamic_cast<SkyDomeLightData*>(oldData);
 
     if (!data)
         data = new SkyDomeLightData();
@@ -297,7 +297,7 @@ void SkyDomeLightDrawOverride::draw(
     const MHWRender::MDrawContext&  context,
     const MUserData*                data)
 {
-    const SkyDomeLightData *drawData = dynamic_cast<const SkyDomeLightData*>(data);
+    const SkyDomeLightData* drawData = dynamic_cast<const SkyDomeLightData*>(data);
     if (!drawData)
         return;
 
@@ -313,7 +313,7 @@ void SkyDomeLightDrawOverride::draw(
 
     const unsigned int displayStyle = context.getDisplayStyle();
 
-    MHWRender::MRenderer *renderer = MHWRender::MRenderer::theRenderer();
+    MHWRender::MRenderer* renderer = MHWRender::MRenderer::theRenderer();
     if (!renderer)
         return;
 
