@@ -47,7 +47,7 @@
 namespace AttributeUtils
 {
 
-template <class T>
+template <typename T>
 MStatus get(const MPlug& plug, T& value)
 {
     return plug.getValue(value);
@@ -59,7 +59,7 @@ MStatus get(const MPlug& plug, MPoint& value);
 MStatus get(const MPlug& plug, MVector& value);
 MStatus get(const MPlug& plug, MMatrix& value);
 
-template <class T>
+template <typename T>
 MStatus get(const MFnDependencyNode& depNodeFn, const MString& attrName, T& value)
 {
     MStatus status;
@@ -70,7 +70,7 @@ MStatus get(const MFnDependencyNode& depNodeFn, const MString& attrName, T& valu
     return get(plug, value);
 }
 
-template <class T>
+template <typename T>
 MStatus get(const MObject& node, const MString& attrName, T& value)
 {
     MFnDependencyNode depNodeFn(node);

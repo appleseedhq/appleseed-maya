@@ -71,7 +71,7 @@ class MurmurHash
 
     std::string toString() const;
 
-    template <class T>
+    template <typename T>
     void append(const T& x)
     {
         append(&x, sizeof(T));
