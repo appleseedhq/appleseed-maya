@@ -40,6 +40,7 @@
 #include "appleseedmaya/_endmayaheaders.h"
 
 // appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
 #include "foundation/utility/autoreleaseptr.h"
 #include "foundation/utility/string.h"
 
@@ -47,21 +48,6 @@
 class MDagPath;
 class MObject;
 class MStatus;
-
-//
-// NonCopyable.
-//
-
-class NonCopyable
-{
-  protected:
-    NonCopyable() = default;
-    ~NonCopyable() = default;
-
-  private:
-    NonCopyable(const NonCopyable&) = delete;
-    NonCopyable& operator=(const NonCopyable&) = delete;
-};
 
 //
 // MStringCompareLess
@@ -86,7 +72,7 @@ struct MStringCompareLess
 
 template<class T>
 class AppleseedEntityPtr
-  : NonCopyable
+  : public foundation::NonCopyable
 {
   public:
     AppleseedEntityPtr()
@@ -206,7 +192,7 @@ MStatus getDagPathByName(const MString& name, MDagPath& dag);
 //
 
 class Computation
-  : public NonCopyable
+  : public foundation::NonCopyable
 {
   public:
 

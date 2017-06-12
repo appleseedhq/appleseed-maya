@@ -36,6 +36,7 @@
 #include "appleseedmaya/_endmayaheaders.h"
 
 // appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
 #include "foundation/image/image.h"
 #include "foundation/image/tile.h"
 #include "foundation/math/vector.h"
@@ -68,11 +69,12 @@ namespace
 {
 
 class SwatchProject
-  : public NonCopyable
+  : public asf::NonCopyable
 {
   public:
-
-    SwatchProject() = default;
+    SwatchProject()
+    {
+    }
 
     void initialize()
     {

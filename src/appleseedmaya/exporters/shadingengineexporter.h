@@ -40,6 +40,9 @@
 #include "renderer/api/material.h"
 #include "renderer/api/surfaceshader.h"
 
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
@@ -49,7 +52,7 @@
 namespace renderer { class Assembly; }
 
 class ShadingEngineExporter
-  : public NonCopyable
+  : public foundation::NonCopyable
 {
   public:
 

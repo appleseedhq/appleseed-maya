@@ -446,7 +446,9 @@ MStatus ShadingNode::initialize()
     return MS::kSuccess;
 }
 
-ShadingNode::ShadingNode() = default;
+ShadingNode::ShadingNode()
+{
+}
 
 void ShadingNode::postConstructor()
 {

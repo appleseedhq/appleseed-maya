@@ -41,6 +41,7 @@
 #include "appleseedmaya/_endmayaheaders.h"
 
 // appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
 #include "foundation/math/matrix.h"
 
 // appleseed.renderer headers.
@@ -57,7 +58,7 @@ namespace renderer { class Scene; }
 class MotionBlurTimes;
 
 class DagNodeExporter
-  : public NonCopyable
+  : public foundation::NonCopyable
 {
   public:
 

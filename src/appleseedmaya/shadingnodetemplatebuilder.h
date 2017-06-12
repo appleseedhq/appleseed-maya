@@ -39,6 +39,9 @@
 // appleseed.maya headers.
 #include "appleseedmaya/utils.h"
 
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+
 // Forward declarations.
 class MStatus;
 class OSLShaderInfo;
@@ -50,7 +53,7 @@ class OSLShaderInfo;
 //
 
 class ShadingNodeTemplateBuilder
-  : NonCopyable
+  : public foundation::NonCopyable
 {
   public:
     // Constructor.

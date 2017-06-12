@@ -174,8 +174,13 @@ float MotionBlurTimes::normalizedFrame(float frame) const
     return (frame - m_shutterOpenTime) / (m_shutterCloseTime - m_shutterOpenTime);
 }
 
-Services::Services() = default;
-Services::~Services() = default;
+Services::Services()
+{
+}
+
+Services::~Services()
+{
+}
 
 } // namespace AppleseedSession.
 
@@ -191,7 +196,7 @@ struct ScopedEndSession
 };
 
 struct SessionImpl
-  : NonCopyable
+  : public asf::NonCopyable
 {
     class ServicesImpl
       : public AppleseedSession::Services

@@ -42,6 +42,9 @@
 #include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/utils.h"
 
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+
 // Forward declarations.
 class OSLParamInfo;
 class OSLShaderInfo;
@@ -49,7 +52,7 @@ namespace renderer { class ParamArray; }
 namespace renderer { class ShaderGroup; }
 
 class ShadingNodeExporter
-  : public NonCopyable
+  : public foundation::NonCopyable
 {
   public:
 

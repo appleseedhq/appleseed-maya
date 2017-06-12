@@ -50,7 +50,9 @@ namespace asf = foundation;
 
 const MString AppleseedTranslator::translatorName("appleseed");
 
-AppleseedTranslator::AppleseedTranslator() = default;
+AppleseedTranslator::AppleseedTranslator()
+{
+}
 
 void* AppleseedTranslator::creator()
 {

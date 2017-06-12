@@ -38,6 +38,7 @@
 #include "appleseedmaya/_endmayaheaders.h"
 
 // appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
 #include "foundation/utility/containers/dictionary.h"
 
 // appleseed.maya headers.
@@ -48,7 +49,7 @@ class MPlug;
 namespace renderer { class ShaderQuery; }
 
 class OSLMetadataExtractor
-  : NonCopyable
+  : public foundation::NonCopyable
 {
   public:
     explicit OSLMetadataExtractor(const foundation::Dictionary& metadata);

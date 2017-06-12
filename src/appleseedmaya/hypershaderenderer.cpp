@@ -36,7 +36,9 @@ void* HypershadeRenderer::creator()
     return new HypershadeRenderer();
 }
 
-HypershadeRenderer::HypershadeRenderer() = default;
+HypershadeRenderer::HypershadeRenderer()
+{
+}
 
 bool HypershadeRenderer::isSafeToUnload()
 {

@@ -45,6 +45,9 @@
 #include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
 #include "appleseedmaya/utils.h"
 
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+
 namespace AppleseedSession
 {
 
@@ -119,7 +122,7 @@ struct MotionBlurTimes
 };
 
 class Services
-  : public NonCopyable
+  : public foundation::NonCopyable
 {
   public:
 

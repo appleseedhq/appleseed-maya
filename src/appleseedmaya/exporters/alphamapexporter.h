@@ -39,6 +39,9 @@
 // appleseed.renderer headers.
 #include "renderer/api/texture.h"
 
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+
 // appleseed.maya headers.
 #include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/utils.h"
@@ -48,7 +51,7 @@ namespace renderer { class Assembly; }
 namespace renderer { class Project; }
 
 class AlphaMapExporter
-  : public NonCopyable
+  : public foundation::NonCopyable
 {
   public:
 
