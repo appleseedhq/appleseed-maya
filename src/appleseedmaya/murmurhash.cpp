@@ -54,13 +54,13 @@ uint64_t fmix(uint64_t k)
 }
 
 MurmurHash::MurmurHash()
-  :	m_h1(0)
+  : m_h1(0)
   , m_h2(0)
 {
 }
 
 MurmurHash::MurmurHash(const MurmurHash& other)
-  :	m_h1(other.m_h1)
+  : m_h1(other.m_h1)
   , m_h2(other.m_h2)
 {
 }

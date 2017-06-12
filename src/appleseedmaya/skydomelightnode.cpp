@@ -319,7 +319,7 @@ void SkyDomeLightDrawOverride::draw(
 
     if (renderer->drawAPIIsOpenGL())
     {
-        float color [3] ={ drawData->m_color.r, drawData->m_color.g, drawData->m_color.b};
+        float color [3] = { drawData->m_color.r, drawData->m_color.g, drawData->m_color.b};
         glColor3fv(color);
 
         glMatrixMode(GL_MODELVIEW);

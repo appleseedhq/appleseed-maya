@@ -119,7 +119,7 @@ class DagNodeExporter
     static bool isObjectRenderable(const MDagPath& path);
     static bool areObjectAndParentsRenderable(const MDagPath& path);
 
-    static bool isAnimated(MObject object, bool checkParent=false);
+    static bool isAnimated(MObject object, bool checkParent = false);
 
   private:
     MDagPath                      m_path;
