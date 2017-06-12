@@ -29,15 +29,12 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_XGENEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_XGENEXPORTER_H
 
-// Standard headers.
-#include <string>
+// appleseed-maya headers.
+#include "appleseedmaya/exporters/dagnodeexporter.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 #include "renderer/api/utility.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/dagnodeexporter.h"
 
 // Forward declarations.
 namespace renderer { class Project; }
@@ -46,7 +43,6 @@ class XGenExporter
   : public DagNodeExporter
 {
   public:
-
     static void registerExporter();
 
     static DagNodeExporter* create(
@@ -67,7 +63,6 @@ class XGenExporter
     void flushEntities() override;
 
   private:
-
     XGenExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,

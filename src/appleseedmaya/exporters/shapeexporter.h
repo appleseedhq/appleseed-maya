@@ -29,22 +29,21 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
 
-// Standard headers.
-#include <vector>
+// appleseed-maya headers.
+#include "appleseedmaya/exporters/dagnodeexporter.h"
+#include "appleseedmaya/murmurhash.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 #include "renderer/api/utility.h"
 
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/dagnodeexporter.h"
-#include "appleseedmaya/murmurhash.h"
+// Standard headers.
+#include <vector>
 
 class ShapeExporter
   : public DagNodeExporter
 {
   public:
-
     ~ShapeExporter() override;
 
     const renderer::TransformSequence& transformSequence() const;
@@ -56,7 +55,6 @@ class ShapeExporter
     void flushEntities() override = 0;
 
   protected:
-
     ShapeExporter(
       const MDagPath&               path,
       renderer::Project&            project,

@@ -27,23 +27,23 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/place3dtextureexporter.h"
+#include "place3dtextureexporter.h"
 
-// Standard headers.
-#include <sstream>
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/utility.h"
 
 // Maya headers.
 #include <maya/MDagPath.h>
 #include <maya/MFnDependencyNode.h>
 #include <maya/MMatrix.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.renderer headers.
-#include "renderer/api/utility.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
+// Standard headers.
+#include <sstream>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -121,4 +121,3 @@ bool Place3dTextureExporter::layerAndParamNameFromPlug(
 
     return ShadingNodeExporter::layerAndParamNameFromPlug(plug, layerName, paramName);
 }
-

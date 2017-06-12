@@ -26,41 +26,42 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SHADING_NODE_METADATA_H
-#define APPLESEED_MAYA_SHADING_NODE_METADATA_H
+#ifndef APPLESEED_MAYA_SHADINGNODEMETADATA_H
+#define APPLESEED_MAYA_SHADINGNODEMETADATA_H
+
+// appleseed-maya headers.
+#include "appleseedmaya/utils.h"
+
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+#include "foundation/utility/containers/dictionary.h"
+
+// Maya headers.
+#include <maya/MString.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Standard headers.
 #include <iostream>
 #include <vector>
-
-// Maya headers.
-#include <maya/MString.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.foundation headers.
-#include "foundation/utility/containers/dictionary.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/utils.h"
 
 // Forward declarations.
 class MPlug;
 namespace renderer { class ShaderQuery; }
 
 class OSLMetadataExtractor
-  : NonCopyable
+  : public foundation::NonCopyable
 {
   public:
     explicit OSLMetadataExtractor(const foundation::Dictionary& metadata);
 
-    bool exists(const char *key) const;
+    bool exists(const char* key) const;
 
-    bool getValue(const char *key, MString& value);
+    bool getValue(const char* key, MString& value);
 
-    bool getValue(const char *key, bool& value);
+    bool getValue(const char* key, bool& value);
 
     template <typename T>
-    bool getValue(const char *key, T& value) const
+    bool getValue(const char* key, T& value) const
     {
         if (exists(key))
         {
@@ -134,8 +135,8 @@ class OSLShaderInfo
         const renderer::ShaderQuery&    q,
         const MString&                  filename);
 
-    const OSLParamInfo *findParam(const MString& mayaAttrName) const;
-    const OSLParamInfo *findParam(const MPlug& plug) const;
+    const OSLParamInfo* findParam(const MString& mayaAttrName) const;
+    const OSLParamInfo* findParam(const MPlug& plug) const;
 
     MString shaderName;
     MString shaderType;
@@ -148,4 +149,4 @@ class OSLShaderInfo
     std::vector<OSLParamInfo> paramInfo;
 };
 
-#endif  // !APPLESEED_MAYA_SHADING_NODE_METADATA_H
+#endif  // !APPLESEED_MAYA_SHADINGNODEMETADATA_H

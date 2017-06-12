@@ -26,13 +26,13 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXTENSION_ATTRIBUTES_H
-#define APPLESEED_MAYA_EXTENSION_ATTRIBUTES_H
+#ifndef APPLESEED_MAYA_EXTENSIONATTRIBUTES_H
+#define APPLESEED_MAYA_EXTENSIONATTRIBUTES_H
 
 // Maya headers.
 #include <maya/MStatus.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 MStatus addExtensionAttributes();
 
-#endif  // !APPLESEED_MAYA_EXTENSION_ATTRIBUTES_H
+#endif  // !APPLESEED_MAYA_EXTENSIONATTRIBUTES_H

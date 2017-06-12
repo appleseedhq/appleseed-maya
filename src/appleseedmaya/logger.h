@@ -46,7 +46,6 @@ MStatus uninitialize();
 class ScopedSetLoggerVerbosity
 {
   public:
-
     explicit ScopedSetLoggerVerbosity(foundation::LogMessage::Category newLevel);
     ~ScopedSetLoggerVerbosity();
 

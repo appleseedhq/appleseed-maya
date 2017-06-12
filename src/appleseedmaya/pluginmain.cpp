@@ -26,30 +26,29 @@
 // THE SOFTWARE.
 //
 
-// Maya headers.
-#include <maya/MGlobal.h>
-#include <maya/MFnPlugin.h>
-#include <maya/MSwatchRenderRegister.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/alphamapnode.h"
 #include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/appleseedtranslator.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/extensionAttributes.h"
+#include "appleseedmaya/extensionattributes.h"
+#include "appleseedmaya/hypershaderenderer.h"
 #include "appleseedmaya/idlejobqueue.h"
 #include "appleseedmaya/logger.h"
+#ifdef APPLESEED_MAYA_WITH_PYTHON_BRIDGE
+#include "appleseedmaya/python.h"
+#endif
 #include "appleseedmaya/rendercommands.h"
 #include "appleseedmaya/renderglobalsnode.h"
 #include "appleseedmaya/shadingnoderegistry.h"
 #include "appleseedmaya/swatchrenderer.h"
-#include "appleseedmaya/hypershaderenderer.h"
 
-#ifdef APPLESEED_MAYA_WITH_PYTHON_BRIDGE
-    #include "appleseedmaya/python.h"
-#endif
+// Maya headers.
+#include <maya/MGlobal.h>
+#include <maya/MFnPlugin.h>
+#include <maya/MSwatchRenderRegister.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Must be last to avoid conflicts with symbols defined in X headers.
 #include "appleseedmaya/physicalskylightnode.h"

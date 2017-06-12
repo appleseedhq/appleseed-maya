@@ -27,7 +27,13 @@
 //
 
 // Interface header.
-#include "appleseedmaya/skydomelightnode.h"
+#include "skydomelightnode.h"
+
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/config.h"
+#include "appleseedmaya/envlightdraw.h"
+#include "appleseedmaya/typeids.h"
 
 // Maya headers.
 #include <maya/MFileObject.h>
@@ -35,13 +41,7 @@
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MFnUnitAttribute.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/config.h"
-#include "appleseedmaya/envlightdraw.h"
-#include "appleseedmaya/typeids.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 const MString SkyDomeLightNode::nodeName("appleseedSkyDomeLight");
 const MTypeId SkyDomeLightNode::id(SkyDomeLightNodeTypeId);
@@ -251,7 +251,7 @@ SkyDomeLightData::SkyDomeLightData()
 {
 }
 
-MHWRender::MPxDrawOverride *SkyDomeLightDrawOverride::creator(const MObject& obj)
+MHWRender::MPxDrawOverride* SkyDomeLightDrawOverride::creator(const MObject& obj)
 {
     return new SkyDomeLightDrawOverride(obj);
 }
@@ -282,7 +282,7 @@ MUserData* SkyDomeLightDrawOverride::prepareForDraw(
     MUserData*                      oldData)
 {
     // Retrieve data cache (create if does not exist)
-    SkyDomeLightData *data =dynamic_cast<SkyDomeLightData*>(oldData);
+    SkyDomeLightData* data = dynamic_cast<SkyDomeLightData*>(oldData);
 
     if (!data)
         data = new SkyDomeLightData();
@@ -297,7 +297,7 @@ void SkyDomeLightDrawOverride::draw(
     const MHWRender::MDrawContext&  context,
     const MUserData*                data)
 {
-    const SkyDomeLightData *drawData = dynamic_cast<const SkyDomeLightData*>(data);
+    const SkyDomeLightData* drawData = dynamic_cast<const SkyDomeLightData*>(data);
     if (!drawData)
         return;
 
@@ -313,13 +313,13 @@ void SkyDomeLightDrawOverride::draw(
 
     const unsigned int displayStyle = context.getDisplayStyle();
 
-    MHWRender::MRenderer *renderer = MHWRender::MRenderer::theRenderer();
+    MHWRender::MRenderer* renderer = MHWRender::MRenderer::theRenderer();
     if (!renderer)
         return;
 
     if (renderer->drawAPIIsOpenGL())
     {
-        float color [3] ={ drawData->m_color.r, drawData->m_color.g, drawData->m_color.b};
+        float color [3] = { drawData->m_color.r, drawData->m_color.g, drawData->m_color.b};
         glColor3fv(color);
 
         glMatrixMode(GL_MODELVIEW);

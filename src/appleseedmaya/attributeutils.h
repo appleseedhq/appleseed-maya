@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_ATTRIBUTE_UTILS_H
-#define APPLESEED_MAYA_ATTRIBUTE_UTILS_H
+#ifndef APPLESEED_MAYA_ATTRIBUTEUTILS_H
+#define APPLESEED_MAYA_ATTRIBUTEUTILS_H
 
 // Maya headers.
 #include <maya/MAngle.h>
@@ -42,12 +42,12 @@
 #include <maya/MStatus.h>
 #include <maya/MString.h>
 #include <maya/MVector.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace AttributeUtils
 {
 
-template<class T>
+template <typename T>
 MStatus get(const MPlug& plug, T& value)
 {
     return plug.getValue(value);
@@ -59,7 +59,7 @@ MStatus get(const MPlug& plug, MPoint& value);
 MStatus get(const MPlug& plug, MVector& value);
 MStatus get(const MPlug& plug, MMatrix& value);
 
-template<class T>
+template <typename T>
 MStatus get(const MFnDependencyNode& depNodeFn, const MString& attrName, T& value)
 {
     MStatus status;
@@ -70,7 +70,7 @@ MStatus get(const MFnDependencyNode& depNodeFn, const MString& attrName, T& valu
     return get(plug, value);
 }
 
-template<class T>
+template <typename T>
 MStatus get(const MObject& node, const MString& attrName, T& value)
 {
     MFnDependencyNode depNodeFn(node);
@@ -88,4 +88,4 @@ MStatus makeOutput(MFnAttribute& attr);
 
 } // AttributeUtils.
 
-#endif  // !APPLESEED_MAYA_ATTRIBUTE_UTILS_H
+#endif  // !APPLESEED_MAYA_ATTRIBUTEUTILS_H

@@ -65,7 +65,7 @@ def register():
     logger.info("Registering appleseed renderer.")
 
     # Register render.
-    pm.renderer("appleseed", rendererUIName="Appleseed")
+    pm.renderer("appleseed", rendererUIName="appleseed")
     createRenderMelProcedures()
 
     # Final Render procedures.
@@ -138,7 +138,7 @@ def register():
         logger.debug("Adding {0} callback.".format(h))
         pm.callbacks(addCallback=c, hook=h, owner="appleseed")
 
-    # Appleseed translator.
+    # appleseed translator.
     createTranslatorMelProcedures()
 
     # Logos.

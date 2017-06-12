@@ -26,24 +26,27 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SESSION_H
-#define APPLESEED_MAYA_SESSION_H
+#ifndef APPLESEED_MAYA_APPLESEEDSESSION_H
+#define APPLESEED_MAYA_APPLESEEDSESSION_H
 
-// Standard headers.
-#include <set>
+// appleseed-maya headers.
+#include "appleseedmaya/exporters/alphamapexporterfwd.h"
+#include "appleseedmaya/exporters/shadingengineexporterfwd.h"
+#include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
+#include "appleseedmaya/utils.h"
+
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
 
 // Maya headers.
 #include <maya/MObject.h>
 #include <maya/MPlug.h>
 #include <maya/MStatus.h>
 #include <maya/MString.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.maya headers.
-#include "appleseedmaya/exporters/alphamapexporterfwd.h"
-#include "appleseedmaya/exporters/shadingengineexporterfwd.h"
-#include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
-#include "appleseedmaya/utils.h"
+// Standard headers.
+#include <set>
 
 namespace AppleseedSession
 {
@@ -119,10 +122,9 @@ struct MotionBlurTimes
 };
 
 class Services
-  : public NonCopyable
+  : public foundation::NonCopyable
 {
   public:
-
     virtual ~Services();
 
     virtual ShadingEngineExporterPtr createShadingEngineExporter(const MObject& object) const = 0;
@@ -136,7 +138,6 @@ class Services
         const MObject&                object) const = 0;
 
   protected:
-
     Services();
 };
 
@@ -154,4 +155,4 @@ const Options& options();
 
 } // namespace AppleseedSession.
 
-#endif  // !APPLESEED_MAYA_SESSION_H
+#endif  // !APPLESEED_MAYA_APPLESEEDSESSION_H

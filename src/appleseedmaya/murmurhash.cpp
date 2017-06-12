@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/murmurhash.h"
+#include "murmurhash.h"
 
 // appleseed.renderer headers.
 #include "renderer/utility/paramarray.h"
@@ -54,13 +54,13 @@ uint64_t fmix(uint64_t k)
 }
 
 MurmurHash::MurmurHash()
-  :	m_h1(0)
+  : m_h1(0)
   , m_h2(0)
 {
 }
 
 MurmurHash::MurmurHash(const MurmurHash& other)
-  :	m_h1(other.m_h1)
+  : m_h1(other.m_h1)
   , m_h2(other.m_h2)
 {
 }
@@ -88,7 +88,7 @@ void MurmurHash::append(const void* data, size_t bytes)
 
     // body
 
-    const uint64_t *blocks = (const uint64_t *)data;
+    const uint64_t* blocks = (const uint64_t *)data;
     for(int i = 0; i < nBlocks; i++)
     {
         uint64_t k1 = blocks[i*2];

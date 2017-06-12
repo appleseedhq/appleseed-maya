@@ -26,38 +26,40 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADINGNETWORKEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_SHADINGNETWORKEXPORTER_H
 
 // Forward declaration header.
 #include "shadingnetworkexporterfwd.h"
 
-// Standard headers.
-#include <map>
-#include <vector>
+// appleseed-maya headers.
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/exporters/shadingnodeexporterfwd.h"
+#include "appleseedmaya/utils.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/shadergroup.h"
+
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
 
 // Maya headers.
 #include <maya/MObject.h>
 #include <maya/MPlug.h>
 #include <maya/MString.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.renderer headers.
-#include "renderer/api/shadergroup.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/appleseedsession.h"
-#include "appleseedmaya/exporters/shadingnodeexporterfwd.h"
-#include "appleseedmaya/utils.h"
+// Standard headers.
+#include <map>
+#include <vector>
 
 // Forward declarations.
 namespace renderer { class Assembly; }
 
 class ShadingNetworkExporter
-  : public NonCopyable
+  : public foundation::NonCopyable
 {
   public:
-
     ~ShadingNetworkExporter();
 
     // Return the name of the appleseed shader group created by this exporter.
@@ -91,4 +93,4 @@ class ShadingNetworkExporter
     ShadingNodeExporterMap                      m_namesToExporters;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADINGNETWORKEXPORTER_H

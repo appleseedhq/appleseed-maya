@@ -27,21 +27,21 @@
 //
 
 // Interface header.
-#include "appleseedmaya/shadingnodetemplatebuilder.h"
+#include "shadingnodetemplatebuilder.h"
+
+// appleseed-maya headers.
+#include "appleseedmaya/shadingnodemetadata.h"
+#include "appleseedmaya/shadingnoderegistry.h"
+
+// Maya headers.
+#include <maya/MGlobal.h>
+#include <maya/MStatus.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Standard headers.
 #include <algorithm>
 #include <iostream>
 #include <sstream>
-
-// Maya headers.
-#include <maya/MGlobal.h>
-#include <maya/MStatus.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/shadingnodemetadata.h"
-#include "appleseedmaya/shadingnoderegistry.h"
 
 ShadingNodeTemplateBuilder::ShadingNodeTemplateBuilder(const OSLShaderInfo& shaderInfo)
 {

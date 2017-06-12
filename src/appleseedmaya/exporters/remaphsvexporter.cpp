@@ -27,51 +27,49 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/remaphsvexporter.h"
+#include "remaphsvexporter.h"
+
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/shadingnodemetadata.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/utility.h"
+
+// Maya headers.
+#include <maya/MFnDependencyNode.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Standard headers.
 #include <algorithm>
 #include <sstream>
 #include <vector>
 
-// Maya headers.
-#include <maya/MFnDependencyNode.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/utility.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/shadingnodemetadata.h"
-
 namespace asf = foundation;
 namespace asr = renderer;
 
 namespace
 {
-
-struct RemapHsvEntry
-{
-    RemapHsvEntry(float pos, float val, int in)
-      : m_pos(pos)
-      , m_value(val)
-      , m_interp(in)
+    struct RemapHsvEntry
     {
-    }
+        RemapHsvEntry(float pos, float val, int in)
+          : m_pos(pos)
+          , m_value(val)
+          , m_interp(in)
+        {
+        }
 
-    bool operator<(const RemapHsvEntry& other) const
-    {
-        return m_pos < other.m_pos;
-    }
+        bool operator<(const RemapHsvEntry& other) const
+        {
+            return m_pos < other.m_pos;
+        }
 
-    float   m_pos;
-    float   m_value;
-    int     m_interp;
-};
-
-} // unnamed
+        float   m_pos;
+        float   m_value;
+        int     m_interp;
+    };
+}
 
 void RemapHsvExporter::registerExporter()
 {
@@ -259,4 +257,3 @@ void RemapHsvExporter::exportParameterValue(
             shaderParams);
     }
 }
-

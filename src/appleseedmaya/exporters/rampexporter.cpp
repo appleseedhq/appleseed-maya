@@ -27,49 +27,47 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/rampexporter.h"
+#include "rampexporter.h"
+
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/shadingnodemetadata.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/utility.h"
+
+// Maya headers.
+#include <maya/MFnDependencyNode.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Standard headers.
 #include <algorithm>
 #include <sstream>
 #include <vector>
 
-// Maya headers.
-#include <maya/MFnDependencyNode.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/utility.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/shadingnodemetadata.h"
-
 namespace asf = foundation;
 namespace asr = renderer;
 
 namespace
 {
-
-struct RampEntry
-{
-    RampEntry(float pos, const MColor& col)
-      : m_pos(pos)
-      , m_col(col)
+    struct RampEntry
     {
-    }
+        RampEntry(float pos, const MColor& col)
+          : m_pos(pos)
+          , m_col(col)
+        {
+        }
 
-    bool operator<(const RampEntry& other) const
-    {
-        return m_pos < other.m_pos;
-    }
+        bool operator<(const RampEntry& other) const
+        {
+            return m_pos < other.m_pos;
+        }
 
-    float   m_pos;
-    MColor  m_col;
-};
-
-} // unnamed
+        float   m_pos;
+        MColor  m_col;
+    };
+}
 
 void RampExporter::registerExporter()
 {
@@ -165,4 +163,3 @@ void RampExporter::exportParameterValue(
             shaderParams);
     }
 }
-

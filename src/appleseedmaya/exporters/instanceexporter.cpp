@@ -27,12 +27,9 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/instanceexporter.h"
+#include "instanceexporter.h"
 
-// Standard headers.
-#include <iostream>
-
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/appleseedsession.h"
 
 namespace asf = foundation;

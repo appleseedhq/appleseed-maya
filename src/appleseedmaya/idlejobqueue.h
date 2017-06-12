@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_IDLE_JOB_QUEUE_H
-#define APPLESEED_MAYA_IDLE_JOB_QUEUE_H
+#ifndef APPLESEED_MAYA_IDLEJOBQUEUE_H
+#define APPLESEED_MAYA_IDLEJOBQUEUE_H
 
 // Standard headers.
 #include <functional>
@@ -48,4 +48,4 @@ void pushJob(std::function<void()> job);
 
 } // IdleJobQueue
 
-#endif  // !APPLESEED_MAYA_IDLE_JOB_QUEUE_H
+#endif  // !APPLESEED_MAYA_IDLEJOBQUEUE_H

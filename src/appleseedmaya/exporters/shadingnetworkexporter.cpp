@@ -27,20 +27,9 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/shadingnetworkexporter.h"
+#include "shadingnetworkexporter.h"
 
-// Standard headers.
-#include <algorithm>
-
-// Maya headers.
-#include <maya/MItDependencyGraph.h>
-#include <maya/MFnDependencyNode.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/scene.h"
-
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/exporters/shadingnodeexporter.h"
@@ -48,33 +37,42 @@
 #include "appleseedmaya/shadingnodemetadata.h"
 #include "appleseedmaya/shadingnoderegistry.h"
 
+// appleseed.renderer headers.
+#include "renderer/api/scene.h"
+
+// Maya headers.
+#include <maya/MItDependencyGraph.h>
+#include <maya/MFnDependencyNode.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <algorithm>
+
 namespace asf = foundation;
 namespace asr = renderer;
 
 namespace
 {
-
-MStatus logUnknownAttributeFound(
-    const MPlug&    outputPlug,
-    const MString&  nodeTypeName)
-{
-    MStatus status;
-    const MString attrName =
-        outputPlug.partialName(
-            false,
-            false,
-            false,
-            false,
-            false,
-            true,   // use long names.
-            &status);
-    RENDERER_LOG_DEBUG(
-        "Skipping unknown attribute %s of shading node %s",
-        attrName.asChar(),
-        nodeTypeName.asChar());
-    return status;
-}
-
+    MStatus logUnknownAttributeFound(
+        const MPlug&    outputPlug,
+        const MString&  nodeTypeName)
+    {
+        MStatus status;
+        const MString attrName =
+            outputPlug.partialName(
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,   // use long names.
+                &status);
+        RENDERER_LOG_DEBUG(
+            "Skipping unknown attribute %s of shading node %s",
+            attrName.asChar(),
+            nodeTypeName.asChar());
+        return status;
+    }
 }
 
 ShadingNetworkExporter::ShadingNetworkExporter(
@@ -132,10 +130,10 @@ void ShadingNetworkExporter::flushEntities()
 
             // Connect the shader to the surface adaptor.
             MFnDependencyNode depNodeFn(m_object);
-            const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+            const OSLShaderInfo* shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
             if (shaderInfo)
             {
-                if (const OSLParamInfo *srcParamInfo = shaderInfo->findParam(m_outputPlug))
+                if (const OSLParamInfo* srcParamInfo = shaderInfo->findParam(m_outputPlug))
                 {
                     m_shaderGroup->add_connection(
                         depNodeFn.name().asChar(),
@@ -164,10 +162,10 @@ void ShadingNetworkExporter::flushEntities()
 
             // Connect the texture to the surface adaptor.
             MFnDependencyNode depNodeFn(m_object);
-            const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+            const OSLShaderInfo* shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
             if (shaderInfo)
             {
-                if (const OSLParamInfo *srcParamInfo = shaderInfo->findParam(m_outputPlug))
+                if (const OSLParamInfo* srcParamInfo = shaderInfo->findParam(m_outputPlug))
                 {
                     m_shaderGroup->add_connection(
                         depNodeFn.name().asChar(),
@@ -205,7 +203,7 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
         return;
     }
 
-    const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+    const OSLShaderInfo* shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
     if (shaderInfo)
     {
         // Look for nodes connected to the shader and create exporters for them.
@@ -281,4 +279,3 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
             depNodeFn.typeName().asChar());
     }
 }
-

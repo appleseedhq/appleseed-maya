@@ -30,9 +30,13 @@
 configure_file (${PROJECT_SOURCE_DIR}/src/appleseedmaya/version.h.in
                 ${PROJECT_SOURCE_DIR}/src/appleseedmaya/version.h)
 
-include_directories (${PROJECT_SOURCE_DIR}/src)
+
+#--------------------------------------------------------------------------------------------------
+# Source files.
+#--------------------------------------------------------------------------------------------------
 
 set (appleseed_maya_sources
+    _endmayaheaders.h
     alphamapnode.cpp
     alphamapnode.h
     appleseedsession.cpp
@@ -45,6 +49,55 @@ set (appleseed_maya_sources
     envlightdraw.cpp
     envlightdraw.h
     exceptions.h
+    extensionattributes.cpp
+    extensionattributes.h
+    hypershaderenderer.cpp
+    hypershaderenderer.h
+    idlejobqueue.cpp
+    idlejobqueue.h
+    logger.cpp
+    logger.h
+    murmurhash.cpp
+    murmurhash.h
+    physicalskylightnode.h
+    physicalskylightnode.cpp
+    pluginmain.cpp
+    rendercommands.cpp
+    rendercommands.h
+    renderercontroller.h
+    renderglobalsnode.cpp
+    renderglobalsnode.h
+    renderviewtilecallback.cpp
+    renderviewtilecallback.h
+    shadingnode.cpp
+    shadingnode.h
+    shadingnodemetadata.cpp
+    shadingnodemetadata.h
+    shadingnoderegistry.cpp
+    shadingnoderegistry.h
+    shadingnodetemplatebuilder.cpp
+    shadingnodetemplatebuilder.h
+    skydomelightnode.cpp
+    skydomelightnode.h
+    swatchrenderer.cpp
+    swatchrenderer.h
+    typeids.h
+    utils.cpp
+    utils.h
+    version.h.in
+)
+if (WITH_PYTHON_BRIDGE)
+    set (appleseed_maya_sources
+        ${appleseed_maya_sources}
+        python.cpp
+        python.h
+    )
+endif ()
+source_group ("" FILES
+    ${appleseed_maya_sources}
+)
+
+set (appleseed_maya_exporters_sources
     exporters/alphamapexporter.cpp
     exporters/alphamapexporter.h
     exporters/alphamapexporterfwd.h
@@ -90,63 +143,47 @@ set (appleseed_maya_sources
     exporters/shadingnodeexporterfwd.h
     exporters/shapeexporter.cpp
     exporters/shapeexporter.h
-    extensionAttributes.cpp
-    extensionAttributes.h
-    hypershaderenderer.cpp
-    hypershaderenderer.h
-    idlejobqueue.cpp
-    idlejobqueue.h
-    logger.cpp
-    logger.h
-    mayaheaderscleanup.h
-    murmurhash.cpp
-    murmurhash.h
-    physicalskylightnode.h
-    physicalskylightnode.cpp
-    pluginmain.cpp
-    rendercommands.cpp
-    rendercommands.h
-    renderercontroller.h
-    renderglobalsnode.cpp
-    renderglobalsnode.h
-    renderviewtilecallback.cpp
-    renderviewtilecallback.h
-    shadingnode.cpp
-    shadingnode.h
-    shadingnodemetadata.cpp
-    shadingnodemetadata.h
-    shadingnoderegistry.cpp
-    shadingnoderegistry.h
-    shadingnodetemplatebuilder.cpp
-    shadingnodetemplatebuilder.h
-    skydomelightnode.cpp
-    skydomelightnode.h
-    swatchrenderer.cpp
-    swatchrenderer.h
-    typeids.h
-    utils.cpp
-    utils.h
-    version.h.in
 )
 if (XGEN_FOUND)
-    set (appleseed_maya_sources
-        ${appleseed_maya_sources}
+    set (appleseed_maya_exporters_sources
+        ${appleseed_maya_exporters_sources}
         exporters/xgenexporter.cpp
         exporters/xgenexporter.h
     )
 endif ()
+list (APPEND appleseed_maya_sources
+    ${appleseed_maya_exporters_sources}
+)
+source_group ("exporters" FILES
+    ${appleseed_maya_exporters_sources}
+)
 
-if (WITH_PYTHON_BRIDGE)
-    set (appleseed_maya_sources
-        ${appleseed_maya_sources}
-        python.cpp
-        python.h
-    )
-endif ()
+
+#--------------------------------------------------------------------------------------------------
+# Target.
+#--------------------------------------------------------------------------------------------------
 
 add_library (appleseedMaya SHARED
     ${appleseed_maya_sources}
 )
+
+set_target_properties (appleseedMaya PROPERTIES PREFIX "")
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set_target_properties (appleseedMaya PROPERTIES SUFFIX ".mll")
+endif ()
+
+
+#--------------------------------------------------------------------------------------------------
+# Include paths.
+#--------------------------------------------------------------------------------------------------
+
+include_directories (${PROJECT_SOURCE_DIR}/src)
+
+
+#--------------------------------------------------------------------------------------------------
+# Static libraries.
+#--------------------------------------------------------------------------------------------------
 
 target_link_libraries (appleseedMaya
     ${MAYA_Foundation_LIBRARY}
@@ -168,10 +205,4 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         debug       ${APPLESEED_DEPS_STAGE_DIR}/ilmbase-debug/lib/Half.lib
         optimized   ${APPLESEED_DEPS_STAGE_DIR}/ilmbase-release/lib/Half.lib
     )
-endif ()
-
-set_target_properties (appleseedMaya PROPERTIES PREFIX "")
-
-if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set_target_properties (appleseedMaya PROPERTIES SUFFIX ".mll")
 endif ()

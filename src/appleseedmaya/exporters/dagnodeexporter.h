@@ -32,23 +32,24 @@
 // Forward declaration header.
 #include "dagnodeexporterfwd.h"
 
+// appleseed-maya headers.
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/utils.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/utility.h"
+
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+#include "foundation/math/matrix.h"
+
 // Maya headers.
 #include <maya/MDagPath.h>
 #include <maya/MMatrix.h>
 #include <maya/MObject.h>
 #include <maya/MObjectArray.h>
 #include <maya/MString.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.foundation headers.
-#include "foundation/math/matrix.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/utility.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/appleseedsession.h"
-#include "appleseedmaya/utils.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 namespace renderer { class Assembly; }
@@ -57,10 +58,9 @@ namespace renderer { class Scene; }
 class MotionBlurTimes;
 
 class DagNodeExporter
-  : public NonCopyable
+  : public foundation::NonCopyable
 {
   public:
-
     // Destructor.
     virtual ~DagNodeExporter();
 
@@ -88,7 +88,6 @@ class DagNodeExporter
     virtual void flushEntities() = 0;
 
   protected:
-
     DagNodeExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,
@@ -120,10 +119,9 @@ class DagNodeExporter
     static bool isObjectRenderable(const MDagPath& path);
     static bool areObjectAndParentsRenderable(const MDagPath& path);
 
-    static bool isAnimated(MObject object, bool checkParent=false);
+    static bool isAnimated(MObject object, bool checkParent = false);
 
   private:
-
     MDagPath                      m_path;
     AppleseedSession::SessionMode m_sessionMode;
     renderer::Project&            m_project;

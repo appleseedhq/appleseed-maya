@@ -29,39 +29,25 @@
 #ifndef APPLESEED_MAYA_UTILS_H
 #define APPLESEED_MAYA_UTILS_H
 
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+#include "foundation/utility/autoreleaseptr.h"
+#include "foundation/utility/string.h"
+
+// Maya headers.
+#include <maya/MComputation.h>
+#include <maya/MString.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
 // Standard headers.
 #include <cstring>
 #include <memory>
 #include <string>
 
-// Maya headers.
-#include <maya/MComputation.h>
-#include <maya/MString.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.foundation headers.
-#include "foundation/utility/autoreleaseptr.h"
-#include "foundation/utility/string.h"
-
 // Forward declarations.
 class MDagPath;
 class MObject;
 class MStatus;
-
-//
-// NonCopyable.
-//
-
-class NonCopyable
-{
-  protected:
-    NonCopyable() = default;
-    ~NonCopyable() = default;
-
-  private:
-    NonCopyable(const NonCopyable&) = delete;
-    NonCopyable& operator=(const NonCopyable&) = delete;
-};
 
 //
 // MStringCompareLess
@@ -84,9 +70,9 @@ struct MStringCompareLess
 //  Smart ptr that holds  an appleseed entity and keeps track of ownership.
 //
 
-template<class T>
+template <typename T>
 class AppleseedEntityPtr
-  : NonCopyable
+  : public foundation::NonCopyable
 {
   public:
     AppleseedEntityPtr()
@@ -137,7 +123,7 @@ class AppleseedEntityPtr
         return foundation::auto_release_ptr<T>(m_ptr);
     }
 
-    template<class U>
+    template <typename U>
     foundation::auto_release_ptr<U> releaseAs()
     {
         assert(m_releaseObj);
@@ -168,7 +154,7 @@ class AppleseedEntityPtr
 };
 
 // Insert an appleseed entity into a container with an unique name.
-template<class Container, class T>
+template <typename Container, typename T>
 void insertEntityWithUniqueName(
     Container&              container,
     AppleseedEntityPtr<T>&  entity)
@@ -206,10 +192,9 @@ MStatus getDagPathByName(const MString& name, MDagPath& dag);
 //
 
 class Computation
-  : public NonCopyable
+  : public foundation::NonCopyable
 {
   public:
-
     static std::shared_ptr<Computation> create();
 
     ~Computation();

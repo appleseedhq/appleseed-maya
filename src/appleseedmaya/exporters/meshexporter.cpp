@@ -27,15 +27,16 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/meshexporter.h"
+#include "meshexporter.h"
 
-// Standard headers.
-#include <sstream>
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/alphamapexporter.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/logger.h"
 
-// Boost headers.
-#include "boost/filesystem/convenience.hpp"
-#include "boost/filesystem/operations.hpp"
-#include "boost/filesystem/path.hpp"
+// appleseed.foundation headers.
+#include "foundation/utility/string.h"
 
 // Maya headers.
 #include <maya/MFloatPointArray.h>
@@ -43,86 +44,79 @@
 #include <maya/MItDependencyGraph.h>
 #include <maya/MItMeshPolygon.h>
 #include <maya/MPointArray.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.foundation headers.
-#include "foundation/utility/string.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/alphamapexporter.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/logger.h"
+// Boost headers.
+#include "boost/filesystem/convenience.hpp"
+#include "boost/filesystem/operations.hpp"
+#include "boost/filesystem/path.hpp"
 
 namespace bfs = boost::filesystem;
 namespace asf = foundation;
 namespace asr = renderer;
 
-// Utility functions
 namespace
 {
-
-void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
-{
-    hash.append(mesh.get_tex_coords_count());
-    for(size_t i = 0, e = mesh.get_tex_coords_count(); i < e; ++i)
-        hash.append(mesh.get_tex_coords(i));
-
-    hash.append(mesh.get_triangle_count());
-    for(size_t i = 0, e = mesh.get_triangle_count(); i < e; ++i)
-        hash.append(mesh.get_triangle(i));
-
-    hash.append(mesh.get_material_slot_count());
-    for(size_t i = 0, e = mesh.get_material_slot_count(); i < e; ++i)
-        hash.append(mesh.get_material_slot(i));
-
-    hash.append(mesh.get_vertex_count());
-    for(size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
-        hash.append(mesh.get_vertex(i));
-
-    hash.append(mesh.get_vertex_normal_count());
-    for(size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
-        hash.append(mesh.get_vertex_normal(i));
-
-    hash.append(mesh.get_vertex_tangent_count());
-    for(size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
-        hash.append(mesh.get_vertex_tangent(i));
-}
-
-void meshObjectHash(
-    const asr::MeshObject&                      mesh,
-    const asf::StringDictionary&                frontMaterialMappings,
-    const asf::StringDictionary&                backMaterialMappings,
-    MurmurHash&                                 hash)
-{
-    staticMeshObjectHash(mesh, hash);
-
-    hash.append(mesh.get_motion_segment_count());
-    for(size_t j = 0, je = mesh.get_motion_segment_count(); j < je; ++j)
+    void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
     {
+        hash.append(mesh.get_tex_coords_count());
+        for(size_t i = 0, e = mesh.get_tex_coords_count(); i < e; ++i)
+            hash.append(mesh.get_tex_coords(i));
+
+        hash.append(mesh.get_triangle_count());
+        for(size_t i = 0, e = mesh.get_triangle_count(); i < e; ++i)
+            hash.append(mesh.get_triangle(i));
+
+        hash.append(mesh.get_material_slot_count());
+        for(size_t i = 0, e = mesh.get_material_slot_count(); i < e; ++i)
+            hash.append(mesh.get_material_slot(i));
+
+        hash.append(mesh.get_vertex_count());
         for(size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
-            mesh.get_vertex_pose(i, j);
+            hash.append(mesh.get_vertex(i));
 
+        hash.append(mesh.get_vertex_normal_count());
         for(size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
-            mesh.get_vertex_normal_pose(i, j);
+            hash.append(mesh.get_vertex_normal(i));
 
+        hash.append(mesh.get_vertex_tangent_count());
         for(size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
-            mesh.get_vertex_tangent_pose(i, j);
+            hash.append(mesh.get_vertex_tangent(i));
     }
 
-    hash.append(mesh.get_parameters());
-    hash.append(frontMaterialMappings);
-    hash.append(backMaterialMappings);
-}
+    void meshObjectHash(
+        const asr::MeshObject&                  mesh,
+        const asf::StringDictionary&            frontMaterialMappings,
+        const asf::StringDictionary&            backMaterialMappings,
+        MurmurHash&                             hash)
+    {
+        staticMeshObjectHash(mesh, hash);
 
-} // unnamed.
+        hash.append(mesh.get_motion_segment_count());
+        for(size_t j = 0, je = mesh.get_motion_segment_count(); j < je; ++j)
+        {
+            for(size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
+                mesh.get_vertex_pose(i, j);
+
+            for(size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
+                mesh.get_vertex_normal_pose(i, j);
+
+            for(size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
+                mesh.get_vertex_tangent_pose(i, j);
+        }
+
+        hash.append(mesh.get_parameters());
+        hash.append(frontMaterialMappings);
+        hash.append(backMaterialMappings);
+    }
+}
 
 void MeshExporter::registerExporter()
 {
     NodeExporterFactory::registerDagNodeExporter("mesh", &MeshExporter::create);
 }
 
-DagNodeExporter *MeshExporter::create(
+DagNodeExporter* MeshExporter::create(
     const MDagPath&                             path,
     asr::Project&                               project,
     AppleseedSession::SessionMode               sessionMode)
@@ -305,9 +299,9 @@ void MeshExporter::exportShapeMotionStep(float time)
 
 //#define APPLESEED_MAYA_OBJ_MESH_EXPORT
 #ifdef APPLESEED_MAYA_OBJ_MESH_EXPORT
-        const char *extension = ".obj";
+        const char* extension = ".obj";
 #else
-        const char *extension = ".binarymesh";
+        const char* extension = ".binarymesh";
 #endif
         const std::string fileName = std::string("_geometry/") + meshHash.toString() + extension;
 
@@ -549,7 +543,7 @@ void MeshExporter::exportGeometry()
     // Vertices.
     m_mesh->reserve_vertices(meshFn.numVertices());
     {
-        const float *p = meshFn.getRawPoints(&status);
+        const float* p = meshFn.getRawPoints(&status);
         for(size_t i = 0, e = meshFn.numVertices(); i < e; ++i, p += 3)
             m_mesh->push_vertex(asr::GVector3(p[0], p[1], p[2]));
     }
@@ -567,7 +561,7 @@ void MeshExporter::exportGeometry()
     {
         const asr::GVector3 Y(0.0f, 1.0f, 0.0f);
         m_mesh->reserve_vertex_normals(meshFn.numNormals());
-        const float *p = meshFn.getRawNormals(&status);
+        const float* p = meshFn.getRawNormals(&status);
 
         for(int i = 0, e = meshFn.numNormals(); i < e; ++i, p += 3)
         {
@@ -593,7 +587,7 @@ void MeshExporter::exportMeshKey()
 
     // Vertices.
     {
-        const float *p = meshFn.getRawPoints(&status);
+        const float* p = meshFn.getRawPoints(&status);
         for(size_t i = 0, e = meshFn.numVertices(); i < e; ++i, p += 3)
         {
             m_mesh->set_vertex_pose(
@@ -607,7 +601,7 @@ void MeshExporter::exportMeshKey()
     {
         const asr::GVector3 Y(0.0f, 1.0f, 0.0f);
         m_mesh->reserve_vertex_normals(meshFn.numNormals());
-        const float *p = meshFn.getRawNormals(&status);
+        const float* p = meshFn.getRawNormals(&status);
 
         for(size_t i = 0, e = meshFn.numNormals(); i < e; ++i, p += 3)
         {

@@ -27,18 +27,9 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/exporterfactory.h"
+#include "exporterfactory.h"
 
-// Standard headers.
-#include <cassert>
-#include <map>
-
-// Maya headers.
-#include <maya/MFnDagNode.h>
-#include <maya/MFnDependencyNode.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exceptions.h"
 #include "appleseedmaya/exporters/alphamapexporter.h"
 #include "appleseedmaya/exporters/arealightexporter.h"
@@ -62,29 +53,36 @@
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/utils.h"
 
+// Maya headers.
+#include <maya/MFnDagNode.h>
+#include <maya/MFnDependencyNode.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <cassert>
+#include <map>
+
 namespace asf = foundation;
 namespace asr = renderer;
 
 namespace
 {
+    typedef std::map<
+        MString,
+        NodeExporterFactory::CreateDagNodeExporterFn,
+        MStringCompareLess
+        > CreateDagExporterMapType;
 
-typedef std::map<
-    MString,
-    NodeExporterFactory::CreateDagNodeExporterFn,
-    MStringCompareLess
-    > CreateDagExporterMapType;
+    CreateDagExporterMapType            gDagNodeExporters;
 
-CreateDagExporterMapType            gDagNodeExporters;
+    typedef std::map<
+        MString,
+        NodeExporterFactory::CreateShadingNodeExporterFn,
+        MStringCompareLess
+        > CreateShadingNodeExporterMapType;
 
-typedef std::map<
-    MString,
-    NodeExporterFactory::CreateShadingNodeExporterFn,
-    MStringCompareLess
-    > CreateShadingNodeExporterMapType;
-
-CreateShadingNodeExporterMapType    gShadingNodeExporters;
-
-} // unnamed
+    CreateShadingNodeExporterMapType    gShadingNodeExporters;
+}
 
 MStatus NodeExporterFactory::initialize(const MString& pluginPath)
 {

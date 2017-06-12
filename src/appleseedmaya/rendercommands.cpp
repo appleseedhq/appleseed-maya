@@ -27,10 +27,14 @@
 //
 
 // Interface header.
-#include "appleseedmaya/rendercommands.h"
+#include "rendercommands.h"
 
-// Standard headers.
-#include <iostream>
+// appleseed-maya headers.
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/config.h"
+#include "appleseedmaya/logger.h"
+#include "appleseedmaya/utils.h"
 
 // Maya headers.
 #include <maya/MArgDatabase.h>
@@ -41,14 +45,10 @@
 #include <maya/MRenderView.h>
 #include <maya/MSelectionList.h>
 #include <maya/MSyntax.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.maya headers.
-#include "appleseedmaya/appleseedsession.h"
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/config.h"
-#include "appleseedmaya/logger.h"
-#include "appleseedmaya/utils.h"
+// Standard headers.
+#include <iostream>
 
 MString FinalRenderCommand::cmdName("appleseedRender");
 
@@ -69,7 +69,7 @@ void* FinalRenderCommand::creator()
 
 MStatus FinalRenderCommand::doIt(const MArgList& args)
 {
-    std::cout << "Appleseed Render:\n";
+    std::cout << "appleseed Render:\n";
     std::cout << "-----------------\n";
 
     // In case we were rendering.
@@ -175,7 +175,7 @@ MStatus ProgressiveRenderCommand::doIt(const MArgList& args)
     //assert(MRenderView::doesRenderEditorExist());
 
     /*
-    std::cout << "Appleseed IPR:\n";
+    std::cout << "appleseed IPR:\n";
     std::cout << "--------------\n";
 
     // In case we were rendering.

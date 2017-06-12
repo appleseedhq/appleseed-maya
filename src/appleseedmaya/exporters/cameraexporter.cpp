@@ -27,25 +27,25 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/cameraexporter.h"
+#include "cameraexporter.h"
+
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/scene.h"
+
+// appleseed.foundation headers
+#include "foundation/math/vector.h"
+#include "foundation/utility/iostreamop.h"
 
 // Maya headers.
 #include <maya/MFnCamera.h>
 #include <maya/MFnDagNode.h>
 #include <maya/MPlug.h>
 #include <maya/MStatus.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.foundation headers
-#include "foundation/math/vector.h"
-#include "foundation/utility/iostreamop.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/scene.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -55,7 +55,7 @@ void CameraExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("camera", &CameraExporter::create);
 }
 
-DagNodeExporter *CameraExporter::create(
+DagNodeExporter* CameraExporter::create(
     const MDagPath&                             path,
     asr::Project&                               project,
     AppleseedSession::SessionMode               sessionMode)
@@ -87,7 +87,7 @@ void CameraExporter::createEntities(
     MFnCamera camera(dagPath());
 
     asr::CameraFactoryRegistrar cameraFactories;
-    const asr::ICameraFactory *cameraFactory = nullptr;
+    const asr::ICameraFactory* cameraFactory = nullptr;
     asr::ParamArray cameraParams;
 
     if (camera.isOrtho())

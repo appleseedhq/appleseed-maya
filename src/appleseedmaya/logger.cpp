@@ -26,79 +26,78 @@
 // THE SOFTWARE.
 //
 
-// interface header.
+// Interface header.
 #include "logger.h"
-
-// Standard headers.
-#include <cstdlib>
-#include <cstring>
-
-// Maya headers.
-#include <maya/MGlobal.h>
-#include <maya/MStatus.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/log.h"
 #include "foundation/utility/string.h"
+
+// Maya headers.
+#include <maya/MGlobal.h>
+#include <maya/MStatus.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <cstdlib>
+#include <cstring>
 
 namespace asf = foundation;
 namespace asr = renderer;
 
 namespace Logger
 {
+
 namespace
 {
-
-class LogTarget
-  : public asf::ILogTarget
-{
-  public:
-    void release() override
+    class LogTarget
+      : public asf::ILogTarget
     {
-        delete this;
-    }
-
-    virtual void write(
-        const asf::LogMessage::Category  category,
-        const char*                      file,
-        const size_t                     line,
-        const char*                      header,
-        const char*                      message)
-    {
-        switch (category)
+      public:
+        void release() override
         {
-            case asf::LogMessage::Debug:
-                MGlobal::displayInfo(MString("[Debug]") + MString(message));
-            break;
-
-            case asf::LogMessage::Info:
-                MGlobal::displayInfo(MString("[Info]") + message);
-            break;
-
-            case asf::LogMessage::Warning:
-                MGlobal::displayWarning(MString("[Warning]") + message);
-            break;
-
-            case asf::LogMessage::Error:
-            case asf::LogMessage::Fatal:
-            default:
-                MGlobal::displayError(MString("[Error]") + message);
-            break;
+            delete this;
         }
-    }
-};
 
-LogTarget gLogTarget;
+        virtual void write(
+            const asf::LogMessage::Category  category,
+            const char*                      file,
+            const size_t                     line,
+            const char*                      header,
+            const char*                      message)
+        {
+            switch (category)
+            {
+                case asf::LogMessage::Debug:
+                    MGlobal::displayInfo(MString("[Debug] ") + MString(message));
+                break;
 
-} // unnamed namespace.
+                case asf::LogMessage::Info:
+                    MGlobal::displayInfo(MString("[Info] ") + message);
+                break;
+
+                case asf::LogMessage::Warning:
+                    MGlobal::displayWarning(MString("[Warning] ") + message);
+                break;
+
+                case asf::LogMessage::Error:
+                case asf::LogMessage::Fatal:
+                default:
+                    MGlobal::displayError(MString("[Error] ") + message);
+                break;
+            }
+        }
+    };
+
+    LogTarget gLogTarget;
+}
 
 MStatus initialize()
 {
     asr::global_logger().add_target(&gLogTarget);
 
     asf::LogMessage::Category level = asf::LogMessage::Info;
-    if (const char *logLevel = getenv("APPLESEED_MAYA_LOG_LEVEL"))
+    if (const char* logLevel = getenv("APPLESEED_MAYA_LOG_LEVEL"))
     {
         if (strcmp(logLevel, "debug") == 0)
             level = asf::LogMessage::Debug;

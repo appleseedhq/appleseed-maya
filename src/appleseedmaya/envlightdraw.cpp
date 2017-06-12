@@ -27,21 +27,21 @@
 //
 
 // Interface header.
-#include "appleseedmaya/envlightdraw.h"
+#include "envlightdraw.h"
 
-// Standard headers.
-#include <cmath>
+// appleseed.foundation headers.
+#include "foundation/math/scalar.h"
+#include "foundation/math/vector.h"
 
 // Maya headers.
 #include <maya/MFloatArray.h>
 #include <maya/MGL.h>
 #include <maya/MIntArray.h>
 #include <maya/MPointArray.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.foundation headers.
-#include "foundation/math/scalar.h"
-#include "foundation/math/vector.h"
+// Standard headers.
+#include <cmath>
 
 namespace asf = foundation;
 

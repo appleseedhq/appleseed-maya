@@ -26,14 +26,14 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_ALPHA_MAP_NODE_H
-#define APPLESEED_MAYA_ALPHA_MAP_NODE_H
+#ifndef APPLESEED_MAYA_ALPHAMAPNODE_H
+#define APPLESEED_MAYA_ALPHAMAPNODE_H
 
 // Maya headers.
 #include <maya/MObject.h>
 #include <maya/MPxNode.h>
 #include <maya/MTypeId.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 
 //
@@ -69,4 +69,4 @@ class AlphaMapNode
     static MObject m_map;
 };
 
-#endif  // !APPLESEED_MAYA_ALPHA_MAP_NODE_H
+#endif  // !APPLESEED_MAYA_ALPHAMAPNODE_H

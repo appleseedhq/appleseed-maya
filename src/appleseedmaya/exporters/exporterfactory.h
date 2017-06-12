@@ -26,8 +26,16 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_NODEEXPORTER_FACTORY_H
-#define APPLESEED_MAYA_EXPORTERS_NODEEXPORTER_FACTORY_H
+#ifndef APPLESEED_MAYA_EXPORTERS_EXPORTERFACTORY_H
+#define APPLESEED_MAYA_EXPORTERS_EXPORTERFACTORY_H
+
+// appleseed-maya headers.
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/exporters/alphamapexporterfwd.h"
+#include "appleseedmaya/exporters/dagnodeexporterfwd.h"
+#include "appleseedmaya/exporters/shadingengineexporterfwd.h"
+#include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
+#include "appleseedmaya/exporters/shadingnodeexporterfwd.h"
 
 // Maya headers.
 #include <maya/MDagPath.h>
@@ -35,15 +43,7 @@
 #include <maya/MPlug.h>
 #include <maya/MStatus.h>
 #include <maya/MString.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/appleseedsession.h"
-#include "appleseedmaya/exporters/alphamapexporterfwd.h"
-#include "appleseedmaya/exporters/dagnodeexporterfwd.h"
-#include "appleseedmaya/exporters/shadingengineexporterfwd.h"
-#include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
-#include "appleseedmaya/exporters/shadingnodeexporterfwd.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 namespace renderer { class Assembly; }
@@ -53,7 +53,6 @@ namespace renderer { class ShaderGroup; }
 class NodeExporterFactory
 {
   public:
-
     static MStatus initialize(const MString& pluginPath);
     static MStatus uninitialize();
 
@@ -101,4 +100,4 @@ class NodeExporterFactory
         AppleseedSession::SessionMode   sessionMode);
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_NODEEXPORTER_FACTORY_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_EXPORTERFACTORY_H

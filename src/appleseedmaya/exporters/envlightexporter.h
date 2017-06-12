@@ -26,10 +26,10 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_ENV_LIGHTEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_ENV_LIGHTEXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_ENVLIGHTEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_ENVLIGHTEXPORTER_H
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
 // appleseed.renderer headers.
@@ -49,7 +49,6 @@ class EnvLightExporter
     void flushEntities() override;
 
   protected:
-
     EnvLightExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,
@@ -67,7 +66,6 @@ class PhysicalSkyLightExporter
   : public EnvLightExporter
 {
   public:
-
     static void registerExporter();
 
     static DagNodeExporter* create(
@@ -84,7 +82,6 @@ class PhysicalSkyLightExporter
     void flushEntities() override;
 
   private:
-
     PhysicalSkyLightExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,
@@ -97,7 +94,6 @@ class SkyDomeLightExporter
   : public EnvLightExporter
 {
   public:
-
     static void registerExporter();
 
     static DagNodeExporter* create(
@@ -114,7 +110,6 @@ class SkyDomeLightExporter
     void flushEntities() override;
 
     private:
-
       SkyDomeLightExporter(
         const MDagPath&                             path,
         renderer::Project&                          project,
@@ -124,4 +119,4 @@ class SkyDomeLightExporter
       AppleseedEntityPtr<renderer::TextureInstance> m_mapTextureInstance;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_ENV_LIGHTEXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_ENVLIGHTEXPORTER_H

@@ -26,17 +26,24 @@
 // THE SOFTWARE.
 //
 
-// interface header.
+// Interface header.
 #include "shadingnoderegistry.h"
 
-// Standard library headers.
-#include <cstdlib>
-#include <map>
-#include <string>
-#include <vector>
+// appleseed-maya headers.
+#include "appleseedmaya/logger.h"
+#include "appleseedmaya/shadingnode.h"
+#include "appleseedmaya/shadingnodemetadata.h"
+#include "appleseedmaya/shadingnodetemplatebuilder.h"
+#include "appleseedmaya/utils.h"
 
-// Boost headers.
-#include "boost/filesystem.hpp"
+// appleseed.renderer headers.
+#include "renderer/api/shadergroup.h"
+
+// appleseed.foundation headers.
+#include "foundation/utility/autoreleaseptr.h"
+#include "foundation/utility/containers/dictionary.h"
+#include "foundation/utility/searchpaths.h"
+#include "foundation/utility/string.h"
 
 // Maya headers.
 #define MNoPluginEntry
@@ -49,23 +56,16 @@
 #include <maya/MStatus.h>
 #include <maya/MStringArray.h>
 #include <maya/MTypeId.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.foundation headers.
-#include "foundation/utility/autoreleaseptr.h"
-#include "foundation/utility/containers/dictionary.h"
-#include "foundation/utility/searchpaths.h"
-#include "foundation/utility/string.h"
+// Boost headers.
+#include "boost/filesystem.hpp"
 
-// appleseed.renderer headers.
-#include "renderer/api/shadergroup.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/logger.h"
-#include "appleseedmaya/shadingnode.h"
-#include "appleseedmaya/shadingnodemetadata.h"
-#include "appleseedmaya/shadingnodetemplatebuilder.h"
-#include "appleseedmaya/utils.h"
+// Standard headers.
+#include <cstdlib>
+#include <map>
+#include <string>
+#include <vector>
 
 namespace bfs = boost::filesystem;
 namespace asr = renderer;
@@ -73,214 +73,212 @@ namespace asf = foundation;
 
 namespace
 {
-
-void logParam(const OSLParamInfo& p)
-{
-    std::cout << "  Name = " << p.paramName << " type = " << p.paramType << "\n";
-    std::cout << "    Maya Attribute = " << p.mayaAttributeName << "\n";
-    std::cout << "    IsOutput = " << p.isOutput << "\n";
-    std::cout << "    IsClosure = " << p.isClosure << "\n";
-
-    if (p.isArray)
-        std::cout << "    ArrayLen = " << p.arrayLen << "\n";
-
-    if (p.isStruct)
-        std::cout << "    StructName = " << p.structName << "\n";
-
-    std::cout << "    ValidDefault = " << p.validDefault << "\n";
-}
-
-void logShader(const OSLShaderInfo& s)
-{
-    std::cout << "------------------------\n";
-
-    std::cout << "Name = " << s.shaderName << " type = " << s.shaderType << "\n";
-    std::cout << "File Name = " << s.shaderFileName << "\n";
-    std::cout << "Maya Name = " << s.mayaName << "\n";
-    std::cout << "Maya Classification = " << s.mayaClassification << "\n";
-
-    if (s.typeId)
-        std::cout << "Maya TypeId = " << s.typeId << "\n";
-
-    std::cout << "Params:\n";
-    std::cout << "-------\n\n";
-
-    for(size_t i = 0, e = s.paramInfo.size(); i < e; ++i)
-        logParam(s.paramInfo[i]);
-
-    std::cout << "------------------------\n";
-    std::cout << std::endl;
-}
-
-typedef std::map<MString, OSLShaderInfo, MStringCompareLess> OSLShaderInfoMap;
-OSLShaderInfoMap gShadersInfo;
-
-bool doRegisterShader(
-    const bfs::path&    shaderPath,
-    MFnPlugin&          pluginFn,
-    asr::ShaderQuery&   query)
-{
-    if (query.open(shaderPath.string().c_str()))
+    void logParam(const OSLParamInfo& p)
     {
-        const MString shaderFilename(
-            shaderPath.filename().replace_extension().c_str());
-        OSLShaderInfo shaderInfo(query, shaderFilename);
+        std::cout << "  Name = " << p.paramName << " type = " << p.paramType << "\n";
+        std::cout << "    Maya Attribute = " << p.mayaAttributeName << "\n";
+        std::cout << "    IsOutput = " << p.isOutput << "\n";
+        std::cout << "    IsClosure = " << p.isClosure << "\n";
 
-        if (shaderInfo.mayaName.length() == 0)
-        {
-            RENDERER_LOG_DEBUG(
-                "Skipping registration for OSL shader %s. No maya name metadata found.",
-                shaderInfo.shaderName.asChar());
-            return false;
-        }
+        if (p.isArray)
+            std::cout << "    ArrayLen = " << p.arrayLen << "\n";
 
-        if (gShadersInfo.count(shaderInfo.mayaName) != 0)
-        {
-            RENDERER_LOG_DEBUG(
-                "Skipping registration for OSL shader %s. Already registered.",
-                shaderInfo.shaderName.asChar());
-            return false;
-        }
+        if (p.isStruct)
+            std::cout << "    StructName = " << p.structName << "\n";
 
-        if (shaderInfo.typeId != 0)
+        std::cout << "    ValidDefault = " << p.validDefault << "\n";
+    }
+
+    void logShader(const OSLShaderInfo& s)
+    {
+        std::cout << "------------------------\n";
+
+        std::cout << "Name = " << s.shaderName << " type = " << s.shaderType << "\n";
+        std::cout << "File Name = " << s.shaderFileName << "\n";
+        std::cout << "Maya Name = " << s.mayaName << "\n";
+        std::cout << "Maya Classification = " << s.mayaClassification << "\n";
+
+        if (s.typeId)
+            std::cout << "Maya TypeId = " << s.typeId << "\n";
+
+        std::cout << "Params:\n";
+        std::cout << "-------\n\n";
+
+        for(size_t i = 0, e = s.paramInfo.size(); i < e; ++i)
+            logParam(s.paramInfo[i]);
+
+        std::cout << "------------------------\n";
+        std::cout << std::endl;
+    }
+
+    typedef std::map<MString, OSLShaderInfo, MStringCompareLess> OSLShaderInfoMap;
+    OSLShaderInfoMap gShadersInfo;
+
+    bool doRegisterShader(
+        const bfs::path&    shaderPath,
+        MFnPlugin&          pluginFn,
+        asr::ShaderQuery&   query)
+    {
+        if (query.open(shaderPath.string().c_str()))
         {
-            if (shaderInfo.mayaClassification.length() == 0)
+            const MString shaderFilename(
+                shaderPath.filename().replace_extension().c_str());
+            OSLShaderInfo shaderInfo(query, shaderFilename);
+
+            if (shaderInfo.mayaName.length() == 0)
             {
                 RENDERER_LOG_DEBUG(
-                    "Skipping registration for OSL shader %s. No maya classification metadata found.",
+                    "Skipping registration for OSL shader %s. No maya name metadata found.",
                     shaderInfo.shaderName.asChar());
                 return false;
             }
-        }
 
-        /*
-        RENDERER_LOG_DEBUG(
-            "Registered OSL shader %s",
-            shaderInfo.shaderName.asChar());
-        */
-
-        gShadersInfo[shaderInfo.mayaName] = shaderInfo;
-
-        /*
-        #ifndef NDEBUG
-            logShader(shaderInfo);
-        #endif
-        */
-
-        if (shaderInfo.typeId != 0)
-        {
-            // This shader is not a builtin node or a node from other plugin.
-            // Create a MPxNode for this shader.
-            RENDERER_LOG_INFO(
-                "Registering MPxNode for OSL shader %s.",
-                shaderInfo.shaderName.asChar());
-
-            ShadingNode::setCurrentShaderInfo(&shaderInfo);
-            MStatus status = pluginFn.registerNode(
-                shaderInfo.mayaName,
-                MTypeId(shaderInfo.typeId),
-                &ShadingNode::creator,
-                &ShadingNode::initialize,
-                MPxNode::kDependNode,
-                &shaderInfo.mayaClassification);
-
-            if (!status)
+            if (gShadersInfo.count(shaderInfo.mayaName) != 0)
             {
-                RENDERER_LOG_WARNING(
-                    "Registration of OSL shader %s failed, error = %s.",
-                    shaderInfo.shaderName.asChar(),
-                    status.errorString().asChar());
-
-                gShadersInfo.erase(shaderInfo.mayaName);
+                RENDERER_LOG_DEBUG(
+                    "Skipping registration for OSL shader %s. Already registered.",
+                    shaderInfo.shaderName.asChar());
                 return false;
             }
 
-            // Build and register an AE template for the node.
-            ShadingNodeTemplateBuilder aeBuilder(shaderInfo);
-            aeBuilder.registerAETemplate();
-        }
-
-        return true;
-    }
-
-    return false;
-}
-
-bool registerShader(
-    const bfs::path&    shaderPath,
-    MFnPlugin&          pluginFn,
-    asr::ShaderQuery&   query)
-{
-    try
-    {
-        return doRegisterShader(shaderPath, pluginFn, query);
-    }
-    catch (const asf::StringException& e)
-    {
-        RENDERER_LOG_ERROR(
-            "OSL shader query for shader %s failed, error = %s.",
-            shaderPath.string().c_str(),
-            e.string());
-    }
-    catch (const std::exception& e)
-    {
-        RENDERER_LOG_ERROR(
-            "OSL shader query for shader %s failed, error = %s.",
-            shaderPath.string().c_str(),
-            e.what());
-    }
-    catch (...)
-    {
-        RENDERER_LOG_ERROR(
-            "OSL shader query for shader %s failed.",
-            shaderPath.string().c_str());
-    }
-
-    return false;
-}
-
-void registerShadersInDirectory(
-    const bfs::path&    shaderDir,
-    MFnPlugin&          pluginFn,
-    asr::ShaderQuery&   query)
-{
-    try
-    {
-        if (bfs::exists(shaderDir) && bfs::is_directory(shaderDir))
-        {
-            bfs::directory_iterator it(shaderDir), e;
-            for(; it != e; ++it)
+            if (shaderInfo.typeId != 0)
             {
-                const bfs::file_status shaderStatus = it->status();
-                if (shaderStatus.type() == bfs::regular_file)
+                if (shaderInfo.mayaClassification.length() == 0)
                 {
-                    const bfs::path& shaderPath = it->path();
-                    if (shaderPath.extension() == ".oso")
-                    {
-                        /*
-                        RENDERER_LOG_DEBUG(
-                            "Found OSL shader %s.",
-                            shaderPath.string().c_str());
-                        */
+                    RENDERER_LOG_DEBUG(
+                        "Skipping registration for OSL shader %s. No maya classification metadata found.",
+                        shaderInfo.shaderName.asChar());
+                    return false;
+                }
+            }
 
-                        registerShader(shaderPath, pluginFn, query);
-                    }
+            /*
+            RENDERER_LOG_DEBUG(
+                "Registered OSL shader %s",
+                shaderInfo.shaderName.asChar());
+            */
+
+            gShadersInfo[shaderInfo.mayaName] = shaderInfo;
+
+            /*
+            #ifndef NDEBUG
+                logShader(shaderInfo);
+            #endif
+            */
+
+            if (shaderInfo.typeId != 0)
+            {
+                // This shader is not a builtin node or a node from other plugin.
+                // Create a MPxNode for this shader.
+                RENDERER_LOG_INFO(
+                    "Registering MPxNode for OSL shader %s.",
+                    shaderInfo.shaderName.asChar());
+
+                ShadingNode::setCurrentShaderInfo(&shaderInfo);
+                MStatus status = pluginFn.registerNode(
+                    shaderInfo.mayaName,
+                    MTypeId(shaderInfo.typeId),
+                    &ShadingNode::creator,
+                    &ShadingNode::initialize,
+                    MPxNode::kDependNode,
+                    &shaderInfo.mayaClassification);
+
+                if (!status)
+                {
+                    RENDERER_LOG_WARNING(
+                        "Registration of OSL shader %s failed, error = %s.",
+                        shaderInfo.shaderName.asChar(),
+                        status.errorString().asChar());
+
+                    gShadersInfo.erase(shaderInfo.mayaName);
+                    return false;
                 }
 
-                // todo: handle symlinks here?
+                // Build and register an AE template for the node.
+                ShadingNodeTemplateBuilder aeBuilder(shaderInfo);
+                aeBuilder.registerAETemplate();
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool registerShader(
+        const bfs::path&    shaderPath,
+        MFnPlugin&          pluginFn,
+        asr::ShaderQuery&   query)
+    {
+        try
+        {
+            return doRegisterShader(shaderPath, pluginFn, query);
+        }
+        catch (const asf::StringException& e)
+        {
+            RENDERER_LOG_ERROR(
+                "OSL shader query for shader %s failed, error = %s.",
+                shaderPath.string().c_str(),
+                e.string());
+        }
+        catch (const std::exception& e)
+        {
+            RENDERER_LOG_ERROR(
+                "OSL shader query for shader %s failed, error = %s.",
+                shaderPath.string().c_str(),
+                e.what());
+        }
+        catch (...)
+        {
+            RENDERER_LOG_ERROR(
+                "OSL shader query for shader %s failed.",
+                shaderPath.string().c_str());
+        }
+
+        return false;
+    }
+
+    void registerShadersInDirectory(
+        const bfs::path&    shaderDir,
+        MFnPlugin&          pluginFn,
+        asr::ShaderQuery&   query)
+    {
+        try
+        {
+            if (bfs::exists(shaderDir) && bfs::is_directory(shaderDir))
+            {
+                bfs::directory_iterator it(shaderDir), e;
+                for(; it != e; ++it)
+                {
+                    const bfs::file_status shaderStatus = it->status();
+                    if (shaderStatus.type() == bfs::regular_file)
+                    {
+                        const bfs::path& shaderPath = it->path();
+                        if (shaderPath.extension() == ".oso")
+                        {
+                            /*
+                            RENDERER_LOG_DEBUG(
+                                "Found OSL shader %s.",
+                                shaderPath.string().c_str());
+                            */
+
+                            registerShader(shaderPath, pluginFn, query);
+                        }
+                    }
+
+                    // todo: handle symlinks here?
+                }
             }
         }
-    }
-    catch (const bfs::filesystem_error& e)
-    {
-        RENDERER_LOG_ERROR(
-            "Filesystem error, path = %s, error = %s.",
-            shaderDir.string().c_str(),
-            e.what());
+        catch (const bfs::filesystem_error& e)
+        {
+            RENDERER_LOG_ERROR(
+                "Filesystem error, path = %s, error = %s.",
+                shaderDir.string().c_str(),
+                e.what());
+        }
     }
 }
-
-} // unnamed
 
 namespace ShadingNodeRegistry
 {
@@ -299,7 +297,7 @@ MStatus registerShadingNodes(MObject plugin)
 
     // Paths from the environment.
     // TODO: maybe APPLESEED_SEARCHPATH is not the best var...?
-    if (const char *envSearchPath = getenv("APPLESEED_SEARCHPATH"))
+    if (const char* envSearchPath = getenv("APPLESEED_SEARCHPATH"))
     {
         const char pathSep = asf::SearchPaths::environment_path_separator();
         std::vector<std::string> paths;
@@ -357,7 +355,7 @@ void getShaderNodeNames(MStringArray& nodeNames)
         nodeNames.append(it->first);
 }
 
-const OSLShaderInfo *getShaderInfo(const MString& nodeName)
+const OSLShaderInfo* getShaderInfo(const MString& nodeName)
 {
     OSLShaderInfoMap::const_iterator it = gShadersInfo.find(nodeName);
 
@@ -373,4 +371,3 @@ bool isShaderSupported(const MString& nodeName)
 }
 
 } // namespace ShadingNodeRegistry
-

@@ -27,22 +27,22 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/arealightexporter.h"
+#include "arealightexporter.h"
 
-// Maya headers.
-#include <maya/MFnDagNode.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.foundation headers.
-#include "foundation/math/scalar.h"
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/exporters/shadingnetworkexporter.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/exporters/shadingnetworkexporter.h"
+// appleseed.foundation headers.
+#include "foundation/math/scalar.h"
+
+// Maya headers.
+#include <maya/MFnDagNode.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -52,7 +52,7 @@ void AreaLightExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("areaLight", &AreaLightExporter::create);
 }
 
-DagNodeExporter *AreaLightExporter::create(
+DagNodeExporter* AreaLightExporter::create(
     const MDagPath&                             path,
     asr::Project&                               project,
     AppleseedSession::SessionMode               sessionMode)

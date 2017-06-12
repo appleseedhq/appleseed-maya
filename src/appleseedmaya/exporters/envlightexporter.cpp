@@ -27,21 +27,21 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/envlightexporter.h"
+#include "envlightexporter.h"
 
-// Maya headers.
-#include <maya/MFnDagNode.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/physicalskylightnode.h"
+#include "appleseedmaya/skydomelightnode.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/environmentedf.h"
 #include "renderer/api/scene.h"
 
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/physicalskylightnode.h"
-#include "appleseedmaya/skydomelightnode.h"
+// Maya headers.
+#include <maya/MFnDagNode.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -68,7 +68,7 @@ void EnvLightExporter::createEntities(
     const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
 {
     asr::EnvironmentShaderFactoryRegistrar factoryRegistrar;
-    const asr::IEnvironmentShaderFactory *factory = factoryRegistrar.lookup("edf_environment_shader");
+    const asr::IEnvironmentShaderFactory* factory = factoryRegistrar.lookup("edf_environment_shader");
 
     MString envShaderName = appleseedName() + "_shader";
     m_envShader = factory->create(
@@ -102,7 +102,7 @@ void PhysicalSkyLightExporter::registerExporter()
         &PhysicalSkyLightExporter::create);
 }
 
-DagNodeExporter *PhysicalSkyLightExporter::create(
+DagNodeExporter* PhysicalSkyLightExporter::create(
     const MDagPath&                             path,
     asr::Project&                               project,
     AppleseedSession::SessionMode               sessionMode)
@@ -187,7 +187,7 @@ void SkyDomeLightExporter::registerExporter()
         &SkyDomeLightExporter::create);
 }
 
-DagNodeExporter *SkyDomeLightExporter::create(
+DagNodeExporter* SkyDomeLightExporter::create(
     const MDagPath&                             path,
     asr::Project&                               project,
     AppleseedSession::SessionMode               sessionMode)

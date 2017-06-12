@@ -79,7 +79,7 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         self.thisNode = pm.PyNode(nodeName)
 
         if self.thisNode.type() == 'areaLight':
-            self.beginLayout('Appleseed', collapse=1)
+            self.beginLayout('appleseed', collapse=1)
             self.addControl('asIntensityScale', label='Intensity Scale')
             self.addControl('asExposure'      , label='Exposure')
             self.addControl('asNormalize'     , label='Normalize')
@@ -87,7 +87,7 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
             self.endLayout()
 
         elif self.thisNode.type() == 'bump2d':
-            self.beginLayout('Appleseed', collapse=1)
+            self.beginLayout('appleseed', collapse=1)
             self.addControl('asNormalMapMode', label='Map Mode')
             self.addSeparator()
             self.addControl('asNormalMapFlipR' , label='Flip Red Channel')
@@ -96,11 +96,11 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
             self.endLayout()
 
         elif self.thisNode.type() == 'camera':
-            self.beginLayout('Appleseed', collapse=1)
+            self.beginLayout('appleseed', collapse=1)
             self.endLayout()
 
         elif self.thisNode.type() == 'mesh':
-            self.beginLayout('Appleseed', collapse=1)
+            self.beginLayout('appleseed', collapse=1)
             self.__buildVisibilitySection()
             self.callCustom(self.meshAlphaMapNew, self.meshAlphaMapUpdate, 'asAlphaMap')
             #self.addControl('asAlphaMap', label='Alpha Map')
@@ -115,7 +115,7 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
             self.endLayout()
 
         elif self.thisNode.type() == 'shadingEngine':
-            self.beginLayout('Appleseed', collapse=1)
+            self.beginLayout('appleseed', collapse=1)
             self.addControl('asDoubleSided', label='Double Sided')
             self.addControl('asShadingSamples', label='Shading Samples')
             self.endLayout()

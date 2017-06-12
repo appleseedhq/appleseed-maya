@@ -29,7 +29,7 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
 // appleseed.renderer headers.
@@ -39,7 +39,6 @@ class CameraExporter
   : public DagNodeExporter
 {
   public:
-
     static void registerExporter();
 
     static DagNodeExporter* create(
@@ -58,7 +57,6 @@ class CameraExporter
     void flushEntities() override;
 
   private:
-
     CameraExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,

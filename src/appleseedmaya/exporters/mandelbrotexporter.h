@@ -29,14 +29,13 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_MANDELBROTEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_MANDELBROTEXPORTER_H
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exporters/shadingnodeexporter.h"
 
 class MandelbrotExporter
   : public ShadingNodeExporter
 {
   public:
-
     static void registerExporter();
 
     static ShadingNodeExporter* create(
@@ -44,7 +43,6 @@ class MandelbrotExporter
         renderer::ShaderGroup&  shaderGroup);
 
   private:
-
     MandelbrotExporter(
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);

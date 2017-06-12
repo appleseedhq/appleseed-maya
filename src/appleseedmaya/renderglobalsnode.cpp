@@ -27,7 +27,21 @@
 //
 
 // Interface header.
-#include "appleseedmaya/renderglobalsnode.h"
+#include "renderglobalsnode.h"
+
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/config.h"
+#include "appleseedmaya/typeids.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/project.h"
+#include "renderer/api/utility.h"
+#include "renderer/api/surfaceshader.h"
+
+// appleseed.foundation headers.
+#include "foundation/utility/api/specializedapiarrays.h"
+#include "foundation/math/scalar.h"
 
 // Maya headers.
 #include <maya/MAnimControl.h>
@@ -35,21 +49,7 @@
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MFnMessageAttribute.h>
 #include <maya/MFnNumericAttribute.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.foundation headers.
-#include "foundation/utility/api/specializedapiarrays.h"
-#include "foundation/math/scalar.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/project.h"
-#include "renderer/api/utility.h"
-#include "renderer/api/surfaceshader.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/config.h"
-#include "appleseedmaya/typeids.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -163,7 +163,7 @@ MStatus RenderGlobalsNode::initialize()
         m_diagnosticShaderKeys.append("no_override");
 
         asr::SurfaceShaderFactoryRegistrar factoryRegistrar;
-        const asr::ISurfaceShaderFactory *factory = factoryRegistrar.lookup("diagnostic_surface_shader");
+        const asr::ISurfaceShaderFactory* factory = factoryRegistrar.lookup("diagnostic_surface_shader");
         assert(factory);
         asf::DictionaryArray metadata = factory->get_input_metadata();
         const asf::Dictionary& items = metadata[0].dictionary("items");

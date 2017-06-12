@@ -29,14 +29,14 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H
 
-// Standard headers.
-#include <string>
-
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exporters/shapeexporter.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
+
+// Standard headers.
+#include <string>
 
 // Forward declarations.
 namespace renderer { class Project; }
@@ -45,7 +45,6 @@ class InstanceExporter
   : public ShapeExporter
 {
   public:
-
     InstanceExporter(
       const MDagPath&                     path,
       AppleseedSession::SessionMode       sessionMode,
@@ -56,7 +55,6 @@ class InstanceExporter
     void flushEntities() override;
 
   private:
-
     MString m_masterShapeName;
 };
 

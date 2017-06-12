@@ -26,21 +26,24 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADINGNODEEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_SHADINGNODEEXPORTER_H
 
 // Forward declaration header.
 #include "shadingnodeexporterfwd.h"
+
+// appleseed-maya headers.
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/utils.h"
+
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
 
 // Maya headers.
 #include <maya/MObject.h>
 #include <maya/MPlug.h>
 #include <maya/MString.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/appleseedsession.h"
-#include "appleseedmaya/utils.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 class OSLParamInfo;
@@ -49,10 +52,9 @@ namespace renderer { class ParamArray; }
 namespace renderer { class ShaderGroup; }
 
 class ShadingNodeExporter
-  : public NonCopyable
+  : public foundation::NonCopyable
 {
   public:
-
     static void registerExporters();
 
     static ShadingNodeExporter* create(
@@ -66,7 +68,6 @@ class ShadingNodeExporter
     void flushEntities();
 
   protected:
-
     ShadingNodeExporter(
         const MObject&                  object,
         renderer::ShaderGroup&          shaderGroup);
@@ -138,4 +139,4 @@ class ShadingNodeExporter
     renderer::ShaderGroup&          m_shaderGroup;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADINGNODEEXPORTER_H

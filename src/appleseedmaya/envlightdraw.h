@@ -26,16 +26,16 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_ENV_LIGHT_DRAW_H
-#define APPLESEED_MAYA_ENV_LIGHT_DRAW_H
+#ifndef APPLESEED_MAYA_ENVLIGHTDRAW_H
+#define APPLESEED_MAYA_ENVLIGHTDRAW_H
 
 // Maya headers.
 #include <maya/MBoundingBox.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 MBoundingBox sphereAndLogoBoundingBox(float size);
 
 void drawSphereWireframe(const float scale);
 void drawAppleseedLogo(const float scale);
 
-#endif  // !APPLESEED_MAYA_ENV_LIGHT_DRAW_H
+#endif  // !APPLESEED_MAYA_ENVLIGHTDRAW_H

@@ -26,8 +26,12 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_MURMUR_HASH_H
-#define APPLESEED_MAYA_MURMUR_HASH_H
+#ifndef APPLESEED_MAYA_MURMURHASH_H
+#define APPLESEED_MAYA_MURMURHASH_H
+
+// Maya headers.
+#include <maya/MString.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Standard headers.
 #include <cstdint>
@@ -35,10 +39,6 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
-
-// Maya headers.
-#include <maya/MString.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
 
 // Forward declarations.
 namespace foundation { class StringDictionary; }
@@ -60,7 +60,6 @@ namespace foundation { class Dictionary; }
 class MurmurHash
 {
   public:
-
     MurmurHash();
     MurmurHash(const MurmurHash& other);
 
@@ -72,13 +71,13 @@ class MurmurHash
 
     std::string toString() const;
 
-    template<class T>
+    template <typename T>
     void append(const T& x)
     {
         append(&x, sizeof(T));
     }
 
-    void append(const char *str)
+    void append(const char* str)
     {
         append(str, strlen(str));
     }
@@ -98,8 +97,7 @@ class MurmurHash
     void append(const foundation::Dictionary& dictionary);
 
   private:
-
-    void append(const void *data, size_t bytes);
+    void append(const void* data, size_t bytes);
 
     uint64_t m_h1;
     uint64_t m_h2;
@@ -107,4 +105,4 @@ class MurmurHash
 
 std::ostream& operator<<(std::ostream& o, const MurmurHash& hash);
 
-#endif  // !APPLESEED_MAYA_MURMUR_HASH_H
+#endif  // !APPLESEED_MAYA_MURMURHASH_H

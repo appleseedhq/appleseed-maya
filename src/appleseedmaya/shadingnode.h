@@ -26,12 +26,12 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SHADING_NODE_H
-#define APPLESEED_MAYA_SHADING_NODE_H
+#ifndef APPLESEED_MAYA_SHADINGNODE_H
+#define APPLESEED_MAYA_SHADINGNODE_H
 
 // Maya headers.
 #include <maya/MPxNode.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 class OSLParamInfo;
@@ -41,11 +41,10 @@ class ShadingNode
   : public MPxNode
 {
   public:
-
     // Set the shader info of the current shader being registered.
-    static void setCurrentShaderInfo(const OSLShaderInfo *shaderInfo);
+    static void setCurrentShaderInfo(const OSLShaderInfo* shaderInfo);
 
-    static void *creator();
+    static void* creator();
     static MStatus initialize();
 
     ShadingNode();
@@ -59,4 +58,4 @@ class ShadingNode
         MStatus&                status);
 };
 
-#endif  // !APPLESEED_MAYA_SHADING_NODE_H
+#endif  // !APPLESEED_MAYA_SHADINGNODE_H

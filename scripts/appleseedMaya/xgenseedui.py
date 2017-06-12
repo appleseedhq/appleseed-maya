@@ -60,7 +60,7 @@ def xgseedUI(selfid):
     # Extend the RenderAPIRendererTab instance with some of our methods
     addMethod(self, xgseedRefresh)
 
-    expand = ExpandUI('Appleseed Settings')
+    expand = ExpandUI('appleseed Settings')
     self.appleseed_expand_settings = expand
     self.layout().addWidget(expand)
 

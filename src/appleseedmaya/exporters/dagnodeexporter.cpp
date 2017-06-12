@@ -27,7 +27,14 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/dagnodeexporter.h"
+#include "dagnodeexporter.h"
+
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/project.h"
+#include "renderer/api/scene.h"
 
 // Maya headers.
 #include <maya/MAnimUtil.h>
@@ -35,14 +42,7 @@
 #include <maya/MFnExpression.h>
 #include <maya/MGlobal.h>
 #include <maya/MItDependencyGraph.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/project.h"
-#include "renderer/api/scene.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -59,7 +59,9 @@ DagNodeExporter::DagNodeExporter(
 {
 }
 
-DagNodeExporter::~DagNodeExporter() = default;
+DagNodeExporter::~DagNodeExporter()
+{
+}
 
 MObject DagNodeExporter::node() const
 {
@@ -212,13 +214,11 @@ bool DagNodeExporter::areObjectAndParentsRenderable(const MDagPath& path)
 // This comes from Alembic's Maya AbcExport plugin.
 namespace
 {
-
-struct NodesToCheckStruct
-{
-    MObject node;
-    bool    checkParent;
-};
-
+    struct NodesToCheckStruct
+    {
+        MObject node;
+        bool    checkParent;
+    };
 }
 
 bool DagNodeExporter::isAnimated(MObject object, bool checkParent)

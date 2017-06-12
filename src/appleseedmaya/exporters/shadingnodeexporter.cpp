@@ -27,44 +27,41 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/shadingnodeexporter.h"
+#include "shadingnodeexporter.h"
 
-// Standard headers.
-#include <sstream>
-
-// Maya headers.
-#include <maya/MFnDependencyNode.h>
-#include <maya/MFnEnumAttribute.h>
-#include <maya/MFnNumericAttribute.h>
-#include <maya/MStringArray.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.foundation headers.
-#include "foundation/utility/string.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/shadergroup.h"
-#include "renderer/api/utility.h"
-
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/shadingnodemetadata.h"
 #include "appleseedmaya/shadingnoderegistry.h"
 
+// appleseed.renderer headers.
+#include "renderer/api/shadergroup.h"
+#include "renderer/api/utility.h"
+
+// appleseed.foundation headers.
+#include "foundation/utility/string.h"
+
+// Maya headers.
+#include <maya/MFnDependencyNode.h>
+#include <maya/MFnEnumAttribute.h>
+#include <maya/MFnNumericAttribute.h>
+#include <maya/MStringArray.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <sstream>
+
 namespace asf = foundation;
 namespace asr = renderer;
 
 namespace
 {
-
-const char *g_colorComponentNames[] = {"compR", "compG", "compB"};
-const char *g_vectorComponentNames[] = {"compX", "compY", "compZ"};
-const char *g_uvComponentNames[] = {"compU", "compV"};
-
-const char *g_componentParamName = "comp";
-
+    const char* g_colorComponentNames[] = {"compR", "compG", "compB"};
+    const char* g_vectorComponentNames[] = {"compX", "compY", "compZ"};
+    const char* g_uvComponentNames[] = {"compU", "compV"};
+    const char* g_componentParamName = "comp";
 }
 
 void ShadingNodeExporter::registerExporters()
@@ -338,7 +335,7 @@ bool ShadingNodeExporter::layerAndParamNameFromPlug(
     {
         MPlug parentPlug = plug.parent();
 
-        const OSLParamInfo *paramInfo = getShaderInfo().findParam(parentPlug);
+        const OSLParamInfo* paramInfo = getShaderInfo().findParam(parentPlug);
 
         if (!paramInfo)
             return false;
@@ -398,7 +395,7 @@ bool ShadingNodeExporter::layerAndParamNameFromPlug(
         return false;
     }
 
-    if (const OSLParamInfo *paramInfo = getShaderInfo().findParam(plug))
+    if (const OSLParamInfo* paramInfo = getShaderInfo().findParam(plug))
     {
         layerName = depNodeFn.name();
         paramName = paramInfo->paramName;
@@ -699,7 +696,7 @@ bool ShadingNodeExporter::hasElementConnections(
 const OSLShaderInfo& ShadingNodeExporter::getShaderInfo() const
 {
     MFnDependencyNode depNodeFn(m_object);
-    const OSLShaderInfo *shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
+    const OSLShaderInfo* shaderInfo = ShadingNodeRegistry::getShaderInfo(depNodeFn.typeName());
     assert(shaderInfo);
 
     return *shaderInfo;

@@ -26,33 +26,35 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADINGENGINEEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_SHADINGENGINEEXPORTER_H
 
 // Forward declaration header.
 #include "shadingengineexporterfwd.h"
 
-// Maya headers.
-#include <maya/MObject.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+// appleseed-maya headers.
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
+#include "appleseedmaya/utils.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/material.h"
 #include "renderer/api/surfaceshader.h"
 
-// appleseed.maya headers.
-#include "appleseedmaya/appleseedsession.h"
-#include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
-#include "appleseedmaya/utils.h"
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+
+// Maya headers.
+#include <maya/MObject.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 namespace renderer { class Assembly; }
 
 class ShadingEngineExporter
-  : public NonCopyable
+  : public foundation::NonCopyable
 {
   public:
-
     ~ShadingEngineExporter();
 
     // Create any extra exporter needed by this exporter (shading networks, ...).
@@ -80,4 +82,4 @@ class ShadingEngineExporter
     ShadingNetworkExporterPtr                       m_surfaceNetworkExporter;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_ENGINE_EXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADINGENGINEEXPORTER_H

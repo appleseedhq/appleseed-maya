@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SKY_DOME_LIGHT_NODE_H
-#define APPLESEED_MAYA_SKY_DOME_LIGHT_NODE_H
+#ifndef APPLESEED_MAYA_SKYDOMELIGHTNODE_H
+#define APPLESEED_MAYA_SKYDOMELIGHTNODE_H
 
 // Maya headers.
 #include <maya/MColor.h>
@@ -42,7 +42,7 @@
 #include <maya/MTypeId.h>
 #include <maya/MUserData.h>
 #include <maya/MViewport2Renderer.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 class MObject;
@@ -91,7 +91,6 @@ class SkyDomeLightData
   : public MUserData
 {
   public:
-
     SkyDomeLightData();
 
     float   m_size;
@@ -102,7 +101,6 @@ class SkyDomeLightDrawOverride
   : public MHWRender::MPxDrawOverride
 {
   public:
-
     static MHWRender::MPxDrawOverride* creator(const MObject& obj);
 
     SkyDomeLightDrawOverride(const MObject& obj);
@@ -124,4 +122,4 @@ class SkyDomeLightDrawOverride
         const MUserData*                data);
 };
 
-#endif  // !APPLESEED_MAYA_SKY_DOME_LIGHT_NODE_H
+#endif  // !APPLESEED_MAYA_SKYDOMELIGHTNODE_H

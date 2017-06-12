@@ -27,7 +27,17 @@
 //
 
 // Interface header.
-#include "appleseedmaya/shadingnode.h"
+#include "shadingnode.h"
+
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/logger.h"
+#include "appleseedmaya/shadingnodemetadata.h"
+#include "appleseedmaya/shadingnoderegistry.h"
+
+// appleseed.foundation headers.
+#include "foundation/math/vector.h"
+#include "foundation/utility/string.h"
 
 // Maya headers.
 #include <maya/MFnDependencyNode.h>
@@ -36,132 +46,120 @@
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnStringData.h>
 #include <maya/MFnTypedAttribute.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.foundation headers.
-#include "foundation/math/vector.h"
-#include "foundation/utility/string.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/logger.h"
-#include "appleseedmaya/shadingnodemetadata.h"
-#include "appleseedmaya/shadingnoderegistry.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
 
 namespace
 {
-
-MObject createPointAttribute(
-    MFnNumericAttribute&    numAttrFn,
-    const OSLParamInfo&     p,
-    MStatus&                status)
-{
-    MObject attr = numAttrFn.createPoint(
-        p.mayaAttributeName,
-        p.mayaAttributeShortName,
-        &status);
-
-    if (p.hasDefault)
+    MObject createPointAttribute(
+        MFnNumericAttribute&    numAttrFn,
+        const OSLParamInfo&     p,
+        MStatus&                status)
     {
-        numAttrFn.setDefault(
-            static_cast<float>(p.defaultValue[0]),
-            static_cast<float>(p.defaultValue[1]),
-            static_cast<float>(p.defaultValue[2]));
+        MObject attr = numAttrFn.createPoint(
+            p.mayaAttributeName,
+            p.mayaAttributeShortName,
+            &status);
+
+        if (p.hasDefault)
+        {
+            numAttrFn.setDefault(
+                static_cast<float>(p.defaultValue[0]),
+                static_cast<float>(p.defaultValue[1]),
+                static_cast<float>(p.defaultValue[2]));
+        }
+
+        return attr;
     }
 
-    return attr;
+    template <typename T>
+    MObject createNumericAttribute(
+        MFnNumericAttribute&    numAttrFn,
+        const OSLParamInfo&     p,
+        MFnNumericData::Type    type,
+        MStatus&                status)
+    {
+        MObject attr = numAttrFn.create(
+            p.mayaAttributeName,
+            p.mayaAttributeShortName,
+            type,
+            T(0),
+            &status);
+
+        if (p.hasDefault)
+            numAttrFn.setDefault(static_cast<T>(p.defaultValue[0]));
+
+        return attr;
+    }
+
+    template <>
+    MObject createNumericAttribute<bool>(
+        MFnNumericAttribute&    numAttrFn,
+        const OSLParamInfo&     p,
+        MFnNumericData::Type    type,
+        MStatus&                status)
+    {
+        MObject attr = numAttrFn.create(
+            p.mayaAttributeName,
+            p.mayaAttributeShortName,
+            type,
+            0.0,
+            &status);
+
+        if (p.hasDefault)
+            numAttrFn.setDefault(p.defaultValue[0] == 0.0 ? false : true);
+
+        return attr;
+    }
+
+    MStatus initializeAttribute(MFnAttribute& attr, const OSLParamInfo& p)
+    {
+        if (p.label.length() != 0)
+            attr.setNiceNameOverride(p.label);
+
+        if (p.mayaAttributeConnectable == false)
+            attr.setConnectable(false);
+
+        if (p.mayaAttributeHidden == true)
+            attr.setHidden(true);
+
+        if (p.mayaAttributeKeyable == false)
+            attr.setKeyable(false);
+
+        if (p.isOutput)
+            return AttributeUtils::makeOutput(attr);
+        else
+            return AttributeUtils::makeInput(attr);
+    }
+
+    MStatus initializeNumericAttribute(MFnNumericAttribute& attr, const OSLParamInfo& p)
+    {
+        if (p.hasMin)
+            attr.setMin(p.minValue);
+
+        if (p.hasMax)
+            attr.setMax(p.maxValue);
+
+        if (p.hasSoftMin)
+            attr.setSoftMin(p.softMinValue);
+
+        if (p.hasSoftMax)
+            attr.setSoftMax(p.softMaxValue);
+
+        return initializeAttribute(attr, p);
+    }
+
+    // Stores the current shader info of the shader being registered.
+    const OSLShaderInfo* g_currentShaderInfo = nullptr;
 }
 
-template <typename T>
-MObject createNumericAttribute(
-    MFnNumericAttribute&    numAttrFn,
-    const OSLParamInfo&     p,
-    MFnNumericData::Type    type,
-    MStatus&                status)
-{
-    MObject attr = numAttrFn.create(
-        p.mayaAttributeName,
-        p.mayaAttributeShortName,
-        type,
-        T(0),
-        &status);
-
-    if (p.hasDefault)
-        numAttrFn.setDefault(static_cast<T>(p.defaultValue[0]));
-
-    return attr;
-}
-
-template <>
-MObject createNumericAttribute<bool>(
-    MFnNumericAttribute&    numAttrFn,
-    const OSLParamInfo&     p,
-    MFnNumericData::Type    type,
-    MStatus&                status)
-{
-    MObject attr = numAttrFn.create(
-        p.mayaAttributeName,
-        p.mayaAttributeShortName,
-        type,
-        0.0,
-        &status);
-
-    if (p.hasDefault)
-        numAttrFn.setDefault(p.defaultValue[0] == 0.0 ? false : true);
-
-    return attr;
-}
-
-MStatus initializeAttribute(MFnAttribute& attr, const OSLParamInfo& p)
-{
-    if (p.label.length() != 0)
-        attr.setNiceNameOverride(p.label);
-
-    if (p.mayaAttributeConnectable == false)
-        attr.setConnectable(false);
-
-    if (p.mayaAttributeHidden == true)
-        attr.setHidden(true);
-
-    if (p.mayaAttributeKeyable == false)
-        attr.setKeyable(false);
-
-    if (p.isOutput)
-        return AttributeUtils::makeOutput(attr);
-    else
-        return AttributeUtils::makeInput(attr);
-}
-
-MStatus initializeNumericAttribute(MFnNumericAttribute& attr, const OSLParamInfo& p)
-{
-    if (p.hasMin)
-        attr.setMin(p.minValue);
-
-    if (p.hasMax)
-        attr.setMax(p.maxValue);
-
-    if (p.hasSoftMin)
-        attr.setSoftMin(p.softMinValue);
-
-    if (p.hasSoftMax)
-        attr.setSoftMax(p.softMaxValue);
-
-    return initializeAttribute(attr, p);
-}
-
-// Stores the current shader info of the shader being registered.
-const OSLShaderInfo *g_currentShaderInfo = nullptr;
-
-} // unnamed.
-
-void ShadingNode::setCurrentShaderInfo(const OSLShaderInfo *shaderInfo)
+void ShadingNode::setCurrentShaderInfo(const OSLShaderInfo* shaderInfo)
 {
     g_currentShaderInfo = shaderInfo;
 }
 
-void *ShadingNode::creator()
+void* ShadingNode::creator()
 {
     return new ShadingNode();
 }
@@ -176,7 +174,7 @@ MStatus ShadingNode::initialize()
         }
 
     assert(g_currentShaderInfo);
-    const OSLShaderInfo *shaderInfo = g_currentShaderInfo;
+    const OSLShaderInfo* shaderInfo = g_currentShaderInfo;
     g_currentShaderInfo = nullptr;
 
     // todo: lots of refactoring possibilities here...
@@ -446,7 +444,9 @@ MStatus ShadingNode::initialize()
     return MS::kSuccess;
 }
 
-ShadingNode::ShadingNode() = default;
+ShadingNode::ShadingNode()
+{
+}
 
 void ShadingNode::postConstructor()
 {

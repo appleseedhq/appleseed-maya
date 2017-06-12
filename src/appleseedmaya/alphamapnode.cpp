@@ -27,18 +27,18 @@
 //
 
 // Interface header.
-#include "appleseedmaya/alphamapnode.h"
+#include "alphamapnode.h"
+
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/config.h"
+#include "appleseedmaya/typeids.h"
 
 // Maya headers.
 #include <maya/MFileObject.h>
 #include <maya/MFnMessageAttribute.h>
 #include <maya/MFnTypedAttribute.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/config.h"
-#include "appleseedmaya/typeids.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 const MString AlphaMapNode::nodeName("appleseedAlphaMap");
 const MTypeId AlphaMapNode::id(AlphaMapNodeTypeId);

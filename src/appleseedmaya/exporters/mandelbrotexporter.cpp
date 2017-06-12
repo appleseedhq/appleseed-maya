@@ -27,70 +27,68 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/mandelbrotexporter.h"
+#include "mandelbrotexporter.h"
+
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/shadingnodemetadata.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/utility.h"
+
+// Maya headers.
+#include <maya/MFnDependencyNode.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Standard headers.
 #include <algorithm>
 #include <sstream>
 #include <vector>
 
-// Maya headers.
-#include <maya/MFnDependencyNode.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/utility.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/shadingnodemetadata.h"
-
 namespace asf = foundation;
 namespace asr = renderer;
 
 namespace
 {
-
-struct MandelbrotColorsEntry
-{
-    MandelbrotColorsEntry(float pos, const MColor& col, int interp)
-      : m_pos(pos)
-      , m_col(col)
-      , m_interp(interp)
+    struct MandelbrotColorsEntry
     {
-    }
+        MandelbrotColorsEntry(float pos, const MColor& col, int interp)
+          : m_pos(pos)
+          , m_col(col)
+          , m_interp(interp)
+        {
+        }
 
-    bool operator<(const MandelbrotColorsEntry& other) const
+        bool operator<(const MandelbrotColorsEntry& other) const
+        {
+            return m_pos < other.m_pos;
+        }
+
+        float   m_pos;
+        MColor  m_col;
+        int     m_interp;
+    };
+
+    struct MandelbrotValuesEntry
     {
-        return m_pos < other.m_pos;
-    }
+        MandelbrotValuesEntry(float pos, float val, int interp)
+          : m_pos(pos)
+          , m_val(val)
+          , m_interp(interp)
+        {
+        }
 
-    float   m_pos;
-    MColor  m_col;
-    int     m_interp;
-};
+        bool operator<(const MandelbrotValuesEntry& other) const
+        {
+            return m_pos < other.m_pos;
+        }
 
-struct MandelbrotValuesEntry
-{
-    MandelbrotValuesEntry(float pos, float val, int interp)
-      : m_pos(pos)
-      , m_val(val)
-      , m_interp(interp)
-    {
-    }
-
-    bool operator<(const MandelbrotValuesEntry& other) const
-    {
-        return m_pos < other.m_pos;
-    }
-
-    float   m_pos;
-    float   m_val;
-    int     m_interp;
-};
-
-} // unnamed
+        float   m_pos;
+        float   m_val;
+        int     m_interp;
+    };
+}
 
 void MandelbrotExporter::registerExporter()
 {

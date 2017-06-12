@@ -27,32 +27,30 @@
 //
 
 // Interface header.
-#include "appleseedmaya/attributeutils.h"
+#include "attributeutils.h"
 
 // Maya headers.
 #include <maya/MFnMatrixData.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace
 {
+    template <typename T>
+    MStatus get3(const MPlug& plug, T& x, T& y, T& z)
+    {
+        if (!plug.isCompound())
+            return MS::kFailure;
 
-template<class T>
-MStatus get3(const MPlug& plug, T& x, T& y, T& z)
-{
-    if (!plug.isCompound())
-        return MS::kFailure;
+        if (plug.numChildren() != 3)
+            return MS::kFailure;
 
-    if (plug.numChildren() != 3)
-        return MS::kFailure;
-
-    MStatus status;
-    if (status) status = plug.child(0).getValue(x);
-    if (status) status = plug.child(1).getValue(y);
-    if (status) status = plug.child(2).getValue(z);
-    return status;
+        MStatus status;
+        if (status) status = plug.child(0).getValue(x);
+        if (status) status = plug.child(1).getValue(y);
+        if (status) status = plug.child(2).getValue(z);
+        return status;
+    }
 }
-
-} // unnamed.
 
 namespace AttributeUtils
 {

@@ -27,20 +27,20 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/xgenexporter.h"
+#include "xgenexporter.h"
+
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/scene.h"
 
 // Maya headers.
 #include <maya/MFileObject.h>
 #include <maya/MFnDagNode.h>
 #include <maya/MGlobal.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/scene.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -50,7 +50,7 @@ void XGenExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("xgmDescription", &XGenExporter::create);
 }
 
-DagNodeExporter *XGenExporter::create(
+DagNodeExporter* XGenExporter::create(
     const MDagPath&                             path,
     asr::Project&                               project,
     AppleseedSession::SessionMode               sessionMode)

@@ -26,17 +26,16 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_FILE_EXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_FILE_EXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_FILEEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_FILEEXPORTER_H
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exporters/shadingnodeexporter.h"
 
 class FileExporter
   : public ShadingNodeExporter
 {
   public:
-
     static void registerExporter();
 
     static ShadingNodeExporter* create(
@@ -44,7 +43,6 @@ class FileExporter
         renderer::ShaderGroup&  shaderGroup);
 
   private:
-
     FileExporter(
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);
@@ -55,4 +53,4 @@ class FileExporter
         renderer::ParamArray&   shaderParams) const override;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_FILE_EXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_FILEEXPORTER_H

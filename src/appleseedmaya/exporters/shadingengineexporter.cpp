@@ -27,20 +27,20 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/shadingengineexporter.h"
+#include "shadingengineexporter.h"
+
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/shadingnetworkexporter.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/scene.h"
 
 // Maya headers.
 #include <maya/MFnDependencyNode.h>
 #include <maya/MPlug.h>
 #include <maya/MPlugArray.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/scene.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/shadingnetworkexporter.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -134,4 +134,3 @@ void ShadingEngineExporter::flushEntities()
 
     m_mainAssembly.materials().insert(m_material.release());
 }
-

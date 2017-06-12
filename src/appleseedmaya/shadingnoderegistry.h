@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
-#define APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
+#ifndef APPLESEED_MAYA_SHADINGNODEREGISTRY_H
+#define APPLESEED_MAYA_SHADINGNODEREGISTRY_H
 
 // Forward declarations.
 class MObject;
@@ -47,9 +47,9 @@ namespace ShadingNodeRegistry
 
     void getShaderNodeNames(MStringArray& nodeNames);
 
-    const OSLShaderInfo *getShaderInfo(const MString& nodeName);
+    const OSLShaderInfo* getShaderInfo(const MString& nodeName);
 
     bool isShaderSupported(const MString& nodeName);
 } // namespace ShadingNodeRegistry
 
-#endif  // !APPLESEED_MAYA_SHADING_NODE_REGISTRY_H
+#endif  // !APPLESEED_MAYA_SHADINGNODEREGISTRY_H

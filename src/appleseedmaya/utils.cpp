@@ -27,21 +27,17 @@
 //
 
 // Interface header.
-#include "appleseedmaya/utils.h"
+#include "utils.h"
 
-// Standard headers.
-#include <algorithm>
-#include <list>
+// appleseed-maya headers.
+#include "appleseedmaya/exceptions.h"
 
 // Maya headers.
 #include <maya/MDagPath.h>
 #include <maya/MEventMessage.h>
 #include <maya/MObject.h>
 #include <maya/MSelectionList.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/exceptions.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 MStatus getDependencyNodeByName(const MString& name, MObject& node)
 {

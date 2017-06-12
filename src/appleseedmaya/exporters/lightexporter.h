@@ -29,10 +29,7 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H
 
-// Standard headers.
-#include <string>
-
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
 // appleseed.renderer headers.
@@ -46,7 +43,6 @@ class LightExporter
   : public DagNodeExporter
 {
   public:
-
     static void registerExporter();
 
     static DagNodeExporter* create(
@@ -65,7 +61,6 @@ class LightExporter
     void flushEntities() override;
 
   private:
-
     LightExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,

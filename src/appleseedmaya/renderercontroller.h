@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDERER_CONTROLLER_H
-#define APPLESEED_MAYA_RENDERER_CONTROLLER_H
+#ifndef APPLESEED_MAYA_RENDERERCONTROLLER_H
+#define APPLESEED_MAYA_RENDERERCONTROLLER_H
 
 // appleseed.renderer headers.
 #include "renderer/api/rendering.h"
@@ -36,7 +36,6 @@ class RendererController
   : public renderer::DefaultRendererController
 {
   public:
-
     RendererController()
     {
         m_status = ContinueRendering;
@@ -56,4 +55,4 @@ class RendererController
     Status m_status;
 };
 
-#endif  // !APPLESEED_MAYA_RENDERER_CONTROLLER_H
+#endif  // !APPLESEED_MAYA_RENDERERCONTROLLER_H

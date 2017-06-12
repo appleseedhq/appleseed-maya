@@ -26,18 +26,21 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SHADING_NODE_TEMPLATE_BUILDER_H
-#define APPLESEED_MAYA_SHADING_NODE_TEMPLATE_BUILDER_H
+#ifndef APPLESEED_MAYA_SHADINGNODETEMPLATEBUILDER_H
+#define APPLESEED_MAYA_SHADINGNODETEMPLATEBUILDER_H
 
-// Standard headers.
-#include <vector>
+// appleseed-maya headers.
+#include "appleseedmaya/utils.h"
+
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
 
 // Maya headers.
 #include <maya/MString.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.maya headers.
-#include "appleseedmaya/utils.h"
+// Standard headers.
+#include <vector>
 
 // Forward declarations.
 class MStatus;
@@ -50,7 +53,7 @@ class OSLShaderInfo;
 //
 
 class ShadingNodeTemplateBuilder
-  : NonCopyable
+  : public foundation::NonCopyable
 {
   public:
     // Constructor.
@@ -70,4 +73,4 @@ class ShadingNodeTemplateBuilder
     MString m_melTemplate;
 };
 
-#endif  // !APPLESEED_MAYA_SHADING_NODE_TEMPLATE_BUILDER_H
+#endif  // !APPLESEED_MAYA_SHADINGNODETEMPLATEBUILDER_H

@@ -26,25 +26,25 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
-#define APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
+#ifndef APPLESEED_MAYA_RENDERVIEWTILECALLBACK_H
+#define APPLESEED_MAYA_RENDERVIEWTILECALLBACK_H
 
-// Standard headers.
-#include <cstddef>
-
-// Maya headers.
-#include <maya/MComputation.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.foundation headers.
-#include "foundation/math/aabb.h"
+// appleseed-maya headers.
+#include "appleseedmaya/renderercontroller.h"
+#include "appleseedmaya/utils.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/rendering.h"
 
-// appleseed.maya headers.
-#include "appleseedmaya/renderercontroller.h"
-#include "appleseedmaya/utils.h"
+// appleseed.foundation headers.
+#include "foundation/math/aabb.h"
+
+// Maya headers.
+#include <maya/MComputation.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <cstddef>
 
 // Forward declarations.
 namespace foundation    { class Tile; }
@@ -55,7 +55,6 @@ class RenderViewTileCallbackFactory
   : public renderer::ITileCallbackFactory
 {
   public:
-
     RenderViewTileCallbackFactory(
         RendererController& rendererController,
         ComputationPtr      computation);
@@ -75,4 +74,4 @@ class RenderViewTileCallbackFactory
     foundation::AABB2i  m_dataWindow;
 };
 
-#endif  // !APPLESEED_MAYA_RENDERVIEW_TILECALLBACK_H
+#endif  // !APPLESEED_MAYA_RENDERVIEWTILECALLBACK_H

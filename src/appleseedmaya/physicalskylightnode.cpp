@@ -27,19 +27,19 @@
 //
 
 // Interface header.
-#include "appleseedmaya/physicalskylightnode.h"
+#include "physicalskylightnode.h"
+
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/config.h"
+#include "appleseedmaya/envlightdraw.h"
+#include "appleseedmaya/typeids.h"
 
 // Maya headers.
 #include <maya/MFnMessageAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnUnitAttribute.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/config.h"
-#include "appleseedmaya/envlightdraw.h"
-#include "appleseedmaya/typeids.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 const MString PhysicalSkyLightNode::nodeName("appleseedPhysicalSkyLight");
 const MTypeId PhysicalSkyLightNode::id(PhysicalSkyLightNodeTypeId);
@@ -324,7 +324,7 @@ MUserData* PhysicalSkyLightDrawOverride::prepareForDraw(
     MUserData*                      oldData)
 {
     // Retrieve data cache (create if does not exist)
-    PhysicalSkyLightData *data =dynamic_cast<PhysicalSkyLightData*>(oldData);
+    PhysicalSkyLightData* data = dynamic_cast<PhysicalSkyLightData*>(oldData);
 
     if (!data)
         data = new PhysicalSkyLightData();
@@ -339,7 +339,7 @@ void PhysicalSkyLightDrawOverride::draw(
     const MHWRender::MDrawContext&  context,
     const MUserData*                data)
 {
-    const PhysicalSkyLightData *drawData = dynamic_cast<const PhysicalSkyLightData*>(data);
+    const PhysicalSkyLightData* drawData = dynamic_cast<const PhysicalSkyLightData*>(data);
     if (!drawData)
         return;
 
@@ -355,13 +355,13 @@ void PhysicalSkyLightDrawOverride::draw(
 
     const unsigned int displayStyle = context.getDisplayStyle();
 
-    MHWRender::MRenderer *renderer = MHWRender::MRenderer::theRenderer();
+    MHWRender::MRenderer* renderer = MHWRender::MRenderer::theRenderer();
     if (!renderer)
         return;
 
     if (renderer->drawAPIIsOpenGL())
     {
-        float color [3] ={ drawData->m_color.r, drawData->m_color.g, drawData->m_color.b};
+        float color [3] = { drawData->m_color.r, drawData->m_color.g, drawData->m_color.b};
         glColor3fv(color);
 
         glMatrixMode(GL_MODELVIEW);

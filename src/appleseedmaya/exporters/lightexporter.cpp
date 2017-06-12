@@ -27,24 +27,21 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/lightexporter.h"
+#include "lightexporter.h"
 
-// Standard headers.
-#include <sstream>
-
-// Maya headers.
-#include <maya/MFnDagNode.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.foundation headers.
-#include "foundation/math/scalar.h"
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 
-// appleseed.maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
+// appleseed.foundation headers.
+#include "foundation/math/scalar.h"
+
+// Maya headers.
+#include <maya/MFnDagNode.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -56,7 +53,7 @@ void LightExporter::registerExporter()
     NodeExporterFactory::registerDagNodeExporter("spotLight", &LightExporter::create);
 }
 
-DagNodeExporter *LightExporter::create(
+DagNodeExporter* LightExporter::create(
     const MDagPath&                             path,
     asr::Project&                               project,
     AppleseedSession::SessionMode               sessionMode)
@@ -94,7 +91,7 @@ void LightExporter::createEntities(
     const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
 {
     asr::LightFactoryRegistrar lightFactories;
-    const asr::ILightFactory *lightFactory = nullptr;
+    const asr::ILightFactory* lightFactory = nullptr;
     asr::ParamArray lightParams;
 
     MFnDependencyNode depNodeFn(node());

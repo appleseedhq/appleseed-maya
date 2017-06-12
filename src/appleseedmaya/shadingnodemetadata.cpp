@@ -26,24 +26,24 @@
 // THE SOFTWARE.
 //
 
-// interface header.
+// Interface header.
 #include "shadingnodemetadata.h"
 
-// Standard library headers.
-#include <cstdlib>
-#include <map>
-#include <vector>
-
-// Maya headers.
-#include <maya/MPlug.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+// appleseed.renderer headers.
+#include "renderer/api/shadergroup.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
 #include "foundation/utility/iostreamop.h"
 
-// appleseed.renderer headers.
-#include "renderer/api/shadergroup.h"
+// Maya headers.
+#include <maya/MPlug.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <cstdlib>
+#include <map>
+#include <vector>
 
 namespace asr = renderer;
 namespace asf = foundation;
@@ -53,12 +53,12 @@ OSLMetadataExtractor::OSLMetadataExtractor(const foundation::Dictionary& metadat
 {
 }
 
-bool OSLMetadataExtractor::exists(const char *key) const
+bool OSLMetadataExtractor::exists(const char* key) const
 {
     return m_metadata.dictionaries().exist(key);
 }
 
-bool OSLMetadataExtractor::getValue(const char *key, MString& value)
+bool OSLMetadataExtractor::getValue(const char* key, MString& value)
 {
     if (exists(key))
     {
@@ -70,7 +70,7 @@ bool OSLMetadataExtractor::getValue(const char *key, MString& value)
     return false;
 }
 
-bool OSLMetadataExtractor::getValue(const char *key, bool& value)
+bool OSLMetadataExtractor::getValue(const char* key, bool& value)
 {
     int tmp;
     if (getValue(key, tmp))
@@ -84,15 +84,13 @@ bool OSLMetadataExtractor::getValue(const char *key, bool& value)
 
 namespace
 {
-
-void getFloat3Default(const asf::Dictionary& paramInfo, std::vector<double>& defaultValue)
-{
-    const asf::Vector3f v = paramInfo.get<asf::Vector3f>("default");
-    defaultValue.push_back(v[0]);
-    defaultValue.push_back(v[1]);
-    defaultValue.push_back(v[2]);
-}
-
+    void getFloat3Default(const asf::Dictionary& paramInfo, std::vector<double>& defaultValue)
+    {
+        const asf::Vector3f v = paramInfo.get<asf::Vector3f>("default");
+        defaultValue.push_back(v[0]);
+        defaultValue.push_back(v[1]);
+        defaultValue.push_back(v[2]);
+    }
 }
 
 OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
@@ -242,7 +240,7 @@ OSLShaderInfo::OSLShaderInfo(
         mayaName = shaderName;
 }
 
-const OSLParamInfo *OSLShaderInfo::findParam(const MString& mayaAttrName) const
+const OSLParamInfo* OSLShaderInfo::findParam(const MString& mayaAttrName) const
 {
     for(size_t i = 0, e = paramInfo.size(); i < e; ++i)
     {
@@ -253,7 +251,7 @@ const OSLParamInfo *OSLShaderInfo::findParam(const MString& mayaAttrName) const
     return 0;
 }
 
-const OSLParamInfo *OSLShaderInfo::findParam(const MPlug& plug) const
+const OSLParamInfo* OSLShaderInfo::findParam(const MPlug& plug) const
 {
     MStatus status;
     const MString attrName =

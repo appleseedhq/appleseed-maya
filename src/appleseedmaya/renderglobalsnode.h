@@ -26,18 +26,18 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDER_GLOBALS_NODE_H
-#define APPLESEED_MAYA_RENDER_GLOBALS_NODE_H
+#ifndef APPLESEED_MAYA_RENDERGLOBALSNODE_H
+#define APPLESEED_MAYA_RENDERGLOBALSNODE_H
+
+// appleseed-maya headers.
+#include "appleseedmaya/appleseedsession.h"
 
 // Maya headers.
 #include <maya/MObject.h>
-#include <maya/MStringArray.h>
 #include <maya/MPxNode.h>
+#include <maya/MStringArray.h>
 #include <maya/MTypeId.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
-
-// appleseed.maya headers.
-#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 namespace renderer { class Project; }
@@ -98,4 +98,4 @@ class RenderGlobalsNode
     static MObject m_imageFormat;
 };
 
-#endif  // !APPLESEED_MAYA_RENDER_GLOBALS_NODE_H
+#endif  // !APPLESEED_MAYA_RENDERGLOBALSNODE_H

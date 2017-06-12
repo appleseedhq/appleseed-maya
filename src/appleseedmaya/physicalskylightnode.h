@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_PHYSICAL_SKY_LIGHT_NODE_H
-#define APPLESEED_MAYA_PHYSICAL_SKY_LIGHT_NODE_H
+#ifndef APPLESEED_MAYA_PHYSICALSKYLIGHTNODE_H
+#define APPLESEED_MAYA_PHYSICALSKYLIGHTNODE_H
 
 // Maya headers.
 #include <maya/MColor.h>
@@ -42,7 +42,7 @@
 #include <maya/MTypeId.h>
 #include <maya/MUserData.h>
 #include <maya/MViewport2Renderer.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 class PhysicalSkyLightNode
   : public MPxLocatorNode
@@ -86,7 +86,6 @@ class PhysicalSkyLightData
   : public MUserData
 {
   public:
-
     PhysicalSkyLightData();
 
     float   m_size;
@@ -97,7 +96,6 @@ class PhysicalSkyLightDrawOverride
   : public MHWRender::MPxDrawOverride
 {
   public:
-
     static MHWRender::MPxDrawOverride* creator(const MObject& obj);
 
     PhysicalSkyLightDrawOverride(const MObject& obj);
@@ -119,4 +117,4 @@ class PhysicalSkyLightDrawOverride
         const MUserData*                data);
 };
 
-#endif  // !APPLESEED_MAYA_PHYSICAL_SKY_LIGHT_NODE_H
+#endif  // !APPLESEED_MAYA_PHYSICALSKYLIGHTNODE_H

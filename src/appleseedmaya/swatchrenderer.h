@@ -26,12 +26,12 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SWATCH_RENDERER_H
-#define APPLESEED_MAYA_SWATCH_RENDERER_H
+#ifndef APPLESEED_MAYA_SWATCHRENDERER_H
+#define APPLESEED_MAYA_SWATCHRENDERER_H
 
 // Maya headers.
 #include <maya/MSwatchRenderBase.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+#include "appleseedmaya/_endmayaheaders.h"
 
 class SwatchRenderer
   : public MSwatchRenderBase
@@ -51,11 +51,10 @@ class SwatchRenderer
     bool doIteration() override;
 
   private:
-
     SwatchRenderer(
         MObject dependNode,
         MObject renderNode,
         int     imageResolution);
 };
 
-#endif  // !APPLESEED_MAYA_SWATCH_RENDERER_H
+#endif  // !APPLESEED_MAYA_SWATCHRENDERER_H

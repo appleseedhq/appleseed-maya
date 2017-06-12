@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/shapeexporter.h"
+#include "shapeexporter.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
@@ -107,7 +107,7 @@ void ShapeExporter::shapeAttributesToParams(renderer::ParamArray& params)
 
 void ShapeExporter::createObjectInstance(const MString& objectName)
 {
-    asr::Assembly *objectAssembly = &mainAssembly();
+    asr::Assembly* objectAssembly = &mainAssembly();
     asf::Transformd objectInstanceTransform;
     asr::ParamArray params;
 

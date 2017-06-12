@@ -32,26 +32,28 @@
 // Forward declaration header.
 #include "alphamapexporterfwd.h"
 
-// Maya headers.
-#include <maya/MObject.h>
-#include "appleseedmaya/mayaheaderscleanup.h"
+// appleseed-maya headers.
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/utils.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/texture.h"
 
-// appleseed.maya headers.
-#include "appleseedmaya/appleseedsession.h"
-#include "appleseedmaya/utils.h"
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+
+// Maya headers.
+#include <maya/MObject.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 namespace renderer { class Assembly; }
 namespace renderer { class Project; }
 
 class AlphaMapExporter
-  : public NonCopyable
+  : public foundation::NonCopyable
 {
   public:
-
     static AlphaMapExporter* create(
       const MObject&                object,
       renderer::Project&            project,
@@ -69,7 +71,6 @@ class AlphaMapExporter
     const char* textureInstanceName() const;
 
   private:
-
     AlphaMapExporter(
       const MObject&                object,
       renderer::Project&            project,
