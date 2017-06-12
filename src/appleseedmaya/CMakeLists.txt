@@ -30,7 +30,10 @@
 configure_file (${PROJECT_SOURCE_DIR}/src/appleseedmaya/version.h.in
                 ${PROJECT_SOURCE_DIR}/src/appleseedmaya/version.h)
 
-include_directories (${PROJECT_SOURCE_DIR}/src)
+
+#--------------------------------------------------------------------------------------------------
+# Source files.
+#--------------------------------------------------------------------------------------------------
 
 set (appleseed_maya_sources
     _endmayaheaders.h
@@ -155,9 +158,32 @@ source_group ("exporters" FILES
     ${appleseed_maya_exporters_sources}
 )
 
+
+#--------------------------------------------------------------------------------------------------
+# Target.
+#--------------------------------------------------------------------------------------------------
+
 add_library (appleseedMaya SHARED
     ${appleseed_maya_sources}
 )
+
+set_target_properties (appleseedMaya PROPERTIES PREFIX "")
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set_target_properties (appleseedMaya PROPERTIES SUFFIX ".mll")
+endif ()
+
+
+#--------------------------------------------------------------------------------------------------
+# Include paths.
+#--------------------------------------------------------------------------------------------------
+
+include_directories (${PROJECT_SOURCE_DIR}/src)
+
+
+#--------------------------------------------------------------------------------------------------
+# Static libraries.
+#--------------------------------------------------------------------------------------------------
 
 target_link_libraries (appleseedMaya
     ${MAYA_Foundation_LIBRARY}
@@ -179,10 +205,4 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         debug       ${APPLESEED_DEPS_STAGE_DIR}/ilmbase-debug/lib/Half.lib
         optimized   ${APPLESEED_DEPS_STAGE_DIR}/ilmbase-release/lib/Half.lib
     )
-endif ()
-
-set_target_properties (appleseedMaya PROPERTIES PREFIX "")
-
-if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set_target_properties (appleseedMaya PROPERTIES SUFFIX ".mll")
 endif ()

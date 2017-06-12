@@ -40,6 +40,7 @@ set (CMAKE_MODULE_PATH
     ${PROJECT_SOURCE_DIR}/cmake/Modules
 )
 
+
 #--------------------------------------------------------------------------------------------------
 # Create the build configurations.
 #--------------------------------------------------------------------------------------------------
@@ -57,6 +58,7 @@ if (NOT CMAKE_BUILD_TYPE)
          CACHE STRING "Choose the type of build, options are: ${CMAKE_CONFIGURATION_TYPES}" FORCE)
     set_property (CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${CMAKE_CONFIGURATION_TYPES})
 endif ()
+
 
 #--------------------------------------------------------------------------------------------------
 # Version.
