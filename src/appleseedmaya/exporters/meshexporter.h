@@ -29,26 +29,26 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H
 
-// Standard headers.
-#include <string>
-#include <vector>
+// appleseed-maya headers.
+#include "appleseedmaya/exporters/alphamapexporterfwd.h"
+#include "appleseedmaya/exporters/shapeexporter.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/material.h"
+#include "renderer/api/object.h"
+#include "renderer/api/scene.h"
+#include "renderer/api/surfaceshader.h"
+
+// appleseed.foundation headers.
+#include "foundation/utility/searchpaths.h"
 
 // Maya headers.
 #include <maya/MIntArray.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.foundation headers.
-#include "renderer/api/material.h"
-#include "renderer/api/surfaceshader.h"
-#include "foundation/utility/searchpaths.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/object.h"
-#include "renderer/api/scene.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/exporters/alphamapexporterfwd.h"
-#include "appleseedmaya/exporters/shapeexporter.h"
+// Standard headers.
+#include <string>
+#include <vector>
 
 class MeshExporter
   : public ShapeExporter

@@ -29,16 +29,16 @@
 #ifndef APPLESEED_MAYA_MURMURHASH_H
 #define APPLESEED_MAYA_MURMURHASH_H
 
+// Maya headers.
+#include <maya/MString.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
 // Standard headers.
 #include <cstdint>
 #include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
-
-// Maya headers.
-#include <maya/MString.h>
-#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 namespace foundation { class StringDictionary; }

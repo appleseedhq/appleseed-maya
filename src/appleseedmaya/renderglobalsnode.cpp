@@ -29,6 +29,20 @@
 // Interface header.
 #include "renderglobalsnode.h"
 
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/config.h"
+#include "appleseedmaya/typeids.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/project.h"
+#include "renderer/api/utility.h"
+#include "renderer/api/surfaceshader.h"
+
+// appleseed.foundation headers.
+#include "foundation/utility/api/specializedapiarrays.h"
+#include "foundation/math/scalar.h"
+
 // Maya headers.
 #include <maya/MAnimControl.h>
 #include <maya/MFnDependencyNode.h>
@@ -36,20 +50,6 @@
 #include <maya/MFnMessageAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 #include "appleseedmaya/_endmayaheaders.h"
-
-// appleseed.foundation headers.
-#include "foundation/utility/api/specializedapiarrays.h"
-#include "foundation/math/scalar.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/project.h"
-#include "renderer/api/utility.h"
-#include "renderer/api/surfaceshader.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/config.h"
-#include "appleseedmaya/typeids.h"
 
 namespace asf = foundation;
 namespace asr = renderer;

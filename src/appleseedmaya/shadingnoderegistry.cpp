@@ -29,14 +29,21 @@
 // Interface header.
 #include "shadingnoderegistry.h"
 
-// Standard library headers.
-#include <cstdlib>
-#include <map>
-#include <string>
-#include <vector>
+// appleseed-maya headers.
+#include "appleseedmaya/logger.h"
+#include "appleseedmaya/shadingnode.h"
+#include "appleseedmaya/shadingnodemetadata.h"
+#include "appleseedmaya/shadingnodetemplatebuilder.h"
+#include "appleseedmaya/utils.h"
 
-// Boost headers.
-#include "boost/filesystem.hpp"
+// appleseed.renderer headers.
+#include "renderer/api/shadergroup.h"
+
+// appleseed.foundation headers.
+#include "foundation/utility/autoreleaseptr.h"
+#include "foundation/utility/containers/dictionary.h"
+#include "foundation/utility/searchpaths.h"
+#include "foundation/utility/string.h"
 
 // Maya headers.
 #define MNoPluginEntry
@@ -51,21 +58,14 @@
 #include <maya/MTypeId.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.foundation headers.
-#include "foundation/utility/autoreleaseptr.h"
-#include "foundation/utility/containers/dictionary.h"
-#include "foundation/utility/searchpaths.h"
-#include "foundation/utility/string.h"
+// Boost headers.
+#include "boost/filesystem.hpp"
 
-// appleseed.renderer headers.
-#include "renderer/api/shadergroup.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/logger.h"
-#include "appleseedmaya/shadingnode.h"
-#include "appleseedmaya/shadingnodemetadata.h"
-#include "appleseedmaya/shadingnodetemplatebuilder.h"
-#include "appleseedmaya/utils.h"
+// Standard headers.
+#include <cstdlib>
+#include <map>
+#include <string>
+#include <vector>
 
 namespace bfs = boost::filesystem;
 namespace asr = renderer;

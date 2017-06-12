@@ -29,14 +29,12 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_SHADINGNODEEXPORTERFWD_H
 #define APPLESEED_MAYA_EXPORTERS_SHADINGNODEEXPORTERFWD_H
 
-// Standard headers.
-#include <map>
-
-// Standard headers.
-#include <memory>
-
 // appleseed-maya headers.
 #include "appleseedmaya/utils.h"
+
+// Standard headers.
+#include <map>
+#include <memory>
 
 class ShadingNodeExporter;
 typedef std::shared_ptr<ShadingNodeExporter> ShadingNodeExporterPtr;

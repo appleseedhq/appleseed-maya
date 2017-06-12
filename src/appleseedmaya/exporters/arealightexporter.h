@@ -29,17 +29,17 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_AREALIGHTEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_AREALIGHTEXPORTER_H
 
-// Standard headers.
-#include <string>
+// appleseed-maya headers.
+#include "appleseedmaya/exporters/dagnodeexporter.h"
+#include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/material.h"
 #include "renderer/api/object.h"
 #include "renderer/api/scene.h"
 
-// appleseed-maya headers.
-#include "appleseedmaya/exporters/dagnodeexporter.h"
-#include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
+// Standard headers.
+#include <string>
 
 // Forward declarations.
 namespace renderer { class Project; }

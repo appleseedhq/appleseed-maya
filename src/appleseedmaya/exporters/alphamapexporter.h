@@ -32,9 +32,9 @@
 // Forward declaration header.
 #include "alphamapexporterfwd.h"
 
-// Maya headers.
-#include <maya/MObject.h>
-#include "appleseedmaya/_endmayaheaders.h"
+// appleseed-maya headers.
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/utils.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/texture.h"
@@ -42,9 +42,9 @@
 // appleseed.foundation headers.
 #include "foundation/core/concepts/noncopyable.h"
 
-// appleseed-maya headers.
-#include "appleseedmaya/appleseedsession.h"
-#include "appleseedmaya/utils.h"
+// Maya headers.
+#include <maya/MObject.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 namespace renderer { class Assembly; }

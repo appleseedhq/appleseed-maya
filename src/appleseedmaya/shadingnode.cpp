@@ -29,6 +29,16 @@
 // Interface header.
 #include "shadingnode.h"
 
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/logger.h"
+#include "appleseedmaya/shadingnodemetadata.h"
+#include "appleseedmaya/shadingnoderegistry.h"
+
+// appleseed.foundation headers.
+#include "foundation/math/vector.h"
+#include "foundation/utility/string.h"
+
 // Maya headers.
 #include <maya/MFnDependencyNode.h>
 #include <maya/MFnEnumAttribute.h>
@@ -37,16 +47,6 @@
 #include <maya/MFnStringData.h>
 #include <maya/MFnTypedAttribute.h>
 #include "appleseedmaya/_endmayaheaders.h"
-
-// appleseed.foundation headers.
-#include "foundation/math/vector.h"
-#include "foundation/utility/string.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/logger.h"
-#include "appleseedmaya/shadingnodemetadata.h"
-#include "appleseedmaya/shadingnoderegistry.h"
 
 namespace asf = foundation;
 

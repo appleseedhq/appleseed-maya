@@ -29,8 +29,12 @@
 // Interface header.
 #include "place3dtextureexporter.h"
 
-// Standard headers.
-#include <sstream>
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/utility.h"
 
 // Maya headers.
 #include <maya/MDagPath.h>
@@ -38,12 +42,8 @@
 #include <maya/MMatrix.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.renderer headers.
-#include "renderer/api/utility.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
+// Standard headers.
+#include <sstream>
 
 namespace asf = foundation;
 namespace asr = renderer;

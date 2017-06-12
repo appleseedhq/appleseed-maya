@@ -29,14 +29,6 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_EXPORTERFACTORY_H
 #define APPLESEED_MAYA_EXPORTERS_EXPORTERFACTORY_H
 
-// Maya headers.
-#include <maya/MDagPath.h>
-#include <maya/MObject.h>
-#include <maya/MPlug.h>
-#include <maya/MStatus.h>
-#include <maya/MString.h>
-#include "appleseedmaya/_endmayaheaders.h"
-
 // appleseed-maya headers.
 #include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/exporters/alphamapexporterfwd.h"
@@ -44,6 +36,14 @@
 #include "appleseedmaya/exporters/shadingengineexporterfwd.h"
 #include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"
 #include "appleseedmaya/exporters/shadingnodeexporterfwd.h"
+
+// Maya headers.
+#include <maya/MDagPath.h>
+#include <maya/MObject.h>
+#include <maya/MPlug.h>
+#include <maya/MStatus.h>
+#include <maya/MString.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 namespace renderer { class Assembly; }

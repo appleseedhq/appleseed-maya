@@ -29,21 +29,9 @@
 // Interface header.
 #include "swatchrenderer.h"
 
-// Maya headers.
-#include <maya/MFnDependencyNode.h>
-#include <maya/MImage.h>
-#include <maya/MPlug.h>
-#include "appleseedmaya/_endmayaheaders.h"
-
-// appleseed.foundation headers.
-#include "foundation/core/concepts/noncopyable.h"
-#include "foundation/image/image.h"
-#include "foundation/image/tile.h"
-#include "foundation/math/vector.h"
-#include "foundation/math/matrix.h"
-#include "foundation/math/transform.h"
-#include "foundation/utility/iostreamop.h"
-#include "foundation/utility/string.h"
+// appleseed-maya headers.
+#include "appleseedmaya/logger.h"
+#include "appleseedmaya/utils.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/camera.h"
@@ -58,9 +46,21 @@
 #include "renderer/api/rendering.h"
 #include "renderer/api/scene.h"
 
-// appleseed-maya headers.
-#include "appleseedmaya/logger.h"
-#include "appleseedmaya/utils.h"
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+#include "foundation/image/image.h"
+#include "foundation/image/tile.h"
+#include "foundation/math/vector.h"
+#include "foundation/math/matrix.h"
+#include "foundation/math/transform.h"
+#include "foundation/utility/iostreamop.h"
+
+// Maya headers.
+#include <maya/MFnDependencyNode.h>
+#include <maya/MImage.h>
+#include <maya/MPlug.h>
+#include "appleseedmaya/_endmayaheaders.h"
+#include "foundation/utility/string.h"
 
 namespace asf = foundation;
 namespace asr = renderer;

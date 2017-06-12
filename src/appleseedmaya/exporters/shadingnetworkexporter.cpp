@@ -29,17 +29,6 @@
 // Interface header.
 #include "shadingnetworkexporter.h"
 
-// Standard headers.
-#include <algorithm>
-
-// Maya headers.
-#include <maya/MItDependencyGraph.h>
-#include <maya/MFnDependencyNode.h>
-#include "appleseedmaya/_endmayaheaders.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/scene.h"
-
 // appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
@@ -47,6 +36,17 @@
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/shadingnodemetadata.h"
 #include "appleseedmaya/shadingnoderegistry.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/scene.h"
+
+// Maya headers.
+#include <maya/MItDependencyGraph.h>
+#include <maya/MFnDependencyNode.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <algorithm>
 
 namespace asf = foundation;
 namespace asr = renderer;

@@ -29,13 +29,14 @@
 // Interface header.
 #include "meshexporter.h"
 
-// Standard headers.
-#include <sstream>
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/alphamapexporter.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/logger.h"
 
-// Boost headers.
-#include "boost/filesystem/convenience.hpp"
-#include "boost/filesystem/operations.hpp"
-#include "boost/filesystem/path.hpp"
+// appleseed.foundation headers.
+#include "foundation/utility/string.h"
 
 // Maya headers.
 #include <maya/MFloatPointArray.h>
@@ -45,14 +46,10 @@
 #include <maya/MPointArray.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.foundation headers.
-#include "foundation/utility/string.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/alphamapexporter.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/logger.h"
+// Boost headers.
+#include "boost/filesystem/convenience.hpp"
+#include "boost/filesystem/operations.hpp"
+#include "boost/filesystem/path.hpp"
 
 namespace bfs = boost::filesystem;
 namespace asf = foundation;

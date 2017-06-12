@@ -29,19 +29,19 @@
 // Interface header.
 #include "envlightexporter.h"
 
-// Maya headers.
-#include <maya/MFnDagNode.h>
-#include "appleseedmaya/_endmayaheaders.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/environmentedf.h"
-#include "renderer/api/scene.h"
-
 // appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/physicalskylightnode.h"
 #include "appleseedmaya/skydomelightnode.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/environmentedf.h"
+#include "renderer/api/scene.h"
+
+// Maya headers.
+#include <maya/MFnDagNode.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
 namespace asr = renderer;

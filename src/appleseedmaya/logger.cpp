@@ -29,18 +29,18 @@
 // Interface header.
 #include "logger.h"
 
-// Standard headers.
-#include <cstdlib>
-#include <cstring>
+// appleseed.foundation headers.
+#include "foundation/utility/log.h"
+#include "foundation/utility/string.h"
 
 // Maya headers.
 #include <maya/MGlobal.h>
 #include <maya/MStatus.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.foundation headers.
-#include "foundation/utility/log.h"
-#include "foundation/utility/string.h"
+// Standard headers.
+#include <cstdlib>
+#include <cstring>
 
 namespace asf = foundation;
 namespace asr = renderer;

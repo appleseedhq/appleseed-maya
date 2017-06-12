@@ -32,18 +32,18 @@
 // Forward declaration header.
 #include "shadingnodeexporterfwd.h"
 
-// Maya headers.
-#include <maya/MObject.h>
-#include <maya/MPlug.h>
-#include <maya/MString.h>
-#include "appleseedmaya/_endmayaheaders.h"
-
 // appleseed-maya headers.
 #include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/utils.h"
 
 // appleseed.foundation headers.
 #include "foundation/core/concepts/noncopyable.h"
+
+// Maya headers.
+#include <maya/MObject.h>
+#include <maya/MPlug.h>
+#include <maya/MString.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 class OSLParamInfo;

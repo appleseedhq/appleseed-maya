@@ -29,13 +29,13 @@
 // Interface header.
 #include "renderviewtilecallback.h"
 
-// Standard headers.
-#include <cassert>
-#include <memory>
+// appleseed-maya headers.
+#include "appleseedmaya/idlejobqueue.h"
+#include "appleseedmaya/utils.h"
 
-// Maya headers.
-#include <maya/MRenderView.h>
-#include "appleseedmaya/_endmayaheaders.h"
+// appleseed.renderer headers.
+#include "renderer/api/frame.h"
+#include "renderer/api/log.h"
 
 // appleseed.foundation headers.
 #include "foundation/image/canvasproperties.h"
@@ -44,13 +44,13 @@
 #include "foundation/image/tile.h"
 #include "foundation/math/scalar.h"
 
-// appleseed.renderer headers.
-#include "renderer/api/frame.h"
-#include "renderer/api/log.h"
+// Maya headers.
+#include <maya/MRenderView.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed-maya headers.
-#include "appleseedmaya/idlejobqueue.h"
-#include "appleseedmaya/utils.h"
+// Standard headers.
+#include <cassert>
+#include <memory>
 
 namespace asf = foundation;
 namespace asr = renderer;

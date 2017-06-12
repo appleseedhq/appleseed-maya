@@ -29,20 +29,20 @@
 #ifndef APPLESEED_MAYA_UTILS_H
 #define APPLESEED_MAYA_UTILS_H
 
-// Standard headers.
-#include <cstring>
-#include <memory>
-#include <string>
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+#include "foundation/utility/autoreleaseptr.h"
+#include "foundation/utility/string.h"
 
 // Maya headers.
 #include <maya/MComputation.h>
 #include <maya/MString.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.foundation headers.
-#include "foundation/core/concepts/noncopyable.h"
-#include "foundation/utility/autoreleaseptr.h"
-#include "foundation/utility/string.h"
+// Standard headers.
+#include <cstring>
+#include <memory>
+#include <string>
 
 // Forward declarations.
 class MDagPath;

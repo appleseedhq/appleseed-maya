@@ -29,20 +29,20 @@
 #ifndef APPLESEED_MAYA_SHADINGNODEMETADATA_H
 #define APPLESEED_MAYA_SHADINGNODEMETADATA_H
 
-// Standard headers.
-#include <iostream>
-#include <vector>
-
-// Maya headers.
-#include <maya/MString.h>
-#include "appleseedmaya/_endmayaheaders.h"
+// appleseed-maya headers.
+#include "appleseedmaya/utils.h"
 
 // appleseed.foundation headers.
 #include "foundation/core/concepts/noncopyable.h"
 #include "foundation/utility/containers/dictionary.h"
 
-// appleseed-maya headers.
-#include "appleseedmaya/utils.h"
+// Maya headers.
+#include <maya/MString.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <iostream>
+#include <vector>
 
 // Forward declarations.
 class MPlug;

@@ -29,15 +29,6 @@
 // Interface header.
 #include "exporterfactory.h"
 
-// Standard headers.
-#include <cassert>
-#include <map>
-
-// Maya headers.
-#include <maya/MFnDagNode.h>
-#include <maya/MFnDependencyNode.h>
-#include "appleseedmaya/_endmayaheaders.h"
-
 // appleseed-maya headers.
 #include "appleseedmaya/exceptions.h"
 #include "appleseedmaya/exporters/alphamapexporter.h"
@@ -61,6 +52,15 @@
 #endif
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/utils.h"
+
+// Maya headers.
+#include <maya/MFnDagNode.h>
+#include <maya/MFnDependencyNode.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <cassert>
+#include <map>
 
 namespace asf = foundation;
 namespace asr = renderer;

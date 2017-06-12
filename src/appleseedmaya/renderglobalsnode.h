@@ -29,15 +29,15 @@
 #ifndef APPLESEED_MAYA_RENDERGLOBALSNODE_H
 #define APPLESEED_MAYA_RENDERGLOBALSNODE_H
 
-// Maya headers.
-#include <maya/MObject.h>
-#include <maya/MStringArray.h>
-#include <maya/MPxNode.h>
-#include <maya/MTypeId.h>
-#include "appleseedmaya/_endmayaheaders.h"
-
 // appleseed-maya headers.
 #include "appleseedmaya/appleseedsession.h"
+
+// Maya headers.
+#include <maya/MObject.h>
+#include <maya/MPxNode.h>
+#include <maya/MStringArray.h>
+#include <maya/MTypeId.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 // Forward declarations.
 namespace renderer { class Project; }

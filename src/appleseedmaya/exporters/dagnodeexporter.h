@@ -32,6 +32,17 @@
 // Forward declaration header.
 #include "dagnodeexporterfwd.h"
 
+// appleseed-maya headers.
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/utils.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/utility.h"
+
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+#include "foundation/math/matrix.h"
+
 // Maya headers.
 #include <maya/MDagPath.h>
 #include <maya/MMatrix.h>
@@ -39,17 +50,6 @@
 #include <maya/MObjectArray.h>
 #include <maya/MString.h>
 #include "appleseedmaya/_endmayaheaders.h"
-
-// appleseed.foundation headers.
-#include "foundation/core/concepts/noncopyable.h"
-#include "foundation/math/matrix.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/utility.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/appleseedsession.h"
-#include "appleseedmaya/utils.h"
 
 // Forward declarations.
 namespace renderer { class Assembly; }

@@ -29,14 +29,14 @@
 #ifndef APPLESEED_MAYA_CONFIG_H
 #define APPLESEED_MAYA_CONFIG_H
 
+// appleseed-maya headers.
+#include "appleseedmaya/logger.h"
+#include "appleseedmaya/version.h"
+
 // Maya headers.
 #include <maya/MGlobal.h>
 #include <maya/MStatus.h>
 #include "appleseedmaya/_endmayaheaders.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/logger.h"
-#include "appleseedmaya/version.h"
 
 // Windows dll exports
 #if defined(_WIN32) || defined(_WIN64) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__)

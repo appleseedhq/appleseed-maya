@@ -29,16 +29,6 @@
 #ifndef APPLESEED_MAYA_APPLESEEDSESSION_H
 #define APPLESEED_MAYA_APPLESEEDSESSION_H
 
-// Standard headers.
-#include <set>
-
-// Maya headers.
-#include <maya/MObject.h>
-#include <maya/MPlug.h>
-#include <maya/MStatus.h>
-#include <maya/MString.h>
-#include "appleseedmaya/_endmayaheaders.h"
-
 // appleseed-maya headers.
 #include "appleseedmaya/exporters/alphamapexporterfwd.h"
 #include "appleseedmaya/exporters/shadingengineexporterfwd.h"
@@ -47,6 +37,16 @@
 
 // appleseed.foundation headers.
 #include "foundation/core/concepts/noncopyable.h"
+
+// Maya headers.
+#include <maya/MObject.h>
+#include <maya/MPlug.h>
+#include <maya/MStatus.h>
+#include <maya/MString.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <set>
 
 namespace AppleseedSession
 {

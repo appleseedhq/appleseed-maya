@@ -29,16 +29,39 @@
 // Interface header.
 #include "appleseedsession.h"
 
-// Standard headers.
-#include <array>
-#include <memory>
-#include <thread>
-#include <vector>
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exceptions.h"
+#include "appleseedmaya/exporters/alphamapexporter.h"
+#include "appleseedmaya/exporters/dagnodeexporter.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/exporters/shadingengineexporter.h"
+#include "appleseedmaya/exporters/shadingnetworkexporter.h"
+#include "appleseedmaya/exporters/shapeexporter.h"
+#include "appleseedmaya/idlejobqueue.h"
+#include "appleseedmaya/logger.h"
+#include "appleseedmaya/renderercontroller.h"
+#include "appleseedmaya/renderglobalsnode.h"
+#include "appleseedmaya/renderviewtilecallback.h"
 
-// Boost headers.
-#include "boost/filesystem/path.hpp"
-#include "boost/filesystem/convenience.hpp"
-#include "boost/filesystem/operations.hpp"
+// appleseed.renderer headers.
+#include "renderer/api/environment.h"
+#include "renderer/api/frame.h"
+#include "renderer/api/material.h"
+#include "renderer/api/project.h"
+#include "renderer/api/rendering.h"
+#include "renderer/api/scene.h"
+#include "renderer/api/utility.h"
+
+// appleseed.foundation headers.
+#include "foundation/math/scalar.h"
+#include "foundation/platform/timers.h"
+#include "foundation/utility/autoreleaseptr.h"
+#include "foundation/utility/iostreamop.h"
+#include "foundation/utility/log.h"
+#include "foundation/utility/searchpaths.h"
+#include "foundation/utility/stopwatch.h"
+#include "foundation/utility/string.h"
 
 // Maya headers.
 #include <maya/MAnimControl.h>
@@ -55,39 +78,16 @@
 #include <maya/MRenderUtil.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.foundation headers.
-#include "foundation/math/scalar.h"
-#include "foundation/platform/timers.h"
-#include "foundation/utility/autoreleaseptr.h"
-#include "foundation/utility/iostreamop.h"
-#include "foundation/utility/log.h"
-#include "foundation/utility/searchpaths.h"
-#include "foundation/utility/stopwatch.h"
-#include "foundation/utility/string.h"
+// Boost headers.
+#include "boost/filesystem/path.hpp"
+#include "boost/filesystem/convenience.hpp"
+#include "boost/filesystem/operations.hpp"
 
-// appleseed.renderer headers.
-#include "renderer/api/environment.h"
-#include "renderer/api/frame.h"
-#include "renderer/api/material.h"
-#include "renderer/api/project.h"
-#include "renderer/api/rendering.h"
-#include "renderer/api/scene.h"
-#include "renderer/api/utility.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exceptions.h"
-#include "appleseedmaya/exporters/alphamapexporter.h"
-#include "appleseedmaya/exporters/dagnodeexporter.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/exporters/shadingengineexporter.h"
-#include "appleseedmaya/exporters/shadingnetworkexporter.h"
-#include "appleseedmaya/exporters/shapeexporter.h"
-#include "appleseedmaya/idlejobqueue.h"
-#include "appleseedmaya/logger.h"
-#include "appleseedmaya/renderercontroller.h"
-#include "appleseedmaya/renderglobalsnode.h"
-#include "appleseedmaya/renderviewtilecallback.h"
+// Standard headers.
+#include <array>
+#include <memory>
+#include <thread>
+#include <vector>
 
 namespace bfs = boost::filesystem;
 namespace asf = foundation;

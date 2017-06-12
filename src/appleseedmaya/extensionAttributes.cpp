@@ -29,6 +29,10 @@
 // Interface header.
 #include "extensionattributes.h"
 
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/logger.h"
+
 // Maya headers.
 #include <maya/MDGModifier.h>
 #include <maya/MFnDependencyNode.h>
@@ -40,10 +44,6 @@
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MNodeClass.h>
 #include "appleseedmaya/_endmayaheaders.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/logger.h"
 
 namespace
 {

@@ -29,6 +29,13 @@
 // Interface header.
 #include "dagnodeexporter.h"
 
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/project.h"
+#include "renderer/api/scene.h"
+
 // Maya headers.
 #include <maya/MAnimUtil.h>
 #include <maya/MFnDagNode.h>
@@ -36,13 +43,6 @@
 #include <maya/MGlobal.h>
 #include <maya/MItDependencyGraph.h>
 #include "appleseedmaya/_endmayaheaders.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/project.h"
-#include "renderer/api/scene.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/attributeutils.h"
 
 namespace asf = foundation;
 namespace asr = renderer;

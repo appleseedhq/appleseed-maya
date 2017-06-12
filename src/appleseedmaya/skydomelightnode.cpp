@@ -29,6 +29,12 @@
 // Interface header.
 #include "skydomelightnode.h"
 
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/config.h"
+#include "appleseedmaya/envlightdraw.h"
+#include "appleseedmaya/typeids.h"
+
 // Maya headers.
 #include <maya/MFileObject.h>
 #include <maya/MFnMessageAttribute.h>
@@ -36,12 +42,6 @@
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MFnUnitAttribute.h>
 #include "appleseedmaya/_endmayaheaders.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/config.h"
-#include "appleseedmaya/envlightdraw.h"
-#include "appleseedmaya/typeids.h"
 
 const MString SkyDomeLightNode::nodeName("appleseedSkyDomeLight");
 const MTypeId SkyDomeLightNode::id(SkyDomeLightNodeTypeId);

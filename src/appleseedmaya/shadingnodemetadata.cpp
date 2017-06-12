@@ -29,21 +29,21 @@
 // Interface header.
 #include "shadingnodemetadata.h"
 
-// Standard library headers.
-#include <cstdlib>
-#include <map>
-#include <vector>
-
-// Maya headers.
-#include <maya/MPlug.h>
-#include "appleseedmaya/_endmayaheaders.h"
+// appleseed.renderer headers.
+#include "renderer/api/shadergroup.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/autoreleaseptr.h"
 #include "foundation/utility/iostreamop.h"
 
-// appleseed.renderer headers.
-#include "renderer/api/shadergroup.h"
+// Maya headers.
+#include <maya/MPlug.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <cstdlib>
+#include <map>
+#include <vector>
 
 namespace asr = renderer;
 namespace asf = foundation;

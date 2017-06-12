@@ -29,9 +29,10 @@
 // Interface header.
 #include "fileexporter.h"
 
-// Maya headers.
-#include <maya/MRenderUtil.h>
-#include "appleseedmaya/_endmayaheaders.h"
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/shadingnodemetadata.h"
 
 // appleseed.renderer headers.
 #include "renderer/utility/paramarray.h"
@@ -39,10 +40,9 @@
 // appleseed.foundation headers.
 #include "foundation/utility/string.h"
 
-// appleseed-maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/shadingnodemetadata.h"
+// Maya headers.
+#include <maya/MRenderUtil.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
 namespace asr = renderer;

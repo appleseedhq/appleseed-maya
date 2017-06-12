@@ -29,9 +29,6 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H
 
-// Standard headers.
-#include <string>
-
 // appleseed-maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 

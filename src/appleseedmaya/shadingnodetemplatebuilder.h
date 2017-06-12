@@ -29,18 +29,18 @@
 #ifndef APPLESEED_MAYA_SHADINGNODETEMPLATEBUILDER_H
 #define APPLESEED_MAYA_SHADINGNODETEMPLATEBUILDER_H
 
-// Standard headers.
-#include <vector>
-
-// Maya headers.
-#include <maya/MString.h>
-#include "appleseedmaya/_endmayaheaders.h"
-
 // appleseed-maya headers.
 #include "appleseedmaya/utils.h"
 
 // appleseed.foundation headers.
 #include "foundation/core/concepts/noncopyable.h"
+
+// Maya headers.
+#include <maya/MString.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <vector>
 
 // Forward declarations.
 class MStatus;

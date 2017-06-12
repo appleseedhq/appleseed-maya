@@ -29,17 +29,17 @@
 // Interface header.
 #include "physicalskylightnode.h"
 
-// Maya headers.
-#include <maya/MFnMessageAttribute.h>
-#include <maya/MFnNumericAttribute.h>
-#include <maya/MFnUnitAttribute.h>
-#include "appleseedmaya/_endmayaheaders.h"
-
 // appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/envlightdraw.h"
 #include "appleseedmaya/typeids.h"
+
+// Maya headers.
+#include <maya/MFnMessageAttribute.h>
+#include <maya/MFnNumericAttribute.h>
+#include <maya/MFnUnitAttribute.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 const MString PhysicalSkyLightNode::nodeName("appleseedPhysicalSkyLight");
 const MTypeId PhysicalSkyLightNode::id(PhysicalSkyLightNodeTypeId);

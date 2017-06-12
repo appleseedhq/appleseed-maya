@@ -29,9 +29,6 @@
 // Interface header.
 #include "instanceexporter.h"
 
-// Standard headers.
-#include <iostream>
-
 // appleseed-maya headers.
 #include "appleseedmaya/appleseedsession.h"
 

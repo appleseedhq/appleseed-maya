@@ -29,22 +29,22 @@
 // Interface header.
 #include "appleseedtranslator.h"
 
-// Standard headers.
-#include <cstdlib>
-#include <string>
-#include <vector>
+// appleseed-maya headers.
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/logger.h"
+
+// appleseed.foundation headers.
+#include "foundation/utility/string.h"
 
 // Maya headers.
 #include <maya/MCommonRenderSettingsData.h>
 #include <maya/MRenderUtil.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.foundation headers.
-#include "foundation/utility/string.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/appleseedsession.h"
-#include "appleseedmaya/logger.h"
+// Standard headers.
+#include <cstdlib>
+#include <string>
+#include <vector>
 
 namespace asf = foundation;
 

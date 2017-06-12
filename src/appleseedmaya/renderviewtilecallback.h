@@ -29,22 +29,22 @@
 #ifndef APPLESEED_MAYA_RENDERVIEWTILECALLBACK_H
 #define APPLESEED_MAYA_RENDERVIEWTILECALLBACK_H
 
-// Standard headers.
-#include <cstddef>
+// appleseed-maya headers.
+#include "appleseedmaya/renderercontroller.h"
+#include "appleseedmaya/utils.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/rendering.h"
+
+// appleseed.foundation headers.
+#include "foundation/math/aabb.h"
 
 // Maya headers.
 #include <maya/MComputation.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.foundation headers.
-#include "foundation/math/aabb.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/rendering.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/renderercontroller.h"
-#include "appleseedmaya/utils.h"
+// Standard headers.
+#include <cstddef>
 
 // Forward declarations.
 namespace foundation    { class Tile; }

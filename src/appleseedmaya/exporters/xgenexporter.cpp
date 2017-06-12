@@ -29,18 +29,18 @@
 // Interface header.
 #include "xgenexporter.h"
 
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/exporters/exporterfactory.h"
+
+// appleseed.renderer headers.
+#include "renderer/api/scene.h"
+
 // Maya headers.
 #include <maya/MFileObject.h>
 #include <maya/MFnDagNode.h>
 #include <maya/MGlobal.h>
 #include "appleseedmaya/_endmayaheaders.h"
-
-// appleseed.renderer headers.
-#include "renderer/api/scene.h"
-
-// appleseed-maya headers.
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/exporters/exporterfactory.h"
 
 namespace asf = foundation;
 namespace asr = renderer;

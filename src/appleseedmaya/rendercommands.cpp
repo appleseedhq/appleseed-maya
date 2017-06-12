@@ -29,8 +29,12 @@
 // Interface header.
 #include "rendercommands.h"
 
-// Standard headers.
-#include <iostream>
+// appleseed-maya headers.
+#include "appleseedmaya/appleseedsession.h"
+#include "appleseedmaya/attributeutils.h"
+#include "appleseedmaya/config.h"
+#include "appleseedmaya/logger.h"
+#include "appleseedmaya/utils.h"
 
 // Maya headers.
 #include <maya/MArgDatabase.h>
@@ -43,12 +47,8 @@
 #include <maya/MSyntax.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed-maya headers.
-#include "appleseedmaya/appleseedsession.h"
-#include "appleseedmaya/attributeutils.h"
-#include "appleseedmaya/config.h"
-#include "appleseedmaya/logger.h"
-#include "appleseedmaya/utils.h"
+// Standard headers.
+#include <iostream>
 
 MString FinalRenderCommand::cmdName("appleseedRender");
 
