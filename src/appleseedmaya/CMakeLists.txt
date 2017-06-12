@@ -91,8 +91,8 @@ set (appleseed_maya_sources
     exporters/shadingnodeexporterfwd.h
     exporters/shapeexporter.cpp
     exporters/shapeexporter.h
-    extensionAttributes.cpp
-    extensionAttributes.h
+    extensionattributes.cpp
+    extensionattributes.h
     hypershaderenderer.cpp
     hypershaderenderer.h
     idlejobqueue.cpp

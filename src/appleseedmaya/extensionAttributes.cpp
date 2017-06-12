@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/extensionAttributes.h"
+#include "appleseedmaya/extensionattributes.h"
 
 // Maya headers.
 #include <maya/MDGModifier.h>

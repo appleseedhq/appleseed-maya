@@ -38,7 +38,7 @@
 #include "appleseedmaya/appleseedtranslator.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
-#include "appleseedmaya/extensionAttributes.h"
+#include "appleseedmaya/extensionattributes.h"
 #include "appleseedmaya/idlejobqueue.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/rendercommands.h"
