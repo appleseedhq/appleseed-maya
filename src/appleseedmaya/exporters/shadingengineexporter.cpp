@@ -134,4 +134,3 @@ void ShadingEngineExporter::flushEntities()
 
     m_mainAssembly.materials().insert(m_material.release());
 }
-

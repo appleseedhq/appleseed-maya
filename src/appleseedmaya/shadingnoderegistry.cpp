@@ -373,4 +373,3 @@ bool isShaderSupported(const MString& nodeName)
 }
 
 } // namespace ShadingNodeRegistry
-

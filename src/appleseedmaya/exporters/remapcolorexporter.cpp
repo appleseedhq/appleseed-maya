@@ -258,4 +258,3 @@ void RemapColorExporter::exportParameterValue(
             shaderParams);
     }
 }
-

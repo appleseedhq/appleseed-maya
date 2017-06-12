@@ -281,4 +281,3 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
             depNodeFn.typeName().asChar());
     }
 }
-
