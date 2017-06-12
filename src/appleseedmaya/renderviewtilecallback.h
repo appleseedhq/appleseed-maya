@@ -60,11 +60,11 @@ class RenderViewTileCallbackFactory
         RendererController& rendererController,
         ComputationPtr      computation);
 
-    virtual ~RenderViewTileCallbackFactory();
+    ~RenderViewTileCallbackFactory() override;
 
-    virtual void release();
+    void release() override;
 
-    virtual renderer::ITileCallback* create();
+    renderer::ITileCallback* create() override;
 
     void renderViewStart(const renderer::Frame& frame);
 

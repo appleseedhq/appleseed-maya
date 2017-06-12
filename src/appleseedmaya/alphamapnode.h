@@ -54,15 +54,15 @@ class AlphaMapNode
     static void* creator();
     static MStatus initialize();
 
-    virtual MStatus compute(const MPlug& plug, MDataBlock& dataBlock);
+    MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override;
 
-    virtual MStringArray getFilesToArchive(
+    MStringArray getFilesToArchive(
         bool    shortName,
         bool    unresolvedName,
-        bool    markCouldBeImageSequence) const;
+        bool    markCouldBeImageSequence) const override;
 
-    virtual void getExternalContent(MExternalContentInfoTable& table) const;
-    virtual void setExternalContent(const MExternalContentLocationTable& table);
+    void getExternalContent(MExternalContentInfoTable& table) const override;
+    void setExternalContent(const MExternalContentLocationTable& table) override;
 
   private:
     static MObject m_message;

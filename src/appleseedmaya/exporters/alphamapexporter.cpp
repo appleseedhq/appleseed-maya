@@ -53,7 +53,7 @@ AlphaMapExporter* AlphaMapExporter::create(
 
     // Ignore alpha maps without image files.
     if (map.length() == 0)
-        return 0;
+        return nullptr;
 
     return new AlphaMapExporter(object, project, sessionMode);
 }

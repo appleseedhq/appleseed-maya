@@ -30,11 +30,11 @@
 #define APPLESEED_MAYA_MURMUR_HASH_H
 
 // Standard headers.
+#include <cstdint>
 #include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
-#include <stdint.h>
 
 // Maya headers.
 #include <maya/MString.h>

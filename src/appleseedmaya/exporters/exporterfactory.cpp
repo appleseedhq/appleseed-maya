@@ -122,7 +122,7 @@ void NodeExporterFactory::registerDagNodeExporter(
     const MString&                  mayaTypeName,
     CreateDagNodeExporterFn         createFn)
 {
-    assert(createFn != 0);
+    assert(createFn != nullptr);
 
     gDagNodeExporters[mayaTypeName] = createFn;
 
@@ -174,7 +174,7 @@ void NodeExporterFactory::registerShadingNodeExporter(
     const MString&                  mayaTypeName,
     CreateShadingNodeExporterFn     createFn)
 {
-    assert(createFn != 0);
+    assert(createFn != nullptr);
 
     gShadingNodeExporters[mayaTypeName] = createFn;
 

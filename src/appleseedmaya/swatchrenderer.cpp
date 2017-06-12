@@ -72,9 +72,7 @@ class SwatchProject
 {
   public:
 
-    SwatchProject()
-    {
-    }
+    SwatchProject() = default;
 
     void initialize()
     {

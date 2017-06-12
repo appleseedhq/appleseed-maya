@@ -42,7 +42,7 @@ class FinalRenderCommand
     static MSyntax syntaxCreator();
     static void* creator();
 
-    virtual MStatus doIt(const MArgList& args);
+    MStatus doIt(const MArgList& args) override;
 };
 
 class ProgressiveRenderCommand
@@ -54,7 +54,7 @@ class ProgressiveRenderCommand
     static MSyntax syntaxCreator();
     static void* creator();
 
-    virtual MStatus doIt(const MArgList& args);
+    MStatus doIt(const MArgList& args) override;
 };
 
 #endif  // !APPLESEED_MAYA_RENDER_COMMAND_H

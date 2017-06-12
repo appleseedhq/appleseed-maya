@@ -48,14 +48,14 @@ class AppleseedTranslator
 
     static void* creator();
 
-    virtual MStatus writer(
+    MStatus writer(
         const MFileObject&  file,
         const MString&      optionsString,
-        FileAccessMode      mode);
+        FileAccessMode      mode) override;
 
-    virtual bool haveWriteMethod() const;
+    bool haveWriteMethod() const override;
 
-    virtual MString defaultExtension() const;
+    MString defaultExtension() const override;
 };
 
 #endif  // !APPLESEED_MAYA_TRANSLATOR_H

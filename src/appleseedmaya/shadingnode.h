@@ -50,7 +50,7 @@ class ShadingNode
 
     ShadingNode();
 
-    virtual void postConstructor();
+    void postConstructor() override;
 
   private:
     static void report_error(

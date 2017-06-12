@@ -54,7 +54,7 @@ class LogTarget
   : public asf::ILogTarget
 {
   public:
-    virtual void release()
+    void release() override
     {
         delete this;
     }

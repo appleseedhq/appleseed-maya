@@ -55,12 +55,12 @@ class MStatus;
 class NonCopyable
 {
   protected:
-    NonCopyable() {}
-    ~NonCopyable() {}
+    NonCopyable() = default;
+    ~NonCopyable() = default;
 
   private:
-    NonCopyable(const NonCopyable&);
-    NonCopyable& operator=(const NonCopyable&);
+    NonCopyable(const NonCopyable&) = delete;
+    NonCopyable& operator=(const NonCopyable&) = delete;
 };
 
 //

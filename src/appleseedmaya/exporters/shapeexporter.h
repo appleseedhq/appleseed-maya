@@ -45,15 +45,15 @@ class ShapeExporter
 {
   public:
 
-    ~ShapeExporter();
+    ~ShapeExporter() override;
 
     const renderer::TransformSequence& transformSequence() const;
 
     void instanceCreated() const;
 
-    virtual void exportTransformMotionStep(float time);
+    void exportTransformMotionStep(float time) override;
 
-    virtual void flushEntities() = 0;
+    void flushEntities() override = 0;
 
   protected:
 

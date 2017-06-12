@@ -53,7 +53,7 @@ class InstanceExporter
       renderer::Project&                  project,
       const renderer::TransformSequence&  transformSequence);
 
-    virtual void flushEntities();
+    void flushEntities() override;
 
   private:
 

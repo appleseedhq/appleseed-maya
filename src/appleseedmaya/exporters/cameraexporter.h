@@ -47,15 +47,15 @@ class CameraExporter
       renderer::Project&                            project,
       AppleseedSession::SessionMode                 sessionMode);
 
-    ~CameraExporter();
+    ~CameraExporter() override;
 
-    virtual void createEntities(
+    void createEntities(
         const AppleseedSession::Options&            options,
-        const AppleseedSession::MotionBlurTimes&    motionBlurTimes);
+        const AppleseedSession::MotionBlurTimes&    motionBlurTimes) override;
 
-    virtual void exportCameraMotionStep(float time);
+    void exportCameraMotionStep(float time) override;
 
-    virtual void flushEntities();
+    void flushEntities() override;
 
   private:
 

@@ -30,7 +30,7 @@
 #include "appleseedmaya/appleseedtranslator.h"
 
 // Standard headers.
-#include <stdlib.h>
+#include <cstdlib>
 #include <string>
 #include <vector>
 
@@ -50,9 +50,7 @@ namespace asf = foundation;
 
 const MString AppleseedTranslator::translatorName("appleseed");
 
-AppleseedTranslator::AppleseedTranslator()
-{
-}
+AppleseedTranslator::AppleseedTranslator() = default;
 
 void* AppleseedTranslator::creator()
 {

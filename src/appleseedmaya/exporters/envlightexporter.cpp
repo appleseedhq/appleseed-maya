@@ -108,7 +108,7 @@ DagNodeExporter *PhysicalSkyLightExporter::create(
     AppleseedSession::SessionMode               sessionMode)
 {
     if (areObjectAndParentsRenderable(path) == false)
-        return 0;
+        return nullptr;
 
     return new PhysicalSkyLightExporter(path, project, sessionMode);
 }
@@ -193,7 +193,7 @@ DagNodeExporter *SkyDomeLightExporter::create(
     AppleseedSession::SessionMode               sessionMode)
 {
     if (areObjectAndParentsRenderable(path) == false)
-        return 0;
+        return nullptr;
 
     return new SkyDomeLightExporter(path, project, sessionMode);
 }

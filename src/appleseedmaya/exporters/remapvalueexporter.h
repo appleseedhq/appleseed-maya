@@ -49,10 +49,10 @@ class RemapValueExporter
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);
 
-    virtual void exportParameterValue(
+    void exportParameterValue(
         const MPlug&            plug,
         const OSLParamInfo&     paramInfo,
-        renderer::ParamArray&   shaderParams) const;
+        renderer::ParamArray&   shaderParams) const override;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_REMAPVALUE_EXPORTER_H

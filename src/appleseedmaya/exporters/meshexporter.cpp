@@ -128,7 +128,7 @@ DagNodeExporter *MeshExporter::create(
     AppleseedSession::SessionMode               sessionMode)
 {
     if (areObjectAndParentsRenderable(path) == false)
-        return 0;
+        return nullptr;
 
     return new MeshExporter(path, project, sessionMode);
 }
@@ -264,8 +264,6 @@ void MeshExporter::createEntities(
         // We don't support PRef and NRef yet...
         m_exportReference = false;
     }
-
-    if (plug.isConnected())
 
     m_numMeshKeys = motionBlurTimes.m_deformTimes.size();
     m_isDeforming = (m_numMeshKeys > 1) && isAnimated(node());

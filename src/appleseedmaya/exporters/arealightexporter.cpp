@@ -58,7 +58,7 @@ DagNodeExporter *AreaLightExporter::create(
     AppleseedSession::SessionMode               sessionMode)
 {
     if (areObjectAndParentsRenderable(path) == false)
-        return 0;
+        return nullptr;
 
     return new AreaLightExporter(path, project, sessionMode);
 }

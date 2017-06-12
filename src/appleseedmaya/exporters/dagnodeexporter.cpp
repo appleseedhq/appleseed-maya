@@ -59,9 +59,7 @@ DagNodeExporter::DagNodeExporter(
 {
 }
 
-DagNodeExporter::~DagNodeExporter()
-{
-}
+DagNodeExporter::~DagNodeExporter() = default;
 
 MObject DagNodeExporter::node() const
 {
