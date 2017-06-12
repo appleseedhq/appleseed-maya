@@ -45,7 +45,6 @@ class InstanceExporter
   : public ShapeExporter
 {
   public:
-
     InstanceExporter(
       const MDagPath&                     path,
       AppleseedSession::SessionMode       sessionMode,
@@ -56,7 +55,6 @@ class InstanceExporter
     void flushEntities() override;
 
   private:
-
     MString m_masterShapeName;
 };
 

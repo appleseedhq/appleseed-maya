@@ -36,7 +36,6 @@ class RemapColorExporter
   : public ShadingNodeExporter
 {
   public:
-
     static void registerExporter();
 
     static ShadingNodeExporter* create(
@@ -44,7 +43,6 @@ class RemapColorExporter
         renderer::ShaderGroup&  shaderGroup);
 
   private:
-
     RemapColorExporter(
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);

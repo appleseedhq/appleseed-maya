@@ -53,7 +53,6 @@ namespace renderer { class ShaderGroup; }
 class NodeExporterFactory
 {
   public:
-
     static MStatus initialize(const MString& pluginPath);
     static MStatus uninitialize();
 

@@ -269,7 +269,6 @@ class SwatchProject
     }
 
   private:
-
     void copySwatchImage(MImage& dstImage) const
     {
         const asf::Image& srcImage = m_project->get_frame()->image();

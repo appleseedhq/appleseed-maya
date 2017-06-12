@@ -86,7 +86,6 @@ class PhysicalSkyLightData
   : public MUserData
 {
   public:
-
     PhysicalSkyLightData();
 
     float   m_size;
@@ -97,7 +96,6 @@ class PhysicalSkyLightDrawOverride
   : public MHWRender::MPxDrawOverride
 {
   public:
-
     static MHWRender::MPxDrawOverride* creator(const MObject& obj);
 
     PhysicalSkyLightDrawOverride(const MObject& obj);

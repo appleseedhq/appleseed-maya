@@ -46,7 +46,6 @@ class XGenExporter
   : public DagNodeExporter
 {
   public:
-
     static void registerExporter();
 
     static DagNodeExporter* create(
@@ -67,7 +66,6 @@ class XGenExporter
     void flushEntities() override;
 
   private:
-
     XGenExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,

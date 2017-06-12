@@ -55,7 +55,6 @@ class RenderViewTileCallbackFactory
   : public renderer::ITileCallbackFactory
 {
   public:
-
     RenderViewTileCallbackFactory(
         RendererController& rendererController,
         ComputationPtr      computation);

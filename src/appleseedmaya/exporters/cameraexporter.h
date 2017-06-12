@@ -39,7 +39,6 @@ class CameraExporter
   : public DagNodeExporter
 {
   public:
-
     static void registerExporter();
 
     static DagNodeExporter* create(
@@ -58,7 +57,6 @@ class CameraExporter
     void flushEntities() override;
 
   private:
-
     CameraExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,

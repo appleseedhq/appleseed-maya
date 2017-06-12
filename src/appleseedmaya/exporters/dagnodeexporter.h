@@ -61,7 +61,6 @@ class DagNodeExporter
   : public foundation::NonCopyable
 {
   public:
-
     // Destructor.
     virtual ~DagNodeExporter();
 
@@ -89,7 +88,6 @@ class DagNodeExporter
     virtual void flushEntities() = 0;
 
   protected:
-
     DagNodeExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,
@@ -124,7 +122,6 @@ class DagNodeExporter
     static bool isAnimated(MObject object, bool checkParent=false);
 
   private:
-
     MDagPath                      m_path;
     AppleseedSession::SessionMode m_sessionMode;
     renderer::Project&            m_project;

@@ -46,7 +46,6 @@ class LightExporter
   : public DagNodeExporter
 {
   public:
-
     static void registerExporter();
 
     static DagNodeExporter* create(
@@ -65,7 +64,6 @@ class LightExporter
     void flushEntities() override;
 
   private:
-
     LightExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,

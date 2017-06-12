@@ -54,7 +54,6 @@ class AlphaMapExporter
   : public foundation::NonCopyable
 {
   public:
-
     static AlphaMapExporter* create(
       const MObject&                object,
       renderer::Project&            project,
@@ -72,7 +71,6 @@ class AlphaMapExporter
     const char* textureInstanceName() const;
 
   private:
-
     AlphaMapExporter(
       const MObject&                object,
       renderer::Project&            project,

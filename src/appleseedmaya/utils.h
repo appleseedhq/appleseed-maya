@@ -195,7 +195,6 @@ class Computation
   : public foundation::NonCopyable
 {
   public:
-
     static std::shared_ptr<Computation> create();
 
     ~Computation();

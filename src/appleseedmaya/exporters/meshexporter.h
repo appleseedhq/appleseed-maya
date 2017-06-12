@@ -54,7 +54,6 @@ class MeshExporter
   : public ShapeExporter
 {
   public:
-
     static void registerExporter();
 
     static DagNodeExporter* create(
@@ -75,7 +74,6 @@ class MeshExporter
     void flushEntities() override;
 
   private:
-
     MeshExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,

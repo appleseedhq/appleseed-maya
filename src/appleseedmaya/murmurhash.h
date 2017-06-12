@@ -60,7 +60,6 @@ namespace foundation { class Dictionary; }
 class MurmurHash
 {
   public:
-
     MurmurHash();
     MurmurHash(const MurmurHash& other);
 
@@ -98,7 +97,6 @@ class MurmurHash
     void append(const foundation::Dictionary& dictionary);
 
   private:
-
     void append(const void *data, size_t bytes);
 
     uint64_t m_h1;

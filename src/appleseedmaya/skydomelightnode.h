@@ -91,7 +91,6 @@ class SkyDomeLightData
   : public MUserData
 {
   public:
-
     SkyDomeLightData();
 
     float   m_size;
@@ -102,7 +101,6 @@ class SkyDomeLightDrawOverride
   : public MHWRender::MPxDrawOverride
 {
   public:
-
     static MHWRender::MPxDrawOverride* creator(const MObject& obj);
 
     SkyDomeLightDrawOverride(const MObject& obj);

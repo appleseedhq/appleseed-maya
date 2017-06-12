@@ -51,7 +51,6 @@ class SwatchRenderer
     bool doIteration() override;
 
   private:
-
     SwatchRenderer(
         MObject dependNode,
         MObject renderNode,

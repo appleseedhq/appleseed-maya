@@ -60,7 +60,6 @@ class ShadingNetworkExporter
   : public foundation::NonCopyable
 {
   public:
-
     ~ShadingNetworkExporter();
 
     // Return the name of the appleseed shader group created by this exporter.

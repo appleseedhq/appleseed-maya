@@ -36,7 +36,6 @@ class RendererController
   : public renderer::DefaultRendererController
 {
   public:
-
     RendererController()
     {
         m_status = ContinueRendering;

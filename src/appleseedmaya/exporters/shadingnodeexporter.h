@@ -55,7 +55,6 @@ class ShadingNodeExporter
   : public foundation::NonCopyable
 {
   public:
-
     static void registerExporters();
 
     static ShadingNodeExporter* create(
@@ -69,7 +68,6 @@ class ShadingNodeExporter
     void flushEntities();
 
   protected:
-
     ShadingNodeExporter(
         const MObject&                  object,
         renderer::ShaderGroup&          shaderGroup);

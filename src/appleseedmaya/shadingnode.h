@@ -41,7 +41,6 @@ class ShadingNode
   : public MPxNode
 {
   public:
-
     // Set the shader info of the current shader being registered.
     static void setCurrentShaderInfo(const OSLShaderInfo *shaderInfo);
 

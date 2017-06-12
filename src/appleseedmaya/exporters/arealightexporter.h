@@ -48,7 +48,6 @@ class AreaLightExporter
   : public DagNodeExporter
 {
   public:
-
     static void registerExporter();
 
     static DagNodeExporter* create(
@@ -69,7 +68,6 @@ class AreaLightExporter
     void flushEntities() override;
 
   private:
-
     AreaLightExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,

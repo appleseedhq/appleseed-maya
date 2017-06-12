@@ -125,7 +125,6 @@ class Services
   : public foundation::NonCopyable
 {
   public:
-
     virtual ~Services();
 
     virtual ShadingEngineExporterPtr createShadingEngineExporter(const MObject& object) const = 0;
@@ -139,7 +138,6 @@ class Services
         const MObject&                object) const = 0;
 
   protected:
-
     Services();
 };
 

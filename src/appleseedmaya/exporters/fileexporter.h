@@ -36,7 +36,6 @@ class FileExporter
   : public ShadingNodeExporter
 {
   public:
-
     static void registerExporter();
 
     static ShadingNodeExporter* create(
@@ -44,7 +43,6 @@ class FileExporter
         renderer::ShaderGroup&  shaderGroup);
 
   private:
-
     FileExporter(
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);

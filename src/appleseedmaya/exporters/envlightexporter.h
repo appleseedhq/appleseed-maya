@@ -49,7 +49,6 @@ class EnvLightExporter
     void flushEntities() override;
 
   protected:
-
     EnvLightExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,
@@ -67,7 +66,6 @@ class PhysicalSkyLightExporter
   : public EnvLightExporter
 {
   public:
-
     static void registerExporter();
 
     static DagNodeExporter* create(
@@ -84,7 +82,6 @@ class PhysicalSkyLightExporter
     void flushEntities() override;
 
   private:
-
     PhysicalSkyLightExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,
@@ -97,7 +94,6 @@ class SkyDomeLightExporter
   : public EnvLightExporter
 {
   public:
-
     static void registerExporter();
 
     static DagNodeExporter* create(
@@ -114,7 +110,6 @@ class SkyDomeLightExporter
     void flushEntities() override;
 
     private:
-
       SkyDomeLightExporter(
         const MDagPath&                             path,
         renderer::Project&                          project,

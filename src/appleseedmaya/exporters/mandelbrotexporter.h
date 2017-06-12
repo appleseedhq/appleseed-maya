@@ -36,7 +36,6 @@ class MandelbrotExporter
   : public ShadingNodeExporter
 {
   public:
-
     static void registerExporter();
 
     static ShadingNodeExporter* create(
@@ -44,7 +43,6 @@ class MandelbrotExporter
         renderer::ShaderGroup&  shaderGroup);
 
   private:
-
     MandelbrotExporter(
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);

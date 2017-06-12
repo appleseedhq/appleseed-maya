@@ -36,7 +36,6 @@ class Place3dTextureExporter
   : public ShadingNodeExporter
 {
   public:
-
     static void registerExporter();
 
     static ShadingNodeExporter* create(
@@ -49,7 +48,6 @@ class Place3dTextureExporter
         MString&                 paramName) override;
 
   private:
-
     Place3dTextureExporter(
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);

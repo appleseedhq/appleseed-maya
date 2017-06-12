@@ -55,7 +55,6 @@ class ShadingEngineExporter
   : public foundation::NonCopyable
 {
   public:
-
     ~ShadingEngineExporter();
 
     // Create any extra exporter needed by this exporter (shading networks, ...).

@@ -36,7 +36,6 @@ class RampExporter
   : public ShadingNodeExporter
 {
   public:
-
     static void registerExporter();
 
     static ShadingNodeExporter* create(
@@ -44,7 +43,6 @@ class RampExporter
         renderer::ShaderGroup&  shaderGroup);
 
   private:
-
     RampExporter(
         const MObject&          object,
         renderer::ShaderGroup&  shaderGroup);

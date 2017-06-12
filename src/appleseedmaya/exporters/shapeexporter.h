@@ -44,7 +44,6 @@ class ShapeExporter
   : public DagNodeExporter
 {
   public:
-
     ~ShapeExporter() override;
 
     const renderer::TransformSequence& transformSequence() const;
@@ -56,7 +55,6 @@ class ShapeExporter
     void flushEntities() override = 0;
 
   protected:
-
     ShapeExporter(
       const MDagPath&               path,
       renderer::Project&            project,
