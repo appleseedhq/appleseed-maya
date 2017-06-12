@@ -18,8 +18,5 @@ Main exporter features
 Limitations
 ===========
 
-See (:ref:`limitations <label_limitations>`) for a compreensive list of
+See (:ref:`limitations <label_limitations>`) for a comprehensive list of
 limitations and possible workarounds.
-
-
-
