@@ -47,282 +47,280 @@
 
 namespace
 {
+    const MString g_extensionsCategory("appleseedMaya");
 
-const MString g_extensionsCategory("appleseedMaya");
+    template <typename T>
+    MObject createNumericAttribute(
+        MFnNumericAttribute&    numAttrFn,
+        const MString&          longName,
+        const MString&          shortName,
+        MFnNumericData::Type    type,
+        const T                 defaultValue,
+        MStatus&                status)
+    {
+        MObject attr = numAttrFn.create(
+            longName,
+            shortName,
+            type,
+            defaultValue,
+            &status);
+        numAttrFn.addToCategory(g_extensionsCategory);
+        return attr;
+    }
 
-template <typename T>
-MObject createNumericAttribute(
-    MFnNumericAttribute&    numAttrFn,
-    const MString&          longName,
-    const MString&          shortName,
-    MFnNumericData::Type    type,
-    const T                 defaultValue,
-    MStatus&                status)
-{
-    MObject attr = numAttrFn.create(
-        longName,
-        shortName,
-        type,
-        defaultValue,
-        &status);
-    numAttrFn.addToCategory(g_extensionsCategory);
-    return attr;
+    void addVisibilityExtensionAttributes(
+        const MNodeClass&   nodeClass,
+        MDGModifier&        modifier)
+    {
+        MStatus status;
+
+        MFnNumericAttribute numAttrFn;
+        MObject attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asVisibilityCamera",
+            "asVisibilityCamera",
+            MFnNumericData::kBoolean,
+            true,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asVisibilityLight",
+            "asVisibilityLight",
+            MFnNumericData::kBoolean,
+            true,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asVisibilityShadow",
+            "asVisibilityShadow",
+            MFnNumericData::kBoolean,
+            true,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asVisibilityDiffuse",
+            "asVisibilityDiffuse",
+            MFnNumericData::kBoolean,
+            true,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asVisibilitySpecular",
+            "asVisibilitySpecular",
+            MFnNumericData::kBoolean,
+            true,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asVisibilityGlossy",
+            "asVisibilityGlossy",
+            MFnNumericData::kBoolean,
+            true,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+    }
+
+    void addMeshExtensionAttributes()
+    {
+        MStatus status;
+
+        MNodeClass nodeClass("mesh");
+        MDGModifier modifier;
+
+        MFnMessageAttribute msgAttrFn;
+        MObject attr = msgAttrFn.create("asAlphaMap", "asAlphaMap", &status);
+        AttributeUtils::makeInput(msgAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        MFnNumericAttribute numAttrFn;
+        attr = createNumericAttribute<int>(
+            numAttrFn,
+            "asMediumPriority",
+            "asMediumPriority",
+            MFnNumericData::kInt,
+            0,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asExportUVs",
+            "asExportUVs",
+            MFnNumericData::kBoolean,
+            true,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asExportNormals",
+            "asExportNormals",
+            MFnNumericData::kBoolean,
+            true,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asSmoothTangents",
+            "asSmoothTangents",
+            MFnNumericData::kBoolean,
+            false,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        addVisibilityExtensionAttributes(nodeClass, modifier);
+        modifier.doIt();
+    }
+
+    void addAreaLightExtensionAttributes()
+    {
+        MNodeClass nodeClass("areaLight");
+        MDGModifier modifier;
+
+        MStatus status;
+
+        MFnNumericAttribute numAttrFn;
+
+        MObject attr = createNumericAttribute<float>(
+            numAttrFn,
+            "asIntensityScale",
+            "asIntensityScale",
+            MFnNumericData::kFloat,
+            1.0f,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<float>(
+            numAttrFn,
+            "asExposure",
+            "asexposure",
+            MFnNumericData::kFloat,
+            0.0f,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asNormalize",
+            "asNormalize",
+            MFnNumericData::kBoolean,
+            false,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        addVisibilityExtensionAttributes(nodeClass, modifier);
+        modifier.doIt();
+    }
+
+    void addBump2dExtensionAttributes()
+    {
+        MNodeClass nodeClass("bump2d");
+        MDGModifier modifier;
+
+        MStatus status;
+
+        MFnEnumAttribute enumAttrFn;
+        MObject attr = enumAttrFn.create(
+            "asNormalMapMode",
+            "asNormalMapMode",
+            0);
+
+        enumAttrFn.addField("Unsigned", 0);
+        enumAttrFn.addField("Signed", 1);
+        AttributeUtils::makeInput(enumAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        MFnNumericAttribute numAttrFn;
+        attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asNormalMapFlipR",
+            "asNormalMapFlipR",
+            MFnNumericData::kBoolean,
+            false,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asNormalMapFlipG",
+            "asNormalMapFlipG",
+            MFnNumericData::kBoolean,
+            false,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asNormalMapSwapRG",
+            "asNormalMapSwapRG",
+            MFnNumericData::kBoolean,
+            false,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        modifier.doIt();
+    }
+
+    void addShadingEngineExtensionAttrs()
+    {
+        MNodeClass nodeClass("shadingEngine");
+        MDGModifier modifier;
+
+        MStatus status;
+
+        MFnNumericAttribute numAttrFn;
+
+        MObject attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asDoubleSided",
+            "asDoubleSided",
+            MFnNumericData::kBoolean,
+            false,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<int>(
+            numAttrFn,
+            "asShadingSamples",
+            "asShadingSamples",
+            MFnNumericData::kInt,
+            1,
+            status);
+        numAttrFn.setMin(1);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        modifier.doIt();
+    }
 }
-
-void addVisibilityExtensionAttributes(
-    const MNodeClass&   nodeClass,
-    MDGModifier&        modifier)
-{
-    MStatus status;
-
-    MFnNumericAttribute numAttrFn;
-    MObject attr = createNumericAttribute<bool>(
-        numAttrFn,
-        "asVisibilityCamera",
-        "asVisibilityCamera",
-        MFnNumericData::kBoolean,
-        true,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    attr = createNumericAttribute<bool>(
-        numAttrFn,
-        "asVisibilityLight",
-        "asVisibilityLight",
-        MFnNumericData::kBoolean,
-        true,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    attr = createNumericAttribute<bool>(
-        numAttrFn,
-        "asVisibilityShadow",
-        "asVisibilityShadow",
-        MFnNumericData::kBoolean,
-        true,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    attr = createNumericAttribute<bool>(
-        numAttrFn,
-        "asVisibilityDiffuse",
-        "asVisibilityDiffuse",
-        MFnNumericData::kBoolean,
-        true,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    attr = createNumericAttribute<bool>(
-        numAttrFn,
-        "asVisibilitySpecular",
-        "asVisibilitySpecular",
-        MFnNumericData::kBoolean,
-        true,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    attr = createNumericAttribute<bool>(
-        numAttrFn,
-        "asVisibilityGlossy",
-        "asVisibilityGlossy",
-        MFnNumericData::kBoolean,
-        true,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-}
-
-void addMeshExtensionAttributes()
-{
-    MStatus status;
-
-    MNodeClass nodeClass("mesh");
-    MDGModifier modifier;
-
-    MFnMessageAttribute msgAttrFn;
-    MObject attr = msgAttrFn.create("asAlphaMap", "asAlphaMap", &status);
-    AttributeUtils::makeInput(msgAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    MFnNumericAttribute numAttrFn;
-    attr = createNumericAttribute<int>(
-        numAttrFn,
-        "asMediumPriority",
-        "asMediumPriority",
-        MFnNumericData::kInt,
-        0,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    attr = createNumericAttribute<bool>(
-        numAttrFn,
-        "asExportUVs",
-        "asExportUVs",
-        MFnNumericData::kBoolean,
-        true,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    attr = createNumericAttribute<bool>(
-        numAttrFn,
-        "asExportNormals",
-        "asExportNormals",
-        MFnNumericData::kBoolean,
-        true,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    attr = createNumericAttribute<bool>(
-        numAttrFn,
-        "asSmoothTangents",
-        "asSmoothTangents",
-        MFnNumericData::kBoolean,
-        false,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    addVisibilityExtensionAttributes(nodeClass, modifier);
-    modifier.doIt();
-}
-
-void addAreaLightExtensionAttributes()
-{
-    MNodeClass nodeClass("areaLight");
-    MDGModifier modifier;
-
-    MStatus status;
-
-    MFnNumericAttribute numAttrFn;
-
-    MObject attr = createNumericAttribute<float>(
-        numAttrFn,
-        "asIntensityScale",
-        "asIntensityScale",
-        MFnNumericData::kFloat,
-        1.0f,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    attr = createNumericAttribute<float>(
-        numAttrFn,
-        "asExposure",
-        "asexposure",
-        MFnNumericData::kFloat,
-        0.0f,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    attr = createNumericAttribute<bool>(
-        numAttrFn,
-        "asNormalize",
-        "asNormalize",
-        MFnNumericData::kBoolean,
-        false,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    addVisibilityExtensionAttributes(nodeClass, modifier);
-    modifier.doIt();
-}
-
-void addBump2dExtensionAttributes()
-{
-    MNodeClass nodeClass("bump2d");
-    MDGModifier modifier;
-
-    MStatus status;
-
-    MFnEnumAttribute enumAttrFn;
-    MObject attr = enumAttrFn.create(
-        "asNormalMapMode",
-        "asNormalMapMode",
-        0);
-
-    enumAttrFn.addField("Unsigned", 0);
-    enumAttrFn.addField("Signed", 1);
-    AttributeUtils::makeInput(enumAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    MFnNumericAttribute numAttrFn;
-    attr = createNumericAttribute<bool>(
-        numAttrFn,
-        "asNormalMapFlipR",
-        "asNormalMapFlipR",
-        MFnNumericData::kBoolean,
-        false,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    attr = createNumericAttribute<bool>(
-        numAttrFn,
-        "asNormalMapFlipG",
-        "asNormalMapFlipG",
-        MFnNumericData::kBoolean,
-        false,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    attr = createNumericAttribute<bool>(
-        numAttrFn,
-        "asNormalMapSwapRG",
-        "asNormalMapSwapRG",
-        MFnNumericData::kBoolean,
-        false,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    modifier.doIt();
-}
-
-void addShadingEngineExtensionAttrs()
-{
-    MNodeClass nodeClass("shadingEngine");
-    MDGModifier modifier;
-
-    MStatus status;
-
-    MFnNumericAttribute numAttrFn;
-
-    MObject attr = createNumericAttribute<bool>(
-        numAttrFn,
-        "asDoubleSided",
-        "asDoubleSided",
-        MFnNumericData::kBoolean,
-        false,
-        status);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    attr = createNumericAttribute<int>(
-        numAttrFn,
-        "asShadingSamples",
-        "asShadingSamples",
-        MFnNumericData::kInt,
-        1,
-        status);
-    numAttrFn.setMin(1);
-    AttributeUtils::makeInput(numAttrFn);
-    modifier.addExtensionAttribute(nodeClass, attr);
-
-    modifier.doIt();
-}
-
-} // unnamed.
 
 MStatus addExtensionAttributes()
 {

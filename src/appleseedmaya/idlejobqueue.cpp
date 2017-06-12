@@ -45,33 +45,31 @@
 
 namespace
 {
+    MCallbackId g_callbackId;
 
-MCallbackId g_callbackId;
+    std::queue<std::function<void ()>> g_jobQueue;
+    std::mutex g_jobQueueMutex;
 
-std::queue<std::function<void ()>> g_jobQueue;
-std::mutex g_jobQueueMutex;
-
-static void idleCallback(void* clientData)
-{
-    while (true)
+    static void idleCallback(void* clientData)
     {
-        std::function<void ()> job;
-
+        while (true)
         {
-            std::lock_guard<std::mutex> lock(g_jobQueueMutex);
+            std::function<void ()> job;
 
-            if (g_jobQueue.empty())
-                break;
+            {
+                std::lock_guard<std::mutex> lock(g_jobQueueMutex);
 
-            job = g_jobQueue.front();
-            g_jobQueue.pop();
+                if (g_jobQueue.empty())
+                    break;
+
+                job = g_jobQueue.front();
+                g_jobQueue.pop();
+            }
+
+            job();
         }
-
-        job();
     }
 }
-
-} // unnamed.
 
 namespace IdleJobQueue
 {

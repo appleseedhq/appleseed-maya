@@ -51,25 +51,23 @@ namespace asr = renderer;
 
 namespace
 {
-
-struct RampEntry
-{
-    RampEntry(float pos, const MColor& col)
-      : m_pos(pos)
-      , m_col(col)
+    struct RampEntry
     {
-    }
+        RampEntry(float pos, const MColor& col)
+          : m_pos(pos)
+          , m_col(col)
+        {
+        }
 
-    bool operator<(const RampEntry& other) const
-    {
-        return m_pos < other.m_pos;
-    }
+        bool operator<(const RampEntry& other) const
+        {
+            return m_pos < other.m_pos;
+        }
 
-    float   m_pos;
-    MColor  m_col;
-};
-
-} // unnamed
+        float   m_pos;
+        MColor  m_col;
+    };
+}
 
 void RampExporter::registerExporter()
 {

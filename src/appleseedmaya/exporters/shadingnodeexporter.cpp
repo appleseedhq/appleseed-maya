@@ -58,13 +58,10 @@ namespace asr = renderer;
 
 namespace
 {
-
-const char* g_colorComponentNames[] = {"compR", "compG", "compB"};
-const char* g_vectorComponentNames[] = {"compX", "compY", "compZ"};
-const char* g_uvComponentNames[] = {"compU", "compV"};
-
-const char* g_componentParamName = "comp";
-
+    const char* g_colorComponentNames[] = {"compR", "compG", "compB"};
+    const char* g_vectorComponentNames[] = {"compX", "compY", "compZ"};
+    const char* g_uvComponentNames[] = {"compU", "compV"};
+    const char* g_componentParamName = "comp";
 }
 
 void ShadingNodeExporter::registerExporters()

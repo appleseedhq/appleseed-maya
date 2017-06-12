@@ -53,28 +53,26 @@ namespace asr = renderer;
 
 namespace
 {
-
-MStatus logUnknownAttributeFound(
-    const MPlug&    outputPlug,
-    const MString&  nodeTypeName)
-{
-    MStatus status;
-    const MString attrName =
-        outputPlug.partialName(
-            false,
-            false,
-            false,
-            false,
-            false,
-            true,   // use long names.
-            &status);
-    RENDERER_LOG_DEBUG(
-        "Skipping unknown attribute %s of shading node %s",
-        attrName.asChar(),
-        nodeTypeName.asChar());
-    return status;
-}
-
+    MStatus logUnknownAttributeFound(
+        const MPlug&    outputPlug,
+        const MString&  nodeTypeName)
+    {
+        MStatus status;
+        const MString attrName =
+            outputPlug.partialName(
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,   // use long names.
+                &status);
+        RENDERER_LOG_DEBUG(
+            "Skipping unknown attribute %s of shading node %s",
+            attrName.asChar(),
+            nodeTypeName.asChar());
+        return status;
+    }
 }
 
 ShadingNetworkExporter::ShadingNetworkExporter(

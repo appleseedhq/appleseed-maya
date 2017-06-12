@@ -47,51 +47,50 @@ namespace asr = renderer;
 
 namespace Logger
 {
+
 namespace
 {
-
-class LogTarget
-  : public asf::ILogTarget
-{
-  public:
-    void release() override
+    class LogTarget
+      : public asf::ILogTarget
     {
-        delete this;
-    }
-
-    virtual void write(
-        const asf::LogMessage::Category  category,
-        const char*                      file,
-        const size_t                     line,
-        const char*                      header,
-        const char*                      message)
-    {
-        switch (category)
+      public:
+        void release() override
         {
-            case asf::LogMessage::Debug:
-                MGlobal::displayInfo(MString("[Debug]") + MString(message));
-            break;
-
-            case asf::LogMessage::Info:
-                MGlobal::displayInfo(MString("[Info]") + message);
-            break;
-
-            case asf::LogMessage::Warning:
-                MGlobal::displayWarning(MString("[Warning]") + message);
-            break;
-
-            case asf::LogMessage::Error:
-            case asf::LogMessage::Fatal:
-            default:
-                MGlobal::displayError(MString("[Error]") + message);
-            break;
+            delete this;
         }
-    }
-};
 
-LogTarget gLogTarget;
+        virtual void write(
+            const asf::LogMessage::Category  category,
+            const char*                      file,
+            const size_t                     line,
+            const char*                      header,
+            const char*                      message)
+        {
+            switch (category)
+            {
+                case asf::LogMessage::Debug:
+                    MGlobal::displayInfo(MString("[Debug]") + MString(message));
+                break;
 
-} // unnamed namespace.
+                case asf::LogMessage::Info:
+                    MGlobal::displayInfo(MString("[Info]") + message);
+                break;
+
+                case asf::LogMessage::Warning:
+                    MGlobal::displayWarning(MString("[Warning]") + message);
+                break;
+
+                case asf::LogMessage::Error:
+                case asf::LogMessage::Fatal:
+                default:
+                    MGlobal::displayError(MString("[Error]") + message);
+                break;
+            }
+        }
+    };
+
+    LogTarget gLogTarget;
+}
 
 MStatus initialize()
 {

@@ -214,13 +214,11 @@ bool DagNodeExporter::areObjectAndParentsRenderable(const MDagPath& path)
 // This comes from Alembic's Maya AbcExport plugin.
 namespace
 {
-
-struct NodesToCheckStruct
-{
-    MObject node;
-    bool    checkParent;
-};
-
+    struct NodesToCheckStruct
+    {
+        MObject node;
+        bool    checkParent;
+    };
 }
 
 bool DagNodeExporter::isAnimated(MObject object, bool checkParent)

@@ -51,27 +51,25 @@ namespace asr = renderer;
 
 namespace
 {
-
-struct RemapColorEntry
-{
-    RemapColorEntry(float pos, float val, int in)
-      : m_pos(pos)
-      , m_value(val)
-      , m_interp(in)
+    struct RemapColorEntry
     {
-    }
+        RemapColorEntry(float pos, float val, int in)
+          : m_pos(pos)
+          , m_value(val)
+          , m_interp(in)
+        {
+        }
 
-    bool operator<(const RemapColorEntry& other) const
-    {
-        return m_pos < other.m_pos;
-    }
+        bool operator<(const RemapColorEntry& other) const
+        {
+            return m_pos < other.m_pos;
+        }
 
-    float   m_pos;
-    float   m_value;
-    int     m_interp;
-};
-
-} // unnamed
+        float   m_pos;
+        float   m_value;
+        int     m_interp;
+    };
+}
 
 void RemapColorExporter::registerExporter()
 {

@@ -51,46 +51,44 @@ namespace asr = renderer;
 
 namespace
 {
-
-struct RemapValueEntry
-{
-    RemapValueEntry(float pos, float val, int vin)
-      : m_pos(pos)
-      , m_value(val)
-      , m_interp(vin)
+    struct RemapValueEntry
     {
-    }
+        RemapValueEntry(float pos, float val, int vin)
+          : m_pos(pos)
+          , m_value(val)
+          , m_interp(vin)
+        {
+        }
 
-    bool operator<(const RemapValueEntry& other) const
+        bool operator<(const RemapValueEntry& other) const
+        {
+            return m_pos < other.m_pos;
+        }
+
+        float   m_pos;
+        float   m_value;
+        int     m_interp;
+    };
+
+    struct RemapColorsEntry
     {
-        return m_pos < other.m_pos;
-    }
+        RemapColorsEntry(float pos, const MColor& col, int cin)
+          : m_pos(pos)
+          , m_color(col)
+          , m_interp(cin)
+        {
+        }
 
-    float   m_pos;
-    float   m_value;
-    int     m_interp;
-};
+        bool operator<(const RemapColorsEntry& other) const
+        {
+            return m_pos < other.m_pos;
+        }
 
-struct RemapColorsEntry
-{
-    RemapColorsEntry(float pos, const MColor& col, int cin)
-      : m_pos(pos)
-      , m_color(col)
-      , m_interp(cin)
-    {
-    }
-
-    bool operator<(const RemapColorsEntry& other) const
-    {
-        return m_pos < other.m_pos;
-    }
-
-    float   m_pos;
-    MColor  m_color;
-    int     m_interp;
-};
-
-} // unnamed
+        float   m_pos;
+        MColor  m_color;
+        int     m_interp;
+    };
+}
 
 void RemapValueExporter::registerExporter()
 {

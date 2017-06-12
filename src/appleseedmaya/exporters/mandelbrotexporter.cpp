@@ -51,46 +51,44 @@ namespace asr = renderer;
 
 namespace
 {
-
-struct MandelbrotColorsEntry
-{
-    MandelbrotColorsEntry(float pos, const MColor& col, int interp)
-      : m_pos(pos)
-      , m_col(col)
-      , m_interp(interp)
+    struct MandelbrotColorsEntry
     {
-    }
+        MandelbrotColorsEntry(float pos, const MColor& col, int interp)
+          : m_pos(pos)
+          , m_col(col)
+          , m_interp(interp)
+        {
+        }
 
-    bool operator<(const MandelbrotColorsEntry& other) const
+        bool operator<(const MandelbrotColorsEntry& other) const
+        {
+            return m_pos < other.m_pos;
+        }
+
+        float   m_pos;
+        MColor  m_col;
+        int     m_interp;
+    };
+
+    struct MandelbrotValuesEntry
     {
-        return m_pos < other.m_pos;
-    }
+        MandelbrotValuesEntry(float pos, float val, int interp)
+          : m_pos(pos)
+          , m_val(val)
+          , m_interp(interp)
+        {
+        }
 
-    float   m_pos;
-    MColor  m_col;
-    int     m_interp;
-};
+        bool operator<(const MandelbrotValuesEntry& other) const
+        {
+            return m_pos < other.m_pos;
+        }
 
-struct MandelbrotValuesEntry
-{
-    MandelbrotValuesEntry(float pos, float val, int interp)
-      : m_pos(pos)
-      , m_val(val)
-      , m_interp(interp)
-    {
-    }
-
-    bool operator<(const MandelbrotValuesEntry& other) const
-    {
-        return m_pos < other.m_pos;
-    }
-
-    float   m_pos;
-    float   m_val;
-    int     m_interp;
-};
-
-} // unnamed
+        float   m_pos;
+        float   m_val;
+        int     m_interp;
+    };
+}
 
 void MandelbrotExporter::registerExporter()
 {

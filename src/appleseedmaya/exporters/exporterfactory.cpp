@@ -67,24 +67,22 @@ namespace asr = renderer;
 
 namespace
 {
+    typedef std::map<
+        MString,
+        NodeExporterFactory::CreateDagNodeExporterFn,
+        MStringCompareLess
+        > CreateDagExporterMapType;
 
-typedef std::map<
-    MString,
-    NodeExporterFactory::CreateDagNodeExporterFn,
-    MStringCompareLess
-    > CreateDagExporterMapType;
+    CreateDagExporterMapType            gDagNodeExporters;
 
-CreateDagExporterMapType            gDagNodeExporters;
+    typedef std::map<
+        MString,
+        NodeExporterFactory::CreateShadingNodeExporterFn,
+        MStringCompareLess
+        > CreateShadingNodeExporterMapType;
 
-typedef std::map<
-    MString,
-    NodeExporterFactory::CreateShadingNodeExporterFn,
-    MStringCompareLess
-    > CreateShadingNodeExporterMapType;
-
-CreateShadingNodeExporterMapType    gShadingNodeExporters;
-
-} // unnamed
+    CreateShadingNodeExporterMapType    gShadingNodeExporters;
+}
 
 MStatus NodeExporterFactory::initialize(const MString& pluginPath)
 {
