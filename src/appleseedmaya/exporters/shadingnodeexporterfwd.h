@@ -35,7 +35,7 @@
 // Standard headers.
 #include <memory>
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/utils.h"
 
 class ShadingNodeExporter;

@@ -48,7 +48,7 @@
 // appleseed.foundation headers.
 #include "foundation/core/concepts/noncopyable.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/exporters/shadingnodeexporterfwd.h"
 #include "appleseedmaya/utils.h"

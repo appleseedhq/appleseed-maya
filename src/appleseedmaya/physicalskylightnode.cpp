@@ -35,7 +35,7 @@
 #include <maya/MFnUnitAttribute.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/envlightdraw.h"

@@ -43,7 +43,7 @@
 #include <maya/MSyntax.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/config.h"

@@ -48,7 +48,7 @@
 // appleseed.foundation headers.
 #include "foundation/utility/string.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/alphamapexporter.h"
 #include "appleseedmaya/exporters/exporterfactory.h"

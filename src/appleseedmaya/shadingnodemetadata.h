@@ -41,7 +41,7 @@
 #include "foundation/core/concepts/noncopyable.h"
 #include "foundation/utility/containers/dictionary.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/utils.h"
 
 // Forward declarations.

@@ -41,7 +41,7 @@
 #include <maya/MNodeClass.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/logger.h"
 

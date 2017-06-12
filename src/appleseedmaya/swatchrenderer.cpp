@@ -58,7 +58,7 @@
 #include "renderer/api/rendering.h"
 #include "renderer/api/scene.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/utils.h"
 

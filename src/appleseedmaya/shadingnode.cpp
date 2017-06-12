@@ -42,7 +42,7 @@
 #include "foundation/math/vector.h"
 #include "foundation/utility/string.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/shadingnodemetadata.h"

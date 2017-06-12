@@ -40,7 +40,7 @@
 #include <maya/MSelectionList.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exceptions.h"
 
 MStatus getDependencyNodeByName(const MString& name, MObject& node)

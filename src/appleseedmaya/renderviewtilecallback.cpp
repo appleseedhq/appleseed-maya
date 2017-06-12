@@ -48,7 +48,7 @@
 #include "renderer/api/frame.h"
 #include "renderer/api/log.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/idlejobqueue.h"
 #include "appleseedmaya/utils.h"
 

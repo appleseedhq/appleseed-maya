@@ -39,7 +39,7 @@
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/exporters/shadingnetworkexporter.h"

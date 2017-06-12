@@ -29,7 +29,7 @@
 // Interface header.
 #include "idlejobqueue.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/logger.h"
 
 // Maya headers.

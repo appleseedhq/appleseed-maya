@@ -38,7 +38,7 @@
 #include <maya/MFnDependencyNode.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exceptions.h"
 #include "appleseedmaya/exporters/alphamapexporter.h"
 #include "appleseedmaya/exporters/arealightexporter.h"

@@ -36,7 +36,7 @@
 #include <maya/MString.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/utils.h"
 
 // appleseed.foundation headers.

@@ -37,7 +37,7 @@
 #include "renderer/api/project.h"
 #include "renderer/api/scene.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 
 namespace asf = foundation;

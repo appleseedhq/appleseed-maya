@@ -47,7 +47,7 @@
 // appleseed.renderer headers.
 #include "renderer/api/utility.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/utils.h"
 

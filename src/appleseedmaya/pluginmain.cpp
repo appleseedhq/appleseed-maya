@@ -32,7 +32,7 @@
 #include <maya/MSwatchRenderRegister.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/alphamapnode.h"
 #include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/appleseedtranslator.h"

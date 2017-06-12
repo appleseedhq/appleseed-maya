@@ -29,7 +29,7 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_REMAPCOLOREXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_REMAPCOLOREXPORTER_H
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exporters/shadingnodeexporter.h"
 
 class RemapColorExporter

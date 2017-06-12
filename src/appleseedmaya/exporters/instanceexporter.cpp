@@ -32,7 +32,7 @@
 // Standard headers.
 #include <iostream>
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/appleseedsession.h"
 
 namespace asf = foundation;

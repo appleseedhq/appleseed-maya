@@ -36,7 +36,7 @@
 #include <maya/MTypeId.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/appleseedsession.h"
 
 // Forward declarations.

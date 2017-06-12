@@ -42,7 +42,7 @@
 // appleseed.foundation headers.
 #include "foundation/utility/string.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/logger.h"
 

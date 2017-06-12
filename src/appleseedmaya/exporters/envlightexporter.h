@@ -29,7 +29,7 @@
 #ifndef APPLESEED_MAYA_EXPORTERS_ENVLIGHTEXPORTER_H
 #define APPLESEED_MAYA_EXPORTERS_ENVLIGHTEXPORTER_H
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
 // appleseed.renderer headers.

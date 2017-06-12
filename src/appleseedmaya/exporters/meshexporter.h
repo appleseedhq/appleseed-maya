@@ -46,7 +46,7 @@
 #include "renderer/api/object.h"
 #include "renderer/api/scene.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exporters/alphamapexporterfwd.h"
 #include "appleseedmaya/exporters/shapeexporter.h"
 

@@ -36,7 +36,7 @@
 #include "renderer/api/scene.h"
 #include "renderer/api/utility.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
 // Forward declarations.

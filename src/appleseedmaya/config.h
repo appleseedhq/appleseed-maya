@@ -34,7 +34,7 @@
 #include <maya/MStatus.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/version.h"
 

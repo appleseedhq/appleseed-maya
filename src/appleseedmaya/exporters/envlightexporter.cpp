@@ -37,7 +37,7 @@
 #include "renderer/api/environmentedf.h"
 #include "renderer/api/scene.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/physicalskylightnode.h"

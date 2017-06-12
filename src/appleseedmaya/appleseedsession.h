@@ -39,7 +39,7 @@
 #include <maya/MString.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exporters/alphamapexporterfwd.h"
 #include "appleseedmaya/exporters/shadingengineexporterfwd.h"
 #include "appleseedmaya/exporters/shadingnetworkexporterfwd.h"

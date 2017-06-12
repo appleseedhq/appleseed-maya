@@ -32,7 +32,7 @@
 // Standard headers.
 #include <string>
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 
 // appleseed.renderer headers.

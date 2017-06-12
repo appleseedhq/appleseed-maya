@@ -42,7 +42,7 @@
 // appleseed.renderer headers.
 #include "renderer/api/rendering.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/renderercontroller.h"
 #include "appleseedmaya/utils.h"
 

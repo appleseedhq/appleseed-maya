@@ -74,7 +74,7 @@
 #include "renderer/api/scene.h"
 #include "renderer/api/utility.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exceptions.h"
 #include "appleseedmaya/exporters/alphamapexporter.h"

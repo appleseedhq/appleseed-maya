@@ -46,7 +46,7 @@
 #include "renderer/api/utility.h"
 #include "renderer/api/surfaceshader.h"
 
-// appleseed.maya headers.
+// appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/config.h"
 #include "appleseedmaya/typeids.h"
