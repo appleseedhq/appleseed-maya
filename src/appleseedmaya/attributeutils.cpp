@@ -35,7 +35,7 @@
 
 namespace
 {
-    template<class T>
+    template <class T>
     MStatus get3(const MPlug& plug, T& x, T& y, T& z)
     {
         if (!plug.isCompound())

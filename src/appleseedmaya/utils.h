@@ -70,7 +70,7 @@ struct MStringCompareLess
 //  Smart ptr that holds  an appleseed entity and keeps track of ownership.
 //
 
-template<class T>
+template <class T>
 class AppleseedEntityPtr
   : public foundation::NonCopyable
 {
@@ -123,7 +123,7 @@ class AppleseedEntityPtr
         return foundation::auto_release_ptr<T>(m_ptr);
     }
 
-    template<class U>
+    template <class U>
     foundation::auto_release_ptr<U> releaseAs()
     {
         assert(m_releaseObj);
@@ -154,7 +154,7 @@ class AppleseedEntityPtr
 };
 
 // Insert an appleseed entity into a container with an unique name.
-template<class Container, class T>
+template <class Container, class T>
 void insertEntityWithUniqueName(
     Container&              container,
     AppleseedEntityPtr<T>&  entity)
