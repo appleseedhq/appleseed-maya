@@ -35,7 +35,7 @@ from logger import logger
 
 
 def hyperShadePanelBuildCreateMenuCallback():
-    mc.menuItem(label="Appleseed")
+    mc.menuItem(label="appleseed")
     mc.menuItem(divider=True)
 
 def hyperShadePanelBuildCreateSubMenuCallback():
@@ -122,7 +122,7 @@ def buildRenderNodeTreeListerContentCallback(tl, postCommand, filterString):
     melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
         tl,
         postCommand,
-        "Appleseed/Surface",
+        "appleseed/Surface",
         "rendernode/appleseed/surface",
         "-asShader",
         ""
@@ -133,7 +133,7 @@ def buildRenderNodeTreeListerContentCallback(tl, postCommand, filterString):
     melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
         tl,
         postCommand,
-        "Appleseed/2D Textures",
+        "appleseed/2D Textures",
         "rendernode/appleseed/texture/2d",
         "-asTexture",
         ""
@@ -144,7 +144,7 @@ def buildRenderNodeTreeListerContentCallback(tl, postCommand, filterString):
     melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
         tl,
         postCommand,
-        "Appleseed/3D Textures",
+        "appleseed/3D Textures",
         "rendernode/appleseed/texture/3d",
         "-asTexture",
         ""
@@ -155,7 +155,7 @@ def buildRenderNodeTreeListerContentCallback(tl, postCommand, filterString):
     melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
         tl,
         postCommand,
-        "Appleseed/Utilities",
+        "appleseed/Utilities",
         "rendernode/appleseed/utility",
         "-asUtility",
         ""

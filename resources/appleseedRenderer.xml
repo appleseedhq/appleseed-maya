@@ -26,7 +26,7 @@
         "t" the parameter types, used in help description.
         "h" the help description.
 -->
-<renderer desc="Appleseed renderer">
+<renderer desc="appleseed renderer">
   <melheader s='string $opt=""; string $rl=""; string $rp=""; float $resize=-1.; loadPlugin appleseedMaya;'/>
   <meltrailer s='setMayaSoftwareLayers($rl, $rp); setImageSizePercent($resize);mayaBatchRenderProcedure(0, "", "", "appleseed", $opt); '/>
   <sep/>

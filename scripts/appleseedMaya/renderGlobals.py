@@ -95,7 +95,7 @@ def renderSettingsBuiltCallback(renderer):
         "appleseed",
         edit=True,
         addGlobalsTab=(
-            "Appleseed",
+            "appleseed",
             "appleseedCreateAppleseedTabProcedure",
             "appleseedUpdateAppleseedTabProcedure"
             )

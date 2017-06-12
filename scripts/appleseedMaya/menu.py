@@ -42,7 +42,7 @@ def showAbout():
     if mc.window('appleseedAboutDialog', query=True, exists=True):
         mc.deleteUI('appleseedAboutDialog')
 
-    window = mc.window('appleseedAboutDialog', title='Appleseed Maya')
+    window = mc.window('appleseedAboutDialog', title='appleseed-maya')
 
     mc.columnLayout(rs=20, columnOffset=['both', 22], width=300)
     mc.text('', height=10)
@@ -72,7 +72,7 @@ def createMenu():
     deleteMenu()
 
     gMainWindow = mel.eval('$temp1=$gMainWindow')
-    __g_appleseedMenu = mc.menu('appleseedMenu', parent=gMainWindow, label='Appleseed', tearOff=True)
+    __g_appleseedMenu = mc.menu('appleseedMenu', parent=gMainWindow, label='appleseed', tearOff=True)
 
     mc.menuItem('appleseedLightMenu', subMenu=True, label='Lights', to=True, parent='appleseedMenu')
     mc.menuItem(

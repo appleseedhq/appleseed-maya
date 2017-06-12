@@ -69,7 +69,7 @@ void* FinalRenderCommand::creator()
 
 MStatus FinalRenderCommand::doIt(const MArgList& args)
 {
-    std::cout << "Appleseed Render:\n";
+    std::cout << "appleseed Render:\n";
     std::cout << "-----------------\n";
 
     // In case we were rendering.
@@ -175,7 +175,7 @@ MStatus ProgressiveRenderCommand::doIt(const MArgList& args)
     //assert(MRenderView::doesRenderEditorExist());
 
     /*
-    std::cout << "Appleseed IPR:\n";
+    std::cout << "appleseed IPR:\n";
     std::cout << "--------------\n";
 
     // In case we were rendering.

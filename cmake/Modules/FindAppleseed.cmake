@@ -1,6 +1,6 @@
 # Copyright (c) 2013 Esteban Tovagliari
 
-# Find Appleseed's headers and libraries.
+# Find appleseed's headers and libraries.
 #
 #  This module defines
 # APPLESEED_INCLUDE_DIRS - where to find APPLESEED includes.

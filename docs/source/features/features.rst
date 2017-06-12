@@ -4,7 +4,7 @@
 Features
 ********
 
-Appleseed-maya is an appleseed plugin for Autodesk® Maya®.
+appleseed-maya is an appleseed plugin for Autodesk® Maya®.
 
 Main exporter features
 ======================
