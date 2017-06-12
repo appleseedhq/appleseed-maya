@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_MURMUR_HASH_H
-#define APPLESEED_MAYA_MURMUR_HASH_H
+#ifndef APPLESEED_MAYA_MURMURHASH_H
+#define APPLESEED_MAYA_MURMURHASH_H
 
 // Standard headers.
 #include <cstdint>
@@ -107,4 +107,4 @@ class MurmurHash
 
 std::ostream& operator<<(std::ostream& o, const MurmurHash& hash);
 
-#endif  // !APPLESEED_MAYA_MURMUR_HASH_H
+#endif  // !APPLESEED_MAYA_MURMURHASH_H

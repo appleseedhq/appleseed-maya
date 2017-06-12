@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SESSION_H
-#define APPLESEED_MAYA_SESSION_H
+#ifndef APPLESEED_MAYA_APPLESEEDSESSION_H
+#define APPLESEED_MAYA_APPLESEEDSESSION_H
 
 // Standard headers.
 #include <set>
@@ -157,4 +157,4 @@ const Options& options();
 
 } // namespace AppleseedSession.
 
-#endif  // !APPLESEED_MAYA_SESSION_H
+#endif  // !APPLESEED_MAYA_APPLESEEDSESSION_H

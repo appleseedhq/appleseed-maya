@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SHADING_NODE_H
-#define APPLESEED_MAYA_SHADING_NODE_H
+#ifndef APPLESEED_MAYA_SHADINGNODE_H
+#define APPLESEED_MAYA_SHADINGNODE_H
 
 // Maya headers.
 #include <maya/MPxNode.h>
@@ -59,4 +59,4 @@ class ShadingNode
         MStatus&                status);
 };
 
-#endif  // !APPLESEED_MAYA_SHADING_NODE_H
+#endif  // !APPLESEED_MAYA_SHADINGNODE_H

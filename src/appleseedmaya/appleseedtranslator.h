@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_TRANSLATOR_H
-#define APPLESEED_MAYA_TRANSLATOR_H
+#ifndef APPLESEED_MAYA_APPLESEEDTRANSLATOR_H
+#define APPLESEED_MAYA_APPLESEEDTRANSLATOR_H
 
 // Maya headers.
 #include <maya/MPxFileTranslator.h>
@@ -58,4 +58,4 @@ class AppleseedTranslator
     MString defaultExtension() const override;
 };
 
-#endif  // !APPLESEED_MAYA_TRANSLATOR_H
+#endif  // !APPLESEED_MAYA_APPLESEEDTRANSLATOR_H

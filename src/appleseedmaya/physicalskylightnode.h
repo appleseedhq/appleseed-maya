@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_PHYSICAL_SKY_LIGHT_NODE_H
-#define APPLESEED_MAYA_PHYSICAL_SKY_LIGHT_NODE_H
+#ifndef APPLESEED_MAYA_PHYSICALSKYLIGHTNODE_H
+#define APPLESEED_MAYA_PHYSICALSKYLIGHTNODE_H
 
 // Maya headers.
 #include <maya/MColor.h>
@@ -119,4 +119,4 @@ class PhysicalSkyLightDrawOverride
         const MUserData*                data);
 };
 
-#endif  // !APPLESEED_MAYA_PHYSICAL_SKY_LIGHT_NODE_H
+#endif  // !APPLESEED_MAYA_PHYSICALSKYLIGHTNODE_H

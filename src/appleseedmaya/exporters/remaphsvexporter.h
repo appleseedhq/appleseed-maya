@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_REMAPHSV_EXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_REMAPHSV_EXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_REMAPHSVEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_REMAPHSVEXPORTER_H
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/shadingnodeexporter.h"
@@ -55,4 +55,4 @@ class RemapHsvExporter
         renderer::ParamArray&   shaderParams) const override;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_REMAPHSV_EXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_REMAPHSVEXPORTER_H

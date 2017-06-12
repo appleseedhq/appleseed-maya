@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SWATCH_RENDERER_H
-#define APPLESEED_MAYA_SWATCH_RENDERER_H
+#ifndef APPLESEED_MAYA_SWATCHRENDERER_H
+#define APPLESEED_MAYA_SWATCHRENDERER_H
 
 // Maya headers.
 #include <maya/MSwatchRenderBase.h>
@@ -58,4 +58,4 @@ class SwatchRenderer
         int     imageResolution);
 };
 
-#endif  // !APPLESEED_MAYA_SWATCH_RENDERER_H
+#endif  // !APPLESEED_MAYA_SWATCHRENDERER_H

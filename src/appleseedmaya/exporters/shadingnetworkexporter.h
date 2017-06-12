@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADINGNETWORKEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_SHADINGNETWORKEXPORTER_H
 
 // Forward declaration header.
 #include "shadingnetworkexporterfwd.h"
@@ -94,4 +94,4 @@ class ShadingNetworkExporter
     ShadingNodeExporterMap                      m_namesToExporters;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NETWORK_EXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADINGNETWORKEXPORTER_H

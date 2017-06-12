@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDER_COMMANDS_H
-#define APPLESEED_MAYA_RENDER_COMMANDS_H
+#ifndef APPLESEED_MAYA_RENDERCOMMANDS_H
+#define APPLESEED_MAYA_RENDERCOMMANDS_H
 
 // Maya headers.
 #include <maya/MPxCommand.h>
@@ -57,4 +57,4 @@ class ProgressiveRenderCommand
     MStatus doIt(const MArgList& args) override;
 };
 
-#endif  // !APPLESEED_MAYA_RENDER_COMMAND_H
+#endif  // !APPLESEED_MAYA_RENDERCOMMANDS_H

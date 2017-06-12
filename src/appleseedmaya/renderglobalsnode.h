@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDER_GLOBALS_NODE_H
-#define APPLESEED_MAYA_RENDER_GLOBALS_NODE_H
+#ifndef APPLESEED_MAYA_RENDERGLOBALSNODE_H
+#define APPLESEED_MAYA_RENDERGLOBALSNODE_H
 
 // Maya headers.
 #include <maya/MObject.h>
@@ -98,4 +98,4 @@ class RenderGlobalsNode
     static MObject m_imageFormat;
 };
 
-#endif  // !APPLESEED_MAYA_RENDER_GLOBALS_NODE_H
+#endif  // !APPLESEED_MAYA_RENDERGLOBALSNODE_H

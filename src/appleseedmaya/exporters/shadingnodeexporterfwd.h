@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_FWD_H
-#define APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_FWD_H
+#ifndef APPLESEED_MAYA_EXPORTERS_SHADINGNODEEXPORTERFWD_H
+#define APPLESEED_MAYA_EXPORTERS_SHADINGNODEEXPORTERFWD_H
 
 // Standard headers.
 #include <map>
@@ -43,4 +43,4 @@ typedef std::shared_ptr<ShadingNodeExporter> ShadingNodeExporterPtr;
 
 typedef std::map<MString, ShadingNodeExporter*, MStringCompareLess> ShadingNodeExporterMap;
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_SHADING_NODE_EXPORTER_FWD_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_SHADINGNODEEXPORTERFWD_H

@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_PLACE3DTEXTURE_EXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_PLACE3DTEXTURE_EXPORTER_H
+#ifndef APPLESEED_MAYA_EXPORTERS_PLACE3DTEXTUREEXPORTER_H
+#define APPLESEED_MAYA_EXPORTERS_PLACE3DTEXTUREEXPORTER_H
 
 // appleseed.maya headers.
 #include "appleseedmaya/exporters/shadingnodeexporter.h"
@@ -59,4 +59,4 @@ class Place3dTextureExporter
         renderer::ParamArray&   shaderParams) const override;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_PLACE3DTEXTURE_EXPORTER_H
+#endif  // !APPLESEED_MAYA_EXPORTERS_PLACE3DTEXTUREEXPORTER_H

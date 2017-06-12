@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_HYPERSHADE_RENDERER_H
-#define APPLESEED_MAYA_HYPERSHADE_RENDERER_H
+#ifndef APPLESEED_MAYA_HYPERSHADERENDERER_H
+#define APPLESEED_MAYA_HYPERSHADERENDERER_H
 
 // Maya headers.
 #include <maya/MPxRenderer.h>
@@ -69,4 +69,4 @@ class HypershadeRenderer
     MStatus translateShader(const MUuid& id, const MObject& node) override;
 };
 
-#endif  // !APPLESEED_MAYA_HYPERSHADE_RENDERER_H
+#endif  // !APPLESEED_MAYA_HYPERSHADERENDERER_H
