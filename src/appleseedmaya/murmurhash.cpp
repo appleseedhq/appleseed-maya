@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/murmurhash.h"
+#include "murmurhash.h"
 
 // appleseed.renderer headers.
 #include "renderer/utility/paramarray.h"

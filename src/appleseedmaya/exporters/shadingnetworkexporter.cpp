@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/shadingnetworkexporter.h"
+#include "shadingnetworkexporter.h"
 
 // Standard headers.
 #include <algorithm>

@@ -26,7 +26,7 @@
 // THE SOFTWARE.
 //
 
-// interface header.
+// Interface header.
 #include "shadingnoderegistry.h"
 
 // Standard library headers.

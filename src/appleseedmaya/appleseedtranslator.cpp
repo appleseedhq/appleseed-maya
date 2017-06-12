@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/appleseedtranslator.h"
+#include "appleseedtranslator.h"
 
 // Standard headers.
 #include <cstdlib>

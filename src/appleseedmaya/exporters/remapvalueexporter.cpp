@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/remapvalueexporter.h"
+#include "remapvalueexporter.h"
 
 // Standard headers.
 #include <algorithm>

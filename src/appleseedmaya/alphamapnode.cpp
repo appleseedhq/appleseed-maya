@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/alphamapnode.h"
+#include "alphamapnode.h"
 
 // Maya headers.
 #include <maya/MFileObject.h>

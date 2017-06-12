@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/envlightdraw.h"
+#include "envlightdraw.h"
 
 // Standard headers.
 #include <cmath>

@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/cameraexporter.h"
+#include "cameraexporter.h"
 
 // Maya headers.
 #include <maya/MFnCamera.h>

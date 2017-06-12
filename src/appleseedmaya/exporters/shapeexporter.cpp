@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/shapeexporter.h"
+#include "shapeexporter.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"

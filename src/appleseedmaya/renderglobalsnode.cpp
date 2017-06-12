@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/renderglobalsnode.h"
+#include "renderglobalsnode.h"
 
 // Maya headers.
 #include <maya/MAnimControl.h>

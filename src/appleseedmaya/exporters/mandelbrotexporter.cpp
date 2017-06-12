@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/mandelbrotexporter.h"
+#include "mandelbrotexporter.h"
 
 // Standard headers.
 #include <algorithm>

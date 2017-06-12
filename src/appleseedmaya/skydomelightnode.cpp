@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/skydomelightnode.h"
+#include "skydomelightnode.h"
 
 // Maya headers.
 #include <maya/MFileObject.h>

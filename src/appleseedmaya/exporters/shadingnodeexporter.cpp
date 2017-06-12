@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/shadingnodeexporter.h"
+#include "shadingnodeexporter.h"
 
 // Standard headers.
 #include <sstream>

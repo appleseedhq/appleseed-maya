@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/lightexporter.h"
+#include "lightexporter.h"
 
 // Standard headers.
 #include <sstream>

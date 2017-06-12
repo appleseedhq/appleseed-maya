@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/utils.h"
+#include "utils.h"
 
 // Standard headers.
 #include <algorithm>

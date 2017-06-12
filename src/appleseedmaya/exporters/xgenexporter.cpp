@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/xgenexporter.h"
+#include "xgenexporter.h"
 
 // Maya headers.
 #include <maya/MFileObject.h>

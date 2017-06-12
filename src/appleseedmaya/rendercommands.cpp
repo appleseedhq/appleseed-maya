@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/rendercommands.h"
+#include "rendercommands.h"
 
 // Standard headers.
 #include <iostream>

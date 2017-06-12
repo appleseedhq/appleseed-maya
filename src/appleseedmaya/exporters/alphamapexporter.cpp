@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/alphamapexporter.h"
+#include "alphamapexporter.h"
 
 // Maya headers.
 #include <maya/MFnDependencyNode.h>

@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/physicalskylightnode.h"
+#include "physicalskylightnode.h"
 
 // Maya headers.
 #include <maya/MFnMessageAttribute.h>

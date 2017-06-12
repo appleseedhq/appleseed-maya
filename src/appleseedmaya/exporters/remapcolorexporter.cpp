@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/remapcolorexporter.h"
+#include "remapcolorexporter.h"
 
 // Standard headers.
 #include <algorithm>

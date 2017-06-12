@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/exporterfactory.h"
+#include "exporterfactory.h"
 
 // Standard headers.
 #include <cassert>

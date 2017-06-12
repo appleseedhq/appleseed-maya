@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/arealightexporter.h"
+#include "arealightexporter.h"
 
 // Maya headers.
 #include <maya/MFnDagNode.h>

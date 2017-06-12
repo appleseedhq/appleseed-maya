@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/shadingnodetemplatebuilder.h"
+#include "shadingnodetemplatebuilder.h"
 
 // Standard headers.
 #include <algorithm>

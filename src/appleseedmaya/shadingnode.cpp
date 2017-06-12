@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/shadingnode.h"
+#include "shadingnode.h"
 
 // Maya headers.
 #include <maya/MFnDependencyNode.h>

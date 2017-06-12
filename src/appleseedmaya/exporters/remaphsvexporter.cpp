@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/remaphsvexporter.h"
+#include "remaphsvexporter.h"
 
 // Standard headers.
 #include <algorithm>

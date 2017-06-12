@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/place3dtextureexporter.h"
+#include "place3dtextureexporter.h"
 
 // Standard headers.
 #include <sstream>

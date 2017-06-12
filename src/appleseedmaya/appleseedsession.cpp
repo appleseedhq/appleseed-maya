@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/appleseedsession.h"
+#include "appleseedsession.h"
 
 // Standard headers.
 #include <array>

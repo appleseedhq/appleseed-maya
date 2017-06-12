@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/fileexporter.h"
+#include "fileexporter.h"
 
 // Maya headers.
 #include <maya/MRenderUtil.h>

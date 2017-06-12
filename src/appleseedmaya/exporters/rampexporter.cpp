@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/rampexporter.h"
+#include "rampexporter.h"
 
 // Standard headers.
 #include <algorithm>

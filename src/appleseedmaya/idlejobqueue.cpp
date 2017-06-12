@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/idlejobqueue.h"
+#include "idlejobqueue.h"
 
 // appleseed.maya headers.
 #include "appleseedmaya/logger.h"

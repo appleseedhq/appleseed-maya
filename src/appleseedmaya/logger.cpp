@@ -26,7 +26,7 @@
 // THE SOFTWARE.
 //
 
-// interface header.
+// Interface header.
 #include "logger.h"
 
 // Standard headers.

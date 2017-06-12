@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/meshexporter.h"
+#include "meshexporter.h"
 
 // Standard headers.
 #include <sstream>

@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/instanceexporter.h"
+#include "instanceexporter.h"
 
 // Standard headers.
 #include <iostream>

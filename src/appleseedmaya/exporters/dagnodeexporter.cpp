@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/exporters/dagnodeexporter.h"
+#include "dagnodeexporter.h"
 
 // Maya headers.
 #include <maya/MAnimUtil.h>

@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/attributeutils.h"
+#include "attributeutils.h"
 
 // Maya headers.
 #include <maya/MFnMatrixData.h>

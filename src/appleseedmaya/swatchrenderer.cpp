@@ -27,7 +27,7 @@
 //
 
 // Interface header.
-#include "appleseedmaya/swatchrenderer.h"
+#include "swatchrenderer.h"
 
 // Maya headers.
 #include <maya/MFnDependencyNode.h>

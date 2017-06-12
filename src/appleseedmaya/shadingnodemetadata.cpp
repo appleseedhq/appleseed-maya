@@ -26,7 +26,7 @@
 // THE SOFTWARE.
 //
 
-// interface header.
+// Interface header.
 #include "shadingnodemetadata.h"
 
 // Standard library headers.
