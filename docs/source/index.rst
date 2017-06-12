@@ -14,6 +14,8 @@ Contents:
    :maxdepth: 2
 
    features/features.rst
+   features/limitations.rst
+   features/supported_nodes.rst
    installation.rst
    shaders/shaders.rst
    tutorials/tutorials.rst

@@ -5,20 +5,19 @@
    :height: 128px
    :alt: Voronoi2D Icon
 
-***********
+###########
 asVoronoi2D
-***********
+###########
 
 A procedural 2D Worley noise like shader, outputs not only the resulting
 color, but the 4 features near the evaluated point, their respective positions, and the color IDs.
 
-==========
+**********
 Parameters
-==========
-
+**********
 
     Color Parameters
-    ----------------
+    ================
 
     *Color 1*
         Primary cell color.
@@ -29,9 +28,8 @@ Parameters
         *Contrast*
             Contrast between primary and secondary cell color.
 
-
     Recursion Parameters
-    --------------------
+    ====================
 
         *Amplitude*
             Controls the amplitute at each octave, including the starting iteration.
@@ -46,7 +44,7 @@ Parameters
             The persistence of the fractal.
 
     Cell Parameters
-    ---------------
+    ===============
 
         *Density*
             The density of the cells, with higher values resulting in a higher number of cells.
@@ -94,20 +92,19 @@ Parameters
                 * Cell ID 3, the ID of the third nearest feature to the cell
                 * Cell ID 4, the ID of the fourth nearest feature to the cell
 
-
     Color Balance
-    -------------
+    =============
 
         The standard Maya color balance, gain, offset parameters.
 
     Effects
-    -------
+    =======
 
         The standard effects parameters
 
-=======
+*******
 Outputs
-=======
+*******
 
     *Output Color*
         The color resulting from ghe *Features Mode* choice.
