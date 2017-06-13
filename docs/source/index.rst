@@ -5,10 +5,18 @@
 
 .. _label_index:
 
-Welcome to appleseed-maya's documentation!
-==========================================
+.. |date| date::
 
-Contents:
+.. |time| date:: %H:%M
+
+******************************************
+Welcome to appleseed-maya's documentation!
+******************************************
+
+Documentation generated on |date| at |time|
+
+Contents
+========
 
 .. toctree::
    :maxdepth: -1
