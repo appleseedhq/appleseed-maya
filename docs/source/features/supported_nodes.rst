@@ -5,52 +5,68 @@ Supported HyperShade Nodes
 **************************
 
 Utilities
----------
+=========
 
-See :ref:`utilities nodes support <label_nodes_utilities>`
+.. include:: nodes_utilities.rst
+
+-----
 
 Image Planes
-------------
+============
 
-See :ref:`image planes support <label_nodes_imageplanes>`
+.. include:: nodes_imageplanes.rst
+
+-----
 
 Surface
--------
+=======
 
-See :ref:`surface nodes support <label_nodes_surface>`
+.. include:: nodes_surface.rst
+
+-----
 
 Volumetric
-----------
+==========
 
-See :ref:`volumetric nodes support <label_nodes_volumetric>` 
+.. include:: nodes_volumetric.rst
+
+-----
 
 Displacement
-------------
+============
 
-See :ref:`displacement nodes support <label_nodes_displacement>`
+.. include:: nodes_displacement.rst
+
+-----
 
 2D Textures
------------
+===========
 
-See :ref:`2d texture nodes support <label_nodes_2dtextures>`
+.. include:: nodes_2dtextures.rst
+
+-----
 
 3D Textures
------------
+===========
 
-See :ref:`3d texture nodes support <label_nodes_3dtextures>` 
+.. include:: nodes_3dtextures.rst
 
 Other Textures
---------------
+==============
 
-See :ref:`other textures nodes support <label_nodes_othertextures>`
+.. include:: nodes_othertextures.rst
+
+-----
 
 Lookdevkit Nodes
-----------------
+================
 
-See :ref:`lookdevkit nodes support <label_nodes_lookdevkitnodes>`
+.. include:: nodes_lookdevkit.rst
+
+-----
 
 Lights
-------
+======
 
-see :ref:`lights nodes support <label_nodes_lights>`
+.. include:: nodes_lights.rst
 

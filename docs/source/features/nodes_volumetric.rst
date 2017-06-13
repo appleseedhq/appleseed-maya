@@ -1,9 +1,5 @@
 .. _label_nodes_volumetric:
 
-**********
-Volumetric
-**********
-
 .. cssclass:: table-striped table-condensed table-hover
 
 =================== ==================

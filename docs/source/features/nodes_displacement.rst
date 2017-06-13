@@ -1,9 +1,5 @@
 .. _label_nodes_displacement:
 
-************
-Displacement
-************
-
 .. cssclass:: table-striped table-condensed table-hover
 
 =================== ==================

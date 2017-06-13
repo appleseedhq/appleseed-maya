@@ -1,9 +1,5 @@
 .. _label_nodes_2dtextures:
 
-***********
-2D Textures
-***********
-
 .. cssclass:: table-striped table-condensed table-hover
 
 =================== ==================

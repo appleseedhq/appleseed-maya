@@ -1,9 +1,5 @@
 .. _label_nodes_othertextures:
 
-**************
-Other Textures
-**************
-
 .. cssclass:: table-striped table-condensed table-hover
 
 =================== ==================

@@ -11,7 +11,8 @@ Welcome to appleseed-maya's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: -1
+   :numbered:
 
    features/features.rst
    features/limitations.rst
@@ -19,11 +20,4 @@ Contents:
    installation.rst
    shaders/shaders.rst
    tutorials/tutorials.rst
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 

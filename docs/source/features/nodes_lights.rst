@@ -1,9 +1,5 @@
 .. _label_nodes_lights:
 
-******
-Lights
-******
-
 .. cssclass:: table-striped table-condensed table-hover
 
 =================== ==================
