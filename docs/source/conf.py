@@ -134,7 +134,8 @@ html_theme_options = {
         ("Installation", "installation"),
         ("Reference", "shaders/shaders"),
         ("Tutorials", "tutorials/tutorials"),
-        ("AppleseedHQ", "http://appleseedhq.net", True)
+        ("appleseedhq", "http://appleseedhq.net", True),
+        ("vimeo", "https://vimeo.com/appleseedhq", True)
     ],
 
     # Render the next and previous page links in navbar. (Default: true)
