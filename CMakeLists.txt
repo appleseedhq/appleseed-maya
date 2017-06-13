@@ -73,7 +73,7 @@ set (appleseed_maya_version_patch    0)
 # Build options.
 #--------------------------------------------------------------------------------------------------
 
-option (USE_STATIC_BOOST    "Use static Boost libraries" OFF)
+option (USE_STATIC_BOOST    "Use static Boost libraries" ON)
 option (WITH_PYTHON_BRIDGE  "Build Python bridge"        OFF)
 
 
