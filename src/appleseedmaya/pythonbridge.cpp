@@ -26,17 +26,17 @@
 // THE SOFTWARE.
 //
 
-// Python headers.
-#include <Python.h>
-
 // Interface header.
-#include "appleseedmaya/python.h"
-
-// Boost headers.
-#include "boost/python.hpp"
+#include "appleseedmaya/pythonbridge.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/project.h"
+
+// appleseed.foundation headers.
+#include "foundation/platform/python.h"
+
+// Boost headers.
+#include "boost/python.hpp"
 
 namespace bpy = boost::python;
 namespace asf = foundation;

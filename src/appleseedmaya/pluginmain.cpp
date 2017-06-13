@@ -37,7 +37,7 @@
 #include "appleseedmaya/idlejobqueue.h"
 #include "appleseedmaya/logger.h"
 #ifdef APPLESEED_MAYA_WITH_PYTHON_BRIDGE
-#include "appleseedmaya/python.h"
+#include "appleseedmaya/pythonbridge.h"
 #endif
 #include "appleseedmaya/rendercommands.h"
 #include "appleseedmaya/renderglobalsnode.h"
