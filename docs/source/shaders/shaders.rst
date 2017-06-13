@@ -5,24 +5,24 @@ Custom appleseed shaders
 ************************
 
 These shaders are meant to either replace some of Maya's functionality that
-was not possible to implement directly in OSL, or to provide functionality
+wasn't possible to implement directly in `OSL <http://opensource.imageworks.com/?p=osl>`_, or to provide functionality
 that is inexistent and we feel might be useful to the end user.
 
 Procedural Texture Nodes
 ========================
     
- * :ref:`asVoronoi2D <label_asVoronoi2D>`
- * :ref:`asVoronoi3D <label_asVoronoi3D>`
+* :doc:`asVoronoi2D <asVoronoi2D>`
+* :doc:`asVoronoi3D <asVoronoi3D>`
 
 Color Utilities
 ===============
 
- * :ref:`asColorTransform <label_asColorTransform>`
- * :ref:`asLuminance <label_asLuminance>`
+* :doc:`asColorTransform <asColorTransform>`
+* :doc:`asLuminance <asLuminance>`
 
 Materials
 =========
 
- * :ref:`asGlass <label_asGlass>`
- * :ref:`asDisneyMaterial <label_asDisneyMaterial>`
+* :doc:`asGlass <asGlass>`
+* :doc:`asDisneyMaterial <asDisneyMaterial>`
 

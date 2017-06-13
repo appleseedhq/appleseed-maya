@@ -1,10 +1,7 @@
 .. _label_nodes_envtextures:
 
-************
-Env Textures
-************
-
 .. cssclass:: table-striped table-condensed table-hover
+
 =================== ==================
 Nodes               Support Status  
 =================== ==================

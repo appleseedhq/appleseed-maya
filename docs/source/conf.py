@@ -134,7 +134,8 @@ html_theme_options = {
         ("Installation", "installation"),
         ("Reference", "shaders/shaders"),
         ("Tutorials", "tutorials/tutorials"),
-        ("AppleseedHQ", "http://appleseedhq.net", True)
+        ("appleseedhq", "http://appleseedhq.net", True),
+        ("vimeo", "https://vimeo.com/appleseedhq", True)
     ],
 
     # Render the next and previous page links in navbar. (Default: true)
@@ -176,8 +177,10 @@ html_theme_options = {
     #
     # Options are nothing (default) or the name of a valid theme
     # such as "amelia" or "cosmo".
-    # 'bootswatch_theme': "sandstone",
-    'bootswatch_theme': "lumen",
+    # 'bootswatch_theme': "lumen",
+    #'bootswatch_theme': "sandstone",
+    # 'bootswatch_theme': "readable",
+    'bootswatch_theme': "yeti",
 
     # Choose Bootstrap version.
     # Values: "3" (default) or "2" (in quotes)
@@ -225,6 +228,12 @@ html_static_path = ['_static']
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
+html_sidebars = {
+    '**': ['localtoc.html', 'searchbox.html'],
+    'using/windows': ['windowssidebar.html', 'searchbox.html'],
+}
+
+html_show_sourcelink = False
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.

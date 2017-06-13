@@ -1,10 +1,7 @@
 .. _label_nodes_3dtextures:
 
-***********
-3D Textures
-***********
-
 .. cssclass:: table-striped table-condensed table-hover
+
 =================== ==================
 Nodes               Support Status  
 =================== ==================

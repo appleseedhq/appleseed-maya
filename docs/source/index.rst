@@ -5,23 +5,27 @@
 
 .. _label_index:
 
-Welcome to appleseed-maya's documentation!
-==========================================
+.. |date| date::
 
-Contents:
+.. |time| date:: %H:%M
+
+******************************************
+Welcome to appleseed-maya's documentation!
+******************************************
+
+Documentation generated on |date| at |time|
+
+Contents
+========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: -1
+   :numbered:
 
    features/features.rst
+   features/limitations.rst
+   features/supported_nodes.rst
    installation.rst
    shaders/shaders.rst
    tutorials/tutorials.rst
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 

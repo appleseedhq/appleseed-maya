@@ -1,10 +1,7 @@
 .. _label_nodes_utilities:
 
-*********
-Utilities
-*********
-
 .. cssclass:: table-striped table-condensed table-hover
+
 =================== ==================
 Nodes               Support Status  
 =================== ==================
