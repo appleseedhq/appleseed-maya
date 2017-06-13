@@ -35,34 +35,29 @@
 // appleseed.foundation headers.
 #include "foundation/platform/python.h"
 
-// Boost headers.
-#include "boost/python.hpp"
-
 namespace bpy = boost::python;
 namespace asf = foundation;
 namespace asr = renderer;
 
 namespace
 {
-
-struct ScopedGilState
-{
-    ScopedGilState()
+    struct ScopedGilState
     {
-        state = PyGILState_Ensure();
-    }
+        PyGILState_STATE state;
 
-    ~ScopedGilState()
-    {
-        PyGILState_Release(state);
-    }
+        ScopedGilState()
+        {
+            state = PyGILState_Ensure();
+        }
 
-    PyGILState_STATE state;
-};
+        ~ScopedGilState()
+        {
+            PyGILState_Release(state);
+        }
+    };
 
-bpy::object gAppleseedMayaNamespace;
-
-} // unnamed
+    bpy::object gAppleseedMayaNamespace;
+}
 
 MStatus PythonBridge::initialize(const MString& pluginPath)
 {
@@ -93,7 +88,7 @@ MStatus PythonBridge::uninitialize()
     return status;
 }
 
-void PythonBridge::setCurrentProject(renderer::Project *project)
+void PythonBridge::setCurrentProject(renderer::Project* project)
 {
     ScopedGilState gilState;
     gAppleseedMayaNamespace["currentProject"] = bpy::ptr(project);
