@@ -1,3 +1,6 @@
 # Sphinx-bootstrap-theme
 sphinx-bootstrap-theme
 
+# bibliography related package
+sphinxcontrib-bibtex
+

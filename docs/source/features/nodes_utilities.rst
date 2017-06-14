@@ -1,5 +1,8 @@
 .. _label_nodes_utilities:
 
+Utilities
+=========
+
 .. cssclass:: table-striped table-condensed table-hover
 
 =================== ==================
@@ -40,7 +43,7 @@ Particle Sample
 2D Placement        Supported
 3D Placement        Supported
 Plus Minus Average  Supported
-Projection          **Unsupported** (*use* :ref:`asProjection <label_asProjection>` *instead*)
+Projection          **Unsupported** [#]_
 Quad Switch         Supported (**WIP**)
 Quat Add
 Quat Conjugate
@@ -68,4 +71,8 @@ UV Chooser
 Vector Product      Supported
 Weighted Add Matrix Supported
 =================== ==================
+
+.. rubric:: Footnotes
+
+.. [#] As alternative to Maya's projection node, use :ref:`asProjection <label_asProjection>` instead.
 

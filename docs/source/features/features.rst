@@ -9,14 +9,11 @@ appleseed-maya is an appleseed plugin for Autodesk® Maya®.
 Main exporter features
 ======================
 
- * appleseed projects export
- * render to Maya's RenderView
- * Image Based Lighting via appleseed Physical Sky, and Dome Light
- * Support for most of :doc:`Maya's Hypershade nodes <supported_nodes>`
- * XGen
+* appleseed projects export
+* render to Maya's RenderView
+* Image Based Lighting via appleseed Physical Sky, and Dome Light
+* Support for most of :doc:`Maya's Hypershade nodes <supported_nodes>`
+* XGen
 
-Limitations
-===========
+.. include:: limitations.rst
 
-See (:ref:`limitations <label_limitations>`) for a comprehensive list of
-limitations and possible workarounds.

@@ -35,7 +35,11 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.pngmath',
+    'sphinx.ext.todo',
+    'sphinxcontrib.bibtex',
 ]
+
+todo_include_todos = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -192,7 +196,7 @@ html_theme_options = {
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = "Mayaseed Documentation"
+html_title = "appleseed-maya Documentation"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
@@ -273,10 +277,10 @@ htmlhelp_basename = 'appleseed-mayadoc'
 
 latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
-# 'papersize': 'a4paper',
+'papersize': 'a4paper',
 
 # The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
 #'preamble': '',
@@ -293,6 +297,7 @@ latex_documents = [
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
 #latex_logo = None
+latex_logo = "appleseed-logo.png"
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
@@ -357,13 +362,13 @@ epub_publisher = 'The appleseedhq Organization'
 epub_copyright = '2017, The appleseedhq Organization'
 
 # The basename for the epub file. It defaults to the project name.
-#epub_basename = 'appleseed-maya'
+epub_basename = 'appleseed-maya'
 
 # The HTML theme for the epub output. Since the default themes are not optimized
 # for small screen space, using the same theme for HTML and epub output is
 # usually not wise. This defaults to 'epub', a theme designed to save visual
 # space.
-#epub_theme = 'epub'
+epub_theme = 'epub'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.
@@ -374,7 +379,7 @@ epub_copyright = '2017, The appleseedhq Organization'
 
 # The unique identifier of the text. This can be a ISBN number
 # or the project homepage.
-#epub_identifier = ''
+epub_identifier = 'https://github.com/appleseedhq/appleseed-maya'
 
 # A unique identification for the text.
 #epub_uid = ''
