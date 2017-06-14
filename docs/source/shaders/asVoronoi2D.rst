@@ -152,4 +152,5 @@ Outputs
 .. rubric:: References
 
 .. bibliography:: /bibtex/references.bib
+    :filter: docname in docnames
 
