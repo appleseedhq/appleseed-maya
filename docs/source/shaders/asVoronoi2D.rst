@@ -1,4 +1,5 @@
 .. _label_asVoronoi2D:
+
 .. image:: ../images/asVoronoi2D.png
    :width: 128px
    :align: left
@@ -14,6 +15,8 @@ color, but the 4 features near the evaluated point, their respective positions, 
 
 Parameters
 ==========
+
+.. bogus directive to silence warning::
 
 -----
 
@@ -99,6 +102,7 @@ The Karlsruhe metric, also known as Moscow metric, is a radial metric, returns r
 * Cell ID 4, the ID of the fourth nearest feature to the cell
 
 .. note::
+
    The unmodified features, points and their color IDs are also output from the shader, giving the user greater creative potential. The feature modes above are but a starting point.
 
 -----
