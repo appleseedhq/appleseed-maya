@@ -10,8 +10,7 @@
 asVoronoi2D
 ***********
 
-A procedural 2D Worley noise like shader, outputs not only the resulting
-color, but the 4 features near the evaluated point, their respective positions, and the color IDs.
+A procedural 2D Worley :cite:`Worley:1996:CTB:237170.237267` like noise shader, that outputs not only the resulting color, but the four nearest features to the evaluated point, their respective positions, and their cell color IDs. See also :cite:`Ebert:2002:TMP:572337`.
 
 Parameters
 ==========
@@ -110,14 +109,21 @@ The Karlsruhe metric, also known as Moscow metric, is a radial metric, returns r
 Color Balance
 -------------
 
-The standard Maya color balance, gain, offset parameters.
+The standard Maya color balance, gain, offset parameters. Please consult Maya's documentation for more information on these controls.
 
 -----
 
 Effects
 -------
 
-The standard effects parameters.
+The standard Maya effects parameters. Please consult Maya's documentation for more information on these controls.
+
+-----
+
+Coordinates
+-----------
+
+The input UV coordinates, typically from an upstream *placement2d* node.
 
 -----
 
@@ -140,4 +146,10 @@ Outputs
     An array of 4 colors, containing the color IDs of the four nearest features to the cell.
 
 .. warning:: presently OSL does not allow connections from/to array elements, and appleseed-maya is not enabling the array outputs for now. This will be addressed in a future release.
+
+-----
+
+.. rubric:: References
+
+.. bibliography:: /bibtex/references.bib
 

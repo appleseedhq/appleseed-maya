@@ -36,6 +36,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.pngmath',
     'sphinx.ext.todo',
+    'sphinxcontrib.bibtex',
 ]
 
 todo_include_todos = True

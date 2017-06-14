@@ -4,5 +4,5 @@
 About
 *****
 
-This software was written by a team of salacious lamas while on a trip to a Bavarian castle's dungeon.
+This software was written by a team of salacious lamas while on a trip to a Bavarian castle's dungeon, upon finding a large stash of apfelwein.
 
