@@ -2,6 +2,8 @@
 
 appleseed-maya is an appleseed plugin for [Autodesk® Maya®](http://www.autodesk.com/products/maya/overview) 2017 and later.
 
+https://readthedocs.org/projects/pip/badge/?version=latest
+
 ### Setup
 
 1. Set environment variables:
