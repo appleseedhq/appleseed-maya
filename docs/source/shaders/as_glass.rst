@@ -1,5 +1,5 @@
-.. _label_asGlass:
-.. image:: ../images/asGlass.png
+.. _label_as_glass:
+.. image:: ../images/as_glass.png
    :width: 128px
    :align: left
    :height: 128px

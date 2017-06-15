@@ -74,5 +74,5 @@ Weighted Add Matrix Supported
 
 .. rubric:: Footnotes
 
-.. [#] As alternative to Maya's projection node, use :ref:`asProjection <label_asProjection>` instead.
+.. [#] As alternative to Maya's projection node, use :ref:`asProjection <label_as_projection>` instead.
 

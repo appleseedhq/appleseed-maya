@@ -4,3 +4,6 @@ sphinx-bootstrap-theme
 # bibliography related package
 sphinxcontrib-bibtex
 
+# extra image options
+sphinxcontrib-images
+

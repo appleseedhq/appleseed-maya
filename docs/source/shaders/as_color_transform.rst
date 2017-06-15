@@ -1,5 +1,5 @@
-.. _label_asColorTransform:
-.. image:: ../images/asColorTransform.png
+.. _label_as_color_transform:
+.. image:: ../images/as_color_transform.png
    :width: 128px
    :align: left
    :height: 128px

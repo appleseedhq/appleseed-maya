@@ -1,16 +1,16 @@
-.. _label_asVoronoi3D:
+.. _label_as_voronoi2d:
 
-.. image:: ../images/asVoronoi3D.png
+.. image:: ../images/as_voronoi2d.png
    :width: 128px
    :align: left
    :height: 128px
-   :alt: Voronoi3D Icon
+   :alt: Voronoi2D Icon
 
 ***********
-asVoronoi3D
+asVoronoi2D
 ***********
 
-A procedural 3D Worley :cite:`Worley:1996:CTB:237170.237267` like noise shader, that outputs not only the resulting color, but the four nearest features to the evaluated point, their respective positions, and their cell color IDs. See also :cite:`Ebert:2002:TMP:572337`.
+A procedural 2D Worley :cite:`Worley:1996:CTB:237170.237267` like noise shader, that outputs not only the resulting color, but the four nearest features to the evaluated point, their respective positions, and their cell color IDs. See also :cite:`Ebert:2002:TMP:572337`.
 
 Parameters
 ==========
@@ -46,7 +46,7 @@ Recursion Parameters
     Defines how large the gaps are in the cell noise with increasing octaves, higher values lead to higher gaps, lower values to small gaps.
 
 *Persistence*:
-    The persistence of the fractal. Higher values result in very stubborn fractals.
+    The persistence of the fractal is a gain factor to apply to the amplitude at each iteration, but it only has an effect when the shader is set to the mode *pebbles*.
 
 -----
 
@@ -54,10 +54,10 @@ Cell Parameters
 ---------------
 
 *Density*:
-    The density of the cells, with higher values resulting in a higher number of cells.
+    The density of the cells, with higher values resulting in a higher number of cells in the same area.
 
 *Jittering*:
-    How random the placement of the cells is, with low values resulting in a ordered grid of cells, and huigh values resulting in aleatory placement of cells.
+    How random the placement of the cells is, with low values resulting in a ordered grid of cells, and higher values resulting in aleatory placement of cells.
 
 *Metric*:
     Which metric to choose to calculate the distance from cell to feature points. There are several to choose from, resulting in different types of patterns.
@@ -70,7 +70,9 @@ Cell Parameters
 * Minkowski metric
 * Karlsruhe metric
 
-The Minkowski metric is a generalized metric whose P parameter allows you to go from Euclidian distance to Tchebychev distance.
+The sum of the square difference is also known as the Manhattan metric.
+
+The Minkowski metric is a generalized metric whose P parameter allows you to go from the Euclidian distance when P has a value of 2, to the Manhattan distance when P has a value of 1, and as P reaches infinity, it represents the Tchebychev metric.
 
 The Akritean distance if a weighted mix of the Euclidian distance, and the Tchebychev distance.
 
@@ -109,7 +111,7 @@ The Karlsruhe metric, also known as Moscow metric, is a radial metric, returns r
 Color Balance
 -------------
 
-The standard Maya color balance, gain, offset parameters. Please consult Maya's documentation for more information on these controls. 
+The standard Maya color balance, gain, offset parameters. Please consult Maya's documentation for more information on these controls.
 
 -----
 
@@ -123,8 +125,7 @@ The standard Maya effects parameters. Please consult Maya's documentation for mo
 Coordinates
 -----------
 
-Typically, the *placement 3d* node's placement matrix, which provides a placement matrix to transform the surface point providing the x,y,z coordinates.
-By default this point is the global primitive variable **P**, but the user can override this if needed.
+The input UV coordinates, typically from an upstream *placement2d* node.
 
 -----
 
@@ -147,6 +148,71 @@ Outputs
     An array of 4 colors, containing the color IDs of the four nearest features to the cell.
 
 .. warning:: presently OSL does not allow connections from/to array elements, and appleseed-maya is not enabling the array outputs for now. This will be addressed in a future release.
+
+-----
+
+.. _label_voronoi2d_screenshots:
+
+Screenshots
+===========
+
+Some examples of feature output modes and metrics.
+
+.. thumbnail:: /images/voronoi/voronoi2d_euclidian_f1.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, with the first feature nearest to the evaluated cell.
+
+.. thumbnail:: /images/voronoi/voronoi2d_euclidian_f2.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, with the second feature nearest to the evaluated cell.
+
+.. thumbnail:: /images/voronoi/voronoi2d_euclidian_f1_divided_by_f2.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, with the first nearest featured divided by the second nearest feature.
+
+.. thumbnail:: /images/voronoi/voronoi2d_euclidian_f1_plus_f2.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, with the first and second nearest features to the cell added.
+
+.. thumbnail:: /images/voronoi/voronoi2d_euclidian_pebbles.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, set to *pebbles* mode, one of the many possible combinations of expressions involving the four nearest features to the cell.
+
+.. thumbnail:: /images/voronoi/voronoi2d_minkowski_p_0.5.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Nearest feature to the cell with the Minkowski metric with P parameter set to 0.5.
+
+.. thumbnail:: /images/voronoi/voronoi2d_euclidian_f2_minus_f1.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, with the difference between the second nearest feature and the nearest feature.
+
+.. thumbnail:: /images/voronoi/voronoi2d_euclidian_cell_id4.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, with the cell IDs of the fourth nearest feature.
 
 -----
 
