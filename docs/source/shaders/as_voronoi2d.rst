@@ -151,12 +151,10 @@ Outputs
 
 -----
 
-.. label:: _label_voronoi2d_screenshots
+.. _label_voronoi2d_screenshots:
 
 Screenshots
 ===========
-
-.. rubric::
 
 Some examples of feature output modes and metrics.
 
@@ -196,7 +194,7 @@ Some examples of feature output modes and metrics.
    Euclidian metric, set to *pebbles* mode, one of the many possible combinations of expressions involving the four nearest features to the cell.
 
 .. thumbnail:: /images/voronoi/voronoi2d_minkowski_p_0.5.png
-   :group: shots_voronoi2d_group_B
+   :group: shots_voronoi2d_group_A
    :width: 10%
    :title:
 

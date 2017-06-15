@@ -152,12 +152,10 @@ Outputs
 
 -----
 
-.. label:: _label_voronoi3d_screenshots
+.. _label_voronoi3d_screenshots:
 
 Screenshots
 ===========
-
-.. rubric::
 
 Some examples of different metrics and feature output combinations used.
 
