@@ -73,7 +73,7 @@ set (appleseed_maya_version_patch    0)
 # Build options.
 #--------------------------------------------------------------------------------------------------
 
-option (USE_STATIC_BOOST    "Use static Boost libraries" OFF)
+option (USE_STATIC_BOOST    "Use static Boost libraries" ON)
 option (WITH_PYTHON_BRIDGE  "Build Python bridge"        OFF)
 
 
@@ -99,7 +99,7 @@ if (USE_STATIC_BOOST)
     set (Boost_USE_STATIC_LIBS TRUE)
 endif ()
 
-set (BOOST_NEEDED_LIBS system filesystem)
+set (BOOST_NEEDED_LIBS filesystem system)
 
 if (WITH_PYTHON_BRIDGE)
     set (BOOST_NEEDED_LIBS ${BOOST_NEEDED_LIBS} python)
@@ -108,7 +108,20 @@ endif ()
 find_package (Boost 1.55 REQUIRED ${BOOST_NEEDED_LIBS})
 
 add_definitions (-DBOOST_FILESYSTEM_VERSION=3 -DBOOST_FILESYSTEM_NO_DEPRECATED)
-add_definitions (-DBOOST_ALL_NO_LIB)
+
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    # Link statically against Boost.Python on Windows.
+    add_definitions (-DBOOST_PYTHON_STATIC_LIB)
+endif ()
+
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    # Workaround for undefined reference to boost::filesystem::detail::copy_file link error
+    # on Linux and macOS if Boost is built in C++03 mode.
+    add_definitions (-DBOOST_NO_CXX11_SCOPED_ENUMS)
+endif ()
+
+include_directories (SYSTEM ${Boost_INCLUDE_DIRS})
+link_directories (${Boost_LIBRARY_DIRS})
 
 
 #--------------------------------------------------------------------------------------------------
@@ -143,7 +156,6 @@ include_directories (
     ${OPENIMAGEIO_INCLUDE_DIRS}
     ${OSL_INCLUDE_DIRS}
     ${PYTHON_INCLUDE_DIRS}
-    ${Boost_INCLUDE_DIRS}
 )
 
 

@@ -89,8 +89,8 @@ set (appleseed_maya_sources
 if (WITH_PYTHON_BRIDGE)
     set (appleseed_maya_sources
         ${appleseed_maya_sources}
-        python.cpp
-        python.h
+        pythonbridge.cpp
+        pythonbridge.h
     )
 endif ()
 source_group ("" FILES

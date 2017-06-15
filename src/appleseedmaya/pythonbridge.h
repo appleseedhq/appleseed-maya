@@ -26,8 +26,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_PYTHON_H
-#define APPLESEED_MAYA_PYTHON_H
+#ifndef APPLESEED_MAYA_PYTHONBRIDGE_H
+#define APPLESEED_MAYA_PYTHONBRIDGE_H
 
 // Maya headers.
 #include <maya/MStatus.h>
@@ -36,19 +36,21 @@
 // appleseed.maya headers.
 #include "appleseedmaya/utils.h"
 
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+
 // Forward declarations.
 namespace renderer { class Project; }
 
 class PythonBridge
-  : NonCopyable
+  : public foundation::NonCopyable
 {
   public:
-
     static MStatus initialize(const MString& pluginPath);
     static MStatus uninitialize();
 
-    static void setCurrentProject(renderer::Project *project);
+    static void setCurrentProject(renderer::Project* project);
     static void clearCurrentProject();
 };
 
-#endif  // !APPLESEED_MAYA_PYTHON_H
+#endif  // !APPLESEED_MAYA_PYTHONBRIDGE_H
