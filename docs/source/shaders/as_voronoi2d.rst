@@ -151,6 +151,71 @@ Outputs
 
 -----
 
+Screenshots
+===========
+
+.. rubric::
+
+Some examples of feature output modes and metrics.
+
+.. thumbnail:: /images/voronoi/voronoi2d_euclidian_f1.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, with the first feature nearest to the evaluated cell.
+
+.. thumbnail:: /images/voronoi/voronoi2d_euclidian_f2.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, with the second feature nearest to the evaluated cell.
+
+.. thumbnail:: /images/voronoi/voronoi2d_euclidian_f1_divided_by_f2.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, with the first nearest featured divided by the second nearest feature.
+
+.. thumbnail:: /images/voronoi/voronoi2d_euclidian_f1_plus_f2.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, with the first and second nearest features to the cell added.
+
+.. thumbnail:: /images/voronoi/voronoi2d_euclidian_pebbles.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, set to *pebbles* mode, one of the many possible combinations of expressions involving the four nearest features to the cell.
+
+.. thumbnail:: /images/voronoi/voronoi2d_minkowski_p_0.5.png
+   :group: shots_voronoi2d_group_B
+   :width: 10%
+   :title:
+
+   Nearest feature to the cell with the Minkowski metric with P parameter set to 0.5.
+
+.. thumbnail:: /images/voronoi/voronoi2d_euclidian_f2_minus_f1.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, with the difference between the second nearest feature and the nearest feature.
+
+.. thumbnail:: /images/voronoi/voronoi2d_euclidian_cell_id4.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, with the cell IDs of the fourth nearest feature.
+
+-----
+
 .. rubric:: References
 
 .. bibliography:: /bibtex/references.bib
