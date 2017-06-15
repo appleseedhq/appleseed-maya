@@ -149,6 +149,13 @@ Some examples of the output luminance of the input color with different color sp
 
    Original color ramp, with CMS settings disabled, and the input color space set to *xy chromacitity coordinates*, which were then set to the RGB chromaticity coordinates of the AdobeRGB 1998 color space, with a D65 whitepoint.
 
+.. thumbnail:: /images/luminance/luminance_compared.png
+   :group: shots_luminance_group_A
+   :width: 10%
+   :title:
+
+   Starting from the bottom, the original color ramp, and above it, first the luminance with the Rec.709 coefficients, Rec.2020 coefficients, DCI-P3, ACEScg AP1, ACES 2065-1 AP0, explicit chromaticities set to AdobeRGB 1998 chromaticities and D65 whitepoint, and the color ramp again at the top.
+
 -----
 
 .. rubric:: References
