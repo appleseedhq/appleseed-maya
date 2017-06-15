@@ -1,5 +1,5 @@
-.. _label_asLuminance:
-.. image:: ../images/asLuminance.png
+.. _label_as_luminance:
+.. image:: ../images/as_luminance.png
    :width: 128px
    :align: left
    :height: 128px

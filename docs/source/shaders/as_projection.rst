@@ -1,5 +1,5 @@
-.. _label_asProjection:
-.. image:: ../images/asProjection.png
+.. _label_as_projection:
+.. image:: ../images/as_projection.png
    :width: 128px
    :align: left
    :height: 128px

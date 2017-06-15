@@ -1,6 +1,6 @@
-.. _label_asVoronoi3D:
+.. _label_as_voronoi3d:
 
-.. image:: ../images/asVoronoi3D.png
+.. image:: ../images/as_voronoi3d.png
    :width: 128px
    :align: left
    :height: 128px
@@ -46,7 +46,7 @@ Recursion Parameters
     Defines how large the gaps are in the cell noise with increasing octaves, higher values lead to higher gaps, lower values to small gaps.
 
 *Persistence*:
-    The persistence of the fractal. Higher values result in very stubborn fractals.
+    The persistence of the fractal is a gain factor to apply to the amplitude at each iteration, but it only has an effect when the shader is set to the mode *pebbles*.
 
 -----
 
@@ -54,10 +54,10 @@ Cell Parameters
 ---------------
 
 *Density*:
-    The density of the cells, with higher values resulting in a higher number of cells.
+    The density of the cells, with higher values resulting in a higher number of cells in the same area.
 
 *Jittering*:
-    How random the placement of the cells is, with low values resulting in a ordered grid of cells, and huigh values resulting in aleatory placement of cells.
+    How random the placement of the cells is, with low values resulting in a ordered grid of cells, and higher values resulting in aleatory placement of cells.
 
 *Metric*:
     Which metric to choose to calculate the distance from cell to feature points. There are several to choose from, resulting in different types of patterns.
@@ -70,7 +70,9 @@ Cell Parameters
 * Minkowski metric
 * Karlsruhe metric
 
-The Minkowski metric is a generalized metric whose P parameter allows you to go from Euclidian distance to Tchebychev distance.
+The sum of the square difference is also known as the Manhattan metric.
+
+The Minkowski metric is a generalized metric whose P parameter allows you to go from the Euclidian distance when P has a value of 2, to the Manhattan distance when P has a value of 1, and as P reaches infinity, it represents the Tchebychev metric.
 
 The Akritean distance if a weighted mix of the Euclidian distance, and the Tchebychev distance.
 
@@ -109,7 +111,7 @@ The Karlsruhe metric, also known as Moscow metric, is a radial metric, returns r
 Color Balance
 -------------
 
-The standard Maya color balance, gain, offset parameters. Please consult Maya's documentation for more information on these controls. 
+The standard Maya color balance, gain, offset parameters. Please consult Maya's documentation for more information on these controls.
 
 -----
 
