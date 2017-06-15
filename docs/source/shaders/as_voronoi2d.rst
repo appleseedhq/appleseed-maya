@@ -151,6 +151,8 @@ Outputs
 
 -----
 
+.. label:: _label_voronoi2d_screenshots
+
 Screenshots
 ===========
 

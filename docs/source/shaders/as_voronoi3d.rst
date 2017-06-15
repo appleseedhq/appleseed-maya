@@ -152,6 +152,73 @@ Outputs
 
 -----
 
+.. label:: _label_voronoi3d_screenshots
+
+Screenshots
+===========
+
+.. rubric::
+
+Some examples of different metrics and feature output combinations used.
+
+.. thumbnail:: /images/voronoi/voronoi3d_akritean_octaves.png
+   :group: shots_voronoi3d_group_A
+   :width: 10%
+   :title:
+
+   Akritean metric with coverage set to 0.5, 4 octaves, and the output set to the difference between the second nearest feature and the nearest feature to the cell.
+
+.. thumbnail:: /images/voronoi/voronoi3d_karlsruhe_f2f1_diff.png
+   :group: shots_voronoi3d_group_A
+   :width: 10%
+   :title:
+
+   Karlsruhe or Moscow metric, with 4 octaves, and the output set to the difference between the second nearest and the nearest feature to the cell.
+
+.. thumbnail:: /images/voronoi/voronoi3d_karlsruhe.png
+   :group: shots_voronoi3d_group_A
+   :width: 10%
+   :title:
+
+   Karlsruhe or Moscow metric, with 1 octaves, set to the nearest feature.
+
+.. thumbnail:: /images/voronoi/voronoi3d_minkowski_p_0.26.png
+   :group: shots_voronoi3d_group_A
+   :width: 10%
+   :title:
+
+   Minkowski metric with the P parameter set to 0.25, 4 octaves, and the output set to the nearest feature.
+
+.. thumbnail:: /images/voronoi/voronoi3d_octaves_euclidian.png
+   :group: shots_voronoi3d_group_A
+   :width: 10%
+   :title:
+
+   Euclidian metric, 4 octaves, and the output set to the nearest feature to the cell.
+
+.. thumbnail:: /images/voronoi/voronoi3d_octaves_minkowski_p_0.5.png
+   :group: shots_voronoi3d_group_A
+   :width: 10%
+   :title:
+
+   Minkowski metric with the P parameter set to 0.5, 4 octaves, and the output set to the nearest feature.
+
+.. thumbnail:: /images/voronoi/voronoi3d_ssd_pebbles.png
+   :group: shots_voronoi3d_group_A
+   :width: 10%
+   :title:
+
+   Sum of square differences, with 4 octaves, and the output mode set to *pebbles*.
+
+.. thumbnail:: /images/voronoi/voronoi3d_tchebychev_f1f2_product.png
+   :group: shots_voronoi3d_group_A
+   :width: 10%
+   :title:
+
+   Tchebychev metric, with 4 octaves, and the output set to the product of the two nearest features to the cell.
+
+-----------
+
 .. rubric:: References
 
 .. bibliography:: /bibtex/references.bib
