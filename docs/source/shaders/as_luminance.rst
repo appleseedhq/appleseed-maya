@@ -41,10 +41,10 @@ Color Space
 *Input Color Space*
     The color space chosen as render/working space. It allows the user to choose one of the following
 
-    * ACES 2065-1 AP0 (D60)
+    * ACES 2065-1 AP0 (D60) :cite:`7289895`
     * ACEScg AP1 (D60) :cite:`Duiker:2015:ACC:2791261.2791273`
-    * Rec.2020 (D65)
-    * DCI-P3 (DCI)
+    * Rec.2020 (D65) :cite:`6784055`
+    * DCI-P3 (DCI) :cite:`7290729`
     * sRGB/Rec.709 (D65)
     * Chromaticity Coordinates
 
