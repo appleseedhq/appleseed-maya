@@ -154,7 +154,7 @@ Some examples of the output luminance of the input color with different color sp
    :width: 10%
    :title:
 
-   Starting from the bottom, the original color ramp, and above it, luminance with coefficients for Rec.709, Rec.2020, DCI-P3, ACEScg AP1, ACES 2065-1 AP0, explicit chromaticities set to AdobeRGB 1998, and color ramp again at the top.
+   Starting from the bottom, the original (scene-linear Rec.709, D65) color ramp, and above it, its luminance with coefficients for Rec.709, Rec.2020, DCI-P3, ACEScg AP1, ACES 2065-1 AP0, explicit chromaticities set to AdobeRGB 1998, and color ramp again at the top.
 
 -----
 
