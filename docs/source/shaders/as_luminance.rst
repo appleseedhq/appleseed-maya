@@ -34,7 +34,7 @@ Color Space
 
 *Derive From Maya CMS*
     Uses the render space definitions from Maya's synColor. This will set the chromaticity coordinates of the RGB primaries, and the white point, standardized in the color space chosen in the synColor configuration.
-    When this is not set, the user **must** set the appropriate options.
+    When this is not set, the user **must** set the appropriate options matching its choice of rendering/working space.
 
 .. important:: appleseed and appleseed-maya don't yet take `OpenColorIO <http://opencolorio.org/>`_ into account, so this parameter considers the working space definitions from synColor **only**. If you wish to use OCIO you **must** set the appropriate color space and white point settings. The default is (scene-linear) sRGB/Rec.709 primaries, with D65 whitepoint. 
 
@@ -88,7 +88,7 @@ Color Space
 Outputs
 =======
 
-*Result*:
+*Result*
     The luminance of the input color.
 
 -----
@@ -98,7 +98,7 @@ Outputs
 Screenshots
 ===========
 
-Some examples of the output luminance of the input color with different color spaces and whitepoints.
+Some examples of the output luminance of the input color ramp, rendered in (scene linear) Rec.709 space, standard illuminant D65, with different color spaces and whitepoints chosen. The mismatches in color spaces are for illustration purposes. If the settings cannot be derived automatically from your DCC application, then the choice of color space should match your choice or render/working space.
 
 .. thumbnail:: /images/luminance/luminance_colorramp_workingspace_rec709.png
    :group: shots_luminance_group_A
