@@ -13,7 +13,8 @@ Main exporter features
 * render to Maya's RenderView
 * Image Based Lighting via appleseed Physical Sky, and Dome Light
 * Support for most of :doc:`Maya's Hypershade nodes <supported_nodes>`
-* XGen
+* Region Rendering
+* Batch Rendering
 
 .. include:: limitations.rst
 
