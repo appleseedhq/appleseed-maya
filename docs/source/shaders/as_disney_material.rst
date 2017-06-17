@@ -1,5 +1,5 @@
 .. _label_as_disney_material:
-.. image:: ../images/as_disney_material.png
+.. image:: /_images/icons/as_disney_material.png
    :width: 128px
    :align: left
    :height: 128px

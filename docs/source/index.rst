@@ -23,7 +23,7 @@ Contents
    :numbered:
 
    features/features.rst
-   installation.rst
+   installation/installation.rst
    shaders/shaders.rst
    features/supported_nodes.rst
    tutorials/tutorials.rst
