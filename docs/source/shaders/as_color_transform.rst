@@ -34,7 +34,7 @@ Color Attributes
     * CIE XYZ [#]_
     * CIE xyY [#]_
     * CIE L\*a\*b\* :cite:`COTE:COTE338`
-    * CIE L\*u\*v\* [#]_
+    * CIE L\*u\*v\* :cite:`Poynton:2012:DVH:2222488`
     * CIE LCh :sub:`ab` [#]_
     * CIE LCh :sub:`uv` [#]_
     * CIE UCS 1960 [#]_
@@ -134,7 +134,6 @@ Some examples of color transformations.
 .. [#] Hue, Saturation, Lightness color space, https://en.wikipedia.org/wiki/HSL_and_HSV
 .. [#] The CIE XYZ color space, https://en.wikipedia.org/wiki/CIE_1931_color_space
 .. [#] CIE xyY, https://en.wikipedia.org/wiki/CIE_1931_color_space 
-.. [#] CIE L\*u\*v\* color space, https://en.wikipedia.org/wiki/CIELUV
 .. [#] Cylindrical representation of the CIELAB color space, LCh :sub:`ab` co, https://en.wikipedia.org/wiki/Lab_color_space#Cylindrical_representation:_CIELCh_or_CIEHLC
 .. [#] Cylindrical representation of the CIELUV color space, CIE LCh :sub:`uv`, https://en.wikipedia.org/wiki/Lab_color_space#Cylindrical_representation:_CIELCh_or_CIEHLC
 .. [#] Uniform color space, CIE UCS 1960, https://en.wikipedia.org/wiki/CIE_1960_color_space
