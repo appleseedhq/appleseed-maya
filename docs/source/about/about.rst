@@ -1,5 +1,4 @@
-.. __label_about:
-
+.. _label_about:
 
 *****
 About

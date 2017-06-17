@@ -4,9 +4,8 @@
 Installation
 ************
 
-Setup
-=====
-
+Manual Setup
+============
 
 **1. Set environment variables**
 
@@ -21,4 +20,13 @@ Setup
     export APPLESEED_SEARCHPATH=${APPLESEED_DIR}/sandbox/shaders/maya
 
 **2. Launch Maya and load the plugin**
+
+-----
+
+Using a module (.mod)
+=====================
+
+To be written here.
+
+.. seealso:: How to install modules in Maya
 

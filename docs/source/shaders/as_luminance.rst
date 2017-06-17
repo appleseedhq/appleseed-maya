@@ -1,6 +1,6 @@
 .. _label_as_luminance:
 
-.. image:: ../images/as_luminance.png
+.. image:: /_images/icons/as_luminance.png
    :width: 128px
    :align: left
    :height: 128px
@@ -34,7 +34,7 @@ Color Space
 
 *Derive From Maya CMS*
     Uses the render space definitions from Maya's synColor. This will set the chromaticity coordinates of the RGB primaries, and the white point, standardized in the color space chosen in the synColor configuration.
-    When this is not set, the user **must** set the appropriate options.
+    When this is not set, the user **must** set the appropriate options matching its choice of rendering/working space.
 
 .. important:: appleseed and appleseed-maya don't yet take `OpenColorIO <http://opencolorio.org/>`_ into account, so this parameter considers the working space definitions from synColor **only**. If you wish to use OCIO you **must** set the appropriate color space and white point settings. The default is (scene-linear) sRGB/Rec.709 primaries, with D65 whitepoint. 
 
@@ -88,7 +88,7 @@ Color Space
 Outputs
 =======
 
-*Result*:
+*Result*
     The luminance of the input color.
 
 -----
@@ -98,63 +98,63 @@ Outputs
 Screenshots
 ===========
 
-Some examples of the output luminance of the input color with different color spaces and whitepoints.
+Some examples of the output luminance of the input color ramp, rendered in (scene linear) Rec.709 space, standard illuminant D65, with different color spaces and whitepoints chosen. The mismatches in color spaces are for illustration purposes. If the settings cannot be derived automatically from your DCC application, then the choice of color space should match your choice or render/working space.
 
-.. thumbnail:: /images/luminance/luminance_colorramp_workingspace_rec709.png
+.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_workingspace_rec709.png
    :group: shots_luminance_group_A
    :width: 10%
    :title:
 
    Original color ramp, synColor render/working space set to (scene-linear) sRGB/Rec.709 primaries and D65 white point.
 
-.. thumbnail:: /images/luminance/luminance_colorramp_workingspace_rec709_from_CMS.png
+.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_workingspace_rec709_from_CMS.png
    :group: shots_luminance_group_A
    :width: 10%
    :title:
 
    Luminance of input color, with settings automatically retrieved from Maya's synColor CMS preferences.
 
-.. thumbnail:: /images/luminance/luminance_colorramp_set_ACES_AP0.png
+.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_ACES_AP0.png
    :group: shots_luminance_group_A
    :width: 10%
    :title:
 
    Original color ramp, with CMS settings disabled, and the input space overriden to ACES 2065-1 AP0, D60 whitepoint.
 
-.. thumbnail:: /images/luminance/luminance_colorramp_set_ACES_AP1.png
+.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_ACES_AP1.png
    :group: shots_luminance_group_A
    :width: 10%
    :title:
 
    Original color ramp, with CMS settings disabled, and the input space overriden to ACEScg AP1, D60 whitepoint.
 
-.. thumbnail:: /images/luminance/luminance_colorramp_set_Rec2020.png
+.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_Rec2020.png
    :group: shots_luminance_group_A
    :width: 10%
    :title:
 
    Original color ramp, with CMS settings disabled, and the input space overriden to Rec.2020, D65 whitepoint.
 
-.. thumbnail:: /images/luminance/luminance_colorramp_set_DCIP3.png
+.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_DCIP3.png
    :group: shots_luminance_group_A
    :width: 10%
    :title:
 
    Original color ramp, with CMS settings disabled, and the input space overriden to DCI-P3, DCI whitepoint.
 
-.. thumbnail:: /images/luminance/luminance_colorramp_explicit_coords_adobergb.png
+.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_explicit_coords_adobergb.png
    :group: shots_luminance_group_A
    :width: 10%
    :title:
 
    Original color ramp, with CMS settings disabled, and the input color space set to *xy chromacitity coordinates*, which were then set to the RGB chromaticity coordinates of the AdobeRGB 1998 color space, with a D65 whitepoint.
 
-.. thumbnail:: /images/luminance/luminance_compared.png
+.. thumbnail:: /_images/screenshots/luminance/luminance_compared.png
    :group: shots_luminance_group_A
    :width: 10%
    :title:
 
-   Starting from the bottom, the original color ramp, and above it, first the luminance with the Rec.709 coefficients, Rec.2020 coefficients, DCI-P3, ACEScg AP1, ACES 2065-1 AP0, explicit chromaticities set to AdobeRGB 1998 chromaticities and D65 whitepoint, and the color ramp again at the top.
+   Starting from the bottom, the original (scene-linear Rec.709, D65) color ramp, and above it, its luminance with coefficients for Rec.709, Rec.2020, DCI-P3, ACEScg AP1, ACES 2065-1 AP0, explicit chromaticities set to AdobeRGB 1998, and color ramp again at the top.
 
 -----
 
