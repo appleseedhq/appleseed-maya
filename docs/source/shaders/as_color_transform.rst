@@ -47,7 +47,7 @@ Color Attributes
     * HSL
     * CIE XYZ
     * CIE xyY
-    * CIE L\*a\*b\* :cite:`COTE:COTE338`
+    * CIE L\*a\*b\*
     * CIE L\*u\*v\*
     * CIE LCh :sub:`ab`
     * CIE LCh :sub:`uv`
