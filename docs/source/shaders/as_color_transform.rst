@@ -33,11 +33,10 @@ Color Attributes
     * HSL [#]_
     * CIE XYZ [#]_
     * CIE xyY [#]_
-    * CIE L\*a\*b\* :cite:`COTE:COTE338`
-    * CIE L\*u\*v\* :cite:`Poynton:2012:DVH:2222488`
-    * CIE LCh :sub:`ab` [#]_
-    * CIE LCh :sub:`uv` [#]_
-    * CIE UCS 1960 [#]_
+    * CIE 1976 L\*a\*b\* :cite:`COTE:COTE338`
+    * CIE 1976 L\*u\*v\* :cite:`Poynton:2012:DVH:2222488`
+    * CIE 1976 LCh :sub:`ab` [#]_
+    * CIE 1976 LCh :sub:`uv` [#]_
 
 *Output Space*:
     The output color space to transform to. It can be one of
@@ -47,11 +46,10 @@ Color Attributes
     * HSL
     * CIE XYZ
     * CIE xyY
-    * CIE L\*a\*b\*
-    * CIE L\*u\*v\*
-    * CIE LCh :sub:`ab`
-    * CIE LCh :sub:`uv`
-    * CIE UCS 1960
+    * CIE 1976 L\*a\*b\*
+    * CIE 1976 L\*u\*v\*
+    * CIE 1976 LCh :sub:`ab`
+    * CIE 1976 LCh :sub:`uv`
 
 -----
 
@@ -59,7 +57,8 @@ Outputs
 =======
 
 *Result*:
-    The transformed color.
+    The transformed color. For usability, the range of some spaces are remapped to the [0,1] range.
+    As an example, the hue could be mapped to a greyscale texture, or if the space is set to CIE 1976 L\*a\*\b*, the *a* variable would control the green/magenta oposition, while the *b* variable would control the blue/yellow oposition, with respective neutral/grey values at 0.5.
 
 -----
 
@@ -89,14 +88,14 @@ Some examples of color transformations.
    :width: 10%
    :title:
 
-   RGB image transformed to CIE L\*a\*b\*.
+   RGB image transformed to CIE 1976 L\*a\*b\*.
 
 .. thumbnail:: /_images/screenshots/color_transform/as_color_transform_RGB_to_CIELCh_uv.png
    :group: shots_color_transform_group_A
    :width: 10%
    :title:
 
-   RGB image transformed to CIE LCh :sub:`uv`. 
+   RGB image transformed to CIE 1976 LCh :sub:`uv`. 
 
 .. thumbnail:: /_images/screenshots/color_transform/as_color_transform_RGB_to_CIELAB_to_CIEXYZ.png
    :group: shots_color_transform_group_A
@@ -110,21 +109,21 @@ Some examples of color transformations.
    :width: 10%
    :title:
 
-   RGB image transformed to CIE L\*a\*b\*, then from CIE L\*a\*b\* to CIE XYZ, and from CIE XYZ to HSV.
+   RGB image transformed to CIE 1976 L\*a\*b\*, then from CIE L\*a\*b\* to CIE XYZ, and from CIE XYZ to HSV.
 
 .. thumbnail:: /_images/screenshots/color_transform/as_color_transform_RGB_to_CIELAB_to_CIEXYZ_to_HSV_to_RGB.png
    :group: shots_color_transform_group_A
    :width: 10%
    :title:
 
-   RGB image transformed to CIE L\*a\*b\*, then from CIE L\*a\*b\* to CIE XYZ, from CIE XYZ to HSV, and finally from HSV to RGB.
+   RGB image transformed to CIE 1976 L\*a\*b\*, then from CIE 1976 L\*a\*b\* to CIE XYZ, from CIE XYZ to HSV, and finally from HSV to RGB.
 
 .. thumbnail:: /_images/screenshots/color_transform/difference_of_xforms.png
    :group: shots_color_transform_group_A
    :width: 10%
    :title:
 
-   Difference between original RGB image, and converted image from RGB to CIE L\*a\*b\*, to CIE XYZ, to HSV, to RGB.
+   Difference between original RGB image, and converted image from RGB to CIE 1976 L\*a\*b\*, to CIE XYZ, to HSV, to RGB.
 
 -----
 
@@ -136,7 +135,6 @@ Some examples of color transformations.
 .. [#] CIE xyY, https://en.wikipedia.org/wiki/CIE_1931_color_space 
 .. [#] Cylindrical representation of the CIELAB color space, LCh :sub:`ab` co, https://en.wikipedia.org/wiki/Lab_color_space#Cylindrical_representation:_CIELCh_or_CIEHLC
 .. [#] Cylindrical representation of the CIELUV color space, CIE LCh :sub:`uv`, https://en.wikipedia.org/wiki/Lab_color_space#Cylindrical_representation:_CIELCh_or_CIEHLC
-.. [#] Uniform color space, CIE UCS 1960, https://en.wikipedia.org/wiki/CIE_1960_color_space
 
 -----
 
