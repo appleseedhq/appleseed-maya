@@ -292,29 +292,29 @@ htmlhelp_basename = 'appleseed-mayadoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
-latex_elements = {
+#latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
-'papersize': 'a4paper',
+#'papersize': 'a4paper',
 
 # The font size ('10pt', '11pt' or '12pt').
-'pointsize': '10pt',
+#'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
 #'preamble': '',
-}
+#}
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-  ('index', 'appleseed-maya.tex', 'appleseed-maya Documentation',
-   'The appleseedhq Organization', 'manual'),
-]
+#latex_documents = [
+#  ('index', 'appleseed-maya.tex', 'appleseed-maya Documentation',
+#   'The appleseedhq Organization', 'manual'),
+#]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
 #latex_logo = None
-latex_logo = "_static/appleseed-logo.png"
+#latex_logo = "_static/appleseed-logo.png"
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
@@ -351,11 +351,11 @@ man_pages = [
 # Grouping the document tree into Texinfo files. List of tuples
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
-texinfo_documents = [
-  ('index', 'appleseed-maya', 'appleseed-maya Documentation',
-   'The appleseedhq Organization', 'appleseed-maya', 'Physically based renderer',
-   'Miscellaneous'),
-]
+#texinfo_documents = [
+#  ('index', 'appleseed-maya', 'appleseed-maya Documentation',
+#   'The appleseedhq Organization', 'appleseed-maya', 'Physically based renderer',
+#   'Miscellaneous'),
+#]
 
 # Documents to append as an appendix to all manuals.
 #texinfo_appendices = []
