@@ -74,6 +74,9 @@ enable_pdf_build = False
 enable_latex_build = False
 enable_epub_build = True
 
+# no latex
+
+
 # Now, it's a pain, updating this by hand. Since this is a python file
 # anyway, we might as well just use GIT tags for the versioning, or
 # git describes
@@ -313,10 +316,13 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-  ('index', 'appleseed-maya.tex', 'appleseed-maya Documentation',
-   'The appleseedhq Organization', 'manual'),
-]
+#latex_documents = [
+#  ('index', 'appleseed-maya.tex', 'appleseed-maya Documentation',
+#   'The appleseedhq Organization', 'manual'),
+#]
+
+# no latex
+latex_documents = []
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
