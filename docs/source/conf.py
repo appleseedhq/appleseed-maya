@@ -302,16 +302,16 @@ htmlhelp_basename = 'appleseed-mayadoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
-latex_elements = {
+#latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
-'papersize': 'a4paper',
+#'papersize': 'a4paper',
 
 # The font size ('10pt', '11pt' or '12pt').
-'pointsize': '10pt',
+#'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
-'preamble': '',
-}
+#'preamble': '',
+#}
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
@@ -327,23 +327,23 @@ latex_documents = []
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
 #latex_logo = None
-latex_logo = "_static/appleseed-logo.png"
+#latex_logo = "_static/appleseed-logo.png"
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
-latex_use_parts = False
+#latex_use_parts = False
 
 # If true, show page references after internal links.
-latex_show_pagerefs = False
+#latex_show_pagerefs = False
 
 # If true, show URL addresses after external links.
-latex_show_urls = False
+#latex_show_urls = False
 
 # Documents to append as an appendix to all manuals.
-latex_appendices = []
+#latex_appendices = []
 
 # If false, no module index is generated.
-latex_domain_indices = True
+#latex_domain_indices = True
 
 
 # -- Options for manual page output ---------------------------------------
@@ -364,23 +364,24 @@ man_pages = [
 # Grouping the document tree into Texinfo files. List of tuples
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
-texinfo_documents = [
-  ('index', 'appleseed-maya', 'appleseed-maya Documentation',
-   'The appleseedhq Organization', 'appleseed-maya', 'Physically based renderer',
-   'Miscellaneous'),
-]
+#texinfo_documents = [
+#  ('index', 'appleseed-maya', 'appleseed-maya Documentation',
+#   'The appleseedhq Organization', 'appleseed-maya', 'Physically based renderer',
+#   'Miscellaneous'),
+#]
+texinfo_documents = []
 
 # Documents to append as an appendix to all manuals.
-texinfo_appendices = []
+#texinfo_appendices = []
 
 # If false, no module index is generated.
-texinfo_domain_indices = True
+#texinfo_domain_indices = True
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
-texinfo_show_urls = 'footnote'
+#texinfo_show_urls = 'footnote'
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
-texinfo_no_detailmenu = False
+#texinfo_no_detailmenu = False
 
 
 # -- Options for Epub output ----------------------------------------------
