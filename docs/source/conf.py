@@ -148,7 +148,8 @@ html_theme_options = {
     # an arbitrary url.
     'navbar_links': [
         ("Features", "features/features"),
-        ("Installation", "installation"),
+        ("Installation", "installation/installation"),
+        ("Workflow", "workflow/workflow"),
         ("Reference", "shaders/shaders"),
         ("Tutorials", "tutorials/tutorials"),
         ("appleseedhq", "http://appleseedhq.net", True),
