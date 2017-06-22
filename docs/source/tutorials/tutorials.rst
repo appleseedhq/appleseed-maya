@@ -14,7 +14,7 @@ Working Around Limitations
 Working with Custom Nodes
 =========================
 
- * :ref:`tutorial 2 <label_tutorial2>`
+ * :ref:`asColorTransform Tutorial <label_tutorial_as_color_transform>`
 
 Working with 3rd Party Applications
 ===================================

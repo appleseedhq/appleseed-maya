@@ -7,3 +7,6 @@ sphinxcontrib-bibtex
 # extra image options
 sphinxcontrib-images
 
+# extra CSS3 image options
+sphinxcontrib-css3image
+
