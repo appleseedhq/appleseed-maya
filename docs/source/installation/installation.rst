@@ -4,6 +4,8 @@
 Installation
 ************
 
+.. dummy directive:
+
 Manual Setup
 ============
 
@@ -12,6 +14,7 @@ Manual Setup
 .. code-block:: bash
    :linenos:
 
+    export THIS_DIR=<path to appleseed-maya source>
     export MAYA_PLUG_IN_PATH=${BUILD_DIR}/src/appleseedmaya
     export MAYA_SCRIPT_PATH=${THIS_DIR}/scripts
     export PYTHONPATH=$PYTHONPATH:${APPLESEED_DIR}/lib/python2.7:${THIS_DIR}/scripts

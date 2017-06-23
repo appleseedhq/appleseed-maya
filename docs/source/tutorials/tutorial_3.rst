@@ -1,4 +1,4 @@
-.. _label_tutorial3:
+.. _label_tutorial_3:
 
 ====================
 Using Substance data
