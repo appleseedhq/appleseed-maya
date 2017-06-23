@@ -12,14 +12,22 @@ for instance, driven by an expression or other parameters.
 
 -----
 
-.. css3image:: /_images/tutorials/tutorial2/pexel_chalk_original.png
-   :scale: 30%
-   :margin-left: 50px
-   :margin-right: 40px
-   :margin-top: 30px
-   :margin-bottom: 30px
-   :border-radius: 20px
-   :align: right
+.. only:: html
+
+    .. css3image:: /_images/tutorials/tutorial2/pexel_chalk_original.png
+        :scale: 30%
+        :margin-left: 50px
+        :margin-right: 40px
+        :margin-top: 30px
+        :margin-bottom: 30px
+        :border-radius: 20px
+        :align: right
+
+.. only:: latex
+
+    .. image:: /_images/tutorials/tutorial2/pexel_chalk_original.png
+        :scale: 30%
+        :align: center 
 
 |
 |
@@ -41,15 +49,22 @@ second one is a\* and the second one is b\*.
 
 |
 
-.. css3image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_network.png
-   :scale: 30%
-   :margin-left: 40px
-   :margin-right: 50px
-   :margin-top: 20px
-   :margin-bottom: 30px
-   :border-radius: 20px
-   :align: left
+.. only:: html
 
+    .. css3image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_network.png
+       :scale: 30%
+       :margin-left: 40px
+       :margin-right: 50px
+       :margin-top: 20px
+       :margin-bottom: 30px
+       :border-radius: 20px
+       :align: left
+
+.. only:: latex
+
+       .. image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_network.png
+       :scale: 30%
+       :align: center
 |
 
 The shading network shows the texture note RGB output connected to the
@@ -61,14 +76,22 @@ changing one of the components, and the round trip back to RGB via a second
 |
 |
 
-.. css3image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_UI.png
-   :scale: 50%
-   :margin-left: 50px
-   :margin-right: 40px
-   :margin-top: 20px
-   :margin-bottom: 30px
-   :border-radius: 20px
-   :align: right
+.. only:: html
+
+    .. css3image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_UI.png
+       :scale: 50%
+       :margin-left: 50px
+       :margin-right: 40px
+       :margin-top: 20px
+       :margin-bottom: 30px
+       :border-radius: 20px
+       :align: right
+
+.. only:: latex
+
+       .. image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_UI.png
+       :scale: 60%
+       :align: center
 
 |
 |
@@ -86,14 +109,22 @@ blue/yellow opposition instead.
 |
 |
 
-.. css3image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_network.png
-   :scale: 30%
-   :margin-left: 40px
-   :margin-right: 70px
-   :margin-top: 20px
-   :margin-bottom: 30px
-   :border-radius: 20px
-   :align: left
+.. only:: html
+
+    .. css3image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_network.png
+       :scale: 30%
+       :margin-left: 40px
+       :margin-right: 70px
+       :margin-top: 20px
+       :margin-bottom: 30px
+       :border-radius: 20px
+       :align: left
+
+.. only:: latex
+
+    .. image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_network.png
+       :scale: 40%
+       :align: cemter
 
 Since we just want to adjust the intensity of the magentas and greens in the image, the *Lightness* and *b* are unchanged. We connect these to another :ref:`asColorTransform<label_as_color_transform>` node's input components, and set its input mode to *CIELAB* and its output to *RGB*.
 
@@ -103,14 +134,22 @@ We connect the *a* component to a standard Maya *remapValue* node's input value
 |
 |
 
-.. css3image:: /_images/tutorials/tutorial2/Lab_workflow_remapValue.png
-   :scale: 40%
-   :margin-left: 50px
-   :margin-right: 40px
-   :margin-top: 20px
-   :margin-bottom: 30px
-   :border-radius: 20px
-   :align: right
+.. only:: html
+
+    .. css3image:: /_images/tutorials/tutorial2/Lab_workflow_remapValue.png
+       :scale: 40%
+       :margin-left: 50px
+       :margin-right: 40px
+       :margin-top: 20px
+       :margin-bottom: 30px
+       :border-radius: 20px
+       :align: right
+
+.. only:: latex
+
+    .. image:: /_images/tutorials/tutorial2/Lab_workflow_remapValue.png
+       :scale: 40%
+       :align: center
 
 |
 |
@@ -129,14 +168,22 @@ in image editing applications.
 |
 |
 
-.. css3image:: /_images/tutorials/tutorial2/Lab_workflow_remapValue_ramp.png
-   :scale: 50%
-   :margin-left: 40px
-   :margin-right: 50px
-   :margin-top: 20px
-   :margin-bottom: 30px
-   :border-radius: 20px
-   :align: left
+.. only:: html
+
+    .. css3image:: /_images/tutorials/tutorial2/Lab_workflow_remapValue_ramp.png
+       :scale: 50%
+       :margin-left: 40px
+       :margin-right: 50px
+       :margin-top: 20px
+       :margin-bottom: 30px
+       :border-radius: 20px
+       :align: left
+
+.. only:: latex
+
+   .. image:: /_images/tutorials/tutorial2/Lab_workflow_remapValue_ramp.png
+       :scale: 50%
+       :align: center
 
 |
 

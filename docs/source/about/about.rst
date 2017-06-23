@@ -4,10 +4,17 @@
 About
 *****
 
-.. css3image:: /_static/appleseed-logo-256.png
-   :align: center
-   :margin: 40px 40px 40px 40px
-   :target: http://appleseedhq.net/
+.. only:: html
+
+    .. css3image:: /_static/appleseed-logo-256.png
+        :align: center
+        :margin: 40px 40px 40px 40px
+        :target: http://appleseedhq.net/
+
+.. only:: latex
+
+    .. image:: /_static/appleseed-logo-256.png
+        :align: center
 
 |
 

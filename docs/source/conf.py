@@ -67,16 +67,6 @@ version = '0.1'
 # The full version, including alpha/beta/rc tags.
 release = '0.1'
 
-# Mess with Css3Image and Latex, latex2PDF, and all that ensues
-# PDF is a monstrosity anyway, just use EPub, or better yet, just use
-# the online HTML docs. If all else fails, there's the man pages.
-enable_pdf_build = False
-enable_latex_build = False
-enable_epub_build = True
-
-# no latex
-
-
 # Now, it's a pain, updating this by hand. Since this is a python file
 # anyway, we might as well just use GIT tags for the versioning, or
 # git describes
@@ -302,48 +292,47 @@ htmlhelp_basename = 'appleseed-mayadoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
-#latex_elements = {
+latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'a4paper',
+'papersize': 'a4paper',
 
 # The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
 #'preamble': '',
-#}
+}
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-#latex_documents = [
-#  ('index', 'appleseed-maya.tex', 'appleseed-maya Documentation',
-#   'The appleseedhq Organization', 'manual'),
-#]
-
-# no latex
-latex_documents = []
+latex_documents = [
+  ('latex_index', 'appleseed-maya.tex', 'appleseed-maya Documentation',
+   'The appleseedhq Organization', 'manual'),
+]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
 #latex_logo = None
-#latex_logo = "_static/appleseed-logo.png"
+latex_logo = "_static/appleseed-logo.png"
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
-#latex_use_parts = False
+latex_use_parts = False
 
 # If true, show page references after internal links.
-#latex_show_pagerefs = False
+latex_show_pagerefs = False
 
 # If true, show URL addresses after external links.
-#latex_show_urls = False
+latex_show_urls = False
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []
 
 # If false, no module index is generated.
 #latex_domain_indices = True
+
+#latex_use_latex_multicolumn = True
 
 
 # -- Options for manual page output ---------------------------------------
@@ -406,7 +395,7 @@ epub_theme = 'epub'
 epub_language = 'en'
 
 # The scheme of the identifier. Typical schemes are ISBN or URL.
-#epub_scheme = ''
+epub_scheme = 'http://appleseedhq.net'
 
 # The unique identifier of the text. This can be a ISBN number
 # or the project homepage.
@@ -433,25 +422,28 @@ epub_identifier = 'https://github.com/appleseedhq/appleseed-maya'
 epub_exclude_files = ['search.html']
 
 # The depth of the table of contents in toc.ncx.
-#epub_tocdepth = 3
+epub_tocdepth = 4
 
 # Allow duplicate toc entries.
-#epub_tocdup = True
+epub_tocdup = True
 
 # Choose between 'default' and 'includehidden'.
-#epub_tocscope = 'default'
+epub_tocscope = 'default'
 
 # Fix unsupported image types using the PIL.
-#epub_fix_images = False
+#epub_fix_images = True
 
 # Scale large images.
-#epub_max_image_width = 0
+#epub_max_image_width = 512
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 epub_show_urls = 'inline'
 
 # If false, no index is generated.
-#epub_use_index = True
+epub_use_index = True
+
+# Epub writing mode, can be horizontal(default), vertical
+epub_writing_mode = 'horizontal'
 
 
 # Example configuration for intersphinx: refer to the Python standard library.

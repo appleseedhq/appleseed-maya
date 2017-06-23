@@ -9,7 +9,7 @@ A series of tutorials, well... tutoring
 Working Around Limitations
 ==========================
 
- * :ref:`tutorial 1 <label_tutorial1>`
+ * :ref:`tutorial 1 <label_tutorial_1>`
 
 Working with Custom Nodes
 =========================
@@ -19,6 +19,6 @@ Working with Custom Nodes
 Working with 3rd Party Applications
 ===================================
 
- * :ref:`tutorial 3 <label_tutorial3>`
+ * :ref:`tutorial 3 <label_tutorial_3>`
 
 

@@ -19,14 +19,20 @@ Contents
 ========
 
 .. toctree::
-   :maxdepth: -1
+   :maxdepth: 3
    :numbered:
+   :glob:
 
-   features/features.rst
    installation/installation.rst
-   features/supported_nodes.rst
+   features/features.rst
+   features/limitations.rst
+   features/supported_nodes
+   features/nodes_*
    workflow/workflow.rst
+   workflow/*
    shaders/shaders.rst
+   shaders/as_*
    tutorials/tutorials.rst
+   tutorials/tutorial_*
    about/about.rst
 
