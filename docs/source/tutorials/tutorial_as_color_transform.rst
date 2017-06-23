@@ -1,8 +1,8 @@
 .. _label_tutorial_as_color_transform:
 
-===================
+*******************
 Transforming Colors
-===================
+*******************
 
 
 In this example, we'll be adjusting the colors of an input texture. Ideally
@@ -16,8 +16,8 @@ for instance, driven by an expression or other parameters.
 
     .. css3image:: /_images/tutorials/tutorial2/pexel_chalk_original.png
         :scale: 30%
-        :margin-left: 50px
-        :margin-right: 40px
+        :margin-left: 30px
+        :margin-right: 30px
         :margin-top: 30px
         :margin-bottom: 30px
         :border-radius: 20px
@@ -31,30 +31,26 @@ for instance, driven by an expression or other parameters.
 
 |
 |
-|
-|
-|
 
 Given the example image, we want to adjust the *redness* or *greenness* of the
 image, without changing its lightness, or giving it an overall tint shift. We
 connect the output color to an
 :ref:`asColorTransform<label_as_color_transform>` node's input.
-
-|
-|
-
 The input color is *RGB* and we will be outputting to *CIELAB* [#]_ color
 space, decomposing the output components. The first one is *lightness*, the
 second one is a\* and the second one is b\*.
 
+|
+|
+|
 |
 
 .. only:: html
 
     .. css3image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_network.png
        :scale: 30%
-       :margin-left: 40px
-       :margin-right: 50px
+       :margin-left: 30px
+       :margin-right: 30px
        :margin-top: 20px
        :margin-bottom: 30px
        :border-radius: 20px
@@ -80,8 +76,8 @@ changing one of the components, and the round trip back to RGB via a second
 
     .. css3image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_UI.png
        :scale: 50%
-       :margin-left: 50px
-       :margin-right: 40px
+       :margin-left: 30px
+       :margin-right: 30px
        :margin-top: 20px
        :margin-bottom: 30px
        :border-radius: 20px
@@ -96,7 +92,7 @@ changing one of the components, and the round trip back to RGB via a second
 |
 |
 
-The input color is *RGB* and we will be outputting to *CIELAB* color space.
+Set the input to *RGB* and output to *CIELAB* color space.
 The a\* component is responsible for the magenta/green opposition. A value of
 0.5 is grey, lower values shift towards magenta, higher values shift towards
 green.
@@ -113,8 +109,8 @@ blue/yellow opposition instead.
 
     .. css3image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_network.png
        :scale: 30%
-       :margin-left: 40px
-       :margin-right: 70px
+       :margin-left: 30px
+       :margin-right: 30px
        :margin-top: 20px
        :margin-bottom: 30px
        :border-radius: 20px
@@ -126,10 +122,9 @@ blue/yellow opposition instead.
        :scale: 40%
        :align: cemter
 
-Since we just want to adjust the intensity of the magentas and greens in the image, the *Lightness* and *b* are unchanged. We connect these to another :ref:`asColorTransform<label_as_color_transform>` node's input components, and set its input mode to *CIELAB* and its output to *RGB*.
+|
 
-We connect the *a* component to a standard Maya *remapValue* node's input value 
-
+Since we just want to adjust the intensity of the magentas and greens in the image, the *Lightness* and *b* are unchanged. We connect these to another :ref:`asColorTransform<label_as_color_transform>` node's input components, and set its input mode to *CIELAB* and its output to *RGB*, then connect the *a* component to a standard Maya *remapValue* node's input value 
 
 |
 |
@@ -138,8 +133,8 @@ We connect the *a* component to a standard Maya *remapValue* node's input value
 
     .. css3image:: /_images/tutorials/tutorial2/Lab_workflow_remapValue.png
        :scale: 40%
-       :margin-left: 50px
-       :margin-right: 40px
+       :margin-left: 30px
+       :margin-right: 30px
        :margin-top: 20px
        :margin-bottom: 30px
        :border-radius: 20px
@@ -172,8 +167,8 @@ in image editing applications.
 
     .. css3image:: /_images/tutorials/tutorial2/Lab_workflow_remapValue_ramp.png
        :scale: 50%
-       :margin-left: 40px
-       :margin-right: 50px
+       :margin-left: 30px
+       :margin-right: 30px
        :margin-top: 20px
        :margin-bottom: 30px
        :border-radius: 20px
@@ -234,7 +229,7 @@ Screenshots
     :width: 10%
     :title:
 
-    Original image
+    Changing the *lightness* channel.
 
 .. thumbnail:: /_images/tutorials/tutorial2/pexel_chalk_Lab_isolate_blue_only.png
     :group: asColorTransform group A
