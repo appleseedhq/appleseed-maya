@@ -1,26 +1,25 @@
-.. _label_as_voronoi2d:
+.. _label_as_voronoi3d:
 
-.. image:: /_images/icons/as_voronoi2d.png
+.. image:: /_images/icons/as_voronoi3d.png
    :width: 128px
    :align: left
    :height: 128px
-   :alt: Voronoi2D Icon
+   :alt: Voronoi3D Icon
 
-***********
-asVoronoi2D
+asVoronoi3D
 ***********
 
-A procedural 2D Worley :cite:`Worley:1996:CTB:237170.237267` like noise shader, that outputs not only the resulting color, but the four nearest features to the evaluated point, their respective positions, and their cell color IDs. See also :cite:`Ebert:2002:TMP:572337`.
+A procedural 3D Worley :cite:`Worley:1996:CTB:237170.237267` like noise shader, that outputs not only the resulting color, but the four nearest features to the evaluated point, their respective positions, and their cell color IDs. See also :cite:`Ebert:2002:TMP:572337`.
 
 Parameters
-==========
+----------
 
 .. bogus directive to silence warning::
 
 -----
 
 Color Parameters
-----------------
+^^^^^^^^^^^^^^^^
 
 *Color 1*:
     Primary cell color.
@@ -34,7 +33,7 @@ Color Parameters
 -----
 
 Recursion Parameters
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 *Amplitude*:
     Controls the amplitute at each octave, including the starting iteration.
@@ -51,7 +50,7 @@ Recursion Parameters
 -----
 
 Cell Parameters
----------------
+^^^^^^^^^^^^^^^
 
 *Density*:
     The density of the cells, with higher values resulting in a higher number of cells in the same area.
@@ -109,28 +108,29 @@ The Karlsruhe metric, also known as Moscow metric, is a radial metric, returns r
 -----
 
 Color Balance
--------------
+^^^^^^^^^^^^^
 
 The standard Maya color balance, gain, offset parameters. Please consult Maya's documentation for more information on these controls.
 
 -----
 
 Effects
--------
+^^^^^^^
 
 The standard Maya effects parameters. Please consult Maya's documentation for more information on these controls.
 
 -----
 
 Coordinates
------------
+^^^^^^^^^^^
 
-The input UV coordinates, typically from an upstream *placement2d* node.
+Typically, the *placement 3d* node's placement matrix, which provides a placement matrix to transform the surface point providing the x,y,z coordinates.
+By default this point is the global primitive variable **P**, but the user can override this if needed.
 
 -----
 
 Outputs
-=======
+^^^^^^^
 
 *Output Color*:
     The color resulting from ghe *Features Mode* choice.
@@ -151,70 +151,70 @@ Outputs
 
 -----
 
-.. _label_voronoi2d_screenshots:
+.. _label_voronoi3d_screenshots:
 
 Screenshots
-===========
+-----------
 
-Some examples of feature output modes and metrics.
+Some examples of different metrics and feature output combinations used.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f1.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/voronoi3d/voronoi3d_akritean_octaves.png
+   :group: shots_voronoi3d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the first feature nearest to the evaluated cell.
+   Akritean metric with coverage set to 0.5, 4 octaves, and the output set to the difference between the second nearest feature and the nearest feature to the cell.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f2.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/voronoi3d/voronoi3d_karlsruhe_f2f1_diff.png
+   :group: shots_voronoi3d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the second feature nearest to the evaluated cell.
+   Karlsruhe or Moscow metric, with 4 octaves, and the output set to the difference between the second nearest and the nearest feature to the cell.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f1_divided_by_f2.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/voronoi3d/voronoi3d_karlsruhe.png
+   :group: shots_voronoi3d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the first nearest featured divided by the second nearest feature.
+   Karlsruhe or Moscow metric, with 1 octaves, set to the nearest feature.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f1_plus_f2.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/voronoi3d/voronoi3d_minkowski_p_0.26.png
+   :group: shots_voronoi3d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the first and second nearest features to the cell added.
+   Minkowski metric with the P parameter set to 0.25, 4 octaves, and the output set to the nearest feature.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_pebbles.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/voronoi3d/voronoi3d_octaves_euclidian.png
+   :group: shots_voronoi3d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, set to *pebbles* mode, one of the many possible combinations of expressions involving the four nearest features to the cell.
+   Euclidian metric, 4 octaves, and the output set to the nearest feature to the cell.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_minkowski_p_0.5.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/voronoi3d/voronoi3d_octaves_minkowski_p_0.5.png
+   :group: shots_voronoi3d_group_A
    :width: 10%
    :title:
 
-   Nearest feature to the cell with the Minkowski metric with P parameter set to 0.5.
+   Minkowski metric with the P parameter set to 0.5, 4 octaves, and the output set to the nearest feature.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f2_minus_f1.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/voronoi3d/voronoi3d_ssd_pebbles.png
+   :group: shots_voronoi3d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the difference between the second nearest feature and the nearest feature.
+   Sum of square differences, with 4 octaves, and the output mode set to *pebbles*.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_cell_id4.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/voronoi3d/voronoi3d_tchebychev_f1f2_product.png
+   :group: shots_voronoi3d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the cell IDs of the fourth nearest feature.
+   Tchebychev metric, with 4 octaves, and the output set to the product of the two nearest features to the cell.
 
------
+-----------
 
 .. rubric:: References
 

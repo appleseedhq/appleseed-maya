@@ -6,21 +6,20 @@
    :height: 128px
    :alt: CC Icon
 
-****************
 asColorTransform
 ****************
 
 A node that transforms a color from **any** input color model, to **any** output color model, respecting the color space definitions set in synColor CMS options. An option will be added later to override this, in a way similar to what is presently done in :ref:`the luminance shader <label_as_luminance>`.
 
 Parameters
-==========
+----------
 
 .. bogus directive to silence warnings::
 
 -----
 
 Color Attributes
-----------------
+^^^^^^^^^^^^^^^^
 
 *Input Color*:
     The color being transformed.
@@ -54,7 +53,7 @@ Color Attributes
 -----
 
 Outputs
-=======
+^^^^^^^
 
 *Result*:
     The transformed color. For usability, the range of some spaces are remapped to the [0,1] range.
@@ -65,7 +64,7 @@ Outputs
 .. _label_as_color_transform_screenshots:
 
 Screenshots
-===========
+-----------
 
 Some examples of color transformations.
 

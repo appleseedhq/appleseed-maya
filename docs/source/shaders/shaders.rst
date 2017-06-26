@@ -10,19 +10,19 @@ that is inexistent and we feel might be useful to the end user.
 
 Procedural Texture Nodes
 ========================
-    
-* :doc:`asVoronoi2D <as_voronoi2d>`
-* :doc:`asVoronoi3D <as_voronoi3d>`
+
+* :ref:`asVoronoi2D <label_as_voronoi2d>`
+* :ref:`asVoronoi3D <label_as_voronoi3d>`
 
 Color Utilities
 ===============
 
-* :doc:`asColorTransform <as_color_transform>`
-* :doc:`asLuminance <as_luminance>`
+* :ref:`asColorTransform <label_as_color_transform>`
+* :ref:`asLuminance <label_as_luminance>`
 
 Materials
 =========
 
-* :doc:`asGlass <as_glass>`
-* :doc:`asDisneyMaterial <as_disney_material>`
+* :ref:`asGlass <label_as_glass>`
+* :ref:`asDisneyMaterial <label_as_disney_material>`
 

@@ -5,21 +5,20 @@
    :height: 128px
    :alt: Glass BSDF
 
-*******
 asGlass
 *******
 
 A Glass BSDF :cite:`Walter:2007:MMR:2383847.2383874`, with volumetric absorption.
 
 Parameters
-==========
+----------
 
 .. bogus directive to silence warnings::
 
 -----
 
 Surface Transmittance
----------------------
+^^^^^^^^^^^^^^^^^^^^^
 
 *Transmittance Color*:
     Transmittance color.
@@ -30,7 +29,7 @@ Surface Transmittance
 -----
 
 Specular Parameters
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 *Reflection Tint*:
     Reflection Tint
@@ -62,7 +61,7 @@ Specular Parameters
 -----
 
 Volume Material Parameters
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 *Volume Transmittance*:
     Volume transmittance.
@@ -73,7 +72,7 @@ Volume Material Parameters
 -----
 
 Bump Parameters
----------------
+^^^^^^^^^^^^^^^
 
 *Bump Normal*:
     The unit length world space normal of the bumped surface.
@@ -81,7 +80,7 @@ Bump Parameters
 .....
 
 Advanced Parameters
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 *Ray Depth*:
     The maximum ray depth a ray is allowed to bounce before being terminated.
@@ -89,7 +88,7 @@ Advanced Parameters
 -----
 
 Outputs
-=======
+^^^^^^^
 
 *Output Color*:
     The BSDF output color.

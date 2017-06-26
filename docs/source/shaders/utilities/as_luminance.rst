@@ -6,7 +6,6 @@
    :height: 128px
    :alt: Luminance Icon
 
-***********
 asLuminance
 ***********
 
@@ -15,14 +14,14 @@ definitions (that is, the chromaticity coordinates of the primaries and the
 white point).
 
 Parameters
-==========
+----------
 
 .. bogus directive to silence warnings::
 
 -----
 
 Color Attributes
-----------------
+^^^^^^^^^^^^^^^^
 
 *Input Color*
     The color being evaluated
@@ -30,7 +29,7 @@ Color Attributes
 -----
 
 Color Space
------------
+^^^^^^^^^^^
 
 *Derive From Maya CMS*
     Uses the render space definitions from Maya's synColor. This will set the chromaticity coordinates of the RGB primaries, and the white point, standardized in the color space chosen in the synColor configuration.
@@ -86,7 +85,7 @@ Color Space
 -----
 
 Outputs
-=======
+^^^^^^^
 
 *Result*
     The luminance of the input color.
@@ -96,7 +95,7 @@ Outputs
 .. _label_as_luminance_screenshots:
 
 Screenshots
-===========
+-----------
 
 Some examples of the output luminance of the input color ramp, rendered in (scene linear) Rec.709 space, standard illuminant D65, with different color spaces and whitepoints chosen. The mismatches in color spaces are for illustration purposes. If the settings cannot be derived automatically from your DCC application, then the choice of color space should match your choice or render/working space.
 
