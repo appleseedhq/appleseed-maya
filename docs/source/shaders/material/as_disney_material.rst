@@ -5,21 +5,20 @@
    :height: 128px
    :alt: Disney BSDF
 
-****************
 asDisneyMaterial
 ****************
 
 The Disney *principled* BRDF :cite:`McAuley:2012:PPS:2343483.2343493`, a physically based material.
 
 Parameters
-==========
+----------
 
 .. bogus directive to silence warning::
 
 -----
 
 Common Material Parameters
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 *Surface Color*
     The surface color
@@ -30,7 +29,7 @@ Common Material Parameters
 -----
 
 Specular Parameters
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 *Specular Amount*
     The amount of specular highlights
@@ -56,7 +55,7 @@ Specular Parameters
 -----
 
 Sheen Parameters
-----------------
+^^^^^^^^^^^^^^^^
 
 *Sheen Amount*
     The amount of sheen, see Westin velvet.
@@ -67,7 +66,7 @@ Sheen Parameters
 -----
 
 Coating Parameters
-------------------
+^^^^^^^^^^^^^^^^^^
 
 *Coating Amount*
     The amount of (clear) coating on the material, producing an extra layer of (usually) sharp highlights.
@@ -78,7 +77,7 @@ Coating Parameters
 -----
 
 Bump Parameters
----------------
+^^^^^^^^^^^^^^^
 
 *Bump Normal*
     The unit length (bump) normal, usually passed from a *bump2d* or a *bump3d* node.
@@ -86,7 +85,7 @@ Bump Parameters
 -----
 
 Advanced Parameters
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 *Ray Depth*
     The maximum number of bounces a ray is allowed to travel.
@@ -94,7 +93,7 @@ Advanced Parameters
 -----
 
 Outputs
-=======
+^^^^^^^
 
 *Output Color*
     The final result color.
@@ -110,7 +109,7 @@ Outputs
 .. _label_disney_material_screenshots:
 
 Screenshots
-===========
+-----------
 
 .. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f1.png
    :group: shots_voronoi2d_group_A
