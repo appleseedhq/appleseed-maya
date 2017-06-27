@@ -35,6 +35,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.imgmath',
+#    'sphinx.ext.autosectionlabel',
     'sphinxcontrib.bibtex',
     'sphinxcontrib.images',
     'sphinxcontrib.css3image',
@@ -324,7 +325,7 @@ latex_use_parts = False
 latex_show_pagerefs = False
 
 # If true, show URL addresses after external links.
-latex_show_urls = False
+latex_show_urls = "True"
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []

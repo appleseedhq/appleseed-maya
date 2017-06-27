@@ -1,5 +1,21 @@
 .. _label_shaders:
 
+.. Adding a toctree here, hidden, and including it in the main TOC tree will
+   flatten the content, instead of working as a nested sub-TOC tree.
+   The only thing that seems to work is including the RST document, which 
+   sadly will mean shaders.rst will be flattened instead.
+   One would want a include directive, with a hidden option, just for TOC
+   purposes, but that doesn't exist.
+
+.. toctree::
+    :name: shaderstoc
+    :glob:
+    :hidden:
+    
+    material/*
+    texture/*
+    utilities/*
+
 ************************
 Custom appleseed shaders
 ************************

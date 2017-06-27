@@ -1,4 +1,5 @@
 .. _label_as_glass:
+
 .. image:: /_images/icons/as_glass.png
    :width: 128px
    :align: left

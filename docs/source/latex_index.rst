@@ -9,30 +9,32 @@
 
 .. |time| date:: %H:%M
 
-******************************************
+##########################################
 Welcome to appleseed-maya's documentation!
-******************************************
+##########################################
 
 Documentation generated on |date| at |time|
 
+********
 Contents
-========
+********
 
 .. toctree::
-   :maxdepth: 3
-   :numbered:
-   :glob:
-
-   installation/installation.rst
-   features/features.rst
-   features/limitations.rst
-   features/supported_nodes
-   features/nodes_*
-   workflow/workflow.rst
-   workflow/*
-   shaders/shaders.rst
-   shaders/as_*
-   tutorials/tutorials.rst
-   tutorials/tutorial_*
-   about/about.rst
+    :name: latex_mastertoc
+    :maxdepth: 3
+    :glob:
+    
+    installation/installation.rst
+    features/features.rst
+    features/limitations.rst
+    features/supported_nodes
+    features/nodes_*
+    workflow/workflow.rst
+    shaders/shaders.rst
+    shaders/material/*
+    shaders/texture/*
+    shaders/utilities/*
+    tutorials/tutorials.rst
+    tutorials/tutorial_as_*
+    about/about.rst
 
