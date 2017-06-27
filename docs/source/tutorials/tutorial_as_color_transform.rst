@@ -58,9 +58,10 @@ second one is a\* and the second one is b\*.
 
 .. only:: latex
 
-       .. image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_network.png
-       :scale: 30%
-       :align: center
+   .. image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_network.png
+      :scale: 30%
+      :align: center
+
 |
 
 The shading network shows the texture note RGB output connected to the
@@ -85,9 +86,9 @@ changing one of the components, and the round trip back to RGB via a second
 
 .. only:: latex
 
-       .. image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_UI.png
-       :scale: 60%
-       :align: center
+   .. image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_UI.png
+      :scale: 60%
+      :align: center
 
 |
 |
@@ -120,7 +121,7 @@ blue/yellow opposition instead.
 
     .. image:: /_images/tutorials/tutorial2/Lab_workflow_asColorTransform_network.png
        :scale: 40%
-       :align: cemter
+       :align: center
 
 |
 

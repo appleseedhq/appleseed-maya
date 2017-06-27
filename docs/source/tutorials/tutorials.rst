@@ -1,5 +1,14 @@
 .. _label_tutorials:
 
+.. toctree::
+    :name: tutorialstoc
+    :glob:
+    :hidden:
+
+    tutorial_1
+    tutorial_as_color_transform
+    tutorial_3
+
 *********
 Tutorials
 *********

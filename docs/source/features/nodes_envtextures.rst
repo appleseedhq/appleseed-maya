@@ -1,5 +1,8 @@
 .. _label_nodes_envtextures:
 
+Environment Textures
+====================
+
 .. cssclass:: table-striped table-condensed table-hover
 
 =================== ==================

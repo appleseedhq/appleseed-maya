@@ -80,7 +80,7 @@ Some examples of color transformations.
    :width: 10%
    :title:
 
-   RGB image transformed to HSV. [#]_
+   RGB image transformed to HSV.
 
 .. thumbnail:: /_images/screenshots/color_transform/as_color_transform_RGB_to_CIELAB.png
    :group: shots_color_transform_group_A

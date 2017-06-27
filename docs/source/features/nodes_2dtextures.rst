@@ -33,7 +33,7 @@ Water               Supported
 
 .. [#] The *Movie* node requires `OIIO <https://github.com/OpenImageIO/oiio>`_ built with `FFMPEG <https://ffmpeg.org/>`_.
 
-.. [#] In order to use `Substance <https://www.allegorithmic.com/>`_ materials, you need to use the Maya's *Substance* node image file output. This will be covered on its own simple :ref:`tutorial <label_tutorial3>`.
+.. [#] In order to use `Substance <https://www.allegorithmic.com/>`_ materials, you need to use the Maya's *Substance* node image file output. This will be covered on its own simple :ref:`tutorial <label_tutorial_3>`.
 
 .. [#] For now, The *Substance Output* is unsupported. This might change in the future.
 

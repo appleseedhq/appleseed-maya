@@ -74,5 +74,5 @@ Weighted Add Matrix Supported
 
 .. rubric:: Footnotes
 
-.. [#] As alternative to Maya's projection node, use :ref:`asProjection <label_as_projection>` instead.
+.. [#] An alternative to Maya's projection node will come on the form of a custom appleseed shader.
 
