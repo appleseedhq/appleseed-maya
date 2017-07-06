@@ -63,39 +63,41 @@ class RenderGlobalsNode
         AppleseedSession::MotionBlurTimes&  motionBlurTimes);
 
   private:
-    static MObject m_pixelSamples;
-    static MObject m_passes;
-    static MObject m_tileSize;
+    static MObject      m_pixelSamples;
+    static MObject      m_passes;
+    static MObject      m_tileSize;
 
-    static MObject m_lightingEngine;
+    static MObject      m_sceneScale;
+
+    static MObject      m_lightingEngine;
 
     static MObject      m_diagnosticShader;
     static MStringArray m_diagnosticShaderKeys;
 
-    static MObject m_limitBounces;
-    static MObject m_globalBounces;
-    static MObject m_specularBounces;
-    static MObject m_glossyBounces;
-    static MObject m_diffuseBounces;
+    static MObject      m_limitBounces;
+    static MObject      m_globalBounces;
+    static MObject      m_specularBounces;
+    static MObject      m_glossyBounces;
+    static MObject      m_diffuseBounces;
 
-    static MObject m_lightSamples;
-    static MObject m_envSamples;
-    static MObject m_caustics;
-    static MObject m_maxRayIntensity;
+    static MObject      m_lightSamples;
+    static MObject      m_envSamples;
+    static MObject      m_caustics;
+    static MObject      m_maxRayIntensity;
 
-    static MObject m_envLightNode;
-    static MObject m_backgroundEmitsLight;
+    static MObject      m_envLightNode;
+    static MObject      m_backgroundEmitsLight;
 
-    static MObject m_motionBlur;
-    static MObject m_mbCameraSamples;
-    static MObject m_mbTransformSamples;
-    static MObject m_mbDeformSamples;
-    static MObject m_shutterOpen;
-    static MObject m_shutterClose;
+    static MObject      m_motionBlur;
+    static MObject      m_mbCameraSamples;
+    static MObject      m_mbTransformSamples;
+    static MObject      m_mbDeformSamples;
+    static MObject      m_shutterOpen;
+    static MObject      m_shutterClose;
 
-    static MObject m_renderingThreads;
+    static MObject      m_renderingThreads;
 
-    static MObject m_imageFormat;
+    static MObject      m_imageFormat;
 };
 
 #endif  // !APPLESEED_MAYA_RENDERGLOBALSNODE_H

@@ -381,8 +381,12 @@ class AppleseedRenderGlobalsMainTab(object):
                                     ui=pm.floatFieldGrp(label="Max Ray Intensity", numberOfFields = 1),
                                     attrName="maxRayIntensity")
 
-                with pm.frameLayout(label="Environment", collapsable=True, collapse=False):
+                with pm.frameLayout(label="Scene", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
+                        self.__addControl(
+                            ui=pm.floatFieldGrp(label="Scene Scale", numberOfFields = 1),
+                            attrName="sceneScale")
+
                         with pm.rowLayout("appleseedRowLayout", nc=3):
                             pm.text("Environment Light")
                             ui = pm.optionMenu(changeCommand=self.__environmentLightSelected)

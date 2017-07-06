@@ -61,6 +61,8 @@ MObject RenderGlobalsNode::m_pixelSamples;
 MObject RenderGlobalsNode::m_passes;
 MObject RenderGlobalsNode::m_tileSize;
 
+MObject RenderGlobalsNode::m_sceneScale;
+
 MObject RenderGlobalsNode::m_lightingEngine;
 
 MStringArray RenderGlobalsNode::m_diagnosticShaderKeys;
@@ -137,6 +139,17 @@ MStatus RenderGlobalsNode::initialize()
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
         "appleseedMaya: Failed to add render globals tileSize attribute");
+
+    // Scene Scale.
+    m_sceneScale = numAttrFn.create("sceneScale", "sceneScale", MFnNumericData::kFloat, 1.0f, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals sceneScale attribute");
+    numAttrFn.setMin(0.0000001f);
+    status = addAttribute(m_sceneScale);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals sceneScale attribute");
 
     // Lighting engine.
     MFnEnumAttribute enumAttrFn;

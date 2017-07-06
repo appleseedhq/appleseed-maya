@@ -381,7 +381,10 @@ namespace
             m_project->get_scene()->assemblies().insert(assembly);
 
             // Instance the main assembly
-            asf::auto_release_ptr<asr::AssemblyInstance> assemblyInstance = asr::AssemblyInstanceFactory::create("assembly_inst", asr::ParamArray(), "assembly");
+            asf::auto_release_ptr<asr::AssemblyInstance> assemblyInstance = asr::AssemblyInstanceFactory::create(
+                "assembly_inst",
+                asr::ParamArray(),
+                "assembly");
             m_project->get_scene()->assembly_instances().insert(assemblyInstance);
         }
 
@@ -464,11 +467,37 @@ namespace
                 }
             }
 
+            MFnDependencyNode fnDepNode(globalsNode);
+
+            // Apply the scene scale factor.
+            float sceneScale;
+            if (AttributeUtils::get(fnDepNode, "sceneScale", sceneScale))
+            {
+                if (sceneScale != 1.0f)
+                {
+                    asr::TransformSequence scaleTransformSeq;
+                    scaleTransformSeq.set_transform(0.0, asf::Transformd::from_local_to_parent(
+                        asf::Matrix4d::make_scaling(asf::Vector3d(sceneScale))));
+
+                    // Scale the main assembly instance.
+                    asr::Scene* scene = m_project->get_scene();
+                    asr::AssemblyInstance* assemblyInstance =
+                        scene->assembly_instances().get_by_name("assembly_inst");
+                    assemblyInstance->transform_sequence() = scaleTransformSeq;
+
+                    // Apply scaling to all cameras.
+                    for (size_t i = 0, e = scene->cameras().size(); i < e; ++i)
+                    {
+                        asr::Camera* camera = scene->cameras().get_by_index(i);
+                        camera->transform_sequence() = camera->transform_sequence() * scaleTransformSeq;
+                    }
+                }
+            }
+
             // Set the resolution.
             params.insert("resolution", asf::Vector2i(m_options.m_width, m_options.m_height));
 
             // Set the tile size.
-            MFnDependencyNode fnDepNode(globalsNode);
             int tileSize;
             if (AttributeUtils::get(fnDepNode, "tileSize", tileSize))
                 params.insert("tile_size", asf::Vector2i(tileSize));
