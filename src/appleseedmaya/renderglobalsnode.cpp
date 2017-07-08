@@ -89,6 +89,7 @@ MObject RenderGlobalsNode::m_shutterOpen;
 MObject RenderGlobalsNode::m_shutterClose;
 
 MObject RenderGlobalsNode::m_renderingThreads;
+MObject RenderGlobalsNode::m_maxTextureCacheSize;
 
 MObject RenderGlobalsNode::m_imageFormat;
 
@@ -384,6 +385,18 @@ MStatus RenderGlobalsNode::initialize()
         status,
         "appleseedMaya: Failed to add render globals threads attribute");
 
+    // Texture cache size.
+    m_maxTextureCacheSize = numAttrFn.create("maxTexCacheSize", "maxTexCacheSize", MFnNumericData::kInt, 1024, &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to create render globals maxTexCacheSize attribute");
+
+    numAttrFn.setMin(16);
+    status = addAttribute(m_maxTextureCacheSize);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
+        status,
+        "appleseedMaya: Failed to add render globals maxTexCacheSize attribute");
+
     // Environment light connection.
     m_envLightNode = msgAttrFn.create("envLight", "env", &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
@@ -543,6 +556,15 @@ void RenderGlobalsNode::applyGlobalsToProject(
             finalParams.insert_path("rendering_threads", threads);
             iprParams.insert_path("rendering_threads", threads);
         }
+    }
+
+    int maxTexCacheSize;
+    if (AttributeUtils::get(MPlug(globals, m_maxTextureCacheSize), maxTexCacheSize))
+    {
+        // Convert to bytes.
+        maxTexCacheSize *= 1024 * 1024;
+        finalParams.insert_path("texture_store.max_size", maxTexCacheSize);
+        iprParams.insert_path("texture_store.max_size", maxTexCacheSize);
     }
 }
 

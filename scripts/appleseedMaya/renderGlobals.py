@@ -430,6 +430,9 @@ class AppleseedRenderGlobalsMainTab(object):
                         self.__addControl(
                             ui=pm.intFieldGrp(label="Threads", numberOfFields = 1),
                             attrName="threads")
+                        self.__addControl(
+                            ui=pm.intFieldGrp(label="Texture Cache Size (MB)", numberOfFields = 1),
+                            attrName="maxTexCacheSize")
 
         pm.setUITemplate("renderGlobalsTemplate", popTemplate=True)
         pm.setUITemplate("attributeEditorTemplate", popTemplate=True)
