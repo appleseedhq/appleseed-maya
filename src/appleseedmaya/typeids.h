@@ -62,6 +62,7 @@ enum AppleseedMayaTypeIds
     AsLayeredSurfaceNodeTypeId      = 0x001279d5,   // 1210837
     AsSkinNodeTypeId                = 0x001279d6,   // 1210838
     AsPlasticNodeTypeId             = 0x001279d7,   // 1210839
+    AsThinFilmNodeTypeId            = 0x001279d8,   // 1210840
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };
