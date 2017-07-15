@@ -240,12 +240,79 @@ Outputs
 Screenshots
 -----------
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f1.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_aluminium.png
+   :group: shots_standard_surface_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the first feature nearest to the evaluated cell.
+   Rough aluminium, specular set to *conductor* mode.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_coated_blue_absorption_rough_aluminium.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Rough aluminium, specular set to *conductor* mode, with a dielectric coating with blue colored absorption.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_coated_rough_aluminium.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Rough aluminium with high specular spread values, dielectric coating without absorption.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_coated_rough_aluminium_w_orange_absorption_high_spread.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Rough aluminium, specular set to *conductor* mode, full specular spread and high absorption value.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_copper.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Moderately rough copper substrate, specular Fresnel set to *conductor*.
+
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_diffuse_rough_coating_velvety.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Colored diffuse term with very rough dielectric coating giving a sheen like appearance.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_incandescence_blackbody_and_coating.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Blackbody radiator with tonemapped values, and a smooth dielectric coating.
+
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_metal_chrome_anisotropy.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Slightly rough copper with anisotropic highlights.
+
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_refraction.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Smooth glass BTDF with minimal surface roughness.
+
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_rough_glass_with_volume_absorption.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Rough glass with volumetric absorption.
 
 -----
 
