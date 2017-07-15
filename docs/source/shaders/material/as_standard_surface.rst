@@ -120,7 +120,6 @@ Volumetric Absorption
 *Absorption Color*
     The color used for the volumetric absorption.
 
-
 -----
 
 Coating Parameters
@@ -268,12 +267,7 @@ Screenshots
 
    Rough aluminium, specular set to *conductor* mode, full specular spread and high absorption value.
 
-.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_copper.png
-   :group: shots_standard_surface_group_A
-   :width: 10%
-   :title:
 
-   Moderately rough copper substrate, specular Fresnel set to *conductor*.
 
 
 .. thumbnail:: /_images/screenshots/standard_surface/stdsurface_diffuse_rough_coating_velvety.png
@@ -306,13 +300,47 @@ Screenshots
 
    Smooth glass BTDF with minimal surface roughness.
 
-
 .. thumbnail:: /_images/screenshots/standard_surface/stdsurface_rough_glass_with_volume_absorption.png
    :group: shots_standard_surface_group_A
    :width: 10%
    :title:
 
    Rough glass with volumetric absorption.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_copper.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Moderately rough copper substrate, specular Fresnel set to *conductor*.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_rough_diffuse.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Diffuse term with diffuse roughness set to 1.0.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_subsurface1.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Subsurface scattering, with a global scale factor set to 0.5.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_rough_glass2.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Rough glass refraction with high specular spread.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_subsurface2.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Subsurface scattering with scale factor set to 0.1, rough specular, and sharp dielectric coating, creating the appearance of a jade like material.
 
 -----
 
