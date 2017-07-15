@@ -10,6 +10,8 @@ asDisneyMaterial
 
 The Disney *principled* BRDF :cite:`McAuley:2012:PPS:2343483.2343493`, a physically based material.
 
+|
+
 Parameters
 ----------
 

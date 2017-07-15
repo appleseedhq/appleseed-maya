@@ -205,6 +205,10 @@ html_theme_options = {
     'bootstrap_version': "3",
 }
 
+# Override stylesheet for block quotes
+def setup(app):
+    app.add_stylesheet("css/blockquote_custom1.css")
+
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
 

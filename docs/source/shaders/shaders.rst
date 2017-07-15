@@ -25,4 +25,5 @@ Materials
 
 * :ref:`asGlass <label_as_glass>`
 * :ref:`asDisneyMaterial <label_as_disney_material>`
+* :ref:`asStandardSurface <label_as_standard_surface>`
 
