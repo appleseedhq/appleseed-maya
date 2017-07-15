@@ -11,6 +11,8 @@ asGlass
 
 A Glass BSDF :cite:`Walter:2007:MMR:2383847.2383874`, with volumetric absorption.
 
+|
+
 Parameters
 ----------
 
