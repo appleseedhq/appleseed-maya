@@ -288,7 +288,7 @@ Screenshots
    :width: 10%
    :title:
 
-   Slightly rough copper with anisotropic highlights.
+   Slightly rough chrome with anisotropic highlights.
 
 .. thumbnail:: /_images/screenshots/standard_surface/stdsurface_refraction.png
    :group: shots_standard_surface_group_A
@@ -359,6 +359,13 @@ Screenshots
    :title:
 
    Subsurface with a rough specular, creating the appearance of a skin like material.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_gummybear.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Glass BSDF with roughness set to 0.6, absorption depth to 2.0, absorption color to red/orange, giving the appearance of a gummy bear like material.
 
 -----
 
