@@ -106,7 +106,7 @@ Refraction Parameters
 ^^^^^^^^^^^^^^^^^^^^^
 
 *Refraction Amount*
-    Intensity of the refraction, only taking place when *Fresnel* is *dielectric* :cite:`Walter:2007:MMR:2383847.2383874`
+    Intensity of the refraction, only taking place when *Fresnel* is *dielectric* :cite:`Walter:2007:MMR:2383847.2383874`.
 
 *Refraction Tint*
     Overall tinting factor, it affects the BTDF equally, unlike volumetric absorption.
@@ -119,6 +119,8 @@ Volumetric Absorption
 
 *Absorption Color*
     The color used for the volumetric absorption.
+
+.. warning:: The refraction BSDF cannot presently support layered coatings nor coating absorption. This will be covered in a future release supporting layered closures.
 
 -----
 
@@ -267,9 +269,6 @@ Screenshots
 
    Rough aluminium, specular set to *conductor* mode, full specular spread and high absorption value.
 
-
-
-
 .. thumbnail:: /_images/screenshots/standard_surface/stdsurface_diffuse_rough_coating_velvety.png
    :group: shots_standard_surface_group_A
    :width: 10%
@@ -284,14 +283,12 @@ Screenshots
 
    Blackbody radiator with tonemapped values, and a smooth dielectric coating.
 
-
 .. thumbnail:: /_images/screenshots/standard_surface/stdsurface_metal_chrome_anisotropy.png
    :group: shots_standard_surface_group_A
    :width: 10%
    :title:
 
    Slightly rough copper with anisotropic highlights.
-
 
 .. thumbnail:: /_images/screenshots/standard_surface/stdsurface_refraction.png
    :group: shots_standard_surface_group_A
@@ -341,6 +338,27 @@ Screenshots
    :title:
 
    Subsurface scattering with scale factor set to 0.1, rough specular, and sharp dielectric coating, creating the appearance of a jade like material.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_satin1.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Satin like material using a dielectric substrate with high roughness and anisotropy.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_velvet1.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Velvet like material using a dielectric substrate with high specular roughness, low specular spread, and a blueish specular tint.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_skinlike_specular.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Subsurface with a rough specular, creating the appearance of a skin like material.
 
 -----
 
