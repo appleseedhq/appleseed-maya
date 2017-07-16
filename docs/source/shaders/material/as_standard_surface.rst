@@ -106,7 +106,7 @@ Refraction Parameters
 ^^^^^^^^^^^^^^^^^^^^^
 
 *Refraction Amount*
-    Intensity of the refraction, only taking place when *Fresnel* is *dielectric* :cite:`Walter:2007:MMR:2383847.2383874`
+    Intensity of the refraction, only taking place when *Fresnel* is *dielectric* :cite:`Walter:2007:MMR:2383847.2383874`.
 
 *Refraction Tint*
     Overall tinting factor, it affects the BTDF equally, unlike volumetric absorption.
@@ -120,6 +120,7 @@ Volumetric Absorption
 *Absorption Color*
     The color used for the volumetric absorption.
 
+.. warning:: The refraction BSDF cannot presently support layered coatings nor coating absorption. This will be covered in a future release supporting layered closures.
 
 -----
 
@@ -240,12 +241,131 @@ Outputs
 Screenshots
 -----------
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f1.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_aluminium.png
+   :group: shots_standard_surface_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the first feature nearest to the evaluated cell.
+   Rough aluminium, specular set to *conductor* mode.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_coated_blue_absorption_rough_aluminium.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Rough aluminium, specular set to *conductor* mode, with a dielectric coating with blue colored absorption.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_coated_rough_aluminium.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Rough aluminium with high specular spread values, dielectric coating without absorption.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_coated_rough_aluminium_w_orange_absorption_high_spread.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Rough aluminium, specular set to *conductor* mode, full specular spread and high absorption value.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_diffuse_rough_coating_velvety.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Colored diffuse term with very rough dielectric coating giving a sheen like appearance.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_incandescence_blackbody_and_coating.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Blackbody radiator with tonemapped values, and a smooth dielectric coating.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_metal_chrome_anisotropy.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Slightly rough chrome with anisotropic highlights.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_refraction.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Smooth glass BTDF with minimal surface roughness.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_rough_glass_with_volume_absorption.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Rough glass with volumetric absorption.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_copper.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Moderately rough copper substrate, specular Fresnel set to *conductor*.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_rough_diffuse.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Diffuse term with diffuse roughness set to 1.0.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_subsurface1.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Subsurface scattering, with a global scale factor set to 0.5.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_rough_glass2.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Rough glass refraction with high specular spread.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_subsurface2.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Subsurface scattering with scale factor set to 0.1, rough specular, and sharp dielectric coating, creating the appearance of a jade like material.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_satin1.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Satin like material using a dielectric substrate with high roughness and anisotropy.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_velvet1.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Velvet like material using a dielectric substrate with high specular roughness, low specular spread, and a blueish specular tint.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_skinlike_specular.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Subsurface with a rough specular, creating the appearance of a skin like material.
+
+.. thumbnail:: /_images/screenshots/standard_surface/stdsurface_gummybear.png
+   :group: shots_standard_surface_group_A
+   :width: 10%
+   :title:
+
+   Glass BSDF with roughness set to 0.6, absorption depth to 2.0, absorption color to red/orange, giving the appearance of a gummy bear like material.
 
 -----
 
@@ -255,7 +375,7 @@ Screenshots
 
 .. [#] The specular (microfacet) BRDF is using the Student's t distribution :cite:`10.1111:cgf.13137`. This includes the Beckmann :cite:`beckmann1963scattering`, :cite:`Cook:1982:RMC:357290.357293` and GGX :cite:`Walter:2007:MMR:2383847.2383874` distributions.
 
-.. [#] See also `Extending the Disney BRDF to a BSDF with Integrated Subsurface Scattering (pdf) <http://blog.selfshadow.com/publications/s2015-shading-course/burley/s2015_pbs_disney_bsdf_notes.pdf>`
+.. [#] See also `Extending the Disney BRDF to a BSDF with Integrated Subsurface Scattering <http://blog.selfshadow.com/publications/s2015-shading-course/burley/s2015_pbs_disney_bsdf_notes.pdf>`_ for details.
 
 .. [#] https://en.wikipedia.org/wiki/Black-body_radiation
 
