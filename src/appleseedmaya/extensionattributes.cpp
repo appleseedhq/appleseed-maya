@@ -302,7 +302,7 @@ namespace
             "asDoubleSided",
             "asDoubleSided",
             MFnNumericData::kBoolean,
-            false,
+            true,
             status);
         AttributeUtils::makeInput(numAttrFn);
         modifier.addExtensionAttribute(nodeClass, attr);
