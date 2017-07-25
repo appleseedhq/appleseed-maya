@@ -81,9 +81,6 @@ def createAsRenderNode(nodeType=None, postCommand=None):
             )
             mc.connectAttr(mat + ".outColor", shadingGroup + ".surfaceShader")
 
-            if nodeType == 'asGlass':
-                mc.setAttr(shadingGroup + ".asDoubleSided", 1)
-
             logger.debug("Created shading node {0} asShader".format(mat))
         elif "rendernode/appleseed/texture/2d" in cl.lower():
             mat = mc.shadingNode(nodeType, asTexture=True)
