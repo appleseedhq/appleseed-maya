@@ -261,7 +261,9 @@ namespace
                                 "Found OSL shader %s.",
                                 shaderPath.string().c_str());
                             */
-
+#ifndef NDEBUG
+                            std::cout << shaderPath.string().c_str() << std::endl;
+#endif
                             registerShader(shaderPath, pluginFn, query);
                         }
                     }
