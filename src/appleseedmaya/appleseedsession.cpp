@@ -428,7 +428,8 @@ namespace
                     RENDERER_LOG_DEBUG(
                         "Setting active camera to %s",
                         camera.fullPathName().asChar());
-                    params.insert("camera", camera.fullPathName().asChar());
+                    //params.insert("camera", camera.fullPathName().asChar());
+                    params.insert("camera", camera.partialPathName().asChar());
                 }
                 else
                     RENDERER_LOG_WARNING("Wrong camera!");

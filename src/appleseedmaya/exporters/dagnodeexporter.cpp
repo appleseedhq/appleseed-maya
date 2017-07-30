@@ -115,7 +115,8 @@ void DagNodeExporter::exportShapeMotionStep(float time)
 
 MString DagNodeExporter::appleseedName() const
 {
-    return dagPath().fullPathName();
+   // return dagPath().fullPathName();
+    return dagPath().partialPathName();
 }
 
 const MDagPath& DagNodeExporter::dagPath() const
