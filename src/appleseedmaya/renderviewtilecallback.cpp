@@ -87,46 +87,48 @@ namespace
             delete this;
         }
 
-        virtual void pre_render(
-            const size_t        x,
-            const size_t        y,
-            const size_t        width,
-            const size_t        height)
+        virtual void on_tiled_frame_begin(const asr::Frame* frame) override
         {
-            int xmin = static_cast<int>(x);
-            int ymin = static_cast<int>(y);
-            int xmax = static_cast<int>(x + width  - 1);
-            int ymax = static_cast<int>(y + height - 1);
-
-            if (!intersect_with_data_window(xmin, ymin, xmax, ymax))
-                return;
-
-            int halfWidth  = (xmax - xmin + 1) / 2;
-            int halfHeight = (ymax - ymin + 1) / 2;
-            int lineSize = std::min(std::min(halfWidth, halfHeight), MaxHighlightSize - 1);
-
-            // Flip Y interval vertically (Maya is Y up).
-            flip_pixel_interval(displayWindowHeight(), ymin, ymax);
-            HighlightTile highlightJob(xmin, ymin, xmax, ymax, lineSize, m_highlightPixels, m_rendererController, m_computation);
-            IdleJobQueue::pushJob(highlightJob);
         }
 
-        void post_render(
-            const asr::Frame*   frame) override
+        virtual void on_tiled_frame_end(const asr::Frame* frame) override
         {
-            const asf::CanvasProperties& frame_props = frame->image().properties();
-
-            for( size_t ty = 0; ty < frame_props.m_tile_count_y; ++ty )
-                for( size_t tx = 0; tx < frame_props.m_tile_count_x; ++tx )
-                    write_tile(frame, tx, ty);
         }
 
-        virtual void post_render_tile(
+        virtual void on_tile_begin(
+            const asr::Frame*    frame,
+            const size_t        tile_x,
+            const size_t        tile_y) override
+        {
+            const asf::CanvasProperties& props = frame->image().properties();
+            pre_render(
+                tile_x * props.m_tile_width,
+                tile_y * props.m_tile_height,
+                props.m_tile_width,
+                props.m_tile_height);
+        }
+
+        virtual void on_tile_end(
             const asr::Frame*   frame,
             const size_t        tile_x,
-            const size_t        tile_y)
+            const size_t        tile_y) override
         {
             write_tile(frame, tile_x, tile_y);
+        }
+
+        virtual void on_progressive_frame_begin(const asr::Frame* frame) override
+        {
+            const asf::CanvasProperties& frame_props = frame->image().properties();
+            pre_render(0, 0, frame_props.m_canvas_width, frame_props.m_canvas_height);
+        }
+
+        void on_progressive_frame_end(const asr::Frame* frame) override
+        {
+            const asf::CanvasProperties& props = frame->image().properties();
+
+            for( size_t ty = 0; ty < props.m_tile_count_y; ++ty )
+                for( size_t tx = 0; tx < props.m_tile_count_x; ++tx )
+                    on_tile_end(frame, tx, ty);
         }
 
       private:
@@ -239,6 +241,30 @@ namespace
             RendererController&             m_rendererController;
             ComputationPtr                  m_computation;
         };
+
+        void pre_render(
+            const size_t        x,
+            const size_t        y,
+            const size_t        width,
+            const size_t        height)
+        {
+            int xmin = static_cast<int>(x);
+            int ymin = static_cast<int>(y);
+            int xmax = static_cast<int>(x + width  - 1);
+            int ymax = static_cast<int>(y + height - 1);
+
+            if (!intersect_with_data_window(xmin, ymin, xmax, ymax))
+                return;
+
+            int halfWidth  = (xmax - xmin + 1) / 2;
+            int halfHeight = (ymax - ymin + 1) / 2;
+            int lineSize = std::min(std::min(halfWidth, halfHeight), MaxHighlightSize - 1);
+
+            // Flip Y interval vertically (Maya is Y up).
+            flip_pixel_interval(displayWindowHeight(), ymin, ymax);
+            HighlightTile highlightJob(xmin, ymin, xmax, ymax, lineSize, m_highlightPixels, m_rendererController, m_computation);
+            IdleJobQueue::pushJob(highlightJob);
+        }
 
         void write_tile(
             const asr::Frame*   frame,
