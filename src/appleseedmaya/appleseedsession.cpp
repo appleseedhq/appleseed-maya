@@ -427,7 +427,7 @@ namespace
                 {
                     RENDERER_LOG_DEBUG(
                         "Setting active camera to %s",
-                        camera.fullPathName().asChar());
+                        camera.partialPathName().asChar());
                     params.insert("camera", camera.partialPathName().asChar());
                 }
                 else
@@ -450,7 +450,7 @@ namespace
                     if (!srcPlug.isNull())
                     {
                         MFnDagNode dagNodeFn(srcPlug.node());
-                        const MString envName = dagNodeFn.fullPathName();
+                        const MString envName = dagNodeFn.partialPathName();
 
                         m_project->get_scene()->get_environment()->get_parameters()
                             .insert("environment_edf", envName.asChar());
@@ -1131,7 +1131,7 @@ MStatus batchRender(Options options)
 
             if (isRenderable)
             {
-                options.m_camera = dagNodeFn.fullPathName();
+                options.m_camera = dagNodeFn.partialPathName();
                 cameraName = dagNodeFn.name();
                 break;
             }
