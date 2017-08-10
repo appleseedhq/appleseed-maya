@@ -109,7 +109,6 @@ APPLESEED_ENVIRONMENT_LIGHTS = [
     "appleseedSkyDomeLight",
     "appleseedPhysicalSkyLight"]
 
-
 def __nodeAdded(node, data):
     depNodeFn = om.MFnDependencyNode(node)
     nodeType = depNodeFn.typeName()
@@ -390,10 +389,22 @@ class AppleseedRenderGlobalsMainTab(object):
                         with pm.rowLayout("appleseedRowLayout", nc=3):
                             pm.text("Environment Light")
                             ui = pm.optionMenu(changeCommand=self.__environmentLightSelected)
-                            pm.menuItem(label="<none>")
 
+                            pm.menuItem(label="<none>")
                             for envLight in g_environmentLightsList:
-                                pm.menuItem(label=envLight)
+                                pm.menuItem(parent=ui, label=envLight)
+
+                            # Set the currently selected environment light in the menu.
+                            connections = mc.listConnections("appleseedRenderGlobals.envLight")
+                            if connections:
+                                node = connections[0]
+                                if mc.nodeType(node) == "transform":
+                                    shapes = mc.listRelatives(node, shapes=True)
+                                    assert shapes
+                                    node = shapes[0]
+                                    pm.optionMenu(ui, edit=True, value=node)
+                            else:
+                                pm.optionMenu(ui, edit=True, value="<none>")
 
                             self.__uis["envLight"] = ui
                             logger.debug("Created globals env light menu, name = %s" % ui)
