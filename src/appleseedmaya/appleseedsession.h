@@ -78,8 +78,6 @@ struct Options
     int         m_xmax;
     int         m_ymax;
 
-    const char* m_colorspace;
-
     // Final render options.
     // ...
 

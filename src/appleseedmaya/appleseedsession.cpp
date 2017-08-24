@@ -105,7 +105,6 @@ Options::Options()
   , m_ymin(-1)
   , m_xmax(-1)
   , m_ymax(-1)
-  , m_colorspace("linear_rgb")
   , m_sequence(false)
   , m_firstFrame(1)
   , m_lastFrame(1)
@@ -286,7 +285,7 @@ namespace
           , m_services(*this)
           , m_computation(computation)
         {
-            createProject(options.m_colorspace);
+            createProject();
         }
 
         // Constructor (scene export).
@@ -313,7 +312,7 @@ namespace
                 }
             }
 
-            createProject(options.m_colorspace);
+            createProject();
 
             // Set the project filename and add the project directory to the search paths.
             m_project->set_path(m_fileName.asChar());
@@ -325,7 +324,7 @@ namespace
             abortRender();
         }
 
-        void createProject(const char* colorspace)
+        void createProject()
         {
             assert(m_project.get() == 0);
 
@@ -363,9 +362,7 @@ namespace
                 asr::FrameFactory::create(
                     "beauty",
                     asr::ParamArray()
-                        .insert("resolution", "640 480")
-                        .insert("pixel_format", "float")
-                        .insert("color_space", colorspace)));
+                        .insert("resolution", "640 480")));
             m_project->set_frame(frame);
 
             // Create the scene
@@ -1065,11 +1062,6 @@ namespace
 
         try
         {
-            if (asf::ends_with(outputFilename.asChar(), ".png"))
-                options.m_colorspace = "srgb";
-            else
-                options.m_colorspace = "linear_rgb";
-
             beginSession(FinalRenderSession, options, ComputationPtr());
             g_globalSession->exportProject();
             g_globalSession->batchRender();
