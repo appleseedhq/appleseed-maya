@@ -78,14 +78,6 @@ void EnvLightExporter::createEntities(
             appleseedName().asChar()));
 }
 
-void EnvLightExporter::exportTransformMotionStep(float time)
-{
-    asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
-    asf::Matrix4d invM = convert(dagPath().inclusiveMatrixInverse());
-    asf::Transformd xform(m, invM);
-    m_envLight->transform_sequence().set_transform(time, xform);
-}
-
 void EnvLightExporter::flushEntities()
 {
     if (m_envLight.get())
@@ -144,9 +136,6 @@ void PhysicalSkyLightExporter::createEntities(
     AttributeUtils::get(node(), "sunPhi", angle);
     params.insert("sun_phi", angle.asDegrees());
 
-    AttributeUtils::get(node(), "turbidity", val);
-    params.insert("turbidity", val);
-
     AttributeUtils::get(node(), "turbidityScale", val);
     params.insert("turbidity_multiplier", val);
 
@@ -165,11 +154,37 @@ void PhysicalSkyLightExporter::createEntities(
     AttributeUtils::get(node(), "groundAlbedo", val);
     params.insert("ground_albedo", val);
 
+    float turbidity = 4.0f;
+    AttributeUtils::get(node(), "turbidity", turbidity);
+    params.insert("turbidity", turbidity);
+
     m_envLight = asr::HosekEnvironmentEDFFactory().create(
         appleseedName().asChar(),
         params);
 
     EnvLightExporter::createEntities(options, motionBlurTimes);
+
+    bool sunEnabled = false;
+    AttributeUtils::get(node(), "sunEnable", sunEnabled);
+    if (sunEnabled)
+    {
+        float radianceScale = 1.0f;
+        AttributeUtils::get(node(), "sunRadianceScale", radianceScale);
+
+        float sizeScale = 1.0f;
+        AttributeUtils::get(node(), "sunSizeScale", sizeScale);
+
+        MString name = appleseedName();
+        name += "_sun_light";
+
+        m_sunLight = asr::SunLightFactory().create(
+            name.asChar(),
+            asr::ParamArray()
+                .insert("environment_edf", appleseedName().asChar())
+                .insert("turbidity", turbidity)
+                .insert("radiance_multiplier", radianceScale)
+                .insert("size_multiplier", sizeScale));
+    }
 }
 
 void PhysicalSkyLightExporter::flushEntities()
@@ -261,6 +276,14 @@ void SkyDomeLightExporter::createEntities(
         params);
 
     EnvLightExporter::createEntities(options, motionBlurTimes);
+}
+
+void SkyDomeLightExporter::exportTransformMotionStep(float time)
+{
+    asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
+    asf::Matrix4d invM = convert(dagPath().inclusiveMatrixInverse());
+    asf::Transformd xform(m, invM);
+    m_envLight->transform_sequence().set_transform(time, xform);
 }
 
 void SkyDomeLightExporter::flushEntities()

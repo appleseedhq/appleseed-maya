@@ -62,7 +62,8 @@ class AEappleseedPhysicalSkyLightTemplate(pm.ui.AETemplate):
 
         self.beginLayout('Sun Attributes' ,collapse=0)
         self.addControl('sunEnable')
-        self.addControl('radianceScale')
+        self.addControl('sunRadianceScale')
+        self.addControl('sunSizeScale')
         self.endLayout()
 
         self.beginLayout('Display' ,collapse=1)

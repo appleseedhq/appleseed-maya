@@ -43,9 +43,6 @@ class EnvLightExporter
 {
   public:
     ~EnvLightExporter() override;
-
-    void exportTransformMotionStep(float time) override;
-
     void flushEntities() override;
 
   protected:
@@ -106,6 +103,8 @@ class SkyDomeLightExporter
     void createEntities(
         const AppleseedSession::Options&            options,
         const AppleseedSession::MotionBlurTimes&    motionBlurTimes) override;
+
+    void exportTransformMotionStep(float time) override;
 
     void flushEntities() override;
 

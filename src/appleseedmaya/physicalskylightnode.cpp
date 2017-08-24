@@ -55,7 +55,8 @@ MObject PhysicalSkyLightNode::m_saturationMultiplier;
 MObject PhysicalSkyLightNode::m_horizonShift;
 MObject PhysicalSkyLightNode::m_groundAlbedo;
 MObject PhysicalSkyLightNode::m_sunEnable;
-MObject PhysicalSkyLightNode::m_radianceMultiplier;
+MObject PhysicalSkyLightNode::m_sunRadianceMultiplier;
+MObject PhysicalSkyLightNode::m_sunSizeMultiplier;
 MObject PhysicalSkyLightNode::m_message;
 MObject PhysicalSkyLightNode::m_displaySize;
 
@@ -213,17 +214,30 @@ MStatus PhysicalSkyLightNode::initialize()
     status = addAttribute(m_sunEnable);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
 
-    m_radianceMultiplier = numAttrFn.create(
-        "radianceScale",
-        "radianceScale",
+    m_sunRadianceMultiplier = numAttrFn.create(
+        "sunRadianceScale",
+        "sunRadianceScale",
         MFnNumericData::kFloat,
         1.0,
         &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
     numAttrFn.setMin(0.0);
     numAttrFn.setMax(10.0);
-    numAttrFn.setNiceNameOverride("Sun Intensity");
-    status = addAttribute(m_radianceMultiplier);
+    numAttrFn.setNiceNameOverride("Sun Intensity Scale");
+    status = addAttribute(m_sunRadianceMultiplier);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
+
+    m_sunSizeMultiplier = numAttrFn.create(
+        "sunSizeScale",
+        "sunSizeScale",
+        MFnNumericData::kFloat,
+        1.0,
+        &status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
+    numAttrFn.setMin(0.0);
+    numAttrFn.setMax(100.0);
+    numAttrFn.setNiceNameOverride("Sun Size Scale");
+    status = addAttribute(m_sunSizeMultiplier);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
 
     return status;

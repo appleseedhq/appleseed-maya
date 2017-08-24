@@ -77,7 +77,8 @@ class PhysicalSkyLightNode
     static MObject m_horizonShift;
     static MObject m_groundAlbedo;
     static MObject m_sunEnable;
-    static MObject m_radianceMultiplier;
+    static MObject m_sunRadianceMultiplier;
+    static MObject m_sunSizeMultiplier;
     static MObject m_message;
     static MObject m_displaySize;
 };
