@@ -46,6 +46,7 @@
 #include "foundation/utility/string.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #define MNoPluginEntry
 #define MNoVersionString
 #include <maya/MFnPlugin.h>

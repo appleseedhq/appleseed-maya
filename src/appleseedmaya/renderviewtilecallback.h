@@ -40,6 +40,7 @@
 #include "foundation/math/aabb.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MComputation.h>
 #include "appleseedmaya/_endmayaheaders.h"
 

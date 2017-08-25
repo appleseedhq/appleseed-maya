@@ -39,6 +39,7 @@
 #include "foundation/utility/string.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MFloatPointArray.h>
 #include <maya/MFnMesh.h>
 #include <maya/MItDependencyGraph.h>

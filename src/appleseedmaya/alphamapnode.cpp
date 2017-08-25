@@ -35,6 +35,7 @@
 #include "appleseedmaya/typeids.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MFileObject.h>
 #include <maya/MFnMessageAttribute.h>
 #include <maya/MFnTypedAttribute.h>

@@ -44,6 +44,7 @@
 #include "foundation/math/matrix.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MDagPath.h>
 #include <maya/MMatrix.h>
 #include <maya/MObject.h>

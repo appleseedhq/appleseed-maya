@@ -38,6 +38,7 @@
 #include "appleseedmaya/exporters/shadingnodeexporterfwd.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MDagPath.h>
 #include <maya/MObject.h>
 #include <maya/MPlug.h>

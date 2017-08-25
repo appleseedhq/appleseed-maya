@@ -37,6 +37,7 @@
 #include "foundation/utility/string.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MCommonRenderSettingsData.h>
 #include <maya/MRenderUtil.h>
 #include "appleseedmaya/_endmayaheaders.h"

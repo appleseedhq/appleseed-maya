@@ -36,6 +36,7 @@ configure_file (${PROJECT_SOURCE_DIR}/src/appleseedmaya/version.h.in
 #--------------------------------------------------------------------------------------------------
 
 set (appleseed_maya_sources
+    _beginmayaheaders.h
     _endmayaheaders.h
     alphamapnode.cpp
     alphamapnode.h

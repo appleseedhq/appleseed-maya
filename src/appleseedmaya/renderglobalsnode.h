@@ -33,6 +33,7 @@
 #include "appleseedmaya/appleseedsession.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MObject.h>
 #include <maya/MPxNode.h>
 #include <maya/MStringArray.h>

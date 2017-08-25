@@ -36,6 +36,7 @@
 #include "foundation/core/concepts/noncopyable.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MString.h>
 #include "appleseedmaya/_endmayaheaders.h"
 

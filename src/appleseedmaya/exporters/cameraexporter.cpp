@@ -41,6 +41,7 @@
 #include "foundation/utility/iostreamop.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MFnCamera.h>
 #include <maya/MFnDagNode.h>
 #include <maya/MPlug.h>

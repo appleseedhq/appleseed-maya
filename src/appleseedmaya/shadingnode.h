@@ -30,6 +30,7 @@
 #define APPLESEED_MAYA_SHADINGNODE_H
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MPxNode.h>
 #include "appleseedmaya/_endmayaheaders.h"
 

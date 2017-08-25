@@ -30,6 +30,7 @@
 #define APPLESEED_MAYA_SKYDOMELIGHTNODE_H
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MColor.h>
 #include <maya/MDrawContext.h>
 #include <maya/MDrawRegistry.h>

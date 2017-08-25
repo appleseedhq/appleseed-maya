@@ -45,6 +45,7 @@
 #include "appleseedmaya/swatchrenderer.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MGlobal.h>
 #include <maya/MFnPlugin.h>
 #include <maya/MSwatchRenderRegister.h>

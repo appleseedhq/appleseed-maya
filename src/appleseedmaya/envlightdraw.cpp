@@ -34,6 +34,7 @@
 #include "foundation/math/vector.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MFloatArray.h>
 #include <maya/MGL.h>
 #include <maya/MIntArray.h>

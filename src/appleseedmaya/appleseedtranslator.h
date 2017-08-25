@@ -30,6 +30,7 @@
 #define APPLESEED_MAYA_APPLESEEDTRANSLATOR_H
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MPxFileTranslator.h>
 #include "appleseedmaya/_endmayaheaders.h"
 

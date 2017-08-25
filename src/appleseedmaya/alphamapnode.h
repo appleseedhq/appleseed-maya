@@ -30,6 +30,7 @@
 #define APPLESEED_MAYA_ALPHAMAPNODE_H
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MObject.h>
 #include <maya/MPxNode.h>
 #include <maya/MTypeId.h>

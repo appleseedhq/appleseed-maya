@@ -30,6 +30,7 @@
 #define APPLESEED_MAYA_ENVLIGHTDRAW_H
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MBoundingBox.h>
 #include "appleseedmaya/_endmayaheaders.h"
 

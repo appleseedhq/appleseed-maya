@@ -34,6 +34,7 @@
 #include "appleseedmaya/shadingnoderegistry.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MGlobal.h>
 #include <maya/MStatus.h>
 #include "appleseedmaya/_endmayaheaders.h"

@@ -37,6 +37,7 @@
 #include "renderer/api/scene.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MFnDependencyNode.h>
 #include <maya/MPlug.h>
 #include <maya/MPlugArray.h>

@@ -54,6 +54,7 @@
 #include "appleseedmaya/utils.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MFnDagNode.h>
 #include <maya/MFnDependencyNode.h>
 #include "appleseedmaya/_endmayaheaders.h"

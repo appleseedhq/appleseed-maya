@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2017 Esteban Tovagliari, The appleseedhq Organization
+// Copyright (c) 2017 Francois Beaune, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,37 +25,3 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-
-#ifndef APPLESEED_MAYA_RENDERCOMMANDS_H
-#define APPLESEED_MAYA_RENDERCOMMANDS_H
-
-// Maya headers.
-#include "appleseedmaya/_beginmayaheaders.h"
-#include <maya/MPxCommand.h>
-#include "appleseedmaya/_endmayaheaders.h"
-
-class FinalRenderCommand
-  : public MPxCommand
-{
-  public:
-    static MString cmdName;
-
-    static MSyntax syntaxCreator();
-    static void* creator();
-
-    MStatus doIt(const MArgList& args) override;
-};
-
-class ProgressiveRenderCommand
-  : public MPxCommand
-{
-  public:
-    static MString cmdName;
-
-    static MSyntax syntaxCreator();
-    static void* creator();
-
-    MStatus doIt(const MArgList& args) override;
-};
-
-#endif  // !APPLESEED_MAYA_RENDERCOMMANDS_H

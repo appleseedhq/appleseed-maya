@@ -40,6 +40,7 @@
 #include "renderer/api/scene.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MFnDagNode.h>
 #include "appleseedmaya/_endmayaheaders.h"
 

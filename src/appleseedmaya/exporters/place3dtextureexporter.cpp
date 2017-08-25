@@ -37,6 +37,7 @@
 #include "renderer/api/utility.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MDagPath.h>
 #include <maya/MFnDependencyNode.h>
 #include <maya/MMatrix.h>

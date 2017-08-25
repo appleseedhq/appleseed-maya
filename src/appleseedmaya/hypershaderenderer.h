@@ -30,6 +30,7 @@
 #define APPLESEED_MAYA_HYPERSHADERENDERER_H
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MPxRenderer.h>
 #include "appleseedmaya/_endmayaheaders.h"
 

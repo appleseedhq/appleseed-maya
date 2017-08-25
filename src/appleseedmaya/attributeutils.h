@@ -30,6 +30,7 @@
 #define APPLESEED_MAYA_ATTRIBUTEUTILS_H
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MAngle.h>
 #include <maya/MColor.h>
 #include <maya/MFnAttribute.h>

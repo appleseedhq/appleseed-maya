@@ -30,6 +30,7 @@
 #include "attributeutils.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MFnMatrixData.h>
 #include "appleseedmaya/_endmayaheaders.h"
 

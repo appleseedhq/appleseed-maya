@@ -34,6 +34,7 @@
 #include "appleseedmaya/logger.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MDGModifier.h>
 #include <maya/MFnDependencyNode.h>
 #include <maya/MFnEnumAttribute.h>

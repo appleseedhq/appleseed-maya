@@ -64,6 +64,7 @@
 #include "foundation/utility/string.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MAnimControl.h>
 #include <maya/MCommonRenderSettingsData.h>
 #include <maya/MDagPath.h>

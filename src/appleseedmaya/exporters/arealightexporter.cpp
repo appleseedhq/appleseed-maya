@@ -41,6 +41,7 @@
 #include "foundation/math/scalar.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MFnDagNode.h>
 #include "appleseedmaya/_endmayaheaders.h"
 

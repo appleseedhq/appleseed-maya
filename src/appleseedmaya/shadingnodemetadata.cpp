@@ -37,6 +37,7 @@
 #include "foundation/utility/iostreamop.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MPlug.h>
 #include "appleseedmaya/_endmayaheaders.h"
 

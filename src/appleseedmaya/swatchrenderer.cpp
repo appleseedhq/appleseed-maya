@@ -54,13 +54,14 @@
 #include "foundation/math/matrix.h"
 #include "foundation/math/transform.h"
 #include "foundation/utility/iostreamop.h"
+#include "foundation/utility/string.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MFnDependencyNode.h>
 #include <maya/MImage.h>
 #include <maya/MPlug.h>
 #include "appleseedmaya/_endmayaheaders.h"
-#include "foundation/utility/string.h"
 
 namespace asf = foundation;
 namespace asr = renderer;

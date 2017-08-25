@@ -40,6 +40,7 @@
 #include "foundation/utility/string.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MFnDependencyNode.h>
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MFnMatrixAttribute.h>

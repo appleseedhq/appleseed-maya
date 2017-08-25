@@ -44,6 +44,7 @@
 #include "foundation/math/scalar.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MAnimControl.h>
 #include <maya/MFnDependencyNode.h>
 #include <maya/MFnEnumAttribute.h>

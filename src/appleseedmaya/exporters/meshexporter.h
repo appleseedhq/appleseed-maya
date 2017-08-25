@@ -43,6 +43,7 @@
 #include "foundation/utility/searchpaths.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MIntArray.h>
 #include "appleseedmaya/_endmayaheaders.h"
 

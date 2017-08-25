@@ -37,6 +37,7 @@
 #include "appleseedmaya/utils.h"
 
 // Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MArgDatabase.h>
 #include <maya/MCommonRenderSettingsData.h>
 #include <maya/MFnDependencyNode.h>
