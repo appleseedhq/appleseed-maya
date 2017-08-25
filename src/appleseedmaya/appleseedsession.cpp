@@ -303,10 +303,10 @@ namespace
             m_projectPath = bfs::path(fileName.asChar()).parent_path();
 
             // Create a dir to store the geom files if it does not exist yet.
-            boost::filesystem::path geomPath = m_projectPath / "_geometry";
-            if (!boost::filesystem::exists(geomPath))
+            bfs::path geomPath = m_projectPath / "_geometry";
+            if (!bfs::exists(geomPath))
             {
-                if (!boost::filesystem::create_directory(geomPath))
+                if (!bfs::create_directory(geomPath))
                 {
                     RENDERER_LOG_ERROR("Couldn't create geometry directory. Aborting");
                     throw AppleseedSessionExportError();
