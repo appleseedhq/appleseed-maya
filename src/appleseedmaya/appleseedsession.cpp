@@ -836,11 +836,13 @@ namespace
 
         bool writeProject(const char* filename) const
         {
+            const bool packed = asf::ends_with(filename, ".appleseedz");
             return asr::ProjectFileWriter::write(
                 *m_project,
                 filename,
-                asr::ProjectFileWriter::OmitHandlingAssetFiles |
-                asr::ProjectFileWriter::OmitWritingGeometryFiles);
+                packed
+                  ? asr::ProjectFileWriter::Defaults
+                  : asr::ProjectFileWriter::OmitHandlingAssetFiles | asr::ProjectFileWriter::OmitWritingGeometryFiles);
         }
 
         void writeMainImage(const char* filename) const
