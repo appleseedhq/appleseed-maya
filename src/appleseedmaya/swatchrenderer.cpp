@@ -48,6 +48,7 @@
 
 // appleseed.foundation headers.
 #include "foundation/core/concepts/noncopyable.h"
+#include "foundation/image/colorspace.h"
 #include "foundation/image/image.h"
 #include "foundation/image/tile.h"
 #include "foundation/math/vector.h"
@@ -144,8 +145,6 @@ namespace
                     asr::ParamArray()
                         .insert("resolution", "128 128")
                         .insert("camera", "camera")
-                        .insert("pixel_format", "uint8")
-                        .insert("color_space", "srgb")
                         .insert("tile_size", asf::Vector2i(TileSize, TileSize))));
             m_project->set_frame(frame);
 
@@ -269,6 +268,12 @@ namespace
         }
 
       private:
+        static uint8_t linear_rgb_to_srgb(const float c)
+        {
+            const float x = asf::faster_linear_rgb_to_srgb(c);
+            return static_cast<uint8_t>(asf::saturate(x) * 255.0f);
+        }
+
         void copySwatchImage(MImage& dstImage) const
         {
             const asf::Image& srcImage = m_project->get_frame()->image();
@@ -285,7 +290,7 @@ namespace
                     const size_t y0 = props.m_tile_height * ty;
 
                     const asf::Tile& tile = srcImage.tile(tx, ty);
-                    const uint8_t* src = tile.get_storage();
+                    const float* src = reinterpret_cast<const float*>(tile.get_storage());
 
                     for (size_t j = 0, je = tile.get_height(); j < je; ++j)
                     {
@@ -296,10 +301,10 @@ namespace
                         for (size_t i = 0, ie = tile.get_width(); i < ie; ++i)
                         {
                             // Maya docs say RGBA, but it is actually BGRA?.
-                            *dst++ = src[2];
-                            *dst++ = src[1];
-                            *dst++ = src[0];
-                            *dst++ = src[3];
+                            *dst++ = linear_rgb_to_srgb(src[2]);
+                            *dst++ = linear_rgb_to_srgb(src[1]);
+                            *dst++ = linear_rgb_to_srgb(src[0]);
+                            *dst++ = 255;
                             src += 4;
                         }
                     }
