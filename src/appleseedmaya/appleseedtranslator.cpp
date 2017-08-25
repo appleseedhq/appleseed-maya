@@ -42,11 +42,17 @@
 #include <maya/MRenderUtil.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
+// Boost headers.
+#include "boost/filesystem/path.hpp"
+#include "boost/filesystem/convenience.hpp"
+#include "boost/filesystem/operations.hpp"
+
 // Standard headers.
 #include <cstdlib>
 #include <string>
 #include <vector>
 
+namespace bfs = boost::filesystem;
 namespace asf = foundation;
 
 const MString AppleseedTranslator::translatorName("appleseed");
@@ -127,7 +133,38 @@ MStatus AppleseedTranslator::writer(
     options.m_height = renderSettings.height;
 
     // Export the scene.
-    return AppleseedSession::projectExport(file.fullName(), options);
+
+    // Check if we are exporting a packed project.
+    if (asf::ends_with(file.fullName().asChar(), ".appleseedz"))
+    {
+        // Export the project in a tmp directory.
+        const bfs::path originalProjectPath(file.fullName().asChar());
+        const bfs::path packDirectory(originalProjectPath.parent_path() / "_asTmpProjectPacking");
+
+        if (!bfs::create_directory(packDirectory))
+        {
+            RENDERER_LOG_ERROR(
+                "Could not create tmp packing directory: %s",
+                packDirectory.string().c_str());
+            return MS::kFailure;
+        }
+
+        const bfs::path packedProjectPath(packDirectory / originalProjectPath.filename());
+        const MStatus result = AppleseedSession::projectExport(packedProjectPath.string().c_str(), options);
+
+        if (result)
+        {
+            // Move the packed project to the requested place.
+            bfs::rename(packedProjectPath, originalProjectPath);
+        }
+
+        // Cleanup packing directory.
+        bfs::remove_all(packDirectory);
+
+        return result;
+    }
+    else
+        return AppleseedSession::projectExport(file.fullName(), options);
 }
 
 bool AppleseedTranslator::haveWriteMethod() const
