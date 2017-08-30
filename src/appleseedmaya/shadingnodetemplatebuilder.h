@@ -37,6 +37,7 @@
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
+#include <maya/MStatus.h>
 #include <maya/MString.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
@@ -44,7 +45,6 @@
 #include <vector>
 
 // Forward declarations.
-class MStatus;
 class OSLShaderInfo;
 
 //

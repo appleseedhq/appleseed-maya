@@ -32,8 +32,10 @@
 // appleseed.renderer headers.
 #include "renderer/api/log.h"
 
-// Forward declarations.
-class MStatus;
+// Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
+#include <maya/MStatus.h>
+#include "appleseedmaya/_endmayaheaders.h"
 
 namespace Logger
 {

@@ -29,11 +29,13 @@
 #ifndef APPLESEED_MAYA_IDLEJOBQUEUE_H
 #define APPLESEED_MAYA_IDLEJOBQUEUE_H
 
+// Maya headers.
+#include "appleseedmaya/_beginmayaheaders.h"
+#include <maya/MStatus.h>
+#include "appleseedmaya/_endmayaheaders.h"
+
 // Standard headers.
 #include <functional>
-
-// Forward declarations.
-class MStatus;
 
 namespace IdleJobQueue
 {

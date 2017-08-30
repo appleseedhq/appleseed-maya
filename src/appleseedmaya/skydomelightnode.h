@@ -45,8 +45,6 @@
 #include <maya/MViewport2Renderer.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// Forward declarations.
-class MObject;
 
 class SkyDomeLightNode
   : public MPxLocatorNode

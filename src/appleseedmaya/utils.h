@@ -37,6 +37,9 @@
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MComputation.h>
+#include <maya/MDagPath.h>
+#include <maya/MObject.h>
+#include <maya/MStatus.h>
 #include <maya/MString.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
@@ -44,11 +47,6 @@
 #include <cstring>
 #include <memory>
 #include <string>
-
-// Forward declarations.
-class MDagPath;
-class MObject;
-class MStatus;
 
 //
 // MStringCompareLess

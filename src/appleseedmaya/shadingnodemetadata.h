@@ -38,6 +38,7 @@
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
+#include <maya/MPlug.h>
 #include <maya/MString.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
@@ -46,7 +47,6 @@
 #include <vector>
 
 // Forward declarations.
-class MPlug;
 namespace renderer { class ShaderQuery; }
 
 class OSLMetadataExtractor
