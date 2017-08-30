@@ -77,7 +77,7 @@ Fresnel
 *Fresnel Type*
     Allows the user to choose the specular mode, of a dielectric such as plastic or glass, or of a conductor or metal.
 
-    .. note:: To use refraction, the mode **must** be set to *dielectric* and the index of refraction set. When in *conductor* mode, the *face tint* and *edge tint* parameters are used to derive the complex index of refraction instead :cite:`Gulbrandsen2014Fresnel` and no refraction is used.
+    .. note:: To use refraction, the mode **must** be set to *dielectric* and the index of refraction set. When in *conductor* mode, the *face tint* and *edge tint* parameters are used to derive the complex index of refraction instead :cite:`b-Gulbrandsen2014Fresnel` and no refraction is used.
 
 *IOR*
     The index of refraction for the dielectric mode.
@@ -98,7 +98,7 @@ Anisotropy
     Rotation angle for the anisotropic highlight in [0,1], mapping a rotation from 0 to 360 degrees.
 
 *Anisotropy Map*
-    Also known as tangent field, encodes the anisotropy directions along X and Y in the Red and Green or Red and Blue channels of the image. Appleseed expects Red and Green channels.
+    Also known as tangent field, encodes the anisotropy directions along X and Y in the Red and Green or Red and Blue channels of the image. Appleseed expects values encoded in the Red and Green channels.
 
 -----
 
@@ -106,7 +106,7 @@ Refraction Parameters
 ^^^^^^^^^^^^^^^^^^^^^
 
 *Refraction Amount*
-    Intensity of the refraction, only taking place when *Fresnel* is *dielectric* :cite:`Walter:2007:MMR:2383847.2383874`.
+    Intensity of the refraction, only taking place when *Fresnel* is *dielectric* :cite:`b-Walter:2007:MMR:2383847.2383874`.
 
 *Refraction Tint*
     Overall tinting factor, it affects the BTDF equally, unlike volumetric absorption.
@@ -373,7 +373,7 @@ Screenshots
 
 .. [#] The diffuse BRDF used is the Oren-Nayar BRDF
 
-.. [#] The specular (microfacet) BRDF is using the Student's t distribution :cite:`10.1111:cgf.13137`. This includes the Beckmann :cite:`beckmann1963scattering`, :cite:`Cook:1982:RMC:357290.357293` and GGX :cite:`Walter:2007:MMR:2383847.2383874` distributions.
+.. [#] The specular (microfacet) BRDF is using the Student's t distribution :cite:`b-10.1111:cgf.13137`. This includes the Beckmann :cite:`b-beckmann1963scattering`, :cite:`b-Cook:1982:RMC:357290.357293` and GGX :cite:`b-Walter:2007:MMR:2383847.2383874` distributions.
 
 .. [#] See also `Extending the Disney BRDF to a BSDF with Integrated Subsurface Scattering <http://blog.selfshadow.com/publications/s2015-shading-course/burley/s2015_pbs_disney_bsdf_notes.pdf>`_ for details.
 
@@ -384,5 +384,6 @@ Screenshots
 .. rubric:: References
 
 .. bibliography:: /bibtex/references.bib
-    :filter: docname in docnames
+    :labelprefix: B
+    :keyprefix: b-
 
