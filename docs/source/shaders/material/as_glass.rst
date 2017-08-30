@@ -56,7 +56,7 @@ Specular Parameters
 *Specular Spread*:
     Specular highlights spread. This controls the *tails* of the specular highlights, with high values producing a softer looking highlights, and lower values producing sharper looking highlights.
     
-.. note:: This parameter is valid only for the Student's t-distribution only. Higher values approach the GGX distribution, and lower spread values, therefore sharper highlights, approach the Beckmann distribution.
+.. note:: This parameter is valid only for Student's t-distribution only. Higher values approach the GGX distribution, and lower spread values, therefore sharper highlights, approach the Beckmann distribution.
 
 *Anisotropy Amount*:
     Overall intensity of the anisotropy effect, with a value of 0.0 representing isotropic specular highlights.
@@ -168,7 +168,7 @@ Screenshots
    :width: 10%
    :title:
 
-   Sharp glass with long specular highlight tails, creating the appearance of a thin veil over the specular highlights. Using the Student's t-distribution with a specular roughness of 0.05, specular spread of 0.25, and with a IOR set to 1.64.
+   Sharp glass with long specular highlight tails, creating the appearance of a thin veil over the specular highlights. Using Student's t-distribution with a specular roughness of 0.05, specular spread of 0.25, and with a IOR set to 1.64.
 
 .. thumbnail:: /_images/screenshots/glass/glass_beckmann_engraving2.png
    :group: shots_as_glass_group_A
