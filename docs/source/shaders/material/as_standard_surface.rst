@@ -373,7 +373,7 @@ Screenshots
 
 .. [#] The diffuse BRDF used is the Oren-Nayar BRDF
 
-.. [#] The specular (microfacet) BRDF is using the Student's t-distribution :cite:`b-10.1111:cgf.13137`. This includes the Beckmann :cite:`b-beckmann1963scattering`, :cite:`b-Cook:1982:RMC:357290.357293` and GGX :cite:`b-Walter:2007:MMR:2383847.2383874` distributions.
+.. [#] The specular (microfacet) BRDF is using Student's t-distribution :cite:`b-10.1111:cgf.13137`. This includes the Beckmann :cite:`b-beckmann1963scattering`, :cite:`b-Cook:1982:RMC:357290.357293` and GGX :cite:`b-Walter:2007:MMR:2383847.2383874` distributions.
 
 .. [#] See also `Extending the Disney BRDF to a BSDF with Integrated Subsurface Scattering <http://blog.selfshadow.com/publications/s2015-shading-course/burley/s2015_pbs_disney_bsdf_notes.pdf>`_ for details.
 
