@@ -168,7 +168,7 @@ Screenshots
    :width: 10%
    :title:
 
-   Sharp glass with long specular highlight tails, creating the appearance of a thin veil over the specular highlights. Using the Student t-distribution with a specular roughness of 0.05, specular spread of 0.25, and with a IOR set to 1.64.
+   Sharp glass with long specular highlight tails, creating the appearance of a thin veil over the specular highlights. Using the Student's t-distribution with a specular roughness of 0.05, specular spread of 0.25, and with a IOR set to 1.64.
 
 .. thumbnail:: /_images/screenshots/glass/glass_beckmann_engraving2.png
    :group: shots_as_glass_group_A
@@ -189,7 +189,7 @@ Screenshots
    :width: 10%
    :title:
 
-   Engraved glass with texture mapped roughness, Student t-distribution, green absorption.
+   Engraved glass with texture mapped roughness, Student's t-distribution, green absorption.
 
 .. thumbnail:: /_images/screenshots/glass/glass_engraving_rough2.png
    :group: shots_as_glass_group_A
