@@ -24,7 +24,7 @@ Surface Transmittance
 ^^^^^^^^^^^^^^^^^^^^^
 
 *Transmittance Color*:
-    Transmittance color.
+    The color that is transmitted to the underlying glass medium. A color of 0 will mean no transmittance will take place, a color of one will mean full transmittance. This parameter is weighted by the next parameter, *transmittance amount*.
 
 *Transmittance Amount*:
     Transmittance amount, with a value of 0 meaning no light reaches the glass medium, and a value of 1.0 meaning a full amount reaching the glass medium. This is useful for compositing the glass BSDF with other BxDFs.
@@ -48,7 +48,7 @@ Specular Parameters
 
     1. *Beckmann* :cite:`a-Cook:1982:RMC:357290.357293`
     2. *GGX* :cite:`a-heitz:hal-00996995` 
-    3. *Student's t* :cite:`a-10.1111:cgf.13137`
+    3. *Student's t-distribution* :cite:`a-10.1111:cgf.13137`
 
 *Roughness*:
     The apparent surface roughness, affecting both the reflection and refraction equally.
@@ -56,7 +56,7 @@ Specular Parameters
 *Specular Spread*:
     Specular highlights spread. This controls the *tails* of the specular highlights, with high values producing a softer looking highlights, and lower values producing sharper looking highlights.
     
-.. note:: This parameter is valid only for the Student's t distribution only. Higher values approach the GGX distribution, and lower spread values, therefore sharper highlights, approach the Beckmann distribution.
+.. note:: This parameter is valid only for the Student's t-distribution only. Higher values approach the GGX distribution, and lower spread values, therefore sharper highlights, approach the Beckmann distribution.
 
 *Anisotropy Amount*:
     Overall intensity of the anisotropy effect, with a value of 0.0 representing isotropic specular highlights.
@@ -65,7 +65,7 @@ Specular Parameters
     Rotation angle for the anisotropic highlights, with the value in [0,1] range mapping to a rotation from 0 to 360 degrees.
 
 *Anisotropy Vector Map*:
-    Also known as tangent field, encodes the anisotropy directions along X and Y in the Red and Green or Red and Blue channels of the image. Appleseed expects values encoded in the Red and Green channels.
+    Also known as tangent field, encodes the anisotropy directions along X and Y in the Red and Green or Red and Blue channels of the image. appleseed expects values encoded in the Red and Green channels.
 
 -----
 
@@ -168,7 +168,7 @@ Screenshots
    :width: 10%
    :title:
 
-   Sharp glass with long specular highlight tails, creating the appearance of a thin veil over the specular highlights. Using the Student t distribution with a specular roughness of 0.05, specular spread of 0.25, and with a IOR set to 1.64.
+   Sharp glass with long specular highlight tails, creating the appearance of a thin veil over the specular highlights. Using the Student t-distribution with a specular roughness of 0.05, specular spread of 0.25, and with a IOR set to 1.64.
 
 .. thumbnail:: /_images/screenshots/glass/glass_beckmann_engraving2.png
    :group: shots_as_glass_group_A
@@ -189,7 +189,7 @@ Screenshots
    :width: 10%
    :title:
 
-   Engraved glass with texture mapped roughness, Student t distribution, green absorption.
+   Engraved glass with texture mapped roughness, Student t-distribution, green absorption.
 
 .. thumbnail:: /_images/screenshots/glass/glass_engraving_rough2.png
    :group: shots_as_glass_group_A
