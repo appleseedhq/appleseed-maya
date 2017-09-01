@@ -92,7 +92,6 @@ class MeshExporter
     bool                                        m_exportUVs;
     bool                                        m_exportNormals;
     bool                                        m_smoothTangents;
-    bool                                        m_exportReference;
     std::vector<std::string>                    m_fileNames;
     MIntArray                                   m_perFaceAssignments;
     bool                                        m_isDeforming;

@@ -246,20 +246,6 @@ void MeshExporter::createEntities(
     if (m_exportUVs)
         AttributeUtils::get(node(), "asSmoothTangents", m_smoothTangents);
 
-    MStatus status;
-    MPlug plug = meshFn.findPlug("referenceObject", &status);
-    m_exportReference = plug.isConnected();
-
-    if (m_exportReference)
-    {
-        RENDERER_LOG_INFO(
-            "Found reference geometry for mesh %s.",
-            m_mesh->get_name());
-
-        // We don't support PRef and NRef yet...
-        m_exportReference = false;
-    }
-
     m_numMeshKeys = motionBlurTimes.m_deformTimes.size();
     m_isDeforming = (m_numMeshKeys > 1) && isAnimated(node());
     m_shapeExportStep = 0;
@@ -298,12 +284,7 @@ void MeshExporter::exportShapeMotionStep(float time)
         MurmurHash meshHash;
         staticMeshObjectHash(*m_mesh, meshHash);
 
-//#define APPLESEED_MAYA_OBJ_MESH_EXPORT
-#ifdef APPLESEED_MAYA_OBJ_MESH_EXPORT
-        const char* extension = ".obj";
-#else
         const char* extension = ".binarymesh";
-#endif
         const std::string fileName = std::string("_geometry/") + meshHash.toString() + extension;
 
         bfs::path projectPath = project().search_paths().get_root_path().c_str();
@@ -327,19 +308,9 @@ void MeshExporter::exportShapeMotionStep(float time)
         }
 
         m_fileNames.push_back(fileName);
-
-        if (m_exportReference && m_shapeExportStep == 0)
-        {
-            // todo: export PRef and possibly NRef here.
-        }
     }
     else
     {
-        if (m_exportReference && m_shapeExportStep == 0)
-        {
-            // todo: export PRef and possibly NRef here.
-        }
-
         // We already exported the first mesh key when
         // we exported the topology.
         if (m_shapeExportStep > 0)
