@@ -42,8 +42,10 @@
 #include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MFloatPointArray.h>
 #include <maya/MFnMesh.h>
+#include <maya/MFnMeshData.h>
 #include <maya/MItDependencyGraph.h>
 #include <maya/MItMeshPolygon.h>
+#include <maya/MMeshSmoothOptions.h>
 #include <maya/MPointArray.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
@@ -58,58 +60,59 @@ namespace asr = renderer;
 
 namespace
 {
-    void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
+void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
+{
+    hash.append(mesh.get_tex_coords_count());
+    for(size_t i = 0, e = mesh.get_tex_coords_count(); i < e; ++i)
+        hash.append(mesh.get_tex_coords(i));
+
+    hash.append(mesh.get_triangle_count());
+    for(size_t i = 0, e = mesh.get_triangle_count(); i < e; ++i)
+        hash.append(mesh.get_triangle(i));
+
+    hash.append(mesh.get_material_slot_count());
+    for(size_t i = 0, e = mesh.get_material_slot_count(); i < e; ++i)
+        hash.append(mesh.get_material_slot(i));
+
+    hash.append(mesh.get_vertex_count());
+    for(size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
+        hash.append(mesh.get_vertex(i));
+
+    hash.append(mesh.get_vertex_normal_count());
+    for(size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
+        hash.append(mesh.get_vertex_normal(i));
+
+    hash.append(mesh.get_vertex_tangent_count());
+    for(size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
+        hash.append(mesh.get_vertex_tangent(i));
+}
+
+void meshObjectHash(
+    const asr::MeshObject&                  mesh,
+    const asf::StringDictionary&            frontMaterialMappings,
+    const asf::StringDictionary&            backMaterialMappings,
+    MurmurHash&                             hash)
+{
+    staticMeshObjectHash(mesh, hash);
+
+    hash.append(mesh.get_motion_segment_count());
+    for(size_t j = 0, je = mesh.get_motion_segment_count(); j < je; ++j)
     {
-        hash.append(mesh.get_tex_coords_count());
-        for(size_t i = 0, e = mesh.get_tex_coords_count(); i < e; ++i)
-            hash.append(mesh.get_tex_coords(i));
-
-        hash.append(mesh.get_triangle_count());
-        for(size_t i = 0, e = mesh.get_triangle_count(); i < e; ++i)
-            hash.append(mesh.get_triangle(i));
-
-        hash.append(mesh.get_material_slot_count());
-        for(size_t i = 0, e = mesh.get_material_slot_count(); i < e; ++i)
-            hash.append(mesh.get_material_slot(i));
-
-        hash.append(mesh.get_vertex_count());
         for(size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
-            hash.append(mesh.get_vertex(i));
+            mesh.get_vertex_pose(i, j);
 
-        hash.append(mesh.get_vertex_normal_count());
         for(size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
-            hash.append(mesh.get_vertex_normal(i));
+            mesh.get_vertex_normal_pose(i, j);
 
-        hash.append(mesh.get_vertex_tangent_count());
         for(size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
-            hash.append(mesh.get_vertex_tangent(i));
+            mesh.get_vertex_tangent_pose(i, j);
     }
 
-    void meshObjectHash(
-        const asr::MeshObject&                  mesh,
-        const asf::StringDictionary&            frontMaterialMappings,
-        const asf::StringDictionary&            backMaterialMappings,
-        MurmurHash&                             hash)
-    {
-        staticMeshObjectHash(mesh, hash);
+    hash.append(mesh.get_parameters());
+    hash.append(frontMaterialMappings);
+    hash.append(backMaterialMappings);
+}
 
-        hash.append(mesh.get_motion_segment_count());
-        for(size_t j = 0, je = mesh.get_motion_segment_count(); j < je; ++j)
-        {
-            for(size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
-                mesh.get_vertex_pose(i, j);
-
-            for(size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
-                mesh.get_vertex_normal_pose(i, j);
-
-            for(size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
-                mesh.get_vertex_tangent_pose(i, j);
-        }
-
-        hash.append(mesh.get_parameters());
-        hash.append(frontMaterialMappings);
-        hash.append(backMaterialMappings);
-    }
 }
 
 void MeshExporter::registerExporter()
@@ -150,7 +153,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
     const int instanceNumber = dagPath().isInstanced() ? dagPath().instanceNumber() : 0;
 
     MStatus status;
-    MFnDependencyNode depNodeFn(dagPath().node(), &status);
+    MFnDependencyNode depNodeFn(node(), &status);
     MPlug plug = depNodeFn.findPlug("instObjGroups");
     plug = plug.elementByLogicalIndex(instanceNumber);
 
@@ -173,9 +176,10 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
     else
     {
         // The mesh has per-face materials.
-        MFnMesh fnMesh(dagPath().node());
+        MFnMesh meshFn(node());
+
         MObjectArray shadingEngines;
-        fnMesh.getConnectedShaders(instanceNumber, shadingEngines, m_perFaceAssignments);
+        meshFn.getConnectedShaders(instanceNumber, shadingEngines, m_perFaceAssignments);
 
         for(unsigned int i = 0, e = shadingEngines.length(); i < e; ++i)
         {
@@ -202,6 +206,15 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
                     m_backMaterialMappings.insert(slotName.c_str(), materialName.asChar());
             }
         }
+
+        const size_t smoothLevel = getSmoothLevel();
+        if (smoothLevel > 0)
+        {
+            // TODO: expand per-face material assignments to the subdivided mesh.
+            RENDERER_LOG_WARNING(
+                "Found mesh %s with displaySmoothMesh enabled and per-face materials.",
+                appleseedName().asChar());
+        }
     }
 
     if (m_frontMaterialMappings.empty())
@@ -212,7 +225,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
     }
 
     // Create an alpha map exporter if needed.
-    depNodeFn.setObject(dagPath().node());
+    depNodeFn.setObject(node());
     plug = depNodeFn.findPlug("asAlphaMap", &status);
 
     MPlugArray connections;
@@ -232,7 +245,7 @@ void MeshExporter::createEntities(
     shapeAttributesToParams(m_meshParams);
     meshAttributesToParams(m_meshParams);
 
-    MFnMesh meshFn(dagPath());
+    MFnMesh meshFn(node());
 
     m_exportUVs = meshFn.numUVs() != 0;
     if (m_exportUVs)
@@ -248,31 +261,32 @@ void MeshExporter::createEntities(
 
     m_numMeshKeys = motionBlurTimes.m_deformTimes.size();
     m_isDeforming = (m_numMeshKeys > 1) && isAnimated(node());
-    m_shapeExportStep = 0;
+    m_shapeExportStep = 1;
 
     if (sessionMode() != AppleseedSession::ExportSession)
     {
         MString objectName = appleseedName();
         m_mesh = asr::MeshObjectFactory::create(objectName.asChar(), m_meshParams);
         createMaterialSlots();
-        fillTopology();
-        exportGeometry();
     }
 }
 
 void MeshExporter::exportShapeMotionStep(float time)
 {
     // Do not export extra motion steps for static meshes.
-    if (!m_isDeforming && m_shapeExportStep > 0)
+    if (!m_isDeforming && m_shapeExportStep > 1)
         return;
+
+    MStatus status;
+    MeshAndData finalMesh = getFinalMesh(&status);
 
     if (sessionMode() == AppleseedSession::ExportSession)
     {
         MString objectName = appleseedName();
         m_mesh = asr::MeshObjectFactory::create(objectName.asChar(), m_meshParams);
         createMaterialSlots();
-        fillTopology();
-        exportGeometry();
+        fillTopology(finalMesh.m_mesh);
+        exportGeometry(finalMesh.m_mesh);
 
         // Compute smooth tangents if needed.
         if (m_smoothTangents)
@@ -311,10 +325,13 @@ void MeshExporter::exportShapeMotionStep(float time)
     }
     else
     {
-        // We already exported the first mesh key when
-        // we exported the topology.
-        if (m_shapeExportStep > 0)
-            exportMeshKey();
+        if (m_shapeExportStep == 1)
+        {
+            fillTopology(finalMesh.m_mesh);
+            exportGeometry(finalMesh.m_mesh);
+        }
+        else
+            exportMeshKey(finalMesh.m_mesh);
     }
 
     m_shapeExportStep++;
@@ -399,6 +416,53 @@ void MeshExporter::meshAttributesToParams(renderer::ParamArray& params)
         params.insert("medium_priority", mediumPriority);
 }
 
+size_t MeshExporter::getSmoothLevel(MStatus* ReturnStatus) const
+{
+    MFnMesh meshFn(node());
+
+    if (meshFn.findPlug("displaySmoothMesh").asBool())
+    {
+        int smoothLevel = meshFn.findPlug("smoothLevel", false, ReturnStatus).asInt();
+
+        if (!meshFn.findPlug("useSmoothPreviewForRender", false, ReturnStatus).asBool())
+            smoothLevel = meshFn.findPlug("renderSmoothLevel", false, ReturnStatus).asInt();
+
+        return smoothLevel;
+    }
+
+    return 0;
+}
+
+MeshExporter::MeshAndData MeshExporter::getFinalMesh(MStatus* ReturnStatus) const
+{
+    MeshAndData finalMesh = {node(), MObject()};
+
+    const size_t smoothLevel = getSmoothLevel();
+    if (smoothLevel > 0)
+    {
+        // We need to create a smooth mesh.
+        MFnMesh meshFn(node());
+        MMeshSmoothOptions options;
+        MStatus status = meshFn.getSmoothMeshDisplayOptions(options);
+
+        if (!status)
+        {
+            if (ReturnStatus)
+                *ReturnStatus = status;
+
+            return finalMesh;
+        }
+
+        options.setDivisions(smoothLevel);
+
+        MFnMeshData meshDataFn;
+        finalMesh.m_data = meshDataFn.create();
+        finalMesh.m_mesh = meshFn.generateSmoothMesh(finalMesh.m_data, &options, ReturnStatus);
+    }
+
+    return finalMesh;
+}
+
 void MeshExporter::createMaterialSlots()
 {
     // Create material slots.
@@ -414,7 +478,7 @@ void MeshExporter::createMaterialSlots()
         m_mesh->push_material_slot("default");
 }
 
-void MeshExporter::fillTopology()
+void MeshExporter::fillTopology(MObject mesh)
 {
     MStatus status;
 
@@ -427,7 +491,7 @@ void MeshExporter::fillTopology()
     MIntArray triangleVertexIndices;
     MPointArray trianglePoints;
 
-    MItMeshPolygon faceIt(dagPath());
+    MItMeshPolygon faceIt(mesh);
     for(; !faceIt.isDone(); faceIt.next())
     {
         // Get the material index for this face.
@@ -507,10 +571,10 @@ void MeshExporter::fillTopology()
         m_mesh->push_triangle(triangles[i]);
 }
 
-void MeshExporter::exportGeometry()
+void MeshExporter::exportGeometry(MObject mesh)
 {
     MStatus status;
-    MFnMesh meshFn(dagPath());
+    MFnMesh meshFn(mesh);
 
     // Vertices.
     m_mesh->reserve_vertices(meshFn.numVertices());
@@ -543,10 +607,10 @@ void MeshExporter::exportGeometry()
     }
 }
 
-void MeshExporter::exportMeshKey()
+void MeshExporter::exportMeshKey(MObject mesh)
 {
     MStatus status;
-    MFnMesh meshFn(dagPath());
+    MFnMesh meshFn(mesh);
 
     if (m_shapeExportStep == 1)
     {

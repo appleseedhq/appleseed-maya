@@ -82,10 +82,19 @@ class MeshExporter
 
     void meshAttributesToParams(renderer::ParamArray& params);
 
+    struct MeshAndData
+    {
+        MObject m_mesh;
+        MObject m_data;
+    };
+
+    size_t getSmoothLevel(MStatus* ReturnStatus = nullptr) const;
+    MeshAndData getFinalMesh(MStatus* ReturnStatus = nullptr) const;
+
     void createMaterialSlots();
-    void fillTopology();
-    void exportGeometry();
-    void exportMeshKey();
+    void fillTopology(MObject mesh);
+    void exportGeometry(MObject mesh);
+    void exportMeshKey(MObject mesh);
 
     AppleseedEntityPtr<renderer::MeshObject>    m_mesh;
     renderer::ParamArray                        m_meshParams;
