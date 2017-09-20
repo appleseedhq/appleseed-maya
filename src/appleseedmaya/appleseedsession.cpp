@@ -440,7 +440,7 @@ namespace
                 MObject appleseedRenderGlobalsNode;
                 getDependencyNodeByName("appleseedRenderGlobals", appleseedRenderGlobalsNode);
                 MFnDependencyNode depNodeFn(appleseedRenderGlobalsNode);
-                MPlug dstPlug = depNodeFn.findPlug("envLight");
+                MPlug dstPlug = depNodeFn.findPlug("envLight", false);
                 MPlug srcPlug;
 
                 if (AttributeUtils::getPlugConnectedTo(dstPlug, srcPlug))

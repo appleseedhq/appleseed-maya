@@ -154,7 +154,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
 
     MStatus status;
     MFnDependencyNode depNodeFn(node(), &status);
-    MPlug plug = depNodeFn.findPlug("instObjGroups");
+    MPlug plug = depNodeFn.findPlug("instObjGroups", false, &status);
     plug = plug.elementByLogicalIndex(instanceNumber);
 
     if (plug.isConnected())
@@ -226,7 +226,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
 
     // Create an alpha map exporter if needed.
     depNodeFn.setObject(node());
-    plug = depNodeFn.findPlug("asAlphaMap", &status);
+    plug = depNodeFn.findPlug("asAlphaMap", false, &status);
 
     MPlugArray connections;
     plug.connectedTo(connections, true, false);
@@ -420,7 +420,7 @@ size_t MeshExporter::getSmoothLevel(MStatus* ReturnStatus) const
 {
     MFnMesh meshFn(node());
 
-    if (meshFn.findPlug("displaySmoothMesh").asBool())
+    if (meshFn.findPlug("displaySmoothMesh", false).asBool())
     {
         int smoothLevel = meshFn.findPlug("smoothLevel", false, ReturnStatus).asInt();
 

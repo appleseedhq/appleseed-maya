@@ -101,7 +101,7 @@ void RampExporter::exportParameterValue(
 
     if (paramInfo.paramName == "in_position")
     {
-        MPlug plug = depNodeFn.findPlug("colorEntryList", &status);
+        MPlug plug = depNodeFn.findPlug("colorEntryList", false, &status);
 
         std::vector<RampEntry> rampColors;
         rampColors.reserve(plug.numElements());
@@ -121,7 +121,7 @@ void RampExporter::exportParameterValue(
             rampColors.push_back(RampEntry(p, c));
         }
 
-        plug = depNodeFn.findPlug("type", &status);
+        plug = depNodeFn.findPlug("type", false, &status);
         int rampType;
         AttributeUtils::get(plug, rampType);
 

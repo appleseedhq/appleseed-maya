@@ -116,7 +116,7 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
         if (paramInfo.isOutput)
             continue;
 
-        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
+        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, false, &status);
         if (!status)
             continue;
 
@@ -251,7 +251,7 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
         if (paramInfo.isOutput)
             continue;
 
-        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
+        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, false, &status);
         if (!status)
         {
             RENDERER_LOG_WARNING(
@@ -295,7 +295,7 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
     if (depNodeFn.typeName() == "bump2d")
     {
         // If we have a bumpValue connection.
-        MPlug plug = depNodeFn.findPlug("bumpValue", &status);
+        MPlug plug = depNodeFn.findPlug("bumpValue", false, &status);
         if (plug.isConnected())
         {
             // Find the node on the other side.
@@ -306,7 +306,7 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
 
             // Check if the node has an outColor attribute.
             MFnDependencyNode otherDepNodeFn(srcPlug.node());
-            srcPlug = otherDepNodeFn.findPlug("outColor", &status);
+            srcPlug = otherDepNodeFn.findPlug("outColor", false, &status);
             if (!status)
                 return;
 
@@ -416,7 +416,7 @@ void ShadingNodeExporter::exportShaderParameters(
     for(size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
-        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, &status);
+        MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, false, &status);
         if (!status)
         {
             RENDERER_LOG_WARNING(

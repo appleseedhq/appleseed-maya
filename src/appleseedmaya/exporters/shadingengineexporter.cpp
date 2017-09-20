@@ -72,7 +72,7 @@ void ShadingEngineExporter::createExporters(const AppleseedSession::Services& se
     MFnDependencyNode depNodeFn(m_object);
 
     MStatus status;
-    const MPlug plug = depNodeFn.findPlug("surfaceShader", &status);
+    const MPlug plug = depNodeFn.findPlug("surfaceShader", false, &status);
     if (plug.isConnected())
     {
         MPlugArray otherPlugs;

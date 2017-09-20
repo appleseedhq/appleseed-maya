@@ -64,7 +64,7 @@ template <typename T>
 MStatus get(const MFnDependencyNode& depNodeFn, const MString& attrName, T& value)
 {
     MStatus status;
-    MPlug plug = depNodeFn.findPlug(attrName, &status);
+    MPlug plug = depNodeFn.findPlug(attrName, false, &status);
     if (!status)
         return status;
 

@@ -122,7 +122,7 @@ void MandelbrotExporter::exportParameterValue(
 
     if (paramInfo.paramName == "in_color_Position")
     {
-        MPlug plug = depNodeFn.findPlug("color", &status);
+        MPlug plug = depNodeFn.findPlug("color", false, &status);
 
         std::vector<MandelbrotColorsEntry> mandelbrotColors;
         mandelbrotColors.reserve(plug.numElements());
@@ -170,7 +170,7 @@ void MandelbrotExporter::exportParameterValue(
     }
     else if (paramInfo.paramName == "in_value_Position")
     {
-        MPlug plug = depNodeFn.findPlug("value", &status);
+        MPlug plug = depNodeFn.findPlug("value", false, &status);
 
         std::vector<MandelbrotValuesEntry> mandelbrotValues;
         mandelbrotValues.reserve(plug.numElements());

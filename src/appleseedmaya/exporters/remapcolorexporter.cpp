@@ -103,7 +103,7 @@ void RemapColorExporter::exportParameterValue(
 
     if (paramInfo.paramName == "in_red_Position")
     {
-        MPlug plug = depNodeFn.findPlug("red", &status);
+        MPlug plug = depNodeFn.findPlug("red", false, &status);
 
         std::vector<RemapColorEntry> remapRed;
         remapRed.reserve(plug.numElements());
@@ -149,7 +149,7 @@ void RemapColorExporter::exportParameterValue(
     }
     else if (paramInfo.paramName == "in_green_Position")
     {
-        MPlug plug = depNodeFn.findPlug("green", &status);
+        MPlug plug = depNodeFn.findPlug("green", false, &status);
 
         std::vector<RemapColorEntry> remapGreen;
         remapGreen.reserve(plug.numElements());
@@ -195,7 +195,7 @@ void RemapColorExporter::exportParameterValue(
     }
     else if (paramInfo.paramName == "in_blue_Position")
     {
-        MPlug plug = depNodeFn.findPlug("blue", &status);
+        MPlug plug = depNodeFn.findPlug("blue", false, &status);
 
         std::vector<RemapColorEntry> remapBlue;
         remapBlue.reserve(plug.numElements());

@@ -183,11 +183,11 @@ bool DagNodeExporter::isObjectRenderable(const MDagPath& path)
         return false;
 
     // Skip invisible objects.
-    plug = dagNodeFn.findPlug("visibility", &status);
+    plug = dagNodeFn.findPlug("visibility", false, &status);
     if (status == MS::kSuccess && plug.asBool() == false)
         return false;
 
-    plug = dagNodeFn.findPlug("overrideVisibility", &status);
+    plug = dagNodeFn.findPlug("overrideVisibility", false, &status);
     if (status == MS::kSuccess && plug.asBool() == false)
         return false;
 
