@@ -63,7 +63,7 @@ namespace
                 if (g_jobQueue.empty())
                     break;
 
-                job = g_jobQueue.front();
+                job = std::move(g_jobQueue.front());
                 g_jobQueue.pop();
             }
 
@@ -125,7 +125,7 @@ void pushJob(std::function<void ()> job)
     assert(g_callbackId != 0);
 
     std::lock_guard<std::mutex> lock(g_jobQueueMutex);
-    g_jobQueue.push(job);
+    g_jobQueue.push(std::move(job));
 }
 
 } // IdleJobQueue
