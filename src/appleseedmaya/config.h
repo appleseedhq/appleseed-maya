@@ -39,14 +39,14 @@
 #include <maya/MStatus.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
-// Windows dll exports
+// Windows dll exports.
 #if defined(_WIN32) || defined(_WIN64) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__)
     #define APPLESEED_MAYA_PLUGIN_EXPORT __declspec(dllexport)
 #else
     #define APPLESEED_MAYA_PLUGIN_EXPORT
 #endif
 
-// Constants, ...
+// Constants.
 #define APPLESEED_MAYA_VENDOR_STRING            "appleseedhq"
 
 // Error handling macros.

@@ -45,6 +45,7 @@ MStatus uninitialize();
 
 } // namespace Logger
 
+// RAII class to set / restore the logger verbosity.
 class ScopedSetLoggerVerbosity
 {
   public:

@@ -34,6 +34,7 @@
 #include <maya/MStatus.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
+// Add appleseed extension attributes to Maya nodes.
 MStatus addExtensionAttributes();
 
 #endif  // !APPLESEED_MAYA_EXTENSIONATTRIBUTES_H

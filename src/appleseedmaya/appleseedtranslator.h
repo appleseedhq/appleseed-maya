@@ -37,6 +37,9 @@
 #include <maya/MString.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
+//
+// The AppleseedTranslator class exports maya scenes to appleseed projects.
+//
 
 class AppleseedTranslator
   : public MPxFileTranslator

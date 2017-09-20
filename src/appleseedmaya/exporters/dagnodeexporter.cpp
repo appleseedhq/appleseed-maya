@@ -137,7 +137,7 @@ asf::Matrix4d DagNodeExporter::convert(const MMatrix& m) const
     return result;
 }
 
-void DagNodeExporter::visibilityAttributesToParams(asr::ParamArray& params)
+void DagNodeExporter::addVisibilityAttributesToParams(asr::ParamArray& params)
 {
     asf::Dictionary visFlags;
 

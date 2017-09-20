@@ -66,7 +66,7 @@ struct MStringCompareLess
 //
 // AppleseedEntityPtr.
 //
-//  Smart ptr that holds  an appleseed entity and keeps track of ownership.
+//  Smart ptr that holds an appleseed entity and keeps track of ownership.
 //
 
 template <typename T>
@@ -194,12 +194,16 @@ class Computation
   : public foundation::NonCopyable
 {
   public:
+    // Create a computation wrapper.
     static std::shared_ptr<Computation> create();
 
+    // Destructor.
     ~Computation();
 
+    // Check if the user requested to interrupt the computation.
     bool isInterruptRequested();
 
+    // Throw AbortRequested if the user requested to interrupt the computation.
     void thowIfInterruptRequested();
 
   private:
@@ -223,6 +227,10 @@ inline void flip_pixel_interval(const T size, T& xmin, T& xmax)
     xmax = flip_pixel_coordinate(size, xmin);
     xmin = flip_pixel_coordinate(size, tmp);
 }
+
+//
+// Deleter that calls delete[] for use with C++11 shared_ptr.
+//
 
 template <typename T>
 struct ArrayDeleter

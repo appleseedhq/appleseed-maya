@@ -49,6 +49,10 @@
 // Forward declarations.
 namespace renderer { class ShaderQuery; }
 
+//
+// The OSLMetadataExtractor class extracts OSL metadata entries from appleseed dictionaries.
+//
+
 class OSLMetadataExtractor
   : public foundation::NonCopyable
 {
@@ -77,6 +81,10 @@ class OSLMetadataExtractor
   private:
     const foundation::Dictionary& m_metadata;
 };
+
+//
+// The OSLParamInfo class holds information about a parameter of an OSL shader.
+//
 
 class OSLParamInfo
 {
@@ -127,6 +135,7 @@ class OSLParamInfo
 
 std::ostream& operator<<(std::ostream& os, const OSLParamInfo& paramInfo);
 
+
 class OSLShaderInfo
 {
   public:
@@ -136,13 +145,17 @@ class OSLShaderInfo
         const renderer::ShaderQuery&    q,
         const MString&                  filename);
 
+    // Returns a pointer to an OSLParamInfo for a shader parameter.
+    // If the parameter is not found, returns a null pointer.
     const OSLParamInfo* findParam(const MString& mayaAttrName) const;
     const OSLParamInfo* findParam(const MPlug& plug) const;
 
+    // Shader info.
     MString shaderName;
     MString shaderType;
     MString shaderFileName;
 
+    // Maya related info.
     MString mayaName;
     MString mayaClassification;
     unsigned int typeId;

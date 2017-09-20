@@ -41,6 +41,7 @@ namespace asr = renderer;
 
 namespace
 {
+    // RAII class to ensure / release the python state.
     struct ScopedGilState
     {
         PyGILState_STATE state;

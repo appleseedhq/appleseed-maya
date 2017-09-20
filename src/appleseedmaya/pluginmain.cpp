@@ -176,7 +176,7 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
     /***************************/
     // Scripts.
 
-    // Make sure that the modules we need can be imported...
+    // Make sure that the modules we need can be imported.
     status = MGlobal::executePythonCommand("import appleseed", false, false);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG_LOG(
         status,
@@ -193,7 +193,7 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         "appleseedMaya: failed to initialize renderer");
 
     /***************************/
-    // Shading Nodes & previews.
+    // Shading nodes & previews.
 
     status = ShadingNodeRegistry::registerShadingNodes(plugin);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG_LOG(

@@ -134,7 +134,7 @@ void AreaLightExporter::createEntities(
     params.clear();
 
     const MString objectInstanceName = appleseedName() + MString("_instance");
-    visibilityAttributesToParams(params);
+    addVisibilityAttributesToParams(params);
     m_objectInstance.reset(
         asr::ObjectInstanceFactory::create(
             objectInstanceName.asChar(),

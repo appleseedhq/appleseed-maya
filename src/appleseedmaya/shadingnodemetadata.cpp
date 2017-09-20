@@ -249,7 +249,7 @@ const OSLParamInfo* OSLShaderInfo::findParam(const MString& mayaAttrName) const
             return &paramInfo[i];
     }
 
-    return 0;
+    return nullptr;
 }
 
 const OSLParamInfo* OSLShaderInfo::findParam(const MPlug& plug) const

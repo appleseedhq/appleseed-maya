@@ -42,6 +42,12 @@
 // Forward declarations.
 namespace renderer { class Project; }
 
+//
+// The python bridge class allows python to access to the currently
+// active appleseed project as appleseedMaya.currentProject.
+// This could be used in pre / post rendering / exporting scripts.
+//
+
 class PythonBridge
   : public foundation::NonCopyable
 {
@@ -49,7 +55,10 @@ class PythonBridge
     static MStatus initialize(const MString& pluginPath);
     static MStatus uninitialize();
 
+    // Set the current active appleseed project.
     static void setCurrentProject(renderer::Project* project);
+
+    // Clear the current project.
     static void clearCurrentProject();
 };
 

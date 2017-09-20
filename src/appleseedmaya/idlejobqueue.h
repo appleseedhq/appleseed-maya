@@ -43,9 +43,13 @@ namespace IdleJobQueue
 MStatus initialize();
 MStatus uninitialize();
 
+// Start the idle job queue.
 void start();
+
+// Execute all pending jobs and stop the idle job queue.
 void stop();
 
+// Push a job to be executed in the main thread during the idle callback.
 void pushJob(std::function<void()> job);
 
 } // IdleJobQueue

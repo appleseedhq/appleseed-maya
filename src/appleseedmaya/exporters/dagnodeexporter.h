@@ -58,6 +58,10 @@ namespace renderer { class Project; }
 namespace renderer { class Scene; }
 class MotionBlurTimes;
 
+//
+// Base class for exporting Maya dag nodes to appleseed projects.
+//
+
 class DagNodeExporter
   : public foundation::NonCopyable
 {
@@ -89,6 +93,7 @@ class DagNodeExporter
     virtual void flushEntities() = 0;
 
   protected:
+    // Constructor.
     DagNodeExporter(
       const MDagPath&                               path,
       renderer::Project&                            project,
@@ -115,11 +120,16 @@ class DagNodeExporter
     // Convert a Maya matrix to an appleseed matrix.
     foundation::Matrix4d convert(const MMatrix& m) const;
 
-    void visibilityAttributesToParams(renderer::ParamArray& params);
+    // Add appleseed visibility attributes to the ParamArray.
+    void addVisibilityAttributesToParams(renderer::ParamArray& params);
 
+    // Return true if an object is renderable.
     static bool isObjectRenderable(const MDagPath& path);
+
+    // Return true if an object and all its parents are renderable.
     static bool areObjectAndParentsRenderable(const MDagPath& path);
 
+        // Return true if an object is animated.
     static bool isAnimated(MObject object, bool checkParent = false);
 
   private:

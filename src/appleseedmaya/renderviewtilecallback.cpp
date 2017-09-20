@@ -129,7 +129,7 @@ namespace
 
             for( size_t ty = 0; ty < props.m_tile_count_y; ++ty )
                 for( size_t tx = 0; tx < props.m_tile_count_x; ++tx )
-                    on_tile_end(frame, tx, ty);
+                    write_tile(frame, tx, ty);
         }
 
       private:

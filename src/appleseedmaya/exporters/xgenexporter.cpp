@@ -169,7 +169,7 @@ void XGenExporter::flushEntities()
 
     const MString assemblyInstanceName = appleseedName() + MString("_assembly_instance");
     asr::ParamArray params;
-    visibilityAttributesToParams(params);
+    addVisibilityAttributesToParams(params);
     m_assemblyInstance.reset(
         asr::AssemblyInstanceFactory::create(
             assemblyInstanceName.asChar(),

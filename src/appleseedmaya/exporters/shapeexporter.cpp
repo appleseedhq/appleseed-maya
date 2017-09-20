@@ -89,7 +89,7 @@ void ShapeExporter::flushEntities()
         const MString assemblyInstanceName = assemblyName + MString("_instance");
 
         asr::ParamArray params;
-        visibilityAttributesToParams(params);
+        addVisibilityAttributesToParams(params);
         m_objectAssemblyInstance.reset(
             asr::AssemblyInstanceFactory::create(
                 assemblyInstanceName.asChar(),
@@ -119,7 +119,7 @@ void ShapeExporter::createObjectInstance(const MString& objectName)
     else
     {
         objectInstanceTransform = m_transformSequence.get_earliest_transform();
-        visibilityAttributesToParams(params);
+        addVisibilityAttributesToParams(params);
     }
 
     const MString objectInstanceName = appleseedName() + MString("_instance");

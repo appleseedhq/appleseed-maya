@@ -54,7 +54,7 @@ void InstanceExporter::flushEntities()
     const MString assemblyInstanceName = appleseedName() + MString("_instance");
 
     asr::ParamArray params;
-    visibilityAttributesToParams(params);
+    addVisibilityAttributesToParams(params);
     asf::auto_release_ptr<asr::AssemblyInstance> assemblyInstance(
         asr::AssemblyInstanceFactory::create(
             assemblyInstanceName.asChar(),
