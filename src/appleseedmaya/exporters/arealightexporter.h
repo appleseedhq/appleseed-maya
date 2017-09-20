@@ -59,7 +59,7 @@ class AreaLightExporter
 
     bool supportsMotionBlur() const override;
 
-    void createExporters(const AppleseedSession::Services& services) override;
+    void createExporters(const AppleseedSession::IExporterFactory& exporter_factory) override;
 
     void createEntities(
         const AppleseedSession::Options&            options,

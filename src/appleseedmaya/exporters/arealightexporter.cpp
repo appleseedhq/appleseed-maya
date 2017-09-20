@@ -88,9 +88,9 @@ bool AreaLightExporter::supportsMotionBlur() const
     return false;
 }
 
-void AreaLightExporter::createExporters(const AppleseedSession::Services& services)
+void AreaLightExporter::createExporters(const AppleseedSession::IExporterFactory& exporter_factory)
 {
-    m_lightNetworkExporter = services.createShadingNetworkExporter(
+    m_lightNetworkExporter = exporter_factory.createShadingNetworkExporter(
         AreaLightNetworkContext,
         node(),
         MPlug());

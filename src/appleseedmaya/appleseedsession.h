@@ -120,11 +120,11 @@ struct MotionBlurTimes
     std::set<float>  m_allTimes;
 };
 
-class Services
+class IExporterFactory
   : public foundation::NonCopyable
 {
   public:
-    virtual ~Services();
+    virtual ~IExporterFactory();
 
     virtual ShadingEngineExporterPtr createShadingEngineExporter(const MObject& object) const = 0;
 
@@ -137,7 +137,7 @@ class Services
         const MObject&                object) const = 0;
 
   protected:
-    Services();
+    IExporterFactory();
 };
 
 MStatus projectExport(const MString& fileName, Options options);

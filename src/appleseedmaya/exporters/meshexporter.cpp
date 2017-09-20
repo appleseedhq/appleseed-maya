@@ -148,7 +148,7 @@ MeshExporter::~MeshExporter()
     }
 }
 
-void MeshExporter::createExporters(const AppleseedSession::Services& services)
+void MeshExporter::createExporters(const AppleseedSession::IExporterFactory& exporter_factory)
 {
     const int instanceNumber = dagPath().isInstanced() ? dagPath().instanceNumber() : 0;
 
@@ -163,7 +163,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
         MPlugArray connections;
         plug.connectedTo(connections, false, true);
         MObject shadingEngine = connections[0].node();
-        services.createShadingEngineExporter(shadingEngine);
+        exporter_factory.createShadingEngineExporter(shadingEngine);
         depNodeFn.setObject(shadingEngine);
         MString materialName = depNodeFn.name() + MString("_material");
         m_frontMaterialMappings.insert("default", materialName.asChar());
@@ -183,7 +183,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
 
         for(unsigned int i = 0, e = shadingEngines.length(); i < e; ++i)
         {
-            services.createShadingEngineExporter(shadingEngines[i]);
+            exporter_factory.createShadingEngineExporter(shadingEngines[i]);
             depNodeFn.setObject(shadingEngines[i]);
             MString materialName = depNodeFn.name() + MString("_material");
 
@@ -234,7 +234,7 @@ void MeshExporter::createExporters(const AppleseedSession::Services& services)
     if (connections.length() != 0)
     {
         MObject alphaMapNode = connections[0].node();
-        m_alphaMapExporter = services.createAlphaMapExporter(alphaMapNode);
+        m_alphaMapExporter = exporter_factory.createAlphaMapExporter(alphaMapNode);
     }
 }
 

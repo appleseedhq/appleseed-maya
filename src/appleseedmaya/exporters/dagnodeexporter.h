@@ -76,7 +76,7 @@ class DagNodeExporter
     virtual bool supportsMotionBlur() const;
 
     // Create any extra exporter needed by this exporter (shading engines, ...).
-    virtual void createExporters(const AppleseedSession::Services& services);
+    virtual void createExporters(const AppleseedSession::IExporterFactory& exporter_factory);
 
     // Create appleseed entities.
     virtual void createEntities(

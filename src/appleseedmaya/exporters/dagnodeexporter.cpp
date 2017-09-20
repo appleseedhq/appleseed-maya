@@ -89,7 +89,7 @@ asr::Assembly& DagNodeExporter::mainAssembly()
     return m_mainAssembly;
 }
 
-void DagNodeExporter::createExporters(const AppleseedSession::Services& services)
+void DagNodeExporter::createExporters(const AppleseedSession::IExporterFactory& exporter_factory)
 {
 }
 

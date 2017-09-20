@@ -67,7 +67,7 @@ ShadingEngineExporter::~ShadingEngineExporter()
     }
 }
 
-void ShadingEngineExporter::createExporters(const AppleseedSession::Services& services)
+void ShadingEngineExporter::createExporters(const AppleseedSession::IExporterFactory& exporter_factory)
 {
     MFnDependencyNode depNodeFn(m_object);
 
@@ -81,7 +81,7 @@ void ShadingEngineExporter::createExporters(const AppleseedSession::Services& se
         {
             MObject otherNode = otherPlugs[0].node();
             depNodeFn.setObject(otherNode);
-            m_surfaceNetworkExporter = services.createShadingNetworkExporter(
+            m_surfaceNetworkExporter = exporter_factory.createShadingNetworkExporter(
                 SurfaceNetworkContext,
                 otherNode,
                 otherPlugs[0]);

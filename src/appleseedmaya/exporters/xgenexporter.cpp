@@ -76,7 +76,7 @@ XGenExporter::~XGenExporter()
     }
 }
 
-void XGenExporter::createExporters(const AppleseedSession::Services& services)
+void XGenExporter::createExporters(const AppleseedSession::IExporterFactory& exporter_factory)
 {
     // todo: implement this.
 }

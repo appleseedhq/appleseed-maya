@@ -174,11 +174,11 @@ float MotionBlurTimes::normalizedFrame(float frame) const
     return (frame - m_shutterOpenTime) / (m_shutterCloseTime - m_shutterOpenTime);
 }
 
-Services::Services()
+IExporterFactory::IExporterFactory()
 {
 }
 
-Services::~Services()
+IExporterFactory::~IExporterFactory()
 {
 }
 
@@ -197,12 +197,12 @@ namespace
     struct SessionImpl
       : public asf::NonCopyable
     {
-        class ServicesImpl
-          : public AppleseedSession::Services
+        class ExporterFactory
+          : public AppleseedSession::IExporterFactory
         {
           public:
-            ServicesImpl(SessionImpl& self)
-              : Services()
+            ExporterFactory(SessionImpl& self)
+              : IExporterFactory()
               , m_self(self)
             {
             }
@@ -283,7 +283,7 @@ namespace
             ComputationPtr                      computation)
           : m_sessionMode(mode)
           , m_options(options)
-          , m_services(*this)
+          , m_exporter_factory(*this)
           , m_computation(computation)
         {
             createProject();
@@ -296,7 +296,7 @@ namespace
             ComputationPtr                      computation)
           : m_sessionMode(AppleseedSession::ExportSession)
           , m_options(options)
-          , m_services(*this)
+          , m_exporter_factory(*this)
           , m_computation(computation)
           , m_fileName(fileName)
         {
@@ -681,14 +681,14 @@ namespace
             // Create dag extra exporters.
             RENDERER_LOG_DEBUG("Creating dag extra exporters");
             for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
-                it->second->createExporters(m_services);
+                it->second->createExporters(m_exporter_factory);
 
             checkUserAborted();
 
             // Create shading engine extra exporters.
             RENDERER_LOG_DEBUG("Creating shading engines extra exporters");
             for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
-                it->second->createExporters(m_services);
+                it->second->createExporters(m_exporter_factory);
         }
 
         void createDagNodeExporter(const MDagPath& path)
@@ -873,7 +873,7 @@ namespace
         AppleseedSession::SessionMode                           m_sessionMode;
         AppleseedSession::Options                               m_options;
         ComputationPtr                                          m_computation;
-        ServicesImpl                                            m_services;
+        ExporterFactory                                         m_exporter_factory;
         MTime                                                   m_savedTime;
 
         asf::auto_release_ptr<renderer::Project>                m_project;
