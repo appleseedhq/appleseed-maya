@@ -122,8 +122,8 @@ namespace
     {
         if (query.open(shaderPath.string().c_str()))
         {
-            const MString shaderFilename(
-                shaderPath.filename().replace_extension().c_str());
+            // Get the shader filename without the .oso extension.
+            const MString shaderFilename(shaderPath.filename().replace_extension().c_str());
             OSLShaderInfo shaderInfo(query, shaderFilename);
 
             if (shaderInfo.mayaName.length() == 0)
@@ -153,19 +153,16 @@ namespace
                 }
             }
 
-            /*
             RENDERER_LOG_DEBUG(
                 "Registered OSL shader %s",
                 shaderInfo.shaderName.asChar());
-            */
+
+            #if 0
+                logShader(shaderInfo);
+            #endif
 
             gShadersInfo[shaderInfo.mayaName] = shaderInfo;
 
-            /*
-            #ifndef NDEBUG
-                logShader(shaderInfo);
-            #endif
-            */
 
             if (shaderInfo.typeId != 0)
             {
@@ -257,19 +254,15 @@ namespace
                         const bfs::path& shaderPath = it->path();
                         if (shaderPath.extension() == ".oso")
                         {
-                            /*
                             RENDERER_LOG_DEBUG(
                                 "Found OSL shader %s.",
                                 shaderPath.string().c_str());
-                            */
-#ifndef NDEBUG
-                            std::cout << shaderPath.string().c_str() << std::endl;
-#endif
+
                             registerShader(shaderPath, pluginFn, query);
                         }
                     }
 
-                    // todo: handle symlinks here?
+                    // TODO: should we handle symlinks here?
                 }
             }
         }
@@ -293,7 +286,7 @@ MStatus registerShadingNodes(MObject plugin)
     // Build list of dirs to look for shaders
     std::vector<bfs::path> shaderPaths;
 
-    // Look relative to plugin
+    // Look relative to the plugin dll / so file.
     bfs::path p(pluginFn.loadPath().asChar());
     p = p.parent_path() / ".." / "shaders";
     shaderPaths.push_back(p);
@@ -326,6 +319,7 @@ MStatus registerShadingNodes(MObject plugin)
         registerShadersInDirectory(shaderPaths[i], pluginFn, *query);
     }
 
+    // Refresh the hypershade.
     MString command("if (`window -exists createRenderNodeWindow`) {refreshCreateRenderNodeWindow(\"\");}\n");
     MGlobal::executeCommand(command);
 
@@ -346,6 +340,7 @@ MStatus unregisterShadingNodes(MObject plugin)
             pluginFn.deregisterNode(MTypeId(shaderInfo.typeId));
     }
 
+    // Refresh the hypershade.
     MString command("if (`window -exists createRenderNodeWindow`) {refreshCreateRenderNodeWindow(\"\");}\n");
     MGlobal::executeCommand(command);
 

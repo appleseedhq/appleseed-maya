@@ -46,13 +46,20 @@ class OSLShaderInfo;
 
 namespace ShadingNodeRegistry
 {
+    // Register shading nodes for OSL shaders.
     MStatus registerShadingNodes(MObject plugin);
+
+    // Unregister shading nodes for OSL shaders.
     MStatus unregisterShadingNodes(MObject plugin);
 
+    // Return a list of all registered shading node names.
     void getShaderNodeNames(MStringArray& nodeNames);
 
+    // Return the shader info for a node.
+    // Returns a nullptr if the node was not registered.
     const OSLShaderInfo* getShaderInfo(const MString& nodeName);
 
+    // Return true if a shading node is supported (is registered).
     bool isShaderSupported(const MString& nodeName);
 } // namespace ShadingNodeRegistry
 
