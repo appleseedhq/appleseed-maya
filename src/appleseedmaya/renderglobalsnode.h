@@ -56,12 +56,12 @@ class RenderGlobalsNode
     MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override;
 
     static void applyGlobalsToProject(
-        const MObject&                      globals,
-        renderer::Project&                  project);
+        const MObject&                              globals,
+        renderer::Project&                          project);
 
-    static void collectMotionBlurTimes(
-        const MObject&                      globals,
-        AppleseedSession::MotionBlurTimes&  motionBlurTimes);
+    static void collectMotionBlurSampleTimes(
+        const MObject&                              globals,
+        AppleseedSession::MotionBlurSampleTimes&    motionBlurSampleTimes);
 
   private:
     static MObject      m_pixelSamples;

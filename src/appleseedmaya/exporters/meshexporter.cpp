@@ -88,10 +88,10 @@ void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
 }
 
 void meshObjectHash(
-    const asr::MeshObject&                  mesh,
-    const asf::StringDictionary&            frontMaterialMappings,
-    const asf::StringDictionary&            backMaterialMappings,
-    MurmurHash&                             hash)
+    const asr::MeshObject&                          mesh,
+    const asf::StringDictionary&                    frontMaterialMappings,
+    const asf::StringDictionary&                    backMaterialMappings,
+    MurmurHash&                                     hash)
 {
     staticMeshObjectHash(mesh, hash);
 
@@ -121,9 +121,9 @@ void MeshExporter::registerExporter()
 }
 
 DagNodeExporter* MeshExporter::create(
-    const MDagPath&                             path,
-    asr::Project&                               project,
-    AppleseedSession::SessionMode               sessionMode)
+    const MDagPath&                                 path,
+    asr::Project&                                   project,
+    AppleseedSession::SessionMode                   sessionMode)
 {
     if (areObjectAndParentsRenderable(path) == false)
         return nullptr;
@@ -132,9 +132,9 @@ DagNodeExporter* MeshExporter::create(
 }
 
 MeshExporter::MeshExporter(
-    const MDagPath&                             path,
-    asr::Project&                               project,
-    AppleseedSession::SessionMode               sessionMode)
+    const MDagPath&                                 path,
+    asr::Project&                                   project,
+    AppleseedSession::SessionMode                   sessionMode)
   : ShapeExporter(path, project, sessionMode)
 {
 }
@@ -239,8 +239,8 @@ void MeshExporter::createExporters(const AppleseedSession::IExporterFactory& exp
 }
 
 void MeshExporter::createEntities(
-    const AppleseedSession::Options&            options,
-    const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
+    const AppleseedSession::Options&                options,
+    const AppleseedSession::MotionBlurSampleTimes&  motionBlurSampleTimes)
 {
     shapeAttributesToParams(m_meshParams);
     meshAttributesToParams(m_meshParams);
@@ -259,7 +259,7 @@ void MeshExporter::createEntities(
     if (m_exportUVs)
         AttributeUtils::get(node(), "asSmoothTangents", m_smoothTangents);
 
-    m_numMeshKeys = motionBlurTimes.m_deformTimes.size();
+    m_numMeshKeys = motionBlurSampleTimes.m_deformTimes.size();
     m_isDeforming = (m_numMeshKeys > 1) && isAnimated(node());
     m_shapeExportStep = 1;
 

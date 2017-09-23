@@ -56,7 +56,7 @@
 namespace renderer { class Assembly; }
 namespace renderer { class Project; }
 namespace renderer { class Scene; }
-class MotionBlurTimes;
+class MotionBlurSampleTimes;
 
 //
 // Base class for exporting Maya dag nodes to appleseed projects.
@@ -80,11 +80,10 @@ class DagNodeExporter
 
     // Create appleseed entities.
     virtual void createEntities(
-        const AppleseedSession::Options&            options,
-        const AppleseedSession::MotionBlurTimes&    motionBlurTimes) = 0;
+        const AppleseedSession::Options&                options,
+        const AppleseedSession::MotionBlurSampleTimes&  motionBlurSampleTimes) = 0;
 
     // Motion blur.
-    virtual void collectMotionBlurSteps(MotionBlurTimes& motionTimes) const;
     virtual void exportCameraMotionStep(float time);
     virtual void exportTransformMotionStep(float time);
     virtual void exportShapeMotionStep(float time);
@@ -95,9 +94,9 @@ class DagNodeExporter
   protected:
     // Constructor.
     DagNodeExporter(
-      const MDagPath&                               path,
-      renderer::Project&                            project,
-      AppleseedSession::SessionMode                 sessionMode);
+      const MDagPath&                                   path,
+      renderer::Project&                                project,
+      AppleseedSession::SessionMode                     sessionMode);
 
     // Return the Maya dependency node.
     MObject node() const;

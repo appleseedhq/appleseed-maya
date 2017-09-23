@@ -47,13 +47,13 @@ class EnvLightExporter
 
   protected:
     EnvLightExporter(
-      const MDagPath&                               path,
-      renderer::Project&                            project,
-      AppleseedSession::SessionMode                 sessionMode);
+      const MDagPath&                                   path,
+      renderer::Project&                                project,
+      AppleseedSession::SessionMode                     sessionMode);
 
     void createEntities(
-        const AppleseedSession::Options&            options,
-        const AppleseedSession::MotionBlurTimes&    motionBlurTimes) override;
+        const AppleseedSession::Options&                options,
+        const AppleseedSession::MotionBlurSampleTimes&  motionBlurSampleTimes) override;
 
     AppleseedEntityPtr<renderer::EnvironmentEDF>    m_envLight;
     AppleseedEntityPtr<renderer::EnvironmentShader> m_envShader;
@@ -66,23 +66,23 @@ class PhysicalSkyLightExporter
     static void registerExporter();
 
     static DagNodeExporter* create(
-      const MDagPath&                               path,
-      renderer::Project&                            project,
-      AppleseedSession::SessionMode                 sessionMode);
+      const MDagPath&                                   path,
+      renderer::Project&                                project,
+      AppleseedSession::SessionMode                     sessionMode);
 
     ~PhysicalSkyLightExporter() override;
 
     void createEntities(
-        const AppleseedSession::Options&            options,
-        const AppleseedSession::MotionBlurTimes&    motionBlurTimes) override;
+        const AppleseedSession::Options&                options,
+        const AppleseedSession::MotionBlurSampleTimes&  motionBlurSampleTimes) override;
 
     void flushEntities() override;
 
   private:
     PhysicalSkyLightExporter(
-      const MDagPath&                               path,
-      renderer::Project&                            project,
-      AppleseedSession::SessionMode                 sessionMode);
+      const MDagPath&                                   path,
+      renderer::Project&                                project,
+      AppleseedSession::SessionMode                     sessionMode);
 
     AppleseedEntityPtr<renderer::Light> m_sunLight;
 };
@@ -94,15 +94,15 @@ class SkyDomeLightExporter
     static void registerExporter();
 
     static DagNodeExporter* create(
-      const MDagPath&                               path,
-      renderer::Project&                            project,
-      AppleseedSession::SessionMode                 sessionMode);
+      const MDagPath&                                   path,
+      renderer::Project&                                project,
+      AppleseedSession::SessionMode                     sessionMode);
 
     ~SkyDomeLightExporter() override;
 
     void createEntities(
-        const AppleseedSession::Options&            options,
-        const AppleseedSession::MotionBlurTimes&    motionBlurTimes) override;
+        const AppleseedSession::Options&                options,
+        const AppleseedSession::MotionBlurSampleTimes&  motionBlurSampleTimes) override;
 
     void exportTransformMotionStep(float time) override;
 
@@ -110,9 +110,9 @@ class SkyDomeLightExporter
 
     private:
       SkyDomeLightExporter(
-        const MDagPath&                             path,
-        renderer::Project&                          project,
-        AppleseedSession::SessionMode               sessionMode);
+        const MDagPath&                                 path,
+        renderer::Project&                              project,
+        AppleseedSession::SessionMode                   sessionMode);
 
       AppleseedEntityPtr<renderer::Texture>         m_mapTexture;
       AppleseedEntityPtr<renderer::TextureInstance> m_mapTextureInstance;

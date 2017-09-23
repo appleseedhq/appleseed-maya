@@ -42,15 +42,15 @@ class CameraExporter
     static void registerExporter();
 
     static DagNodeExporter* create(
-      const MDagPath&                               path,
-      renderer::Project&                            project,
-      AppleseedSession::SessionMode                 sessionMode);
+      const MDagPath&                                   path,
+      renderer::Project&                                project,
+      AppleseedSession::SessionMode                     sessionMode);
 
     ~CameraExporter() override;
 
     void createEntities(
-        const AppleseedSession::Options&            options,
-        const AppleseedSession::MotionBlurTimes&    motionBlurTimes) override;
+        const AppleseedSession::Options&                options,
+        const AppleseedSession::MotionBlurSampleTimes&  motionBlurSampleTimes) override;
 
     void exportCameraMotionStep(float time) override;
 
@@ -58,9 +58,9 @@ class CameraExporter
 
   private:
     CameraExporter(
-      const MDagPath&                               path,
-      renderer::Project&                            project,
-      AppleseedSession::SessionMode                 sessionMode);
+      const MDagPath&                                   path,
+      renderer::Project&                                project,
+      AppleseedSession::SessionMode                     sessionMode);
 
     static bool isRenderable(const MDagPath& path);
 

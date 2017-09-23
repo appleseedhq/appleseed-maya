@@ -92,9 +92,9 @@ struct Options
     int         m_frameStep;
 };
 
-struct MotionBlurTimes
+struct MotionBlurSampleTimes
 {
-    MotionBlurTimes();
+    MotionBlurSampleTimes();
 
     void clear();
 

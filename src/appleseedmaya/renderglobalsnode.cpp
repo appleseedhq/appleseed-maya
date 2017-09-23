@@ -263,8 +263,8 @@ MStatus RenderGlobalsNode::compute(const MPlug& plug, MDataBlock& dataBlock)
 }
 
 void RenderGlobalsNode::applyGlobalsToProject(
-    const MObject&                      globals,
-    asr::Project&                       project)
+    const MObject&                              globals,
+    asr::Project&                               project)
 {
     asr::ParamArray& finalParams = project.configurations().get_by_name("final")->get_parameters();
     asr::ParamArray& iprParams   = project.configurations().get_by_name("interactive")->get_parameters();
@@ -376,9 +376,9 @@ void RenderGlobalsNode::applyGlobalsToProject(
     #undef REMOVE_PATH_IN_CONFIGS
 }
 
-void RenderGlobalsNode::collectMotionBlurTimes(
-    const MObject&                      globals,
-    AppleseedSession::MotionBlurTimes&  motionBlurTimes)
+void RenderGlobalsNode::collectMotionBlurSampleTimes(
+    const MObject&                              globals,
+    AppleseedSession::MotionBlurSampleTimes&    motionBlurSampleTimes)
 {
     bool enableMotionBlur = false;
     AttributeUtils::get(MPlug(globals, m_motionBlur), enableMotionBlur);
@@ -396,28 +396,28 @@ void RenderGlobalsNode::collectMotionBlurTimes(
     {
         const float now = static_cast<float>(MAnimControl::currentTime().value());
 
-        motionBlurTimes.clear();
-        motionBlurTimes.m_shutterOpenTime = now + shutterOpenTime;
-        motionBlurTimes.m_shutterCloseTime = now + shutterCloseTime;
+        motionBlurSampleTimes.clear();
+        motionBlurSampleTimes.m_shutterOpenTime = now + shutterOpenTime;
+        motionBlurSampleTimes.m_shutterCloseTime = now + shutterCloseTime;
 
         int cameraSamples = 1;
         if (AttributeUtils::get(MPlug(globals, m_mbCameraSamples), cameraSamples))
         {
-            motionBlurTimes.initializeFrameSet(
+            motionBlurSampleTimes.initializeFrameSet(
                 cameraSamples,
-                motionBlurTimes.m_shutterOpenTime,
-                motionBlurTimes.m_shutterCloseTime,
-                motionBlurTimes.m_cameraTimes);
+                motionBlurSampleTimes.m_shutterOpenTime,
+                motionBlurSampleTimes.m_shutterCloseTime,
+                motionBlurSampleTimes.m_cameraTimes);
         }
 
         int xformSamples = 1;
         if (AttributeUtils::get(MPlug(globals, m_mbTransformSamples), xformSamples))
         {
-            motionBlurTimes.initializeFrameSet(
+            motionBlurSampleTimes.initializeFrameSet(
                 xformSamples,
-                motionBlurTimes.m_shutterOpenTime,
-                motionBlurTimes.m_shutterCloseTime,
-                motionBlurTimes.m_transformTimes);
+                motionBlurSampleTimes.m_shutterOpenTime,
+                motionBlurSampleTimes.m_shutterCloseTime,
+                motionBlurSampleTimes.m_transformTimes);
         }
 
         int deformSamples = 1;
@@ -426,15 +426,15 @@ void RenderGlobalsNode::collectMotionBlurTimes(
             if (!asf::is_pow2(deformSamples))
                 deformSamples = asf::next_pow2(deformSamples);
 
-            motionBlurTimes.initializeFrameSet(
+            motionBlurSampleTimes.initializeFrameSet(
                 deformSamples,
-                motionBlurTimes.m_shutterOpenTime,
-                motionBlurTimes.m_shutterCloseTime,
-                motionBlurTimes.m_deformTimes);
+                motionBlurSampleTimes.m_shutterOpenTime,
+                motionBlurSampleTimes.m_shutterCloseTime,
+                motionBlurSampleTimes.m_deformTimes);
         }
 
-        motionBlurTimes.mergeTimes();
+        motionBlurSampleTimes.mergeTimes();
     }
     else
-        motionBlurTimes.initializeToCurrentFrame();
+        motionBlurSampleTimes.initializeToCurrentFrame();
 }

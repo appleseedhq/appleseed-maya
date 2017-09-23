@@ -98,10 +98,6 @@ bool DagNodeExporter::supportsMotionBlur() const
     return true;
 }
 
-void DagNodeExporter::collectMotionBlurSteps(MotionBlurTimes& motionTimes) const
-{
-}
-
 void DagNodeExporter::exportCameraMotionStep(float time)
 {
 }
@@ -225,7 +221,9 @@ namespace
 bool DagNodeExporter::isAnimated(MObject object, bool checkParent)
 {
     MStatus stat;
-    MItDependencyGraph iter(object, MFn::kInvalid,
+    MItDependencyGraph iter(
+        object,
+        MFn::kInvalid,
         MItDependencyGraph::kUpstream,
         MItDependencyGraph::kDepthFirst,
         MItDependencyGraph::kPlugLevel,
@@ -246,27 +244,28 @@ bool DagNodeExporter::isAnimated(MObject object, bool checkParent)
     {
         MObject node = iter.thisNode();
 
-        if (node.hasFn(MFn::kPluginDependNode) ||
-                node.hasFn( MFn::kConstraint ) ||
-                node.hasFn(MFn::kPointConstraint) ||
-                node.hasFn(MFn::kAimConstraint) ||
-                node.hasFn(MFn::kOrientConstraint) ||
-                node.hasFn(MFn::kScaleConstraint) ||
-                node.hasFn(MFn::kGeometryConstraint) ||
-                node.hasFn(MFn::kNormalConstraint) ||
-                node.hasFn(MFn::kTangentConstraint) ||
-                node.hasFn(MFn::kParentConstraint) ||
-                node.hasFn(MFn::kPoleVectorConstraint) ||
-                node.hasFn(MFn::kParentConstraint) ||
-                node.hasFn(MFn::kTime) ||
-                node.hasFn(MFn::kJoint) ||
-                node.hasFn(MFn::kGeometryFilt) ||
-                node.hasFn(MFn::kTweak) ||
-                node.hasFn(MFn::kPolyTweak) ||
-                node.hasFn(MFn::kSubdTweak) ||
-                node.hasFn(MFn::kCluster) ||
-                node.hasFn(MFn::kFluid) ||
-                node.hasFn(MFn::kPolyBoolOp))
+        if (
+            node.hasFn(MFn::kPluginDependNode) ||
+            node.hasFn( MFn::kConstraint ) ||
+            node.hasFn(MFn::kPointConstraint) ||
+            node.hasFn(MFn::kAimConstraint) ||
+            node.hasFn(MFn::kOrientConstraint) ||
+            node.hasFn(MFn::kScaleConstraint) ||
+            node.hasFn(MFn::kGeometryConstraint) ||
+            node.hasFn(MFn::kNormalConstraint) ||
+            node.hasFn(MFn::kTangentConstraint) ||
+            node.hasFn(MFn::kParentConstraint) ||
+            node.hasFn(MFn::kPoleVectorConstraint) ||
+            node.hasFn(MFn::kParentConstraint) ||
+            node.hasFn(MFn::kTime) ||
+            node.hasFn(MFn::kJoint) ||
+            node.hasFn(MFn::kGeometryFilt) ||
+            node.hasFn(MFn::kTweak) ||
+            node.hasFn(MFn::kPolyTweak) ||
+            node.hasFn(MFn::kSubdTweak) ||
+            node.hasFn(MFn::kCluster) ||
+            node.hasFn(MFn::kFluid) ||
+            node.hasFn(MFn::kPolyBoolOp))
         {
             return true;
         }

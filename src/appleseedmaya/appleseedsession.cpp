@@ -113,13 +113,13 @@ Options::Options()
 {
 }
 
-MotionBlurTimes::MotionBlurTimes()
+MotionBlurSampleTimes::MotionBlurSampleTimes()
   : m_shutterOpenTime(0.0f)
   , m_shutterCloseTime(0.0f)
 {
 }
 
-void MotionBlurTimes::clear()
+void MotionBlurSampleTimes::clear()
 {
     m_cameraTimes.clear();
     m_transformTimes.clear();
@@ -127,7 +127,7 @@ void MotionBlurTimes::clear()
     m_allTimes.clear();
 }
 
-void MotionBlurTimes::initializeToCurrentFrame()
+void MotionBlurSampleTimes::initializeToCurrentFrame()
 {
     const float now = static_cast<float>(MAnimControl::currentTime().value());
     m_shutterOpenTime = now;
@@ -140,7 +140,7 @@ void MotionBlurTimes::initializeToCurrentFrame()
     m_allTimes.insert(now);
 }
 
-void MotionBlurTimes::initializeFrameSet(
+void MotionBlurSampleTimes::initializeFrameSet(
     const size_t        numSamples,
     const float         shutterOpenTime,
     const float         shutterCloseTime,
@@ -158,7 +158,7 @@ void MotionBlurTimes::initializeFrameSet(
     }
 }
 
-void MotionBlurTimes::mergeTimes()
+void MotionBlurSampleTimes::mergeTimes()
 {
     m_allTimes.clear();
     m_allTimes.insert(m_cameraTimes.begin(), m_cameraTimes.end());
@@ -166,7 +166,7 @@ void MotionBlurTimes::mergeTimes()
     m_allTimes.insert(m_deformTimes.begin(), m_deformTimes.end());
 }
 
-float MotionBlurTimes::normalizedFrame(float frame) const
+float MotionBlurSampleTimes::normalizedFrame(float frame) const
 {
     if (m_shutterCloseTime == m_shutterOpenTime)
         return 0.0f;
@@ -392,22 +392,22 @@ namespace
             exportDefaultRenderGlobals();
             MObject globalsNode = exportAppleseedRenderGlobals();
 
-            AppleseedSession::MotionBlurTimes motionBlurTimes;
+            AppleseedSession::MotionBlurSampleTimes motionBlurSampleTimes;
             // Only do motion blur for non progressive renders.
             if (m_sessionMode != AppleseedSession::ProgressiveRenderSession)
-                RenderGlobalsNode::collectMotionBlurTimes(globalsNode, motionBlurTimes);
+                RenderGlobalsNode::collectMotionBlurSampleTimes(globalsNode, motionBlurSampleTimes);
             else
-                motionBlurTimes.initializeToCurrentFrame();
+                motionBlurSampleTimes.initializeToCurrentFrame();
 
-            exportScene(motionBlurTimes);
+            exportScene(motionBlurSampleTimes);
 
             // Set the shutter open and close times in all cameras.
             asr::CameraContainer& cameras = m_project->get_scene()->cameras();
             for (size_t i = 0, e = cameras.size(); i < e; ++i)
             {
                 cameras.get_by_index(i)->get_parameters()
-                    .insert("shutter_open_time", motionBlurTimes.normalizedFrame(motionBlurTimes.m_shutterOpenTime))
-                    .insert("shutter_close_time", motionBlurTimes.normalizedFrame(motionBlurTimes.m_shutterCloseTime));
+                    .insert("shutter_open_time", motionBlurSampleTimes.normalizedFrame(motionBlurSampleTimes.m_shutterOpenTime))
+                    .insert("shutter_close_time", motionBlurSampleTimes.normalizedFrame(motionBlurSampleTimes.m_shutterCloseTime));
             }
 
             asr::ParamArray params = m_project->get_frame()->get_parameters();
@@ -514,7 +514,7 @@ namespace
             }
         }
 
-        void exportScene(const AppleseedSession::MotionBlurTimes& motionBlurTimes)
+        void exportScene(const AppleseedSession::MotionBlurSampleTimes& motionBlurSampleTimes)
         {
             createExporters();
             checkUserAborted();
@@ -540,11 +540,11 @@ namespace
 
             RENDERER_LOG_DEBUG("Creating dag entities");
             for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
-                it->second->createEntities(m_options, motionBlurTimes);
+                it->second->createEntities(m_options, motionBlurSampleTimes);
 
             RENDERER_LOG_DEBUG("Exporting motion steps");
-            std::set<float>::const_iterator frameIt(motionBlurTimes.m_allTimes.begin());
-            std::set<float>::const_iterator frameEnd(motionBlurTimes.m_allTimes.end());
+            std::set<float>::const_iterator frameIt(motionBlurSampleTimes.m_allTimes.begin());
+            std::set<float>::const_iterator frameEnd(motionBlurSampleTimes.m_allTimes.end());
             for (; frameIt != frameEnd; ++frameIt)
             {
                 const float now = static_cast<float>(MAnimControl::currentTime().value());
@@ -555,19 +555,19 @@ namespace
                     MGlobal::viewFrame(*frameIt);
                 }
 
-                const float frame = motionBlurTimes.normalizedFrame(*frameIt);
+                const float frame = motionBlurSampleTimes.normalizedFrame(*frameIt);
 
                 for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
                 {
                     if (it->second->supportsMotionBlur())
                     {
-                        if (motionBlurTimes.m_cameraTimes.count(*frameIt))
+                        if (motionBlurSampleTimes.m_cameraTimes.count(*frameIt))
                             it->second->exportCameraMotionStep(frame);
 
-                        if (motionBlurTimes.m_transformTimes.count(*frameIt))
+                        if (motionBlurSampleTimes.m_transformTimes.count(*frameIt))
                             it->second->exportTransformMotionStep(frame);
 
-                        if (motionBlurTimes.m_deformTimes.count(*frameIt))
+                        if (motionBlurSampleTimes.m_deformTimes.count(*frameIt))
                             it->second->exportShapeMotionStep(frame);
                     }
 

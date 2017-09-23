@@ -54,9 +54,9 @@ void AreaLightExporter::registerExporter()
 }
 
 DagNodeExporter* AreaLightExporter::create(
-    const MDagPath&                             path,
-    asr::Project&                               project,
-    AppleseedSession::SessionMode               sessionMode)
+    const MDagPath&                                 path,
+    asr::Project&                                   project,
+    AppleseedSession::SessionMode                   sessionMode)
 {
     if (areObjectAndParentsRenderable(path) == false)
         return nullptr;
@@ -65,9 +65,9 @@ DagNodeExporter* AreaLightExporter::create(
 }
 
 AreaLightExporter::AreaLightExporter(
-    const MDagPath&                             path,
-    asr::Project&                               project,
-    AppleseedSession::SessionMode               sessionMode)
+    const MDagPath&                                 path,
+    asr::Project&                                   project,
+    AppleseedSession::SessionMode                   sessionMode)
   : DagNodeExporter(path, project, sessionMode)
 {
 }
@@ -97,8 +97,8 @@ void AreaLightExporter::createExporters(const AppleseedSession::IExporterFactory
 }
 
 void AreaLightExporter::createEntities(
-    const AppleseedSession::Options&            options,
-    const AppleseedSession::MotionBlurTimes&    motionBlurTimes)
+    const AppleseedSession::Options&                options,
+    const AppleseedSession::MotionBlurSampleTimes&  motionBlurSampleTimes)
 {
     MString objectName = appleseedName();
 
