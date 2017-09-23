@@ -325,6 +325,17 @@ namespace
             abortRender();
         }
 
+        void initializeConfiguration(asr::ParamArray& params) const
+        {
+            params.insert("sample_renderer", "generic");
+            params.insert("sample_generator", "generic");
+            params.insert("tile_renderer", "generic");
+            params.insert("pixel_renderer", "uniform");
+            params.insert("sampling_mode", "qmc");
+            params.insert("lighting_engine", "pt");
+            params.insert("spectrum_mode", "rgb");
+        }
+
         void createProject()
         {
             assert(m_project.get() == 0);
@@ -334,27 +345,17 @@ namespace
 
             // Insert some config params needed by the interactive renderer.
             asr::Configuration* cfg = m_project->configurations().get_by_name("interactive");
-            asr::ParamArray* cfg_params = &cfg->get_parameters();
-            cfg_params->insert("sample_renderer", "generic");
-            cfg_params->insert("sample_generator", "generic");
-            cfg_params->insert("tile_renderer", "generic");
-            cfg_params->insert("frame_renderer", "progressive");
-            cfg_params->insert("lighting_engine", "pt");
-            cfg_params->insert("pixel_renderer", "uniform");
-            cfg_params->insert("sampling_mode", "qmc");
-            cfg_params->insert_path("progressive_frame_renderer.max_fps", "5");
+            asr::ParamArray* configParams = &cfg->get_parameters();
+            initializeConfiguration(*configParams);
+            configParams->insert("frame_renderer", "progressive");
+            configParams->insert_path("progressive_frame_renderer.max_fps", "5");
 
             // Insert some config params needed by the final renderer.
             cfg = m_project->configurations().get_by_name("final");
-            cfg_params = &cfg->get_parameters();
-            cfg_params->insert("sample_renderer", "generic");
-            cfg_params->insert("sample_generator", "generic");
-            cfg_params->insert("tile_renderer", "generic");
-            cfg_params->insert("frame_renderer", "generic");
-            cfg_params->insert("lighting_engine", "pt");
-            cfg_params->insert("pixel_renderer", "uniform");
-            cfg_params->insert("sampling_mode", "qmc");
-            cfg_params->insert_path("uniform_pixel_renderer.samples", "16");
+            configParams = &cfg->get_parameters();
+            initializeConfiguration(*configParams);
+            configParams->insert("frame_renderer", "generic");
+            configParams->insert_path("uniform_pixel_renderer.samples", "16");
 
             // Create some basic project entities.
 
