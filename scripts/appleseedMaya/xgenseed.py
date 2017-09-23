@@ -39,6 +39,8 @@ def appleseedExport(self, objs, filename, lod, materialNS):
     pass
 
 # Export Init callback. Must fill in some arrays on self
+
+
 def xgseedArchiveExportInit(selfid):
     logger.debug("xgenseed archive export init.")
 
@@ -46,6 +48,8 @@ def xgseedArchiveExportInit(selfid):
     self.batch_plugins.append("appleseedMaya")
 
 # Export Info callback. Must fill in some arrays on self
+
+
 def xgseedArchiveExportInfo(selfid):
     logger.debug("xgenseed archive export info.")
 
@@ -56,6 +60,8 @@ def xgseedArchiveExportInfo(selfid):
 
 # Main Export callback
 # Arguments are passed in self.invokeArgs
+
+
 def xgseedArchiveExport(selfid):
     logger.debug("xgenseed archive export")
 

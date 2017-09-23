@@ -32,7 +32,9 @@ import pymel.core as pm
 # appleseedMaya imports.
 from appleseedMaya.logger import logger
 
+
 class AEappleseedSkyDomeLightTemplate(pm.ui.AETemplate):
+
     def __init__(self, nodeName):
         super(AEappleseedSkyDomeLightTemplate, self).__init__(nodeName)
         self.beginScrollLayout()
@@ -58,6 +60,6 @@ class AEappleseedSkyDomeLightTemplate(pm.ui.AETemplate):
         self.beginLayout('Color Correct', collapse=0)
         self.endLayout()
 
-        self.beginLayout('Display' ,collapse=1)
+        self.beginLayout('Display', collapse=1)
         self.addControl('size', label='Size')
         self.endLayout()

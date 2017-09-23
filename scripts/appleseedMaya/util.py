@@ -32,6 +32,7 @@ import os
 # Maya imports.
 import maya.cmds as mc
 
+
 def createLocator(locatorType):
     xformName = mc.createNode("transform", name=locatorType + "1")
     shapeName = xformName.replace(locatorType, locatorType + "Shape")

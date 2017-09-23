@@ -39,17 +39,18 @@ from appleseedMaya.renderGlobals import createGlobalNodes
 
 def translatorOptions(parent, action, initialSettings, resultCallback):
     defaults = {
-        "activeCamera" : "<Current>",
-        "exportAnim"   : False,
-        "startFrame"   : 1,
-        "endFrame"     : 100,
-        "stepFrame"    : 1
+        "activeCamera": "<Current>",
+        "exportAnim": False,
+        "startFrame": 1,
+        "endFrame": 100,
+        "stepFrame": 1
     }
 
     createGlobalNodes()
 
     if initialSettings:
-        logger.debug("Parsing initial translator settings %s" % initialSettings)
+        logger.debug(
+            "Parsing initial translator settings %s" % initialSettings)
 
         opts = initialSettings.split(";")
         for opt in opts:
@@ -67,7 +68,8 @@ def translatorOptions(parent, action, initialSettings, resultCallback):
                 elif isinstance(defaults[name], int):
                     defaults[name] = int(value)
                 else:
-                    logger.warning("Unhandled param %s in translator options" % name)
+                    logger.warning(
+                        "Unhandled param %s in translator options" % name)
 
     if action == "post":
         mc.setParent(parent)
@@ -143,7 +145,8 @@ def translatorOptions(parent, action, initialSettings, resultCallback):
     elif action == "query":
         options = ""
 
-        value = mc.optionMenuGrp("as_exportOpts_activeCamera", query=True, value=True)
+        value = mc.optionMenuGrp(
+            "as_exportOpts_activeCamera", query=True, value=True)
 
         # Replace current by the active camera.
         if value == "<Current>":
@@ -161,23 +164,28 @@ def translatorOptions(parent, action, initialSettings, resultCallback):
                 value = ""
 
         if value:
-            options +="activeCamera=" + value + ";"
+            options += "activeCamera=" + value + ";"
 
-        exportAnim = mc.checkBoxGrp("as_exportOpts_exportAnim", query=True, value1=True)
+        exportAnim = mc.checkBoxGrp(
+            "as_exportOpts_exportAnim", query=True, value1=True)
         if exportAnim:
             options += "exportAnim=true;"
 
-            value = mc.intSliderGrp("as_exportOpts_startFrame", query=True, value=True)
+            value = mc.intSliderGrp(
+                "as_exportOpts_startFrame", query=True, value=True)
             options += "startFrame=" + str(value) + ";"
 
-            value = mc.intSliderGrp("as_exportOpts_endFrame", query=True, value=True)
+            value = mc.intSliderGrp(
+                "as_exportOpts_endFrame", query=True, value=True)
             options += "endFrame=" + str(value) + ";"
 
-            value = mc.intSliderGrp("as_exportOpts_stepFrame", query=True, value=True)
+            value = mc.intSliderGrp(
+                "as_exportOpts_stepFrame", query=True, value=True)
             options += "stepFrame=" + str(value) + ";"
 
         logger.debug("calling translator callback, options = %s" % options)
         mel.eval('%s "%s"' % (resultCallback, options))
+
 
 def createTranslatorMelProcedures():
     mel.eval('''
@@ -195,4 +203,4 @@ def createTranslatorMelProcedures():
             python($pythonCmd);
         }
         '''
-    )
+             )

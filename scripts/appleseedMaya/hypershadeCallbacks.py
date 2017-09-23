@@ -38,8 +38,10 @@ def hyperShadePanelBuildCreateMenuCallback():
     mc.menuItem(label="appleseed")
     mc.menuItem(divider=True)
 
+
 def hyperShadePanelBuildCreateSubMenuCallback():
     return "rendernode/appleseed/surface"
+
 
 def hyperShadePanelPluginChangeCallback(classification, changeType):
     if 'rendernode/appleseed' in classification:
@@ -47,9 +49,11 @@ def hyperShadePanelPluginChangeCallback(classification, changeType):
 
     return 0
 
+
 def createRenderNodeSelectNodeCategoriesCallback(flag, treeLister):
     if flag == "allWithAppleseedUp":
         mc.treeLister(treeLister, edit=True, selectPath="appleseed")
+
 
 def createRenderNodePluginChangeCallback(classification):
     if 'rendernode/appleseed' in classification:
@@ -57,8 +61,10 @@ def createRenderNodePluginChangeCallback(classification):
 
     return 0
 
+
 def renderNodeClassificationCallback():
     return "rendernode/appleseed"
+
 
 def createAsRenderNode(nodeType=None, postCommand=None):
     classification = mc.getClassification(nodeType)
@@ -104,6 +110,7 @@ def createAsRenderNode(nodeType=None, postCommand=None):
 
     return ""
 
+
 def createRenderNodeCallback(postCommand, nodeType):
     #logger.debug("createRenderNodeCallback called!")
 
@@ -114,6 +121,7 @@ def createRenderNodeCallback(postCommand, nodeType):
                 "appleseedMaya.hypershadeCallbacks.createAsRenderNode"
                 "(nodeType=\\\"{0}\\\", postCommand='{1}')").format(nodeType, postCommand)
             return "string $cmd = \"{0}\"; python($cmd);".format(buildNodeCmd)
+
 
 def buildRenderNodeTreeListerContentCallback(tl, postCommand, filterString):
     melCmd = 'addToRenderNodeTreeLister("{0}", "{1}", "{2}", "{3}", "{4}", "{5}");'.format(
@@ -159,6 +167,7 @@ def buildRenderNodeTreeListerContentCallback(tl, postCommand, filterString):
     )
     logger.debug("buildRenderNodeTreeListerContentCallback: mel = %s" % melCmd)
     mel.eval(melCmd)
+
 
 def nodeCanBeUsedAsMaterialCallback(nodeId, nodeOwner):
     logger.debug((

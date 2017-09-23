@@ -55,15 +55,24 @@ def showAbout():
 
 __g_appleseedMenu = None
 
+
 def createSkyDomeLight():
     (xform, shape) = createLocator('appleseedSkyDomeLight')
     # Add the locator to the light set.
-    mc.connectAttr(xform + '.instObjGroups', 'defaultLightSet.dagSetMembers', nextAvailable=True)
+    mc.connectAttr(
+        xform + '.instObjGroups',
+        'defaultLightSet.dagSetMembers',
+        nextAvailable=True)
+
 
 def createPhysicalLight():
     (xform, shape) = createLocator('appleseedPhysicalSkyLight')
     # Add the locator to the light set.
-    mc.connectAttr(xform + '.instObjGroups', 'defaultLightSet.dagSetMembers', nextAvailable=True)
+    mc.connectAttr(
+        xform + '.instObjGroups',
+        'defaultLightSet.dagSetMembers',
+        nextAvailable=True)
+
 
 def createMenu():
     logger.debug("creating appleseed menu.")
@@ -72,9 +81,15 @@ def createMenu():
     deleteMenu()
 
     gMainWindow = mel.eval('$temp1=$gMainWindow')
-    __g_appleseedMenu = mc.menu('appleseedMenu', parent=gMainWindow, label='appleseed', tearOff=True)
+    __g_appleseedMenu = mc.menu(
+        'appleseedMenu', parent=gMainWindow, label='appleseed', tearOff=True)
 
-    mc.menuItem('appleseedLightMenu', subMenu=True, label='Lights', to=True, parent='appleseedMenu')
+    mc.menuItem(
+        'appleseedLightMenu',
+        subMenu=True,
+        label='Lights',
+        to=True,
+        parent='appleseedMenu')
     mc.menuItem(
         label='Create Sky Dome',
         parent='appleseedLightMenu',
@@ -90,6 +105,7 @@ def createMenu():
         label='About',
         parent='appleseedMenu',
         command='import appleseedMaya.menu\nappleseedMaya.menu.showAbout()')
+
 
 def deleteMenu():
     global __g_appleseedMenu

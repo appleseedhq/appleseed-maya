@@ -53,13 +53,14 @@ from translator import createTranslatorMelProcedures
 thisDir = os.path.normpath(os.path.dirname(__file__))
 
 asXGenCallbacks = [
-    ("RenderAPIRendererTabUIInit"   , "appleseedMaya.xgenseedui.xgseedUI"),
+    ("RenderAPIRendererTabUIInit", "appleseedMaya.xgenseedui.xgseedUI"),
     ("RenderAPIRendererTabUIRefresh", "appleseedMaya.xgenseedui.xgseedRefresh"),
-    ("PostDescriptionCreate"        , "appleseedMaya.xgenseedui.xgseedOnCreateDescription"),
-    ("ArchiveExport"                , "appleseedMaya.xgenseed.xgseedArchiveExport"),
-    ("ArchiveExportInfo"            , "appleseedMaya.xgenseed.xgseedArchiveExportInfo"),
-    ("ArchiveExportInit"            , "appleseedMaya.xgenseed.xgseedArchiveExportInit")
+    ("PostDescriptionCreate", "appleseedMaya.xgenseedui.xgseedOnCreateDescription"),
+    ("ArchiveExport", "appleseedMaya.xgenseed.xgseedArchiveExport"),
+    ("ArchiveExportInfo", "appleseedMaya.xgenseed.xgseedArchiveExportInfo"),
+    ("ArchiveExportInit", "appleseedMaya.xgenseed.xgseedArchiveExportInit")
 ]
+
 
 def register():
     logger.info("Registering appleseed renderer.")
@@ -77,7 +78,7 @@ def register():
         batchRenderProcedure="appleseedBatchRenderProcedure",
         cancelBatchRenderProcedure="appleseedCancelBatchRenderProcedure",
         renderRegionProcedure="mayaRenderRegion"
-        )
+    )
 
     # Ipr Render procedures.
     pm.renderer(
@@ -90,7 +91,7 @@ def register():
         refreshIprRenderProcedure="appleseedRefreshIprRenderProcedure",
         pauseIprRenderProcedure="appleseedPauseIprRenderProcedure",
         changeIprRegionProcedure="appleseedChangeIprRegionProcedure",
-        )
+    )
 
     # Globals
     createRenderTabsMelProcedures()
@@ -98,7 +99,8 @@ def register():
 
     pm.renderer("appleseed", edit=True, addGlobalsNode="defaultRenderGlobals")
     pm.renderer("appleseed", edit=True, addGlobalsNode="defaultResolution")
-    pm.renderer("appleseed", edit=True, addGlobalsNode="appleseedRenderGlobals")
+    pm.renderer(
+        "appleseed", edit=True, addGlobalsNode="appleseedRenderGlobals")
 
     pm.callbacks(
         addCallback=renderSettingsBuiltCallback,
@@ -114,7 +116,7 @@ def register():
         owner="appleseed")
 
     # Manually load templates in aetemplate folder.
-    templatesDir =  os.path.join(thisDir, "aetemplate")
+    templatesDir = os.path.join(thisDir, "aetemplate")
     logger.debug("Registering AETemplates in %s" % templatesDir)
     for file in os.listdir(templatesDir):
         if fnmatch.fnmatch(file, '*template.py'):
@@ -124,15 +126,15 @@ def register():
 
     # Hypershade callbacks
     asHypershadeCallbacks = [
-        ("hyperShadePanelBuildCreateMenu"       , hyperShadePanelBuildCreateMenuCallback),
-        ("hyperShadePanelBuildCreateSubMenu"    , hyperShadePanelBuildCreateSubMenuCallback),
-        ("hyperShadePanelPluginChange"          , hyperShadePanelPluginChangeCallback),
-        ("createRenderNodeSelectNodeCategories" , createRenderNodeSelectNodeCategoriesCallback),
-        ("createRenderNodePluginChange"         , createRenderNodePluginChangeCallback),
-        ("renderNodeClassification"             , renderNodeClassificationCallback),
-        ("createRenderNodeCommand"              , createRenderNodeCallback),
-        ("nodeCanBeUsedAsMaterial"              , nodeCanBeUsedAsMaterialCallback),
-        ("buildRenderNodeTreeListerContent"     , buildRenderNodeTreeListerContentCallback)
+        ("hyperShadePanelBuildCreateMenu", hyperShadePanelBuildCreateMenuCallback),
+        ("hyperShadePanelBuildCreateSubMenu", hyperShadePanelBuildCreateSubMenuCallback),
+        ("hyperShadePanelPluginChange", hyperShadePanelPluginChangeCallback),
+        ("createRenderNodeSelectNodeCategories",createRenderNodeSelectNodeCategoriesCallback),
+        ("createRenderNodePluginChange", createRenderNodePluginChangeCallback),
+        ("renderNodeClassification", renderNodeClassificationCallback),
+        ("createRenderNodeCommand", createRenderNodeCallback),
+        ("nodeCanBeUsedAsMaterial", nodeCanBeUsedAsMaterialCallback),
+        ("buildRenderNodeTreeListerContent", buildRenderNodeTreeListerContentCallback)
     ]
     for h, c in asHypershadeCallbacks:
         logger.debug("Adding {0} callback.".format(h))
@@ -154,7 +156,7 @@ def register():
             evalDeferred("showHelp -absolute \\\"http://appleseedhq.net\\\"");
         }
         '''
-    )
+             )
 
     pm.renderer(
         "appleseed",
@@ -174,7 +176,9 @@ def register():
 
         logger.info("appleseedMaya: initialized xgenseed")
     except Exception as e:
-        logger.info("appleseedMaya: could not initialize xgenseed. error = %s" % e)
+        logger.info(
+            "appleseedMaya: could not initialize xgenseed. error = %s" % e)
+
 
 def unregister():
     logger.info("Unregistering appleseed renderer.")
@@ -188,7 +192,8 @@ def unregister():
 
         logger.info("appleseedMaya: uninitialized xgenseed")
     except Exception as e:
-        logger.info("appleseedMaya: could not uninitialize xgenseed. error = %s" % e)
+        logger.info(
+            "appleseedMaya: could not uninitialize xgenseed. error = %s" % e)
 
     if om.MGlobal.mayaState() == om.MGlobal.kInteractive:
         deleteMenu()

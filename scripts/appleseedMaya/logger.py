@@ -30,6 +30,7 @@
 import os
 import logging
 
+
 def __createLogger():
     logger = logging.getLogger(__name__)
     logLevel = os.environ.get('APPLESEED_MAYA_LOG_LEVEL', 'info')

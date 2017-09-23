@@ -32,7 +32,9 @@ import pymel.core as pm
 # appleseedMaya imports.
 from appleseedMaya.logger import logger
 
+
 class AEappleseedAlphaMapTemplate(pm.ui.AETemplate):
+
     def __init__(self, nodeName):
         super(AEappleseedAlphaMapTemplate, self).__init__(nodeName)
         self.beginScrollLayout()
@@ -47,6 +49,6 @@ class AEappleseedAlphaMapTemplate(pm.ui.AETemplate):
         pm.ui.AETemplate.beginLayout(self, name, collapse=collapse)
 
     def buildBody(self, nodeName):
-        self.beginLayout('Map' ,collapse=0)
+        self.beginLayout('Map', collapse=0)
         self.addControl("map")
         self.endLayout()

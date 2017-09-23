@@ -32,7 +32,9 @@ import pymel.core as pm
 # appleseedMaya imports.
 from appleseedMaya.logger import logger
 
+
 class AEappleseedPhysicalSkyLightTemplate(pm.ui.AETemplate):
+
     def __init__(self, nodeName):
         super(AEappleseedPhysicalSkyLightTemplate, self).__init__(nodeName)
         self.beginScrollLayout()
@@ -47,7 +49,7 @@ class AEappleseedPhysicalSkyLightTemplate(pm.ui.AETemplate):
         pm.ui.AETemplate.beginLayout(self, name, collapse=collapse)
 
     def buildBody(self, nodeName):
-        self.beginLayout('Sky Attributes' ,collapse=0)
+        self.beginLayout('Sky Attributes', collapse=0)
         self.addControl('sunTheta')
         self.addControl('sunPhi')
         self.addControl('turbidity')
@@ -60,12 +62,12 @@ class AEappleseedPhysicalSkyLightTemplate(pm.ui.AETemplate):
         self.addControl('groundAlbedo')
         self.endLayout()
 
-        self.beginLayout('Sun Attributes' ,collapse=0)
+        self.beginLayout('Sun Attributes', collapse=0)
         self.addControl('sunEnable')
         self.addControl('sunRadianceScale')
         self.addControl('sunSizeScale')
         self.endLayout()
 
-        self.beginLayout('Display' ,collapse=1)
+        self.beginLayout('Display', collapse=1)
         self.addControl('size', label='Size')
         self.endLayout()

@@ -30,11 +30,12 @@
 import ctypes
 import types
 
+
 def castSelf(selfid):
     # Can't pass self as an object.
     # It's cast to id(self) by the caller
     # and we convert it back to a Python object here
-    if isinstance(selfid,str):
+    if isinstance(selfid, str):
         return ctypes.cast(int(selfid), ctypes.py_object).value
     else:
         return selfid

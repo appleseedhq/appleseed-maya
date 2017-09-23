@@ -43,12 +43,15 @@ import xgenseedutil
 
 
 def addMethod(self, method):
-    self.__dict__[method.__name__] = types.MethodType(method, self, xg.ui.tabs.RendermanRendererTabUI)
+    self.__dict__[method.__name__] = types.MethodType(
+        method, self, xg.ui.tabs.RendermanRendererTabUI)
 
 g_tabUIinitCalled = False
 
 # RenderAPIRendererTabUIInit callback
 # Called at the end of RenderAPIRendererTab.__init__()
+
+
 def xgseedUI(selfid):
     global g_tabUIinitCalled
     g_tabUIinitCalled = True
@@ -72,22 +75,27 @@ def xgseedUI(selfid):
 
 # RenderAPIRendererTabUIRefresh callback
 # Called at the end of RenderAPIRendererTab.refresh()
+
+
 def xgseedRefresh(selfid):
     global g_tabUIinitCalled
     if g_tabUIinitCalled == False:
         xgseedUI(selfid)
 
     self = xgenseedutil.castSelf(selfid)
-    vis = self.renderer.currentText()=="appleseed"
+    vis = self.renderer.currentText() == "appleseed"
     self.appleseed_expand_settings.setVisible(vis)
 
     # todo: update the UI here...
     # ...
 
 # Callback after description creation to switch to the appleseed render
+
+
 def xgseedOnCreateDescription(param):
     logger.debug("xgenseed xgseedOnCreateDescription called")
 
     params = str(param).split(',')
     if len(params) == 2:
-        xg.setAttr("renderer", "appleseed", params[1], params[0], "RendermanRenderer")
+        xg.setAttr(
+            "renderer", "appleseed", params[1], params[0], "RendermanRenderer")

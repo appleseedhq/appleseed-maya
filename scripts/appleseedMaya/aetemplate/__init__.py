@@ -33,6 +33,7 @@ from appleseedMaya.logger import logger
 
 
 class AEappleseedNodeTemplate(pm.ui.AETemplate):
+
     def __init__(self, nodeName):
         super(AEappleseedNodeTemplate, self).__init__(nodeName)
         self.buildBody(nodeName)
@@ -40,12 +41,12 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
 
     def __buildVisibilitySection(self):
         self.beginLayout('Visibility', collapse=1)
-        self.addControl('asVisibilityCamera'  , label='Camera')
-        self.addControl('asVisibilityLight'   , label='Light')
-        self.addControl('asVisibilityShadow'  , label='Shadow')
-        self.addControl('asVisibilityDiffuse' , label='Diffuse')
+        self.addControl('asVisibilityCamera', label='Camera')
+        self.addControl('asVisibilityLight', label='Light')
+        self.addControl('asVisibilityShadow', label='Shadow')
+        self.addControl('asVisibilityDiffuse', label='Diffuse')
         self.addControl('asVisibilitySpecular', label='Specular')
-        self.addControl('asVisibilityGlossy'  , label='Glossy')
+        self.addControl('asVisibilityGlossy', label='Glossy')
         self.endLayout()
 
     @staticmethod
@@ -81,8 +82,8 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         if self.thisNode.type() == 'areaLight':
             self.beginLayout('appleseed', collapse=1)
             self.addControl('asIntensityScale', label='Intensity Scale')
-            self.addControl('asExposure'      , label='Exposure')
-            self.addControl('asNormalize'     , label='Normalize')
+            self.addControl('asExposure', label='Exposure')
+            self.addControl('asNormalize', label='Normalize')
             self.__buildVisibilitySection()
             self.endLayout()
 
@@ -90,8 +91,8 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
             self.beginLayout('appleseed', collapse=1)
             self.addControl('asNormalMapMode', label='Map Mode')
             self.addSeparator()
-            self.addControl('asNormalMapFlipR' , label='Flip Red Channel')
-            self.addControl('asNormalMapFlipG' , label='Flip Green Channel')
+            self.addControl('asNormalMapFlipR', label='Flip Red Channel')
+            self.addControl('asNormalMapFlipG', label='Flip Green Channel')
             self.addControl('asNormalMapSwapRG', label='Swap R/G Channels')
             self.endLayout()
 
@@ -102,13 +103,14 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         elif self.thisNode.type() == 'mesh':
             self.beginLayout('appleseed', collapse=1)
             self.__buildVisibilitySection()
-            self.callCustom(self.meshAlphaMapNew, self.meshAlphaMapUpdate, 'asAlphaMap')
+            self.callCustom(
+                self.meshAlphaMapNew, self.meshAlphaMapUpdate, 'asAlphaMap')
             #self.addControl('asAlphaMap', label='Alpha Map')
             self.addControl('asMediumPriority', label='Medium Priority')
 
             self.beginLayout('Export', collapse=1)
             self.addControl('asExportUVs', label='Export UVs')
-            self.addControl('asExportNormals' , label='Export Normals')
+            self.addControl('asExportNormals', label='Export Normals')
             self.addControl('asSmoothTangents', label='Smooth Tangents')
             self.endLayout()
 
@@ -119,6 +121,7 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
             self.addControl('asDoubleSided', label='Double Sided')
             self.addControl('asShadingSamples', label='Shading Samples')
             self.endLayout()
+
 
 def appleseedAETemplateCallback(nodeName):
     AEappleseedNodeTemplate(nodeName)
