@@ -128,7 +128,7 @@ class DagNodeExporter
     // Return true if an object and all its parents are renderable.
     static bool areObjectAndParentsRenderable(const MDagPath& path);
 
-        // Return true if an object is animated.
+    // Return true if an object is animated.
     static bool isAnimated(MObject object, bool checkParent = false);
 
   private:

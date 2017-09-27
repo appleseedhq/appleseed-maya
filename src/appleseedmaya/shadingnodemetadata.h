@@ -135,6 +135,9 @@ class OSLParamInfo
 
 std::ostream& operator<<(std::ostream& os, const OSLParamInfo& paramInfo);
 
+//
+// The OSLShaderInfo class holds information about an OSL shader.
+//
 
 class OSLShaderInfo
 {
@@ -160,6 +163,7 @@ class OSLShaderInfo
     MString mayaClassification;
     unsigned int typeId;
 
+    // Parameter information.
     std::vector<OSLParamInfo> paramInfo;
 };
 

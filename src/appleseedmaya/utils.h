@@ -52,7 +52,7 @@
 // MStringCompareLess
 //
 //  Function object class for MString less-than comparison.
-//  Used in maps as a compare predicate, to avoid MString <-> std::string copies.
+//  Used in maps as a compare predicate, to avoid MString <-> std::string conversions.
 //
 
 struct MStringCompareLess
@@ -214,12 +214,14 @@ class Computation
 
 typedef std::shared_ptr<Computation> ComputationPtr;
 
+// Convert image coordinates from Y down to Y up.
 template <typename T>
-T flip_pixel_coordinate(const T size, const T x)
+inline T flip_pixel_coordinate(const T size, const T x)
 {
     return size - x - 1;
 }
 
+// Convert image coordinates from Y down to Y up.
 template <typename T>
 inline void flip_pixel_interval(const T size, T& xmin, T& xmax)
 {
@@ -230,6 +232,7 @@ inline void flip_pixel_interval(const T size, T& xmin, T& xmax)
 
 //
 // Deleter that calls delete[] for use with C++11 shared_ptr.
+// TODO: check that we really need this.
 //
 
 template <typename T>

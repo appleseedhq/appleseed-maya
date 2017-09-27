@@ -57,6 +57,7 @@ class AlphaMapNode
 
     MStatus compute(const MPlug& plug, MDataBlock& dataBlock) override;
 
+    // Maya scene packing support.
     MStringArray getFilesToArchive(
         bool    shortName,
         bool    unresolvedName,

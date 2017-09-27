@@ -45,6 +45,7 @@
 #include "appleseedmaya/renderviewtilecallback.h"
 
 // appleseed.renderer headers.
+#include "renderer/api/aov.h"
 #include "renderer/api/environment.h"
 #include "renderer/api/frame.h"
 #include "renderer/api/material.h"
@@ -186,6 +187,7 @@ IExporterFactory::~IExporterFactory()
 
 namespace
 {
+    // RAII class to end active the session in an exception safe way.
     struct ScopedEndSession
     {
         ~ScopedEndSession()
@@ -276,15 +278,15 @@ namespace
             SessionImpl& m_self;
         };
 
-        // Constructor (IPR or Batch).
+        // Constructor (IPR or batch render).
         SessionImpl(
             AppleseedSession::SessionMode       mode,
             const AppleseedSession::Options&    options,
             ComputationPtr                      computation)
           : m_sessionMode(mode)
           , m_options(options)
-          , m_exporter_factory(*this)
           , m_computation(computation)
+          , m_exporter_factory(*this)
         {
             createProject();
         }
@@ -296,13 +298,13 @@ namespace
             ComputationPtr                      computation)
           : m_sessionMode(AppleseedSession::ExportSession)
           , m_options(options)
-          , m_exporter_factory(*this)
           , m_computation(computation)
+          , m_exporter_factory(*this)
           , m_fileName(fileName)
         {
             m_projectPath = bfs::path(fileName.asChar()).parent_path();
 
-            // Create a dir to store the geom files if it does not exist yet.
+            // Create a directory to store the geometry files if it does not exist yet.
             bfs::path geomPath = m_projectPath / "_geometry";
             if (!bfs::exists(geomPath))
             {
@@ -393,6 +395,7 @@ namespace
             MObject globalsNode = exportAppleseedRenderGlobals();
 
             AppleseedSession::MotionBlurSampleTimes motionBlurSampleTimes;
+
             // Only do motion blur for non progressive renders.
             if (m_sessionMode != AppleseedSession::ProgressiveRenderSession)
                 RenderGlobalsNode::collectMotionBlurSampleTimes(globalsNode, motionBlurSampleTimes);
@@ -418,7 +421,7 @@ namespace
                 MDagPath camera;
                 MStatus status = getDagPathByName(m_options.m_camera, camera);
 
-                // If the camera name is a transform name, move to the camera.
+                // If the camera is a transform, move to the shape.
                 status = camera.extendToShape();
 
                 MFnDagNode dagNodeFn(camera);
@@ -430,20 +433,26 @@ namespace
                     params.insert("camera", camera.partialPathName().asChar());
                 }
                 else
-                    RENDERER_LOG_WARNING("Wrong camera!");
+                {
+                    RENDERER_LOG_WARNING(
+                        "Invalid camera specified %s",
+                        camera.partialPathName().asChar());
+                }
             }
             else
-                RENDERER_LOG_WARNING("No active camera in project!");
+                RENDERER_LOG_WARNING("No active camera in project");
 
             // Set the environment.
             if (!m_project->get_scene()->environment_edfs().empty())
             {
+                // Get the appleseed globals node.
                 MObject appleseedRenderGlobalsNode;
                 getDependencyNodeByName("appleseedRenderGlobals", appleseedRenderGlobalsNode);
                 MFnDependencyNode depNodeFn(appleseedRenderGlobalsNode);
                 MPlug dstPlug = depNodeFn.findPlug("envLight", false);
                 MPlug srcPlug;
 
+                // Find the environment light connected to the globals node.
                 if (AttributeUtils::getPlugConnectedTo(dstPlug, srcPlug))
                 {
                     if (!srcPlug.isNull())
@@ -451,9 +460,11 @@ namespace
                         MFnDagNode dagNodeFn(srcPlug.node());
                         const MString envName = dagNodeFn.partialPathName();
 
+                        // Set the active environment.
                         m_project->get_scene()->get_environment()->get_parameters()
                             .insert("environment_edf", envName.asChar());
 
+                        // Make the environment visible if the user set it.
                         bool bgLight;
                         AttributeUtils::get(appleseedRenderGlobalsNode, "bgLight", bgLight);
                         if (bgLight)
@@ -484,7 +495,7 @@ namespace
                         scene->assembly_instances().get_by_name("assembly_inst");
                     assemblyInstance->transform_sequence() = scaleTransformSeq;
 
-                    // Apply scaling to all cameras.
+                    // Apply the scale to all cameras.
                     for (size_t i = 0, e = scene->cameras().size(); i < e; ++i)
                     {
                         asr::Camera* camera = scene->cameras().get_by_index(i);
@@ -502,7 +513,8 @@ namespace
                 params.insert("tile_size", asf::Vector2i(tileSize));
 
             // Replace the frame.
-            m_project->set_frame(asr::FrameFactory().create("beauty", params));
+            const asr::AOVContainer& aovs = m_project->get_frame()->aovs();
+            m_project->set_frame(asr::FrameFactory().create("beauty", params, aovs));
 
             // Set the crop window.
             if (m_options.m_renderRegion)
@@ -517,13 +529,13 @@ namespace
         void exportScene(const AppleseedSession::MotionBlurSampleTimes& motionBlurSampleTimes)
         {
             createExporters();
-            checkUserAborted();
+            throwIfUserAborted();
 
             RENDERER_LOG_DEBUG("Creating alpha map entities");
             for(AlphaMapExporterMap::const_iterator it = m_alphaMapExporters.begin(), e = m_alphaMapExporters.end(); it != e; ++it)
                 it->second->createEntities();
 
-            checkUserAborted();
+            throwIfUserAborted();
 
             RENDERER_LOG_DEBUG("Creating shading network entities");
             for(size_t i = 0; i < NumShadingNetworkContexts; ++i)
@@ -536,7 +548,7 @@ namespace
             for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
                 it->second->createEntities(m_options);
 
-            checkUserAborted();
+            throwIfUserAborted();
 
             RENDERER_LOG_DEBUG("Creating dag entities");
             for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
@@ -551,7 +563,7 @@ namespace
 
                 if (*frameIt != now)
                 {
-                    RENDERER_LOG_DEBUG("Setting frame to %d", *frameIt);
+                    RENDERER_LOG_DEBUG("Setting frame to %f", *frameIt);
                     MGlobal::viewFrame(*frameIt);
                 }
 
@@ -571,7 +583,7 @@ namespace
                             it->second->exportShapeMotionStep(frame);
                     }
 
-                    checkUserAborted();
+                    throwIfUserAborted();
                 }
             }
 
@@ -582,13 +594,13 @@ namespace
                 convertObjectsToInstances();
             }
 
-            checkUserAborted();
+            throwIfUserAborted();
 
             RENDERER_LOG_DEBUG("Flushing alpha map entities");
             for(AlphaMapExporterMap::const_iterator it = m_alphaMapExporters.begin(), e = m_alphaMapExporters.end(); it != e; ++it)
                 it->second->flushEntities();
 
-            checkUserAborted();
+            throwIfUserAborted();
 
             RENDERER_LOG_DEBUG("Flushing shading network entities");
             for(size_t i = 0; i < NumShadingNetworkContexts; ++i)
@@ -597,13 +609,13 @@ namespace
                     it->second->flushEntities();
             }
 
-            checkUserAborted();
+            throwIfUserAborted();
 
             RENDERER_LOG_DEBUG("Flushing shading engines entities");
             for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
                 it->second->flushEntities();
 
-            checkUserAborted();
+            throwIfUserAborted();
 
             RENDERER_LOG_DEBUG("Flushing dag entities");
             for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
@@ -617,7 +629,7 @@ namespace
             MObject defaultRenderGlobalsNode;
             if (getDependencyNodeByName("defaultRenderGlobals", defaultRenderGlobalsNode))
             {
-                // todo: export globals here...
+                // TODO: export Maya render globals if needed...
             }
         }
 
@@ -640,7 +652,7 @@ namespace
         {
             if (m_options.m_selectionOnly)
             {
-                // Create exporters for the selected nodes in the scene.
+                // Create exporters only for the selected nodes in the scene.
                 MStatus status;
                 MSelectionList sel;
                 status = MGlobal::getActiveSelectionList(sel);
@@ -684,7 +696,7 @@ namespace
             for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
                 it->second->createExporters(m_exporter_factory);
 
-            checkUserAborted();
+            throwIfUserAborted();
 
             // Create shading engine extra exporters.
             RENDERER_LOG_DEBUG("Creating shading engines extra exporters");
@@ -694,7 +706,7 @@ namespace
 
         void createDagNodeExporter(const MDagPath& path)
         {
-            checkUserAborted();
+            throwIfUserAborted();
 
             if (m_dagExporters.count(path.fullPathName()) != 0)
                 return;
@@ -740,7 +752,9 @@ namespace
                 //if (shape && shape->supportsInstancing())
                 //{
                     /*
+                    // Compute the object hash.
                     hash = exporter->hash();
+
                     if (instanceMap.find(hash) != end())
                     {
                         DagNodeExporterPtr exporter(shape);
@@ -759,6 +773,7 @@ namespace
             assert(MGlobal::mayaState() == MGlobal::kInteractive);
             assert(m_computation);
 
+            // Start the idle job queue for render view updates.
             IdleJobQueue::start();
 
             // Reset the renderer controller.
@@ -768,6 +783,7 @@ namespace
             asr::Configuration* cfg = m_project->configurations().get_by_name("final");
             const asr::ParamArray& params = cfg->get_parameters();
 
+            // Create a tile callback to render to Maya's render view.
             m_tileCallbackFactory.reset(
                 new RenderViewTileCallbackFactory(m_rendererController, m_computation));
             m_tileCallbackFactory->renderViewStart(*m_project->get_frame());
@@ -779,7 +795,7 @@ namespace
                     &m_rendererController,
                     static_cast<asr::ITileCallbackFactory*>(m_tileCallbackFactory.get())));
 
-            // Non blocking mode.
+            // Render in a thread (non blocking).
             std::thread thread(&SessionImpl::renderFunc, this);
             m_renderThread.swap(thread);
         }
@@ -800,6 +816,7 @@ namespace
                     &m_rendererController,
                     static_cast<asr::ITileCallbackFactory*>(0)));
 
+            // Render in the main thread (blocking).
             m_renderer->render();
         }
 
@@ -826,7 +843,10 @@ namespace
 
         void abortRender()
         {
+            // Ask appleseed to stop rendering.
             m_rendererController.set_status(asr::IRendererController::AbortRendering);
+
+            // Wait for the render thread to finish.
             if (m_renderThread.joinable())
                 m_renderThread.join();
         }
@@ -859,7 +879,7 @@ namespace
             return scene->assemblies().get_by_name("assembly");
         }
 
-        void checkUserAborted() const
+        void throwIfUserAborted() const
         {
             if (m_computation)
                 m_computation->thowIfInterruptRequested();
@@ -944,6 +964,7 @@ MStatus projectExport(
     ScopedEndSession session;
     ComputationPtr computation = Computation::create();
 
+    // Save the current Maya time.
     g_savedTime = MAnimControl::currentTime();
 
     if (options.m_sequence)
@@ -957,6 +978,7 @@ MStatus projectExport(
 
         for(int frame = options.m_firstFrame; frame <= options.m_lastFrame; frame += options.m_frameStep)
         {
+            // Check if the user wants to abort the export.
             if (computation->isInterruptRequested())
             {
                 RENDERER_LOG_INFO("Project export aborted.");
@@ -1010,7 +1032,6 @@ MStatus render(Options options)
     endSession();
 
     ComputationPtr computation = Computation::create();
-
     g_savedTime = MAnimControl::currentTime();
 
     try
@@ -1019,7 +1040,10 @@ MStatus render(Options options)
         g_globalSession->exportProject();
 
         if (computation->isInterruptRequested())
+        {
+            RENDERER_LOG_INFO("Render aborted.");
             return MS::kSuccess;
+        }
 
         g_globalSession->finalRender();
     }
@@ -1095,7 +1119,7 @@ MStatus batchRender(Options options)
 
     MStatus status;
 
-    // Hack!: update the file format and file extension in the render globals.
+    // HACK!: update the file format and file extension in the render globals.
     MGlobal::executePythonCommand(
         "import appleseedMaya.renderGlobals\n"
         "appleseedMaya.renderGlobals.imageFormatChanged()");
@@ -1108,7 +1132,9 @@ MStatus batchRender(Options options)
     {
         // Filename of the scene without the __xxxx tmp file suffix
         // and without the .ma or .mb extension.
-        sceneName = MString(sceneName.asChar(), sceneName.length() - 9);
+        sceneName = MString(
+            sceneName.asChar(),
+            sceneName.length() - strlen("__xxxx") -  strlen(".mx"));
     }
     else
         sceneName.set("untitled");
@@ -1134,13 +1160,13 @@ MStatus batchRender(Options options)
         }
     }
 
-    // TODO: check if this is needed and how to get it...
-    MString fileFormat;
-
     MObject renderLayer = MFnRenderLayer::currentLayer(&status);
 
     MCommonRenderSettingsData renderSettings;
     MRenderUtil::getCommonRenderSettings(renderSettings);
+
+    // TODO: check if this is needed and how to get it...
+    MString fileFormat;
 
     if (renderSettings.isAnimated())
     {
@@ -1161,7 +1187,9 @@ MStatus batchRender(Options options)
                 &status);
 
             RENDERER_LOG_DEBUG("Batch render: rendering frame %f, filename = %s", frame, outputFileName.asChar());
+
             status = batchRenderFrame(options, outputFileName);
+
             RENDERER_LOG_DEBUG("Status = %s", status.errorString().asChar());
             RENDERER_LOG_DEBUG("=================================");
         }
@@ -1179,7 +1207,9 @@ MStatus batchRender(Options options)
             &status);
 
         RENDERER_LOG_DEBUG("Batch render: rendering single frame, filename = %s", outputFileName.asChar());
+
         status = batchRenderFrame(options, outputFileName);
+
         RENDERER_LOG_DEBUG("Status = %s", status.errorString().asChar());
         RENDERER_LOG_DEBUG("=================================");
     }

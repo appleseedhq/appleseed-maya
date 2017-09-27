@@ -62,6 +62,9 @@ class ShadingNodeExporter
         const MObject&                  object,
         renderer::ShaderGroup&          shaderGroup);
 
+    // Destructor.
+    virtual ~ShadingNodeExporter();
+
     // Create appleseed entities.
     void createEntities(ShadingNodeExporterMap& exporters);
 

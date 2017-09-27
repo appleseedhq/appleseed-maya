@@ -151,8 +151,7 @@ void XGenExporter::createEntities(
     }
 
     params.insert("patches", patches);
-    m_assembly.reset(
-        asr::AssemblyFactory().create(assemblyName.asChar(), params));
+    m_assembly.reset(asr::AssemblyFactory().create(assemblyName.asChar(), params));
 }
 
 void XGenExporter::exportTransformMotionStep(float time)

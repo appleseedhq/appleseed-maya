@@ -71,6 +71,7 @@ struct Options
     MString     m_camera;
     bool        m_selectionOnly;
 
+    // Output options.
     int         m_width;
     int         m_height;
     bool        m_renderRegion;
@@ -126,30 +127,37 @@ class IExporterFactory
   public:
     virtual ~IExporterFactory();
 
-    virtual ShadingEngineExporterPtr createShadingEngineExporter(const MObject& object) const = 0;
+    virtual ShadingEngineExporterPtr createShadingEngineExporter(
+        const MObject&                  object) const = 0;
 
     virtual ShadingNetworkExporterPtr createShadingNetworkExporter(
-        const ShadingNetworkContext   context,
-        const MObject&                object,
-        const MPlug&                  outputPlug) const = 0;
+        const ShadingNetworkContext     context,
+        const MObject&                  object,
+        const MPlug&                    outputPlug) const = 0;
 
     virtual AlphaMapExporterPtr createAlphaMapExporter(
-        const MObject&                object) const = 0;
+        const MObject&                  object) const = 0;
 
   protected:
     IExporterFactory();
 };
 
+// Export the current scene.
 MStatus projectExport(const MString& fileName, Options options);
 
+// Export and render the current scene to Maya's render view.
 MStatus render(Options options);
 
+// Export and batch render the current scene.
 MStatus batchRender(Options options);
 
+// Stop rendering and free resources.
 void endSession();
 
+// Return the currently active session mode.
 SessionMode sessionMode();
 
+// Return the currently active session options.
 const Options& options();
 
 } // namespace AppleseedSession.

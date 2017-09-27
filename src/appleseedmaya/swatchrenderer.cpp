@@ -81,6 +81,7 @@ namespace
         {
             assert(m_project.get() == 0);
 
+            // Create an appleseed project.
             m_project = asr::ProjectFactory::create("project");
             m_project->add_default_configurations();
 
@@ -104,7 +105,7 @@ namespace
 
             // Create some basic project entities.
 
-            // Create the scene
+            // Create the scene.
             asf::auto_release_ptr<asr::Scene> scene = asr::SceneFactory::create();
             m_project->set_scene(scene);
 
@@ -300,7 +301,7 @@ namespace
 
                         for (size_t i = 0, ie = tile.get_width(); i < ie; ++i)
                         {
-                            // Maya docs say RGBA, but it is actually BGRA?.
+                            // Maya docs say RGBA, but it is actually BGRA.
                             *dst++ = linear_rgb_to_srgb(src[2]);
                             *dst++ = linear_rgb_to_srgb(src[1]);
                             *dst++ = linear_rgb_to_srgb(src[0]);

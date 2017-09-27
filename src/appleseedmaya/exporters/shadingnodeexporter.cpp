@@ -70,7 +70,7 @@ void ShadingNodeExporter::registerExporters()
     MStringArray nodeNames;
     ShadingNodeRegistry::getShaderNodeNames(nodeNames);
 
-    for(int i = 0, e = nodeNames.length(); i < e; ++i)
+    for(unsigned int i = 0, e = nodeNames.length(); i < e; ++i)
     {
         NodeExporterFactory::registerShadingNodeExporter(
             nodeNames[i],
@@ -83,6 +83,10 @@ ShadingNodeExporter* ShadingNodeExporter::create(
     asr::ShaderGroup&                   shaderGroup)
 {
     return new ShadingNodeExporter(object, shaderGroup);
+}
+
+ShadingNodeExporter::~ShadingNodeExporter()
+{
 }
 
 ShadingNodeExporter::ShadingNodeExporter(

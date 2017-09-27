@@ -80,13 +80,14 @@ MStatus AppleseedTranslator::writer(
 
     AppleseedSession::Options options;
 
-    // Parse the options string.
+    // Break the options string into a list of individual options.
     std::vector<std::string> tokens;
     asf::tokenize(
         asf::trim_both(opts.asChar()),
         ";",
         tokens);
 
+    // Parse each option=value pair.
     std::vector<std::string> optNameValue;
     for(size_t i = 0, e = tokens.size(); i < e; ++i)
     {
