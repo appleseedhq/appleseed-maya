@@ -409,6 +409,23 @@ void MeshExporter::flushEntities()
     createObjectInstance(objectName);
 }
 
+bool MeshExporter::supportsInstancing() const
+{
+    // Disabled for now. Needs more testing.
+    return false;
+}
+
+MurmurHash MeshExporter::hash() const
+{
+    MurmurHash hash;
+    meshObjectHash(
+        *m_mesh,
+        m_frontMaterialMappings,
+        m_backMaterialMappings,
+        hash);
+    return hash;
+}
+
 void MeshExporter::meshAttributesToParams(renderer::ParamArray& params)
 {
     int mediumPriority = 0;

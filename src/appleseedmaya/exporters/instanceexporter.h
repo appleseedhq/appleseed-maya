@@ -52,6 +52,10 @@ class InstanceExporter
       renderer::Project&                  project,
       const renderer::TransformSequence&  transformSequence);
 
+    void createEntities(
+        const AppleseedSession::Options&                options,
+        const AppleseedSession::MotionBlurSampleTimes&  motionBlurSampleTimes) override;
+
     void flushEntities() override;
 
   private:

@@ -60,6 +60,16 @@ const asr::TransformSequence& ShapeExporter::transformSequence() const
     return m_transformSequence;
 }
 
+bool ShapeExporter::supportsInstancing() const
+{
+    return false;
+}
+
+MurmurHash ShapeExporter::hash() const
+{
+    return MurmurHash();
+}
+
 void ShapeExporter::instanceCreated() const
 {
     m_numInstances++;
@@ -77,7 +87,7 @@ void ShapeExporter::flushEntities()
 {
     m_transformSequence.optimize();
 
-    // Check if we need to create an assembly for this object.
+    // Create an assembly for this object if needed (instanced or xform motion blur).
     const bool needsAssembly = m_numInstances > 0 || m_transformSequence.size() > 1;
     if (sessionMode() == AppleseedSession::ProgressiveRenderSession || needsAssembly)
     {

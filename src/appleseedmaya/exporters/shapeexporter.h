@@ -48,11 +48,18 @@ class ShapeExporter
 
     const renderer::TransformSequence& transformSequence() const;
 
-    void instanceCreated() const;
-
     void exportTransformMotionStep(float time) override;
 
     void flushEntities() override = 0;
+
+    // Return true if this object can be instanced.
+    virtual bool supportsInstancing() const;
+
+    // Compute a hash of the shape.
+    virtual MurmurHash hash() const;
+
+    // Called when this object is instanced.
+    void instanceCreated() const;
 
   protected:
     ShapeExporter(

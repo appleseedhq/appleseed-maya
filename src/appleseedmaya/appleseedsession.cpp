@@ -35,6 +35,7 @@
 #include "appleseedmaya/exporters/alphamapexporter.h"
 #include "appleseedmaya/exporters/dagnodeexporter.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/exporters/instanceexporter.h"
 #include "appleseedmaya/exporters/shadingengineexporter.h"
 #include "appleseedmaya/exporters/shadingnetworkexporter.h"
 #include "appleseedmaya/exporters/shapeexporter.h"
@@ -745,26 +746,36 @@ namespace
 
         void convertObjectsToInstances()
         {
-            for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+            std::map<MurmurHash, ShapeExporterPtr> shapesMap;
+
+            for(DagExporterMap::iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             {
-                //const ShapeExporter* shape = dynamic_cast<const ShapeExporter*>(it->second.get());
+                ShapeExporter* shape = dynamic_cast<ShapeExporter*>(it->second.get());
 
-                //if (shape && shape->supportsInstancing())
-                //{
-                    /*
+                if (shape && shape->supportsInstancing())
+                {
                     // Compute the object hash.
-                    hash = exporter->hash();
+                    MurmurHash hash = shape->hash();
 
-                    if (instanceMap.find(hash) != end())
+                    // Check if we have exported this object before.
+                    auto masterIt = shapesMap.find(hash);
+                    if (masterIt != shapesMap.end())
                     {
-                        DagNodeExporterPtr exporter(shape);
-                        // Create InstanceExporter(...)
+                        // Create an instance exporter.
+                        DagNodeExporterPtr instanceExporter(
+                            new InstanceExporter(
+                                shape->dagPath(),
+                                m_sessionMode,
+                                *masterIt->second,
+                                *m_project,
+                                shape->transformSequence()));
+
+                        // Replace the shape exporter by an instance exporter.
                         m_dagExporters[it->first] = instanceExporter;
                     }
                     else
-                        instanceMap[hash] = ShapeExporterPtr(exporter)
-                    */
-                //}
+                        shapesMap[hash] = ShapeExporterPtr(shape);
+                }
             }
         }
 

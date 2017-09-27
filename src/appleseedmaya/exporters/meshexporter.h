@@ -74,6 +74,10 @@ class MeshExporter
 
     void flushEntities() override;
 
+    bool supportsInstancing() const override;
+
+    MurmurHash hash() const override;
+
   private:
     MeshExporter(
       const MDagPath&                                   path,

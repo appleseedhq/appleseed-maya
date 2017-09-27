@@ -69,6 +69,12 @@ class DagNodeExporter
     // Destructor.
     virtual ~DagNodeExporter();
 
+    // Return the Maya dependency node.
+    MObject node() const;
+
+    // Return the Maya dag path.
+    const MDagPath& dagPath() const;
+
     // Return the name of the entity in the appleseed project.
     MString appleseedName() const;
 
@@ -97,12 +103,6 @@ class DagNodeExporter
       const MDagPath&                                   path,
       renderer::Project&                                project,
       AppleseedSession::SessionMode                     sessionMode);
-
-    // Return the Maya dependency node.
-    MObject node() const;
-
-    // Return the Maya dag path.
-    const MDagPath& dagPath() const;
 
     // Return the session mode.
     AppleseedSession::SessionMode sessionMode() const;

@@ -48,6 +48,14 @@ InstanceExporter::InstanceExporter(
     master.instanceCreated();
 }
 
+void InstanceExporter::createEntities(
+    const AppleseedSession::Options&                options,
+    const AppleseedSession::MotionBlurSampleTimes&  motionBlurSampleTimes)
+{
+    // This exporter instances an already created object.
+    // Nothing to do here.
+}
+
 void InstanceExporter::flushEntities()
 {
     const MString assemblyName = m_masterShapeName + MString("_assembly");
