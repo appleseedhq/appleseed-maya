@@ -533,26 +533,26 @@ namespace
             throwIfUserAborted();
 
             RENDERER_LOG_DEBUG("Creating alpha map entities");
-            for(AlphaMapExporterMap::const_iterator it = m_alphaMapExporters.begin(), e = m_alphaMapExporters.end(); it != e; ++it)
+            for (auto it = m_alphaMapExporters.begin(), e = m_alphaMapExporters.end(); it != e; ++it)
                 it->second->createEntities();
 
             throwIfUserAborted();
 
             RENDERER_LOG_DEBUG("Creating shading network entities");
-            for(size_t i = 0; i < NumShadingNetworkContexts; ++i)
+            for (size_t i = 0; i < NumShadingNetworkContexts; ++i)
             {
-                for(ShadingNetworkExporterMap::const_iterator it = m_shadingNetworkExporters[i].begin(), e = m_shadingNetworkExporters[i].end(); it != e; ++it)
+                for (auto it = m_shadingNetworkExporters[i].begin(), e = m_shadingNetworkExporters[i].end(); it != e; ++it)
                     it->second->createEntities();
             }
 
             RENDERER_LOG_DEBUG("Creating shading engine entities");
-            for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
+            for (auto it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
                 it->second->createEntities(m_options);
 
             throwIfUserAborted();
 
             RENDERER_LOG_DEBUG("Creating dag entities");
-            for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+            for (auto it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
                 it->second->createEntities(m_options, motionBlurSampleTimes);
 
             RENDERER_LOG_DEBUG("Exporting motion steps");
@@ -570,7 +570,7 @@ namespace
 
                 const float frame = motionBlurSampleTimes.normalizedFrame(*frameIt);
 
-                for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+                for (auto it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
                 {
                     if (it->second->supportsMotionBlur())
                     {
@@ -598,28 +598,28 @@ namespace
             throwIfUserAborted();
 
             RENDERER_LOG_DEBUG("Flushing alpha map entities");
-            for(AlphaMapExporterMap::const_iterator it = m_alphaMapExporters.begin(), e = m_alphaMapExporters.end(); it != e; ++it)
+            for (auto it = m_alphaMapExporters.begin(), e = m_alphaMapExporters.end(); it != e; ++it)
                 it->second->flushEntities();
 
             throwIfUserAborted();
 
             RENDERER_LOG_DEBUG("Flushing shading network entities");
-            for(size_t i = 0; i < NumShadingNetworkContexts; ++i)
+            for (size_t i = 0; i < NumShadingNetworkContexts; ++i)
             {
-                for(ShadingNetworkExporterMap::const_iterator it = m_shadingNetworkExporters[i].begin(), e = m_shadingNetworkExporters[i].end(); it != e; ++it)
+                for (auto it = m_shadingNetworkExporters[i].begin(), e = m_shadingNetworkExporters[i].end(); it != e; ++it)
                     it->second->flushEntities();
             }
 
             throwIfUserAborted();
 
             RENDERER_LOG_DEBUG("Flushing shading engines entities");
-            for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
+            for (auto it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
                 it->second->flushEntities();
 
             throwIfUserAborted();
 
             RENDERER_LOG_DEBUG("Flushing dag entities");
-            for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+            for (auto it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
                 it->second->flushEntities();
         }
 
@@ -661,12 +661,12 @@ namespace
                 MDagPath rootPath, path;
                 MItDag it(MItDag::kBreadthFirst);
 
-                for(int i = 0, e = sel.length(); i < e; ++i)
+                for (int i = 0, e = sel.length(); i < e; ++i)
                 {
                     status = sel.getDagPath(i, rootPath);
                     if (status)
                     {
-                        for(it.reset(rootPath); !it.isDone(); it.next())
+                        for (it.reset(rootPath); !it.isDone(); it.next())
                         {
                             status = it.getPath(path);
                             if (status)
@@ -680,7 +680,7 @@ namespace
                 // Create exporters for all the dag nodes in the scene.
                 RENDERER_LOG_DEBUG("Creating dag node exporters");
                 MDagPath path;
-                for(MItDag it(MItDag::kDepthFirst); !it.isDone(); it.next())
+                for (MItDag it(MItDag::kDepthFirst); !it.isDone(); it.next())
                 {
                     it.getPath(path);
                     createDagNodeExporter(path);
@@ -694,14 +694,14 @@ namespace
         {
             // Create dag extra exporters.
             RENDERER_LOG_DEBUG("Creating dag extra exporters");
-            for(DagExporterMap::const_iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+            for (auto it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
                 it->second->createExporters(m_exporter_factory);
 
             throwIfUserAborted();
 
             // Create shading engine extra exporters.
             RENDERER_LOG_DEBUG("Creating shading engines extra exporters");
-            for(ShadingEngineExporterMap::const_iterator it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
+            for (auto it = m_shadingEngineExporters.begin(), e = m_shadingEngineExporters.end(); it != e; ++it)
                 it->second->createExporters(m_exporter_factory);
         }
 
@@ -748,14 +748,17 @@ namespace
         {
             std::map<MurmurHash, ShapeExporterPtr> shapesMap;
 
-            for(DagExporterMap::iterator it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+            for (auto it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
             {
                 ShapeExporter* shape = dynamic_cast<ShapeExporter*>(it->second.get());
-
                 if (shape && shape->supportsInstancing())
                 {
                     // Compute the object hash.
                     MurmurHash hash = shape->hash();
+                    RENDERER_LOG_DEBUG(
+                        "Computed hash for object %s, hash = %s",
+                        shape->appleseedName().asChar(),
+                        hash.toString().c_str());
 
                     // Check if we have exported this object before.
                     auto masterIt = shapesMap.find(hash);
@@ -774,7 +777,7 @@ namespace
                         m_dagExporters[it->first] = instanceExporter;
                     }
                     else
-                        shapesMap[hash] = ShapeExporterPtr(shape);
+                        shapesMap[hash] = std::dynamic_pointer_cast<ShapeExporter>(it->second);
                 }
             }
         }
@@ -987,7 +990,7 @@ MStatus projectExport(
             return MS::kFailure;
         }
 
-        for(int frame = options.m_firstFrame; frame <= options.m_lastFrame; frame += options.m_frameStep)
+        for (int frame = options.m_firstFrame; frame <= options.m_lastFrame; frame += options.m_frameStep)
         {
             // Check if the user wants to abort the export.
             if (computation->isInterruptRequested())
@@ -1154,7 +1157,7 @@ MStatus batchRender(Options options)
     MString cameraName;
     {
         MDagPath path;
-        for(MItDag it(MItDag::kDepthFirst, MFn::kCamera); !it.isDone(); it.next())
+        for (MItDag it(MItDag::kDepthFirst, MFn::kCamera); !it.isDone(); it.next())
         {
             it.getPath(path);
             MFnDagNode dagNodeFn(path);

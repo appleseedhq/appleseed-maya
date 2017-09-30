@@ -387,18 +387,6 @@ void MeshExporter::flushEntities()
             m_alphaMapExporter->textureInstanceName());
     }
 
-    // Compute the object hash for auto-instancing.
-    /*
-    if (sessionMode() != AppleseedSession::ProgressiveRenderSession)
-    {
-        meshObjectHash(
-            *m_mesh,
-            m_frontMaterialMappings,
-            m_backMaterialMappings,
-            m_shapeHash);
-    }
-    */
-
     RENDERER_LOG_DEBUG("Flushing mesh object %s", m_mesh->get_name());
     if (m_objectAssembly.get())
         m_objectAssembly->objects().insert(m_mesh.releaseAs<asr::Object>());
@@ -411,8 +399,7 @@ void MeshExporter::flushEntities()
 
 bool MeshExporter::supportsInstancing() const
 {
-    // Disabled for now. Needs more testing.
-    return false;
+    return true;
 }
 
 MurmurHash MeshExporter::hash() const

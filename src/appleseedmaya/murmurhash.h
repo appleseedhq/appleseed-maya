@@ -44,6 +44,7 @@
 // Forward declarations.
 namespace foundation { class StringDictionary; }
 namespace foundation { class Dictionary; }
+namespace renderer   { class ParamArray; }
 
 //
 // MurmurHash.
@@ -96,6 +97,8 @@ class MurmurHash
     void append(const foundation::StringDictionary& dictionary);
 
     void append(const foundation::Dictionary& dictionary);
+
+    void append(const renderer::ParamArray& params);
 
   private:
     void append(const void* data, size_t bytes);

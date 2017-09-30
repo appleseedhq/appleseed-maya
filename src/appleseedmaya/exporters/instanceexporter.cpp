@@ -69,6 +69,10 @@ void InstanceExporter::flushEntities()
             params,
             assemblyName.asChar()));
 
+    RENDERER_LOG_DEBUG(
+        "Flushing assembly instance %s",
+        assemblyInstanceName.asChar());
+
     assemblyInstance->transform_sequence() = m_transformSequence;
     mainAssembly().assembly_instances().insert(assemblyInstance);
 }

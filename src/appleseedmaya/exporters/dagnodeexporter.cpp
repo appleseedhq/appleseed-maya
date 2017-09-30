@@ -297,7 +297,7 @@ bool DagNodeExporter::isAnimated(MObject object, bool checkParent)
         }
     }
 
-    for (size_t i = 0; i < nodesToCheckAnimCurve.size(); ++i)
+    for (size_t i = 0, e = nodesToCheckAnimCurve.size(); i < e; ++i)
     {
         if (MAnimUtil::isAnimated(nodesToCheckAnimCurve[i].node, nodesToCheckAnimCurve[i].checkParent))
             return true;

@@ -36,6 +36,7 @@
 #include "foundation/utility/containers/dictionary.h"
 
 namespace asf = foundation;
+namespace asr = renderer;
 
 uint64_t rotl64(uint64_t x, int8_t r)
 {
@@ -175,9 +176,7 @@ std::string MurmurHash::toString() const
 
 void MurmurHash::append(const asf::StringDictionary& dictionary)
 {
-    asf::StringDictionary::const_iterator it(dictionary.begin());
-    asf::StringDictionary::const_iterator e(dictionary.end());
-    for(; it != e; ++it)
+    for (auto it = dictionary.begin(), e = dictionary.end(); it != e; ++it)
     {
         append(it.key());
         append(it.value());
@@ -188,13 +187,16 @@ void MurmurHash::append(const asf::Dictionary& dictionary)
 {
     append(dictionary.strings());
 
-    asf::DictionaryDictionary::const_iterator it(dictionary.dictionaries().begin());
-    asf::DictionaryDictionary::const_iterator e(dictionary.dictionaries().end());
-    for(; it != e; ++it)
+    for (auto it = dictionary.dictionaries().begin(), e = dictionary.dictionaries().end(); it != e; ++it)
     {
         append(it.key());
         append(it.value());
     }
+}
+
+void MurmurHash::append(const asr::ParamArray& params)
+{
+    return append(static_cast<const asf::Dictionary&>(params));
 }
 
 std::ostream& operator<<(std::ostream& o, const MurmurHash& hash)
