@@ -63,7 +63,7 @@ ShadingNodeTemplateBuilder::ShadingNodeTemplateBuilder(const OSLShaderInfo& shad
     {
         ss << "    editorTemplate -beginLayout \"" << pages[i] << "\"  -collapse 0;\n";
 
-        for(size_t j = 0, je = shaderInfo.paramInfo.size(); j < je; ++j)
+        for (size_t j = 0, je = shaderInfo.paramInfo.size(); j < je; ++j)
         {
             const OSLParamInfo& p = shaderInfo.paramInfo[j];
 
@@ -97,7 +97,7 @@ ShadingNodeTemplateBuilder::ShadingNodeTemplateBuilder(const OSLShaderInfo& shad
     }
 
     // Supress hidden attributes.
-    for(size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
+    for (size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& p = shaderInfo.paramInfo[i];
         if (p.widget == "null")
@@ -136,7 +136,7 @@ void ShadingNodeTemplateBuilder::buildPageList(
 {
     // Naive and slow, but the number of pages and parameters should be small,
     // and we do the work only once at startup.
-    for(size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
+    for (size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& p = shaderInfo.paramInfo[i];
         if (p.page.length() != 0)

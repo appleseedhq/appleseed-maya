@@ -108,7 +108,7 @@ void RemapHsvExporter::exportParameterValue(
         std::vector<RemapHsvEntry> remapHue;
         remapHue.reserve(plug.numElements());
 
-        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
+        for (unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
@@ -136,7 +136,7 @@ void RemapHsvExporter::exportParameterValue(
         std::stringstream ssi;
         ssi << "int[] ";
 
-        for(size_t i = 0, e = remapHue.size(); i < e; ++i)
+        for (size_t i = 0, e = remapHue.size(); i < e; ++i)
         {
             ssp << remapHue[i].m_pos    << " ";
             ssv << remapHue[i].m_value  << " ";
@@ -154,7 +154,7 @@ void RemapHsvExporter::exportParameterValue(
         std::vector<RemapHsvEntry> remapSaturation;
         remapSaturation.reserve(plug.numElements());
 
-        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
+        for (unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
@@ -182,7 +182,7 @@ void RemapHsvExporter::exportParameterValue(
         std::stringstream ssi;
         ssi << "int[] ";
 
-        for(size_t i = 0, e = remapSaturation.size(); i < e; ++i)
+        for (size_t i = 0, e = remapSaturation.size(); i < e; ++i)
         {
             ssp << remapSaturation[i].m_pos    << " ";
             ssv << remapSaturation[i].m_value  << " ";
@@ -200,7 +200,7 @@ void RemapHsvExporter::exportParameterValue(
         std::vector<RemapHsvEntry> remapValue;
         remapValue.reserve(plug.numElements());
 
-        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
+        for (unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
@@ -228,7 +228,7 @@ void RemapHsvExporter::exportParameterValue(
         std::stringstream ssi;
         ssi << "int[] ";
 
-        for(size_t i = 0, e = remapValue.size(); i < e; ++i)
+        for (size_t i = 0, e = remapValue.size(); i < e; ++i)
         {
             ssp << remapValue[i].m_pos    << " ";
             ssv << remapValue[i].m_value  << " ";

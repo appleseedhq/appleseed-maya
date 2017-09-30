@@ -108,7 +108,7 @@ void RemapColorExporter::exportParameterValue(
         std::vector<RemapColorEntry> remapRed;
         remapRed.reserve(plug.numElements());
 
-        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
+        for (unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
@@ -136,7 +136,7 @@ void RemapColorExporter::exportParameterValue(
         std::stringstream ssi;
         ssi << "int[] ";
 
-        for(size_t i = 0, e = remapRed.size(); i < e; ++i)
+        for (size_t i = 0, e = remapRed.size(); i < e; ++i)
         {
             ssp << remapRed[i].m_pos    << " ";
             ssv << remapRed[i].m_value  << " ";
@@ -154,7 +154,7 @@ void RemapColorExporter::exportParameterValue(
         std::vector<RemapColorEntry> remapGreen;
         remapGreen.reserve(plug.numElements());
 
-        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
+        for (unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
@@ -182,7 +182,7 @@ void RemapColorExporter::exportParameterValue(
         std::stringstream ssi;
         ssi << "int[] ";
 
-        for(size_t i = 0, e = remapGreen.size(); i < e; ++i)
+        for (size_t i = 0, e = remapGreen.size(); i < e; ++i)
         {
             ssp << remapGreen[i].m_pos    << " ";
             ssv << remapGreen[i].m_value  << " ";
@@ -200,7 +200,7 @@ void RemapColorExporter::exportParameterValue(
         std::vector<RemapColorEntry> remapBlue;
         remapBlue.reserve(plug.numElements());
 
-        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
+        for (unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
@@ -228,7 +228,7 @@ void RemapColorExporter::exportParameterValue(
         std::stringstream ssi;
         ssi << "int[] ";
 
-        for(size_t i = 0, e = remapBlue.size(); i < e; ++i)
+        for (size_t i = 0, e = remapBlue.size(); i < e; ++i)
         {
             ssp << remapBlue[i].m_pos    << " ";
             ssv << remapBlue[i].m_value  << " ";

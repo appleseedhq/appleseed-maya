@@ -148,7 +148,7 @@ bool anyChildPlugConnected(const MPlug& plug, bool input)
     if (!status)
         return false;
 
-    for(int i = 0, e = plug.numChildren(); i < e; ++i)
+    for (int i = 0, e = plug.numChildren(); i < e; ++i)
     {
         MPlug c = plug.child(i, &status);
 

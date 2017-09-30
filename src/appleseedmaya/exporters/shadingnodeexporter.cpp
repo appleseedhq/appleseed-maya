@@ -70,7 +70,7 @@ void ShadingNodeExporter::registerExporters()
     MStringArray nodeNames;
     ShadingNodeRegistry::getShaderNodeNames(nodeNames);
 
-    for(unsigned int i = 0, e = nodeNames.length(); i < e; ++i)
+    for (unsigned int i = 0, e = nodeNames.length(); i < e; ++i)
     {
         NodeExporterFactory::registerShadingNodeExporter(
             nodeNames[i],
@@ -112,7 +112,7 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
     // - Output adaptor shaders are created as needed.
 
     // Create adaptor shaders and add component connections first.
-    for(size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
+    for (size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
 
@@ -247,7 +247,7 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
         shaderParams);
 
     // Create connections.
-    for(size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
+    for (size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
 
@@ -417,7 +417,7 @@ void ShadingNodeExporter::exportShaderParameters(
     MStatus status;
     MFnDependencyNode depNodeFn(m_object);
 
-    for(size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
+    for (size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& paramInfo = shaderInfo.paramInfo[i];
         MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, false, &status);
@@ -503,8 +503,8 @@ void ShadingNodeExporter::exportValue(
         if (AttributeUtils::get(plug, matrixValue))
         {
             ss << "matrix ";
-            for(int i = 0; i < 4; ++i)
-                for(int j = 0; j < 4; ++j)
+            for (int i = 0; i < 4; ++i)
+                for (int j = 0; j < 4; ++j)
                     ss << matrixValue[i][j] << " ";
         }
     }
@@ -575,7 +575,7 @@ void ShadingNodeExporter::exportArrayValue(
         assert(plug.isCompound());
 
         ss << "float[] ";
-        for(unsigned int i = 0, e = plug.numChildren(); i < e; ++i)
+        for (unsigned int i = 0, e = plug.numChildren(); i < e; ++i)
         {
             MPlug childPlug = plug.child(i, &status);
             if (status)
@@ -595,7 +595,7 @@ void ShadingNodeExporter::exportArrayValue(
         assert(plug.isCompound());
 
         ss << "int[] ";
-        for(unsigned int i = 0, e = plug.numChildren(); i < e; ++i)
+        for (unsigned int i = 0, e = plug.numChildren(); i < e; ++i)
         {
             MPlug childPlug = plug.child(i, &status);
             if (status)
@@ -663,7 +663,7 @@ bool ShadingNodeExporter::hasChildrenConnections(
 
     if (plug.numConnectedChildren() != 0)
     {
-        for(unsigned int i = 0, e = plug.numChildren(); i < e; ++i)
+        for (unsigned int i = 0, e = plug.numChildren(); i < e; ++i)
         {
             MStatus status;
             MPlug childPlug = plug.child(i, &status);
@@ -685,7 +685,7 @@ bool ShadingNodeExporter::hasElementConnections(
 
     if (plug.numConnectedElements() != 0)
     {
-        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
+        for (unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MStatus status;
             MPlug elementPlug = plug.elementByPhysicalIndex(i, &status);
@@ -712,8 +712,7 @@ ShadingNodeExporter* ShadingNodeExporter::findExporterForNode(
     const MObject&                      node)
 {
     MFnDependencyNode depNodeFn(node);
-    ShadingNodeExporterMap::const_iterator it;
-    it = exporters.find(depNodeFn.name());
+    auto it= exporters.find(depNodeFn.name());
 
     if (it != exporters.end())
         return it->second;

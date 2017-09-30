@@ -179,7 +179,7 @@ MStatus ShadingNode::initialize()
     g_currentShaderInfo = nullptr;
 
     // todo: lots of refactoring possibilities here...
-    for(size_t i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
+    for (size_t i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
     {
         const OSLParamInfo& p = shaderInfo->paramInfo[i];
 

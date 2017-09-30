@@ -221,7 +221,7 @@ MStringArray SkyDomeLightNode::getFilesToArchive(
 
     if (status == MS::kSuccess && fileName.length() > 0)
     {
-        if(unresolvedName)
+        if (unresolvedName)
             files.append(fileName);
         else
         {

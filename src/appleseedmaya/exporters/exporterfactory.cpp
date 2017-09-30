@@ -138,7 +138,7 @@ DagNodeExporter* NodeExporterFactory::createDagNodeExporter(
     AppleseedSession::SessionMode   sessionMode)
 {
     MFnDagNode dagNodeFn(path);
-    CreateDagExporterMapType::const_iterator it = gDagNodeExporters.find(dagNodeFn.typeName());
+    auto it = gDagNodeExporters.find(dagNodeFn.typeName());
 
     if (it == gDagNodeExporters.end())
         throw NoExporterForNode();
@@ -189,7 +189,7 @@ ShadingNodeExporter* NodeExporterFactory::createShadingNodeExporter(
     asr::ShaderGroup&               shaderGroup)
 {
     MFnDependencyNode depNodeFn(object);
-    CreateShadingNodeExporterMapType::const_iterator it = gShadingNodeExporters.find(depNodeFn.typeName());
+    auto it = gShadingNodeExporters.find(depNodeFn.typeName());
 
     if (it == gShadingNodeExporters.end())
         throw NoExporterForNode();

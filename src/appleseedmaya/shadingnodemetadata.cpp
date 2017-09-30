@@ -231,7 +231,7 @@ OSLShaderInfo::OSLShaderInfo(
     metadata.getValue<unsigned int>("as_maya_type_id", typeId);
 
     paramInfo.reserve(q.get_param_count());
-    for(size_t i = 0, e = q.get_param_count(); i < e; ++i)
+    for (size_t i = 0, e = q.get_param_count(); i < e; ++i)
         paramInfo.push_back(OSLParamInfo(q.get_param_info(i)));
 
     // Apply some defaults.
@@ -243,7 +243,7 @@ OSLShaderInfo::OSLShaderInfo(
 
 const OSLParamInfo* OSLShaderInfo::findParam(const MString& mayaAttrName) const
 {
-    for(size_t i = 0, e = paramInfo.size(); i < e; ++i)
+    for (size_t i = 0, e = paramInfo.size(); i < e; ++i)
     {
         if (paramInfo[i].mayaAttributeName == mayaAttrName)
             return &paramInfo[i];

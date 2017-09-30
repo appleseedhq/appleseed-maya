@@ -127,7 +127,7 @@ void RemapValueExporter::exportParameterValue(
         std::vector<RemapValueEntry> remapValue;
         remapValue.reserve(plug.numElements());
 
-        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
+        for (unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
@@ -155,7 +155,7 @@ void RemapValueExporter::exportParameterValue(
         std::stringstream ssi;
         ssi << "int[] ";
 
-        for(size_t i = 0, e = remapValue.size(); i < e; ++i)
+        for (size_t i = 0, e = remapValue.size(); i < e; ++i)
         {
             ssp << remapValue[i].m_pos << " ";
             ssv << remapValue[i].m_value << " ";
@@ -173,7 +173,7 @@ void RemapValueExporter::exportParameterValue(
         std::vector<RemapColorsEntry> remapColors;
         remapColors.reserve(plug.numElements());
 
-        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
+        for (unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
@@ -201,7 +201,7 @@ void RemapValueExporter::exportParameterValue(
         std::stringstream ssi;
         ssi << "int[] ";
 
-        for(size_t i = 0, e = remapColors.size(); i < e; ++i)
+        for (size_t i = 0, e = remapColors.size(); i < e; ++i)
         {
             ssp << remapColors[i].m_pos << " ";
             ssc << remapColors[i].m_color.r << " " << remapColors[i].m_color.g << " " << remapColors[i].m_color.b << " ";

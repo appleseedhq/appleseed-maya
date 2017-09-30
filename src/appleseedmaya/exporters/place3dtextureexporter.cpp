@@ -81,8 +81,8 @@ void Place3dTextureExporter::exportShaderParameters(
 
     std::stringstream ss;
     ss << "matrix ";
-    for(int i = 0; i < 4; ++i)
-        for(int j = 0; j < 4; ++j)
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
             ss << matrixValue[i][j] << " ";
     shaderParams.insert("inclusiveMatrixInverse", ss.str().c_str());
 

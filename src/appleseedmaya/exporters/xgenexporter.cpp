@@ -129,7 +129,7 @@ void XGenExporter::createEntities(
         descriptionPath.fullPathName().asChar() + paletteName.length() + 2);
 
     asf::Dictionary patches;
-    for(unsigned int i = 0, e = descriptionPath.childCount(); i < e; ++i)
+    for (unsigned int i = 0, e = descriptionPath.childCount(); i < e; ++i)
     {
         MDagPath childDagPath;
         MDagPath::getAPathTo(descriptionPath.child(i), childDagPath);

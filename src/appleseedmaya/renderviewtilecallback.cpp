@@ -74,7 +74,7 @@ namespace
           , m_rendererController(rendererController)
           , m_computation(computation)
         {
-            for(int i = 0; i < MaxHighlightSize; ++i)
+            for (int i = 0; i < MaxHighlightSize; ++i)
             {
                 m_highlightPixels[i].r = 1.0f;
                 m_highlightPixels[i].g = 1.0f;
@@ -127,8 +127,8 @@ namespace
         {
             const asf::CanvasProperties& props = frame->image().properties();
 
-            for( size_t ty = 0; ty < props.m_tile_count_y; ++ty )
-                for( size_t tx = 0; tx < props.m_tile_count_x; ++tx )
+            for ( size_t ty = 0; ty < props.m_tile_count_y; ++ty )
+                for ( size_t tx = 0; tx < props.m_tile_count_x; ++tx )
                     write_tile(frame, tx, ty);
         }
 

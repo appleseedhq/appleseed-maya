@@ -127,7 +127,7 @@ void MandelbrotExporter::exportParameterValue(
         std::vector<MandelbrotColorsEntry> mandelbrotColors;
         mandelbrotColors.reserve(plug.numElements());
 
-        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
+        for (unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
@@ -157,7 +157,7 @@ void MandelbrotExporter::exportParameterValue(
         std::stringstream ssi;
         ssi << "int[] ";
 
-        for(size_t i = 0, e = mandelbrotColors.size(); i < e; ++i)
+        for (size_t i = 0, e = mandelbrotColors.size(); i < e; ++i)
         {
             ssp << mandelbrotColors[i].m_pos << " ";
             ssc << mandelbrotColors[i].m_col.r << " " << mandelbrotColors[i].m_col.g << " " << mandelbrotColors[i].m_col.b << " ";
@@ -175,7 +175,7 @@ void MandelbrotExporter::exportParameterValue(
         std::vector<MandelbrotValuesEntry> mandelbrotValues;
         mandelbrotValues.reserve(plug.numElements());
 
-        for(unsigned int i = 0, e = plug.numElements(); i < e; ++i)
+        for (unsigned int i = 0, e = plug.numElements(); i < e; ++i)
         {
             MPlug entry = plug.elementByPhysicalIndex(i);
             MPlug position = entry.child(0);
@@ -205,7 +205,7 @@ void MandelbrotExporter::exportParameterValue(
         std::stringstream ssi;
         ssi << "int[] ";
 
-        for(size_t i = 0, e = mandelbrotValues.size(); i < e; ++i)
+        for (size_t i = 0, e = mandelbrotValues.size(); i < e; ++i)
         {
             ssp << mandelbrotValues[i].m_pos << " ";
             ssv << mandelbrotValues[i].m_val << " ";

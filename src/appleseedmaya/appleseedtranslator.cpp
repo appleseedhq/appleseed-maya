@@ -89,7 +89,7 @@ MStatus AppleseedTranslator::writer(
 
     // Parse each option=value pair.
     std::vector<std::string> optNameValue;
-    for(size_t i = 0, e = tokens.size(); i < e; ++i)
+    for (size_t i = 0, e = tokens.size(); i < e; ++i)
     {
         optNameValue.clear();
         asf::tokenize(

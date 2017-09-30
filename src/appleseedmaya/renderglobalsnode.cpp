@@ -154,9 +154,7 @@ MStatus RenderGlobalsNode::initialize()
         asf::DictionaryArray metadata = factory->get_input_metadata();
         const asf::Dictionary& items = metadata[0].dictionary("items");
 
-        asf::StringDictionary::const_iterator it(items.strings().begin());
-        asf::StringDictionary::const_iterator e(items.strings().end());
-        for(; it != e; ++it)
+        for (auto it(items.strings().begin()), e(items.strings().end()); it != e; ++it)
         {
             enumAttrFn.addField(it.key(), menuIndex++);
             m_diagnosticShaderKeys.append(MString(it.value()));

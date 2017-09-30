@@ -63,27 +63,27 @@ namespace
 void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
 {
     hash.append(mesh.get_tex_coords_count());
-    for(size_t i = 0, e = mesh.get_tex_coords_count(); i < e; ++i)
+    for (size_t i = 0, e = mesh.get_tex_coords_count(); i < e; ++i)
         hash.append(mesh.get_tex_coords(i));
 
     hash.append(mesh.get_triangle_count());
-    for(size_t i = 0, e = mesh.get_triangle_count(); i < e; ++i)
+    for (size_t i = 0, e = mesh.get_triangle_count(); i < e; ++i)
         hash.append(mesh.get_triangle(i));
 
     hash.append(mesh.get_material_slot_count());
-    for(size_t i = 0, e = mesh.get_material_slot_count(); i < e; ++i)
+    for (size_t i = 0, e = mesh.get_material_slot_count(); i < e; ++i)
         hash.append(mesh.get_material_slot(i));
 
     hash.append(mesh.get_vertex_count());
-    for(size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
+    for (size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
         hash.append(mesh.get_vertex(i));
 
     hash.append(mesh.get_vertex_normal_count());
-    for(size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
+    for (size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
         hash.append(mesh.get_vertex_normal(i));
 
     hash.append(mesh.get_vertex_tangent_count());
-    for(size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
+    for (size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
         hash.append(mesh.get_vertex_tangent(i));
 }
 
@@ -96,15 +96,15 @@ void meshObjectHash(
     staticMeshObjectHash(mesh, hash);
 
     hash.append(mesh.get_motion_segment_count());
-    for(size_t j = 0, je = mesh.get_motion_segment_count(); j < je; ++j)
+    for (size_t j = 0, je = mesh.get_motion_segment_count(); j < je; ++j)
     {
-        for(size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
+        for (size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
             mesh.get_vertex_pose(i, j);
 
-        for(size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
+        for (size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
             mesh.get_vertex_normal_pose(i, j);
 
-        for(size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
+        for (size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
             mesh.get_vertex_tangent_pose(i, j);
     }
 
@@ -181,7 +181,7 @@ void MeshExporter::createExporters(const AppleseedSession::IExporterFactory& exp
         MObjectArray shadingEngines;
         meshFn.getConnectedShaders(instanceNumber, shadingEngines, m_perFaceAssignments);
 
-        for(unsigned int i = 0, e = shadingEngines.length(); i < e; ++i)
+        for (unsigned int i = 0, e = shadingEngines.length(); i < e; ++i)
         {
             exporter_factory.createShadingEngineExporter(shadingEngines[i]);
             depNodeFn.setObject(shadingEngines[i]);
@@ -357,7 +357,7 @@ void MeshExporter::flushEntities()
             asf::Dictionary fileNames;
             MString key;
 
-            for(size_t i = 0, e = m_fileNames.size(); i < e; ++i)
+            for (size_t i = 0, e = m_fileNames.size(); i < e; ++i)
             {
                 key.set(static_cast<double>(i));
                 fileNames.insert(key.asChar(), m_fileNames[i].c_str());
@@ -473,9 +473,7 @@ void MeshExporter::createMaterialSlots()
     if (!m_frontMaterialMappings.empty())
     {
         m_mesh->reserve_material_slots(m_frontMaterialMappings.size());
-        asf::StringDictionary::const_iterator it(m_frontMaterialMappings.begin());
-        asf::StringDictionary::const_iterator e(m_frontMaterialMappings.end());
-        for(;it != e; ++it)
+        for (auto it(m_frontMaterialMappings.begin()), e(m_frontMaterialMappings.end()); it != e; ++it)
             m_mesh->push_material_slot(it.key());
     }
     else
@@ -496,7 +494,7 @@ void MeshExporter::fillTopology(MObject mesh)
     MPointArray trianglePoints;
 
     MItMeshPolygon faceIt(mesh);
-    for(; !faceIt.isDone(); faceIt.next())
+    for (;!faceIt.isDone(); faceIt.next())
     {
         // Get the material index for this face.
         int materialIndex = 0;
@@ -508,7 +506,7 @@ void MeshExporter::fillTopology(MObject mesh)
         faceNormalIndices.clear();
 
         faceIt.getVertices(faceVertexIndices);
-        for(unsigned int i = 0, e = faceVertexIndices.length(); i < e; ++i)
+        for (unsigned int i = 0, e = faceVertexIndices.length(); i < e; ++i)
         {
             if (m_exportUVs)
             {
@@ -527,14 +525,14 @@ void MeshExporter::fillTopology(MObject mesh)
         // Match the triangle indices to the face indices.
         int numTris;
         faceIt.numTriangles(numTris);
-        for(int i = 0; i < numTris; ++i)
+        for (int i = 0; i < numTris; ++i)
         {
             trianglePoints.clear();
             triangleVertexIndices.clear();
             faceIt.getTriangle(i, trianglePoints, triangleVertexIndices);
 
             int triangleVertexOffset[3] = {-1, -1, -1};
-            for(unsigned int j = 0, je = faceVertexIndices.length(); j < je; ++j)
+            for (unsigned int j = 0, je = faceVertexIndices.length(); j < je; ++j)
             {
                 if (faceVertexIndices[j] == triangleVertexIndices[0])
                     triangleVertexOffset[0] = j;
@@ -571,7 +569,7 @@ void MeshExporter::fillTopology(MObject mesh)
 
     // Copy triangles to the mesh.
     m_mesh->reserve_triangles(triangles.size());
-    for(size_t i = 0, e = triangles.size(); i < e; ++i)
+    for (size_t i = 0, e = triangles.size(); i < e; ++i)
         m_mesh->push_triangle(triangles[i]);
 }
 
@@ -584,7 +582,7 @@ void MeshExporter::exportGeometry(MObject mesh)
     m_mesh->reserve_vertices(meshFn.numVertices());
     {
         const float* p = meshFn.getRawPoints(&status);
-        for(size_t i = 0, e = meshFn.numVertices(); i < e; ++i, p += 3)
+        for (size_t i = 0, e = meshFn.numVertices(); i < e; ++i, p += 3)
             m_mesh->push_vertex(asr::GVector3(p[0], p[1], p[2]));
     }
 
@@ -593,7 +591,7 @@ void MeshExporter::exportGeometry(MObject mesh)
         m_mesh->reserve_tex_coords(meshFn.numUVs());
         MFloatArray u, v;
         status = meshFn.getUVs(u, v);
-        for(int i = 0, e = meshFn.numUVs(); i < e; ++i)
+        for (int i = 0, e = meshFn.numUVs(); i < e; ++i)
             m_mesh->push_tex_coords(asr::GVector2(u[i], v[i]));
     }
 
@@ -603,7 +601,7 @@ void MeshExporter::exportGeometry(MObject mesh)
         m_mesh->reserve_vertex_normals(meshFn.numNormals());
         const float* p = meshFn.getRawNormals(&status);
 
-        for(int i = 0, e = meshFn.numNormals(); i < e; ++i, p += 3)
+        for (int i = 0, e = meshFn.numNormals(); i < e; ++i, p += 3)
         {
             asr::GVector3 n(p[0], p[1], p[2]);
             m_mesh->push_vertex_normal(asf::safe_normalize(n, Y));
@@ -628,7 +626,7 @@ void MeshExporter::exportMeshKey(MObject mesh)
     // Vertices.
     {
         const float* p = meshFn.getRawPoints(&status);
-        for(size_t i = 0, e = meshFn.numVertices(); i < e; ++i, p += 3)
+        for (size_t i = 0, e = meshFn.numVertices(); i < e; ++i, p += 3)
         {
             m_mesh->set_vertex_pose(
                 i,
@@ -643,7 +641,7 @@ void MeshExporter::exportMeshKey(MObject mesh)
         m_mesh->reserve_vertex_normals(meshFn.numNormals());
         const float* p = meshFn.getRawNormals(&status);
 
-        for(size_t i = 0, e = meshFn.numNormals(); i < e; ++i, p += 3)
+        for (size_t i = 0, e = meshFn.numNormals(); i < e; ++i, p += 3)
         {
             asr::GVector3 n(p[0], p[1], p[2]);
             m_mesh->set_vertex_normal_pose(

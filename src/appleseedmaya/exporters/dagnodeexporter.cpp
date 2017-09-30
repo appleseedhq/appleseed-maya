@@ -124,9 +124,9 @@ asf::Matrix4d DagNodeExporter::convert(const MMatrix& m) const
 {
     asf::Matrix4d result;
 
-    for(int i = 0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i)
     {
-        for(int j = 0; j < 4; ++j)
+        for (int j = 0; j < 4; ++j)
             result(i, j) = m[j][i];
     }
 
@@ -138,7 +138,7 @@ void DagNodeExporter::addVisibilityAttributesToParams(asr::ParamArray& params)
     asf::Dictionary visFlags;
 
     bool flag = true;
-    if(AttributeUtils::get(node(), "asVisibilityCamera", flag))
+    if (AttributeUtils::get(node(), "asVisibilityCamera", flag))
         visFlags.insert("camera", flag);
 
     flag = true;

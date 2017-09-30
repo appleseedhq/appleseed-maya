@@ -214,8 +214,7 @@ namespace
             {
                 MFnDependencyNode depNodeFn(object);
 
-                ShadingEngineExporterMap::iterator it =
-                    m_self.m_shadingEngineExporters.find(depNodeFn.name());
+                auto it = m_self.m_shadingEngineExporters.find(depNodeFn.name());
 
                 if (it != m_self.m_shadingEngineExporters.end())
                     return it->second;
@@ -236,8 +235,7 @@ namespace
             {
                 MFnDependencyNode depNodeFn(object);
 
-                ShadingNetworkExporterMap::iterator it =
-                    m_self.m_shadingNetworkExporters[context].find(depNodeFn.name());
+                auto it = m_self.m_shadingNetworkExporters[context].find(depNodeFn.name());
 
                 if (it != m_self.m_shadingNetworkExporters[context].end())
                     return it->second;
@@ -258,8 +256,7 @@ namespace
             {
                 MFnDependencyNode depNodeFn(object);
 
-                AlphaMapExporterMap::iterator it =
-                    m_self.m_alphaMapExporters.find(depNodeFn.name());
+                auto it = m_self.m_alphaMapExporters.find(depNodeFn.name());
 
                 if (it != m_self.m_alphaMapExporters.end())
                     return it->second;
@@ -556,8 +553,8 @@ namespace
                 it->second->createEntities(m_options, motionBlurSampleTimes);
 
             RENDERER_LOG_DEBUG("Exporting motion steps");
-            std::set<float>::const_iterator frameIt(motionBlurSampleTimes.m_allTimes.begin());
-            std::set<float>::const_iterator frameEnd(motionBlurSampleTimes.m_allTimes.end());
+            auto frameIt(motionBlurSampleTimes.m_allTimes.begin());
+            auto frameEnd(motionBlurSampleTimes.m_allTimes.end());
             for (; frameIt != frameEnd; ++frameIt)
             {
                 const float now = static_cast<float>(MAnimControl::currentTime().value());

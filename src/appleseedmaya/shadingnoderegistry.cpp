@@ -105,7 +105,7 @@ namespace
         std::cout << "Params:\n";
         std::cout << "-------\n\n";
 
-        for(size_t i = 0, e = s.paramInfo.size(); i < e; ++i)
+        for (size_t i = 0, e = s.paramInfo.size(); i < e; ++i)
             logParam(s.paramInfo[i]);
 
         std::cout << "------------------------\n";
@@ -245,8 +245,7 @@ namespace
         {
             if (bfs::exists(shaderDir) && bfs::is_directory(shaderDir))
             {
-                bfs::directory_iterator it(shaderDir), e;
-                for(; it != e; ++it)
+                for (bfs::directory_iterator it(shaderDir), e; it != e; ++it)
                 {
                     const bfs::file_status shaderStatus = it->status();
                     if (shaderStatus.type() == bfs::regular_file)
@@ -302,7 +301,7 @@ MStatus registerShadingNodes(MObject plugin)
             std::string(&pathSep, 1),
             paths);
 
-        for(size_t i = 0, e = paths.size(); i < e; ++i)
+        for (size_t i = 0, e = paths.size(); i < e; ++i)
             shaderPaths.push_back(bfs::path(paths[i]));
     }
 
@@ -310,7 +309,7 @@ MStatus registerShadingNodes(MObject plugin)
         asr::ShaderQueryFactory::create();
 
     // Iterate in reverse order to allow overriding of shaders.
-    for(int i = static_cast<int>(shaderPaths.size()) - 1; i >= 0; --i)
+    for (int i = static_cast<int>(shaderPaths.size()) - 1; i >= 0; --i)
     {
         RENDERER_LOG_INFO(
             "Looking for OSL shaders in path %s.",
@@ -332,7 +331,7 @@ MStatus unregisterShadingNodes(MObject plugin)
 
     RENDERER_LOG_INFO("Unregistering shading nodes.");
 
-    for(OSLShaderInfoMap::const_iterator it = gShadersInfo.begin(), e = gShadersInfo.end(); it != e; ++it)
+    for (auto it = gShadersInfo.begin(), e = gShadersInfo.end(); it != e; ++it)
     {
         const OSLShaderInfo& shaderInfo(it->second);
 
@@ -349,13 +348,13 @@ MStatus unregisterShadingNodes(MObject plugin)
 
 void getShaderNodeNames(MStringArray& nodeNames)
 {
-    for(OSLShaderInfoMap::const_iterator it = gShadersInfo.begin(), e = gShadersInfo.end(); it != e; ++it)
+    for (auto it = gShadersInfo.begin(), e = gShadersInfo.end(); it != e; ++it)
         nodeNames.append(it->first);
 }
 
 const OSLShaderInfo* getShaderInfo(const MString& nodeName)
 {
-    OSLShaderInfoMap::const_iterator it = gShadersInfo.find(nodeName);
+    auto it = gShadersInfo.find(nodeName);
 
     if (it == gShadersInfo.end())
         return nullptr;
