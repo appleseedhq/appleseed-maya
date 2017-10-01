@@ -139,29 +139,30 @@ void DagNodeExporter::addVisibilityAttributesToParams(asr::ParamArray& params)
 
     bool flag = true;
     if (AttributeUtils::get(node(), "asVisibilityCamera", flag))
-        visFlags.insert("camera", flag);
+        if (!flag) visFlags.insert("camera", false);
 
     flag = true;
     if (AttributeUtils::get(node(), "asVisibilityLight", flag))
-        visFlags.insert("light", flag);
+        if (!flag) visFlags.insert("light", false);
 
     flag = true;
     if (AttributeUtils::get(node(), "asVisibilityShadow", flag))
-        visFlags.insert("shadow", flag);
+        if (!flag) visFlags.insert("shadow", false);
 
     flag = true;
     if (AttributeUtils::get(node(), "asVisibilityDiffuse", flag))
-        visFlags.insert("diffuse", flag);
+        if (!flag) visFlags.insert("diffuse", false);
 
     flag = true;
     if (AttributeUtils::get(node(), "asVisibilitySpecular", flag))
-        visFlags.insert("specular", flag);
+        if (!flag) visFlags.insert("specular", false);
 
     flag = true;
     if (AttributeUtils::get(node(), "asVisibilityGlossy", flag))
-        visFlags.insert("glossy", flag);
+        if (!flag) visFlags.insert("glossy", false);
 
-    params.insert("visibility", visFlags);
+    if (!visFlags.empty())
+        params.insert("visibility", visFlags);
 }
 
 bool DagNodeExporter::isObjectRenderable(const MDagPath& path)
@@ -208,7 +209,7 @@ bool DagNodeExporter::areObjectAndParentsRenderable(const MDagPath& path)
     return true;
 }
 
-// This comes from Alembic's Maya AbcExport plugin.
+// This code comes from Alembic's Maya AbcExport plugin.
 namespace
 {
     struct NodesToCheckStruct
@@ -229,8 +230,8 @@ bool DagNodeExporter::isAnimated(MObject object, bool checkParent)
         MItDependencyGraph::kPlugLevel,
         &stat);
 
-    if (stat!= MS::kSuccess)
-        MGlobal::displayError("Unable to create DG iterator ");
+    if (stat != MS::kSuccess)
+        RENDERER_LOG_ERROR("Unable to create DG iterator");
 
     // MAnimUtil::isAnimated(node) will search the history of the node
     // for any animation curve nodes. It will return true for those nodes
@@ -277,23 +278,23 @@ bool DagNodeExporter::isAnimated(MObject object, bool checkParent)
                 return true;
         }
 
-        // skip shading nodes
-        if (!node.hasFn(MFn::kShadingEngine))
+        if (node.hasFn(MFn::kShadingEngine))
+        {
+            // Skip shading nodes and don't traverse the rest of their subgraph.
+            iter.prune();
+        }
+        else
         {
             MPlug plug = iter.thisPlug();
             MFnAttribute attr(plug.attribute(), &stat);
             bool checkNodeParent = false;
+
             if (stat == MS::kSuccess && attr.isWorldSpace())
                 checkNodeParent = true;
 
             nodeStruct.node = node;
             nodeStruct.checkParent = checkParent || checkNodeParent;
             nodesToCheckAnimCurve.push_back(nodeStruct);
-        }
-        else
-        {
-            // and don't traverse the rest of their subgraph
-            iter.prune();
         }
     }
 

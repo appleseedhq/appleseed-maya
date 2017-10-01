@@ -524,6 +524,15 @@ namespace
             }
         }
 
+        bool autoInstancingEnabled() const
+        {
+            // When doing interactive rendering, we disable auto-instancing.
+            if (m_sessionMode == AppleseedSession::ProgressiveRenderSession)
+                return false;
+
+            return true;
+        }
+
         void exportScene(const AppleseedSession::MotionBlurSampleTimes& motionBlurSampleTimes)
         {
             createExporters();
@@ -585,8 +594,7 @@ namespace
                 }
             }
 
-            // Handle auto-instancing.
-            if (m_sessionMode != AppleseedSession::ProgressiveRenderSession)
+            if (autoInstancingEnabled())
             {
                 RENDERER_LOG_DEBUG("Converting objects to instances");
                 convertObjectsToInstances();

@@ -85,8 +85,8 @@ MStatus PhysicalSkyLightNode::initialize()
     m_displaySize = numAttrFn.create("size", "sz", MFnNumericData::kFloat, 1.0f, &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create physical sky light attribute");
 
-    numAttrFn.setMin(0.01f);
-    numAttrFn.setMax(100.0f);
+    numAttrFn.setMin(0.01);
+    numAttrFn.setMax(100.0);
     status = addAttribute(m_displaySize);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to add physical sky light attribute");
 
