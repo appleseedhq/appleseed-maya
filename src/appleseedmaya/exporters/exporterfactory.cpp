@@ -124,12 +124,6 @@ void NodeExporterFactory::registerDagNodeExporter(
     assert(createFn != nullptr);
 
     gDagNodeExporters[mayaTypeName] = createFn;
-
-    /*
-    RENDERER_LOG_DEBUG(
-        "NodeExporterFactory: registered dag node exporter for node %s",
-        mayaTypeName.asChar());
-    */
 }
 
 DagNodeExporter* NodeExporterFactory::createDagNodeExporter(
@@ -176,12 +170,6 @@ void NodeExporterFactory::registerShadingNodeExporter(
     assert(createFn != nullptr);
 
     gShadingNodeExporters[mayaTypeName] = createFn;
-
-    /*
-    RENDERER_LOG_DEBUG(
-        "NodeExporterFactory: registered shading node exporter for node %s",
-        mayaTypeName.asChar());
-    */
 }
 
 ShadingNodeExporter* NodeExporterFactory::createShadingNodeExporter(
