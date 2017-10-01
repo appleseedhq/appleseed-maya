@@ -90,6 +90,7 @@ namespace
             // Insert some config params needed by the final renderer.
             asr::Configuration* cfg = m_project->configurations().get_by_name("final");
             asr::ParamArray* cfg_params = &cfg->get_parameters();
+            cfg_params->insert("spectrum_mode", "rgb");
             cfg_params->insert("sample_renderer", "generic");
             cfg_params->insert("sample_generator", "generic");
             cfg_params->insert("tile_renderer", "generic");
@@ -97,8 +98,8 @@ namespace
             cfg_params->insert("lighting_engine", "pt");
             cfg_params->insert("pixel_renderer", "uniform");
             cfg_params->insert("sampling_mode", "qmc");
-            cfg_params->insert_path("uniform_pixel_renderer.samples", "4");
             cfg_params->insert("rendering_threads", NumThreads);
+            cfg_params->insert_path("uniform_pixel_renderer.samples", "4");
 
             // While testing.
             cfg_params->insert_path("shading_engine.override_shading.mode", "uv");
