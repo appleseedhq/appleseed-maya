@@ -1149,11 +1149,11 @@ MStatus batchRender(Options options)
 
     if (sceneName.length() != 0)
     {
-        // Filename of the scene without the __xxxx tmp file suffix
+        // Filename of the scene without the __xxxx file suffix
         // and without the .ma or .mb extension.
         sceneName = MString(
             sceneName.asChar(),
-            sceneName.length() - strlen("__xxxx") -  strlen(".mx"));
+            sceneName.length() - strlen("__xxxx") - strlen(".mx"));
     }
     else
         sceneName.set("untitled");
