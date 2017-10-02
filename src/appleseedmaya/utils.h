@@ -98,7 +98,7 @@ class AppleseedEntityPtr
             m_ptr->release();
 
         m_releaseObj = false;
-        m_ptr = 0;
+        m_ptr = nullptr;
     }
 
     void reset(foundation::auto_release_ptr<T> ptr)
