@@ -157,7 +157,7 @@ namespace
 
             void operator()()
             {
-                if (m_computation->isInterruptRequested())
+                if (m_computation && m_computation->isInterruptRequested())
                 {
                     m_rendererController.set_status(RendererController::AbortRendering);
                     return;
@@ -224,7 +224,7 @@ namespace
 
             void operator()()
             {
-                if (m_computation->isInterruptRequested())
+                if (m_computation && m_computation->isInterruptRequested())
                 {
                     m_rendererController.set_status(RendererController::AbortRendering);
                     return;
