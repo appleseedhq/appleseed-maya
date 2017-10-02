@@ -105,7 +105,7 @@ void ShadingNodeExporter::createEntities(ShadingNodeExporterMap& exporters)
 
     // The fact that we need to specify shaders in depth first
     // order and that Maya allows component connections but OSL
-    // does not make things a bit messy...
+    // does not, make things a bit messy...
 
     // - We need to create any input adaptor shader first.
     // - Then we need to create the shader itself.

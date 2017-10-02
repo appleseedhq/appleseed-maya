@@ -56,7 +56,7 @@
 #include "appleseedmaya/skydomelightnode.h"
 
 // Constants.
-const char* gDrawRegistrantId = "appleseedMaya";
+static const char* gDrawRegistrantId = "appleseedMaya";
 
 APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
 {
