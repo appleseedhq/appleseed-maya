@@ -111,6 +111,9 @@ void XGenExporter::createEntities(
     params.insert("scene_file", sceneFile.asChar());
     params.insert("scene_name", sceneName.asChar());
 
+    // Create the assembly.
+    m_assembly.reset(asr::AssemblyFactory().create(assemblyName.asChar(), params));
+
     // Get Description and Palette from the dag paths.
     // The current dag path points to the desciption.
     // We get the parent to get the palette name.
@@ -128,7 +131,6 @@ void XGenExporter::createEntities(
     MString descriptionName(
         descriptionPath.fullPathName().asChar() + paletteName.length() + 2);
 
-    asf::Dictionary patches;
     for (unsigned int i = 0, e = descriptionPath.childCount(); i < e; ++i)
     {
         MDagPath childDagPath;
@@ -144,14 +146,25 @@ void XGenExporter::createEntities(
         // Check that the description matches.
         if (asf::ends_with(patchName.asChar(), descriptionName.asChar()))
         {
-            patches.insert(
-                asf::to_string(i).c_str(),
-                patchName.asChar());
+            // Create an assembly for the patch.
+            params.clear();
+            // todo: fill params here.
+
+            AppleseedEntityPtr<renderer::Assembly> patchAssembly(
+                asr::AssemblyFactory().create(patchName.asChar(), params));
+
+            // Create an assembly instance for the patch.
+            const MString patchInstanceName = patchName + "_instance";
+            AppleseedEntityPtr<renderer::AssemblyInstance> patchAssemblyInstance(
+                asr::AssemblyInstanceFactory().create(
+                    patchInstanceName.asChar(),
+                    params,
+                    patchName.asChar()));
+
+            m_assembly->assemblies().insert(patchAssembly.release());
+            m_assembly->assembly_instances().insert(patchAssemblyInstance.release());
         }
     }
-
-    params.insert("patches", patches);
-    m_assembly.reset(asr::AssemblyFactory().create(assemblyName.asChar(), params));
 }
 
 void XGenExporter::exportTransformMotionStep(float time)

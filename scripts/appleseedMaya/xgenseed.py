@@ -29,41 +29,107 @@
 # XGen imports.
 import xgenm as xg
 
+# Maya imports.
+import maya.cmds as mc
+
 # appleseedMaya imports.
-from logger import logger
 import xgenseedutil
 import xgenseedui
 
 
-def appleseedExport(self, objs, filename, lod, materialNS):
-    pass
+def appleseedExportFrame(self, frame, objFilename):
+    '''Export a single appleseed archive frame.'''
 
-# Export Init callback. Must fill in some arrays on self
+    mc.file(
+        objFilename + ".appleseedz",
+        force=True,
+        options="activeCamera=perspShape;",
+        typ="appleseed",
+        es=True,
+        pr=True,
+        de=False
+    )
+
+    self.log("appleseedExport " + objFilename + ".appleseedz")
+
+
+def appleseedExport(self, objs, filename, lod, materialNS):
+    '''Export appleseed archives'''
+
+    filename = self.nestFilenameInDirectory(filename, "appleseed")
+
+    lastProgress = self.progress
+    self.splitProgress(len(objs))
+
+    self.log("appleseedExport " + filename + lod)
+
+    # Force units to centimeters when exporting.
+    prevUnits = mc.currentUnit(query=True, linear=True, fullName=True)
+    mc.currentUnit(linear="centimeter")
+
+    prevTime = mc.currentTime(query=True)
+
+    for obj in objs:
+        objFilename = filename + "_" + obj.replace("|", "_") + lod
+        mc.select(obj, r=True)
+
+        filenames = []
+        # Choose to export single file or a sequence.
+        frameToken = ""
+        if self.startFrame != self.endFrame:
+            frameToken =".${FRAME}"
+
+            dummyFrameFile = open(objFilename + frameToken + ".appleseed", "wt")
+            dummyFrameFile.write("STARTFRAME=%4.4d\nENDFRAME=%4.4d\n" % (int(self.startFrame), int(self.endFrame)))
+            dummyFrameFile.close()
+
+            for curFrame in range(int(self.startFrame), int(self.endFrame)+ 1):
+                appleseedExportFrame(self, curFrame, objFilename + ".%4.4d" % int(curFrame))
+        else:
+            appleseedExportFrame(self, self.startFrame, objFilename)
+
+        if self.curFiles != None:
+            materials = self.getSGsFromObj(obj)
+            if materials and len(materials) > 0:
+                appleseedFilename = objFilename + frameToken + ".appleseedz"
+                appleseedExportAppendFile(self, appleseedFilename, materialNS+materials[0], obj, lod)
+        self.incProgress()
+
+    mc.currentUnit(linear=prevUnits)
+    mc.currentTime(prevTime)
+
+    self.progress = lastProgress
+
+
+def appleseedExportAppendFile(self, appleseedFilename, material, obj, lod):
+    lodList = self.tweakLodAppend(self.curFiles, lod)
+    for l in lodList:
+        self.addArchiveFile("appleseed", appleseedFilename, material, "", l, 3)
 
 
 def xgseedArchiveExportInit(selfid):
-    logger.debug("xgenseed archive export init.")
+    '''Export Init callback. Must fill in some arrays on self.'''
 
     self = xgenseedutil.castSelf(selfid)
     self.batch_plugins.append("appleseedMaya")
 
-# Export Info callback. Must fill in some arrays on self
-
 
 def xgseedArchiveExportInfo(selfid):
-    logger.debug("xgenseed archive export info.")
+    '''Export Info callback. Must fill in some arrays on self.'''
 
     self = xgenseedutil.castSelf(selfid)
     self.archiveDirs.append("appleseed")
     self.archiveLODBeforeExt.append(".${FRAME}.appleseed")
     self.archiveLODBeforeExt.append(".appleseed")
-
-# Main Export callback
-# Arguments are passed in self.invokeArgs
+    self.archiveLODBeforeExt.append(".${FRAME}.appleseedz")
+    self.archiveLODBeforeExt.append(".appleseedz")
 
 
 def xgseedArchiveExport(selfid):
-    logger.debug("xgenseed archive export")
+    '''
+    Main archive export callback.
+    Arguments are passed in self.invokeArgs
+    '''
 
     self = xgenseedutil.castSelf(selfid)
     appleseedExport(

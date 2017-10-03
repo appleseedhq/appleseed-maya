@@ -156,7 +156,7 @@ def register():
             evalDeferred("showHelp -absolute \\\"http://appleseedhq.net\\\"");
         }
         '''
-             )
+    )
 
     pm.renderer(
         "appleseed",

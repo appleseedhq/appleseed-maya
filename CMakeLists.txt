@@ -145,46 +145,12 @@ endif ()
 
 
 #--------------------------------------------------------------------------------------------------
-# Include paths.
+# Common include paths.
 #--------------------------------------------------------------------------------------------------
 
 include_directories (
-    ${MAYA_INCLUDE_DIRS}
     ${APPLESEED_INCLUDE_DIRS}
-    ${IMATH_INCLUDE_DIRS}
-    ${IMATH_INCLUDE_DIRS}/OpenEXR/
-    ${OPENIMAGEIO_INCLUDE_DIRS}
-    ${OSL_INCLUDE_DIRS}
-    ${PYTHON_INCLUDE_DIRS}
 )
-
-
-#--------------------------------------------------------------------------------------------------
-# Preprocessor definitions.
-#--------------------------------------------------------------------------------------------------
-
-add_definitions (-D_BOOL)
-add_definitions (-DREQUIRE_IOSTREAM)
-
-if (XGEN_FOUND)
-    add_definitions (-DAPPLESEED_MAYA_WITH_XGEN)
-endif ()
-
-if (WITH_PYTHON_BRIDGE)
-    add_definitions (-DAPPLESEED_MAYA_WITH_PYTHON_BRIDGE)
-endif ()
-
-if (MSVC)
-    add_definitions (-D_CRT_SECURE_NO_WARNINGS)
-    add_definitions (-D_SCL_SECURE_NO_WARNINGS)
-    add_definitions (-DWINDOWS_LEAN_AND_MEAN)
-    add_definitions (-DNOMINMAX)
-    add_definitions (-DNT_PLUGIN)
-    add_definitions (-DBits64_)
-    add_definitions (-DARCH64)
-elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    add_definitions (-DLINUX)
-endif ()
 
 
 #--------------------------------------------------------------------------------------------------
