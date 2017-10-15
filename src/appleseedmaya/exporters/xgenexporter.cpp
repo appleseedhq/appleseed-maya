@@ -38,10 +38,16 @@
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
+#include <maya/MAnimControl.h>
 #include <maya/MFileObject.h>
 #include <maya/MFnDagNode.h>
 #include <maya/MGlobal.h>
+#include <maya/MTime.h>
 #include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <map>
+#include <string>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -81,6 +87,55 @@ void XGenExporter::createExporters(const AppleseedSession::IExporterFactory& exp
     // todo: implement this.
 }
 
+namespace
+{
+
+float getUnitConversionFactor()
+{
+    static std::map<std::string, float> unit_conversions;
+    if (unit_conversions.empty())
+    {
+        unit_conversions["in"] = 2.54f;
+        unit_conversions["ft"] = 30.48f;
+        unit_conversions["yd"] = 91.44f;
+        unit_conversions["mi"] = 160934.4f;
+        unit_conversions["mm"] = 0.1f;
+        unit_conversions["km"] = 100000.0f;
+        unit_conversions["m"] =  100.0f;
+        unit_conversions["dm"] = 10.0;
+    }
+
+    MString currentMayaUnit;
+    MGlobal::executeCommand("currentUnit -q -linear", currentMayaUnit);
+
+    auto it = unit_conversions.find(currentMayaUnit.asChar());
+    if(it != unit_conversions.end())
+        return it->second;
+
+    return 1.0f;
+}
+
+float getFps()
+{
+    float fps = 24.0f;
+    const MTime::Unit unit = MTime::uiUnit();
+
+    if (unit != MTime::kInvalid)
+    {
+        const MTime time(1.0, MTime::kSeconds);
+        fps = static_cast<float>(time.as(unit));
+    }
+
+    if (fps <= 0.f )
+    {
+        fps = 24.0f;
+    }
+
+    return fps;
+}
+
+}
+
 void XGenExporter::createEntities(
     const AppleseedSession::Options&                options,
     const AppleseedSession::MotionBlurSampleTimes&  motionBlurSampleTimes)
@@ -107,11 +162,7 @@ void XGenExporter::createEntities(
     // Filename of the scene without the extension.
     const MString sceneName(sceneFile.asChar(), sceneFile.length() - 3);
 
-    params.insert("scene_path", scenePath.asChar());
-    params.insert("scene_file", sceneFile.asChar());
-    params.insert("scene_name", sceneName.asChar());
-
-    // Create the assembly.
+    // Create an assembly.
     m_assembly.reset(asr::AssemblyFactory().create(assemblyName.asChar(), params));
 
     // Get Description and Palette from the dag paths.
@@ -131,6 +182,18 @@ void XGenExporter::createEntities(
     MString descriptionName(
         descriptionPath.fullPathName().asChar() + paletteName.length() + 2);
 
+    // Build the XGen arguments string.
+    std::string xgen_args;
+    xgen_args  = "-debug 1 -warning 1 -stats 1 ";
+    xgen_args += asf::format(" -frame {0}", MAnimControl::currentTime().value());
+    xgen_args += asf::format(" -fps {0}", getFps());
+    xgen_args += asf::format(" -file {0}{1}__{2}.xgen", scenePath.asChar(), sceneName.asChar(), paletteName.asChar());
+    xgen_args += asf::format(" -palette {0}", paletteName.asChar());
+    xgen_args += asf::format(" -geom {0}{1}__{2}.abc", scenePath.asChar(), sceneName.asChar(), paletteName.asChar());
+    xgen_args += " -patch {0}";
+    xgen_args += asf::format(" -description {0}", descriptionName.asChar());
+    xgen_args += asf::format(" -world {0};0;0;0;0;{0};0;0;0;0;{0};0;0;0;0;1", getUnitConversionFactor());
+
     for (unsigned int i = 0, e = descriptionPath.childCount(); i < e; ++i)
     {
         MDagPath childDagPath;
@@ -148,17 +211,23 @@ void XGenExporter::createEntities(
         {
             // Create an assembly for the patch.
             params.clear();
-            // todo: fill params here.
+            params.insert("plugin_name", "xgenseed");
+
+            // Remove the description name from the patch name.
+            patchName = patchName.substring(0, patchName.length() - descriptionName.length() - 2);
+
+            params.insert_path(
+                "parameters.xgen_args", asf::format(xgen_args, patchName.asChar()).c_str());
 
             AppleseedEntityPtr<renderer::Assembly> patchAssembly(
-                asr::AssemblyFactory().create(patchName.asChar(), params));
+                asr::PluginAssemblyFactory().create(patchName.asChar(), params));
 
             // Create an assembly instance for the patch.
             const MString patchInstanceName = patchName + "_instance";
             AppleseedEntityPtr<renderer::AssemblyInstance> patchAssemblyInstance(
                 asr::AssemblyInstanceFactory().create(
                     patchInstanceName.asChar(),
-                    params,
+                    asr::ParamArray(),
                     patchName.asChar()));
 
             m_assembly->assemblies().insert(patchAssembly.release());

@@ -150,7 +150,7 @@ MeshExporter::~MeshExporter()
 
 void MeshExporter::createExporters(const AppleseedSession::IExporterFactory& exporter_factory)
 {
-    const int instanceNumber = dagPath().isInstanced() ? dagPath().instanceNumber() : 0;
+    const unsigned int instanceNumber = dagPath().isInstanced() ? dagPath().instanceNumber() : 0;
 
     MStatus status;
     MFnDependencyNode depNodeFn(node(), &status);

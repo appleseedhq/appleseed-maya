@@ -50,8 +50,16 @@ def appleseedExportFrame(self, frame, objFilename):
         de=False
     )
 
-    self.log("appleseedExport " + objFilename + ".appleseedz")
+    self.log("XGen appleseed export, filename = " + objFilename + ".appleseedz")
 
+    # Save the bounding box of the archive.
+    bbox = mc.exactWorldBoundingBox(ignoreInvisible=True)
+    with open(objFilename + ".bounds", "w") as f:
+        f.write("bbox = {0}, {1}, {2}, {3}, {4}, {5}".format(
+            bbox[0], bbox[1], bbox[2], bbox[3], bbox[4], bbox[5]
+        ))
+
+    self.log("XGen appleseed export bbox, filename = " + objFilename + ".bounds")
 
 def appleseedExport(self, objs, filename, lod, materialNS):
     '''Export appleseed archives'''

@@ -44,6 +44,7 @@ source_group ("" FILES
 add_library (xgenseed SHARED
     ${xgenseed_sources}
 )
+set_target_properties (xgenseed PROPERTIES PREFIX "")
 
 
 #--------------------------------------------------------------------------------------------------
@@ -52,6 +53,8 @@ add_library (xgenseed SHARED
 
 include_directories (
     ${XGEN_INCLUDE_DIRS}
+    ${IMATH_INCLUDE_DIRS}
+    ${IMATH_INCLUDE_DIRS}/OpenEXR
 )
 
 
