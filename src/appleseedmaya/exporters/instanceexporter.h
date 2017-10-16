@@ -58,8 +58,11 @@ class InstanceExporter
 
     void flushEntities() override;
 
+    // Bounds.
+    foundation::AABB3d boundingBox() const override;
+
   private:
-    MString m_masterShapeName;
+    const ShapeExporter& m_masterShape;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H

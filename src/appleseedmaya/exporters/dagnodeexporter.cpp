@@ -39,6 +39,7 @@
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MAnimUtil.h>
+#include <maya/MBoundingBox.h>
 #include <maya/MFnDagNode.h>
 #include <maya/MFnExpression.h>
 #include <maya/MGlobal.h>
@@ -108,6 +109,21 @@ void DagNodeExporter::exportTransformMotionStep(float time)
 
 void DagNodeExporter::exportShapeMotionStep(float time)
 {
+}
+
+asf::AABB3d DagNodeExporter::boundingBox() const
+{
+    return asf::AABB3d();
+}
+
+asf::AABB3d DagNodeExporter::objectSpaceBoundingBox(const MDagPath& path)
+{
+    MFnDagNode dagNodeFn(path);
+    MBoundingBox b = dagNodeFn.boundingBox();
+
+    return asf::AABB3d(
+        asf::Vector3d(b.min().x, b.min().y, b.min().z),
+        asf::Vector3d(b.max().x, b.max().y, b.max().z));
 }
 
 MString DagNodeExporter::appleseedName() const

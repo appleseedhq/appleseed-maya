@@ -75,6 +75,12 @@ void ShapeExporter::instanceCreated() const
     m_numInstances++;
 }
 
+asf::AABB3d ShapeExporter::boundingBox() const
+{
+    asf::AABB3d bbox = objectSpaceBoundingBox(dagPath());
+    return m_transformSequence.to_parent(bbox);
+}
+
 void ShapeExporter::exportTransformMotionStep(float time)
 {
     asf::Matrix4d m = convert(dagPath().inclusiveMatrix());

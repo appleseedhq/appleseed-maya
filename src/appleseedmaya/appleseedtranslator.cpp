@@ -133,6 +133,9 @@ MStatus AppleseedTranslator::writer(
     options.m_width = renderSettings.width;
     options.m_height = renderSettings.height;
 
+    // Write the bounding box of the project scene.
+    options.m_writeBoundingBox = true;
+
     // Export the scene.
 
     // Check if we are exporting a packed project.

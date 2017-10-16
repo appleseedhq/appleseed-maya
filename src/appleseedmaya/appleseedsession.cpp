@@ -88,6 +88,7 @@
 
 // Standard headers.
 #include <array>
+#include <fstream>
 #include <memory>
 #include <thread>
 #include <vector>
@@ -112,6 +113,7 @@ Options::Options()
   , m_firstFrame(1)
   , m_lastFrame(1)
   , m_frameStep(1)
+  , m_writeBoundingBox(false)
 {
 }
 
@@ -870,6 +872,20 @@ namespace
                 m_renderThread.join();
         }
 
+        asf::AABB3d computeSceneBoundingBox() const
+        {
+            asf::AABB3d bbox;
+
+            // Compute the bounding box of all the objects exported.
+            for (auto it = m_dagExporters.begin(), e = m_dagExporters.end(); it != e; ++it)
+                bbox += it->second->boundingBox();
+
+            // Apply the scene scale factor.
+            const asr::AssemblyInstance* assemblyInstance =
+                m_project->get_scene()->assembly_instances().get_by_name("assembly_inst");
+            return assemblyInstance->transform_sequence().to_parent(bbox);
+        }
+
         bool writeProject() const
         {
             return writeProject(m_fileName.asChar());
@@ -877,6 +893,20 @@ namespace
 
         bool writeProject(const char* filename) const
         {
+            if (m_options.m_writeBoundingBox)
+            {
+                // Save the bounding box of the scene.
+                asf::AABB3d bbox = computeSceneBoundingBox();
+
+                bfs::path path(filename);
+                path.replace_extension(".bounds");
+
+                std::ofstream ofs(path.string());
+                ofs << "bounds = ["
+                    << bbox.min.x << ", " << bbox.min.y << ", " << bbox.min.z << ", "
+                    << bbox.max.x << ", " << bbox.max.y << ", " << bbox.max.z << "]";
+            }
+
             const bool packed = asf::ends_with(filename, ".appleseedz");
             return asr::ProjectFileWriter::write(
                 *m_project,

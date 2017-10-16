@@ -91,6 +91,7 @@ struct Options
     int         m_firstFrame;
     int         m_lastFrame;
     int         m_frameStep;
+    bool        m_writeBoundingBox;
 };
 
 struct MotionBlurSampleTimes

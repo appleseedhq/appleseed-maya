@@ -41,6 +41,7 @@
 
 // appleseed.foundation headers.
 #include "foundation/core/concepts/noncopyable.h"
+#include "foundation/math/aabb.h"
 #include "foundation/math/matrix.h"
 
 // Maya headers.
@@ -97,6 +98,9 @@ class DagNodeExporter
     // Flush entities to the renderer.
     virtual void flushEntities() = 0;
 
+    // Bounds.
+    virtual foundation::AABB3d boundingBox() const;
+
   protected:
     // Constructor.
     DagNodeExporter(
@@ -130,6 +134,10 @@ class DagNodeExporter
 
     // Return true if an object is animated.
     static bool isAnimated(MObject object, bool checkParent = false);
+
+    // Return the object space bounding box.
+    static foundation::AABB3d objectSpaceBoundingBox(const MDagPath& path);
+
 
   private:
     MDagPath                      m_path;

@@ -61,6 +61,9 @@ class ShapeExporter
     // Called when this object is instanced.
     void instanceCreated() const;
 
+    // Bounds.
+    foundation::AABB3d boundingBox() const override;
+
   protected:
     ShapeExporter(
       const MDagPath&               path,

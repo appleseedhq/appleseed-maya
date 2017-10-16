@@ -159,3 +159,10 @@ void AreaLightExporter::flushEntities()
     mainAssembly().objects().insert(m_lightMesh.releaseAs<asr::Object>());
     mainAssembly().object_instances().insert(m_objectInstance.release());
 }
+
+asf::AABB3d AreaLightExporter::boundingBox() const
+{
+    asf::AABB3d bbox = objectSpaceBoundingBox(dagPath());
+    const asf::Transformd xform(convert(dagPath().inclusiveMatrix()));
+    return xform.to_parent(bbox);
+}

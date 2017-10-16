@@ -67,6 +67,9 @@ class AreaLightExporter
 
     void flushEntities() override;
 
+    // Bounds.
+    foundation::AABB3d boundingBox() const override;
+
   private:
     AreaLightExporter(
       const MDagPath&                                   path,

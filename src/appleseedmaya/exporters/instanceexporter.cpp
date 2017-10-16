@@ -42,10 +42,10 @@ InstanceExporter::InstanceExporter(
     asr::Project&                   project,
     const asr::TransformSequence&   transformSequence)
   : ShapeExporter(path, project, sessionMode)
-  , m_masterShapeName(master.appleseedName())
+  , m_masterShape(master)
 {
     m_transformSequence = transformSequence;
-    master.instanceCreated();
+    m_masterShape.instanceCreated();
 }
 
 void InstanceExporter::createEntities(
@@ -58,7 +58,7 @@ void InstanceExporter::createEntities(
 
 void InstanceExporter::flushEntities()
 {
-    const MString assemblyName = m_masterShapeName + MString("_assembly");
+    const MString assemblyName = m_masterShape.appleseedName() + MString("_assembly");
     const MString assemblyInstanceName = appleseedName() + MString("_instance");
 
     asr::ParamArray params;
@@ -75,4 +75,10 @@ void InstanceExporter::flushEntities()
 
     assemblyInstance->transform_sequence() = m_transformSequence;
     mainAssembly().assembly_instances().insert(assemblyInstance);
+}
+
+asf::AABB3d InstanceExporter::boundingBox() const
+{
+    asf::AABB3d bbox = objectSpaceBoundingBox(m_masterShape.dagPath());
+    return m_transformSequence.to_parent(bbox);
 }
