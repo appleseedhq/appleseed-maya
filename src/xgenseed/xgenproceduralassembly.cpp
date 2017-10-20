@@ -56,10 +56,14 @@ class XGenCallbacks
   : public ProceduralCallbacks
 {
   public:
-    explicit XGenCallbacks(asr::Assembly& assembly)
+        XGenCallbacks(
+        const asr::Project& project,
+        asr::Assembly&      assembly)
       : m_assembly(assembly)
       , m_params(assembly.get_parameters())
     {
+        add_xgen_params(project);
+        compute_transform_sequence(assembly);
     }
 
     void flush(const char* in_geom, PrimitiveCache* in_cache) override
@@ -173,9 +177,7 @@ class XGenCallbacks
                 return get_string("irRenderCamRatio");
 
             case RenderCamXform:
-            {
                 return get_string("irRenderCamXform");
-            }
 
             case RenderMethod:
                 return get_string("RenderMethod");
@@ -216,6 +218,18 @@ class XGenCallbacks
     void getTransform(float in_time, mat44& out_mat) const override
     {
         RENDERER_LOG_DEBUG("XGenCallbacks: getTransform called");
+
+        asf::Transformd scratch;
+        const asf::Transformd& transform = m_transform_sequence.evaluate(in_time, scratch);
+        const asf::Matrix4f matrix = transform.get_parent_to_local();
+
+        out_mat =
+        {
+            matrix(0, 0), matrix(0, 1), matrix(0, 2), matrix(0, 3),
+            matrix(1, 0), matrix(1, 1), matrix(1, 2), matrix(1, 3),
+            matrix(2, 0), matrix(2, 1), matrix(2, 2), matrix(2, 3),
+            matrix(3, 0), matrix(3, 1), matrix(3, 2), matrix(3, 3)
+        };
     }
 
     bool getArchiveBoundingBox(const char* in_filename, bbox& out_bbox) const override
@@ -226,7 +240,8 @@ class XGenCallbacks
 
   private:
     asr::Assembly&          m_assembly;
-    const asr::ParamArray&  m_params;
+    asr::ParamArray         m_params;
+    asr::TransformSequence  m_transform_sequence;
 
     const asr::ParamArray& get_parameters() const
     {
@@ -246,45 +261,97 @@ class XGenCallbacks
     {
         return m_params.get_optional(key, default_value);
     }
-};
 
-
-class XGenFaceAssembly
-  : public asr::ProceduralAssembly
-{
-  public:
-    XGenFaceAssembly(
-        const char*             name,
-        const asr::ParamArray   params,
-        PatchRenderer*          patch_renderer,
-        unsigned int            face_id)
-      : asr::ProceduralAssembly(name, params)
-      , m_patch_renderer(patch_renderer)
+    void add_xgen_params(const asr::Project& project)
     {
+        // Fetch the camera.
+        const asr::Frame* frame = project.get_frame();
+        const asr::Camera *camera = project.get_scene()->cameras().get_by_name(
+            frame->get_active_camera_name());
+
+        bool camera_is_persp = false;
+        if (strcmp(camera->get_model(), "pinhole_camera") == 0)
+            camera_is_persp = true;
+        else if (strcmp(camera->get_model(), "thinlens_camera") == 0)
+            camera_is_persp = true;
+
+        // Get the camera transform.
+        const asf::Transformd& transform =
+            camera->transform_sequence().get_earliest_transform();
+
+        if (!m_params.strings().exist("irRenderCam"))
+        {
+            asf::Vector3d camera_pos_or_dir;
+
+            if (camera_is_persp)
+                camera_pos_or_dir = transform.get_local_to_parent().extract_translation();
+            else
+                camera_pos_or_dir = transform.vector_to_parent(asf::Vector3d(0.0, 0.0, 1.0));
+
+            m_params.insert_path(
+                "irRenderCam",
+                asf::format(
+                    "{0}, {1}, {2}, {3}",
+                    camera_is_persp ? "false" : "true",
+                    camera_pos_or_dir.x,
+                    camera_pos_or_dir.y,
+                    camera_pos_or_dir.z));
+        }
+
+        if (!m_params.strings().exist("irRenderCamFOV"))
+        {
+            if (camera_is_persp)
+            {
+                m_params.insert_path("irRenderCamFOV", "54.0");
+            }
+            else
+                m_params.insert_path("irRenderCamFOV", "90.0");
+        }
+
+        if (!m_params.strings().exist("irRenderCamRatio"))
+        {
+            m_params.insert_path("irRenderCamRatio", "1.0");
+        }
+
+        if (!m_params.strings().exist("irRenderCamXform"))
+        {
+            const asf::Matrix4d& m = transform.get_parent_to_local();
+            std::stringstream ss;
+            ss << m(0, 0) << "," << m(0, 1) << "," << m(0, 2) << "," << m(0, 3) << ",";
+            ss << m(1, 0) << "," << m(1, 1) << "," << m(1, 2) << "," << m(1, 3) << ",";
+            ss << m(2, 0) << "," << m(2, 1) << "," << m(2, 2) << "," << m(2, 3) << ",";
+            ss << m(3, 0) << "," << m(3, 1) << "," << m(3, 2) << "," << m(3, 3);
+            m_params.insert_path("irRenderCamXform", ss.str().c_str());
+        }
     }
 
-    void release() override
+    void compute_transform_sequence(const asr::Assembly& assembly)
     {
-        delete this;
-    }
+        const asr::Assembly* parent_assembly =
+            static_cast<const asr::Assembly*>(assembly.get_parent());
 
-    bool expand_contents(
-        const asr::Project&     project,
-        const asr::Assembly*    parent,
-        asf::IAbortSwitch*      abort_switch = 0) override
-    {
-        m_xgen_callbacks.reset(new XGenCallbacks(*this));
-        std::unique_ptr<FaceRenderer> face_renderer(FaceRenderer::init(
-            m_patch_renderer,
-            m_face_id,
-            m_xgen_callbacks.get()));
-        return face_renderer->render();
-    }
+        const asr::AssemblyInstance* assembly_instance = nullptr;
+        for (const auto& i : parent_assembly->assembly_instances())
+        {
+            if (strcmp(assembly.get_name(), i.get_assembly_name()) == 0)
+            {
+                assembly_instance = &i;
+                break;
+            }
+        }
 
-  private:
-    std::unique_ptr<XGenCallbacks>  m_xgen_callbacks;
-    PatchRenderer*                  m_patch_renderer;
-    unsigned int                    m_face_id;
+        assert(assembly_instance != nullptr);
+
+        // Compose all the transformation sequences.
+        while (assembly_instance)
+        {
+            m_transform_sequence =
+                assembly_instance->transform_sequence() * m_transform_sequence;
+
+            assembly_instance = static_cast<const asr::AssemblyInstance*>(
+                assembly_instance->get_parent());
+        }
+    }
 };
 
 
@@ -305,7 +372,7 @@ class XGenPatchAssembly
     bool expand_contents(
         const asr::Project&     project,
         const asr::Assembly*    parent,
-        asf::IAbortSwitch*      abort_switch = 0) override
+        asf::IAbortSwitch*      abort_switch = nullptr) override
     {
         std::string xgen_args;
 
@@ -319,68 +386,9 @@ class XGenPatchAssembly
             return false;
         }
 
-        // Compute and save some parameters needed by XGen.
-        {
-            // Fetch the camera.
-            const asr::Frame* frame = project.get_frame();
-            const asr::Camera *camera = project.get_scene()->cameras().get_by_name(
-                frame->get_active_camera_name());
-
-            const asf::Transformd& transform =
-                camera->transform_sequence().get_earliest_transform();
-
-            bool camera_is_persp = false;
-            if (strcmp(camera->get_model(), "pinhole_camera") == 0)
-                camera_is_persp = true;
-            else if (strcmp(camera->get_model(), "thinlens_camera") == 0)
-                camera_is_persp = true;
-
-            asr::ParamArray& params = get_parameters();
-
-            if (!params.strings().exist("irRenderCam"))
-            {
-                asf::Vector3d camera_pos_or_dir;
-
-                if (camera_is_persp)
-                    camera_pos_or_dir = transform.get_local_to_parent().extract_translation();
-                else
-                    camera_pos_or_dir = transform.vector_to_parent(asf::Vector3d(0.0, 0.0, 1.0));
-
-                get_parameters().insert_path(
-                    "irRenderCam",
-                    asf::format(
-                        "{0}, {1}, {2}, {3}",
-                        camera_is_persp ? "false" : "true",
-                        camera_pos_or_dir.x,
-                        camera_pos_or_dir.y,
-                        camera_pos_or_dir.z));
-            }
-
-            if (!params.strings().exist("irRenderCamFOV"))
-            {
-                if (camera_is_persp)
-                    params.insert_path("irRenderCamFOV", "54.0");
-                else
-                    params.insert_path("irRenderCamFOV", "90.0");
-            }
-
-            if (!params.strings().exist("irRenderCamRatio"))
-                params.insert_path("irRenderCamRatio", "1.0");
-
-            if (!params.strings().exist("irRenderCamXform"))
-            {
-                const asf::Matrix4d& m = transform.get_parent_to_local();
-                std::stringstream ss;
-                ss << m(0, 0) << "," << m(0, 1) << "," << m(0, 2) << "," << m(0, 3) << ",";
-                ss << m(1, 0) << "," << m(1, 1) << "," << m(1, 2) << "," << m(1, 3) << ",";
-                ss << m(2, 0) << "," << m(2, 1) << "," << m(2, 2) << "," << m(2, 3) << ",";
-                ss << m(3, 0) << "," << m(3, 1) << "," << m(3, 2) << "," << m(3, 3);
-                params.insert_path("irRenderCamXform", ss.str().c_str());
-            }
-        }
-
-        m_xgen_callbacks.reset(new XGenCallbacks(*this));
-        std::unique_ptr<PatchRenderer> patch_renderer(PatchRenderer::init(m_xgen_callbacks.get(), xgen_args.c_str()));
+        XGenCallbacks xgen_callbacks(project, *this);
+        std::unique_ptr<PatchRenderer> patch_renderer(
+            PatchRenderer::init(&xgen_callbacks, xgen_args.c_str()));
 
         if (!patch_renderer)
         {
@@ -390,36 +398,31 @@ class XGenPatchAssembly
 
         bbox bbox;
         unsigned int face_id;
+        bool success = true;
 
         while (patch_renderer->nextFace(bbox, face_id))
         {
             if (isEmpty(bbox))
                 continue;
 
-            std::string face_assembly_name = asf::format("xgen_face_assembly_{0}", face_id);
-            asf::auto_release_ptr<asr::Assembly> face_assembly(
-                new XGenFaceAssembly(
-                    face_assembly_name.c_str(),
-                    get_parameters(),
-                    patch_renderer.get(),
-                    face_id));
+            std::unique_ptr<FaceRenderer> face_renderer(FaceRenderer::init(
+                patch_renderer.get(),
+                face_id,
+                &xgen_callbacks));
 
-            std::string face_assembly_instance_name = asf::format("xgen_face_assembly_{0}_instance", face_id);
-            asf::auto_release_ptr<asr::AssemblyInstance> face_assembly_instance(
-                asr::AssemblyInstanceFactory().create(
-                    face_assembly_instance_name.c_str(),
-                    asr::ParamArray(),
-                    face_assembly_name.c_str()));
-
-            assemblies().insert(face_assembly);
-            assembly_instances().insert(face_assembly_instance);
+            if (face_renderer)
+            {
+                success = success && face_renderer->render();
+            }
+            else
+            {
+                RENDERER_LOG_ERROR("Error creating XGen face renderer");
+                success = false;
+            }
         }
 
-        return true;
+        return success;
     }
-
-  private:
-    std::unique_ptr<XGenCallbacks>  m_xgen_callbacks;
 };
 
 
