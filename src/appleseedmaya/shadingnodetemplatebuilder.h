@@ -29,49 +29,15 @@
 #ifndef APPLESEED_MAYA_SHADINGNODETEMPLATEBUILDER_H
 #define APPLESEED_MAYA_SHADINGNODETEMPLATEBUILDER_H
 
-// appleseed-maya headers.
-#include "appleseedmaya/utils.h"
-
-// appleseed.foundation headers.
-#include "foundation/core/concepts/noncopyable.h"
-
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MStatus.h>
-#include <maya/MString.h>
 #include "appleseedmaya/_endmayaheaders.h"
-
-// Standard headers.
-#include <vector>
 
 // Forward declarations.
 class OSLShaderInfo;
 
-//
-// ShadingNodeTemplateBuilder.
-//
-//  Builds a Mel template for a shading node from shaders metadata.
-//
-
-class ShadingNodeTemplateBuilder
-  : public foundation::NonCopyable
-{
-  public:
-    // Constructor.
-    explicit ShadingNodeTemplateBuilder(const OSLShaderInfo& shaderInfo);
-
-    // Register a Mel template with Maya.
-    MStatus registerAETemplate() const;
-
-    // For debugging.
-    void logAETemplate() const;
-
-  private:
-    void buildPageList(
-        const OSLShaderInfo&    shaderInfo,
-        std::vector<MString>&   pages) const;
-
-    MString m_melTemplate;
-};
+// Build and execute an attribute editor template procedure for an OSL shader.
+MStatus buildAndRegisterAETemplate(const OSLShaderInfo& shaderInfo);
 
 #endif  // !APPLESEED_MAYA_SHADINGNODETEMPLATEBUILDER_H

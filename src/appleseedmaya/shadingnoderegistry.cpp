@@ -192,9 +192,7 @@ namespace
                     return false;
                 }
 
-                // Build and register an AE template for the node.
-                ShadingNodeTemplateBuilder aeBuilder(shaderInfo);
-                aeBuilder.registerAETemplate();
+                buildAndRegisterAETemplate(shaderInfo);
             }
 
             return true;
