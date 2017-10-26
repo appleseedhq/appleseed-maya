@@ -68,8 +68,11 @@ void EnvLightExporter::createEntities(
     const AppleseedSession::Options&                options,
     const AppleseedSession::MotionBlurSampleTimes&  motionBlurSampleTimes)
 {
-    asr::EnvironmentShaderFactoryRegistrar factoryRegistrar;
-    const asr::IEnvironmentShaderFactory* factory = factoryRegistrar.lookup("edf_environment_shader");
+    const asr::EnvironmentShaderFactoryRegistrar& factoryRegistrar =
+        project().get_factory_registrar<asr::EnvironmentShader>();
+
+    const asr::IEnvironmentShaderFactory* factory =
+        factoryRegistrar.lookup("edf_environment_shader");
 
     MString envShaderName = appleseedName() + "_shader";
     m_envShader = factory->create(

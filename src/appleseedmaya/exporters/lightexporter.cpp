@@ -91,7 +91,9 @@ void LightExporter::createEntities(
     const AppleseedSession::Options&                options,
     const AppleseedSession::MotionBlurSampleTimes&  motionBlurSampleTimes)
 {
-    asr::LightFactoryRegistrar lightFactories;
+    const asr::LightFactoryRegistrar& lightFactories =
+        project().get_factory_registrar<asr::Light>();
+
     const asr::ILightFactory* lightFactory = nullptr;
     asr::ParamArray lightParams;
 

@@ -87,7 +87,9 @@ void CameraExporter::createEntities(
 {
     MFnCamera camera(dagPath());
 
-    asr::CameraFactoryRegistrar cameraFactories;
+    const asr::CameraFactoryRegistrar& cameraFactories =
+        project().get_factory_registrar<asr::Camera>();
+
     const asr::ICameraFactory* cameraFactory = nullptr;
     asr::ParamArray cameraParams;
 

@@ -219,7 +219,10 @@ void XGenExporter::createEntities(
             params.insert_path(
                 "parameters.xgen_args", asf::format(xgen_args, patchName.asChar()).c_str());
 
-            const auto factory = asr::AssemblyFactoryRegistrar().lookup("xgen_patch_assembly");
+            const asr::AssemblyFactoryRegistrar& assemblyFactories =
+                project().get_factory_registrar<asr::Assembly>();
+
+            const auto factory = assemblyFactories.lookup("xgen_patch_assembly");
             assert(factory);
 
             AppleseedEntityPtr<renderer::Assembly> patchAssembly(
