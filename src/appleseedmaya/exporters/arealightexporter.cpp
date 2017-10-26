@@ -110,7 +110,7 @@ void AreaLightExporter::createEntities(
     params.insert("height", 2.0f);
 
     if (sessionMode() == AppleseedSession::ExportSession)
-        m_lightMesh.reset(asr::MeshObjectFactory::create(objectName.asChar(), params));
+        m_lightMesh.reset(asr::MeshObjectFactory().create(objectName.asChar(), params));
     else
         m_lightMesh.reset(asr::create_primitive_mesh(objectName.asChar(), params));
 
@@ -156,7 +156,7 @@ void AreaLightExporter::flushEntities()
 
     mainAssembly().materials().insert(m_material.release());
     mainAssembly().materials().insert(m_backMaterial.release());
-    mainAssembly().objects().insert(m_lightMesh.releaseAs<asr::Object>());
+    mainAssembly().objects().insert(m_lightMesh.release());
     mainAssembly().object_instances().insert(m_objectInstance.release());
 }
 

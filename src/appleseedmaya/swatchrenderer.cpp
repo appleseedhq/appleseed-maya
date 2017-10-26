@@ -30,6 +30,7 @@
 #include "swatchrenderer.h"
 
 // appleseed-maya headers.
+#include "appleseedmaya/appleseedsession.h"
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/utils.h"
 
@@ -63,6 +64,9 @@
 #include <maya/MImage.h>
 #include <maya/MPlug.h>
 #include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <cstring>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -181,6 +185,11 @@ namespace
         {
             m_project.reset();
             delete m_renderer;
+        }
+
+        asr::Project& getProject()
+        {
+            return *m_project;
         }
 
         void createMaterialSceneGeometry()
@@ -392,21 +401,19 @@ bool SwatchRenderer::doIteration()
     // Allocate the pixels.
     image().create(resolution(), resolution());
 
-    if (asf::ends_with(classification.asChar(), ":swatch/AppleseedRenderSwatch:texture"))
-    {
-        // Texture swatch.
-        g_textureSwatchProject.removeAllShaderGroups();
-
-        // todo: export node() here...
-        g_textureSwatchProject.render(resolution(), image());
-    }
-    else
+    if (strstr(classification.asChar(), "rendernode/appleseed/surface") != nullptr)
     {
         // Material swatch.
         g_materialSwatchProject.removeAllShaderGroups();
-
-        // todo: export node() here...
+        AppleseedSession::exportMaterialSwatch(g_materialSwatchProject.getProject(), node());
         g_materialSwatchProject.render(resolution(), image());
+    }
+    else // if (strstr(classification.asChar(), "rendernode/appleseed/texture") != nullptr)
+    {
+        // Texture swatch.
+        g_textureSwatchProject.removeAllShaderGroups();
+        AppleseedSession::exportTextureSwatch(g_textureSwatchProject.getProject(), node());
+        g_textureSwatchProject.render(resolution(), image());
     }
 
     return true;

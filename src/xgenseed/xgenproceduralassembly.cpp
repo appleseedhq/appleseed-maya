@@ -36,6 +36,9 @@
 #include "foundation/math/matrix.h"
 #include "foundation/utility/string.h"
 
+// appleseed.main headers.
+#include "main/dllvisibility.h"
+
 // XGen headers.
 #include <XGen/XgRenderAPI.h>
 #include <XGen/XgRenderAPIUtils.h>
@@ -51,6 +54,12 @@ namespace asr = renderer;
 using namespace XGenRenderAPI;
 using namespace XGenRenderAPI::Utils;
 
+namespace
+{
+
+const char* Model = "xgen_patch_assembly";
+
+}
 
 class XGenCallbacks
   : public ProceduralCallbacks
@@ -356,17 +365,22 @@ class XGenCallbacks
 
 
 class XGenPatchAssembly
-  : public asr::PluginAssembly
+  : public asr::ProceduralAssembly
 {
   public:
     XGenPatchAssembly(const char* name, const asr::ParamArray params)
-      : asr::PluginAssembly(name, params)
+      : asr::ProceduralAssembly(name, params)
     {
     }
 
     void release() override
     {
         delete this;
+    }
+
+    const char* get_model() const override
+    {
+        return Model;
     }
 
     bool expand_contents(
@@ -427,16 +441,19 @@ class XGenPatchAssembly
 
 
 class XGenPatchAssemblyFactory
-  : public asr::PluginAssemblyFactory
+  : public asr::IAssemblyFactory
 {
   public:
-    // Delete this instance.
     void release() override
     {
         delete this;
     }
 
-    // Create a new assembly.
+    const char* get_model() const override
+    {
+        return Model;
+    }
+
     asf::auto_release_ptr<asr::Assembly> create(
         const char*             name,
         const asr::ParamArray&  params = asr::ParamArray()) const override
@@ -447,13 +464,11 @@ class XGenPatchAssemblyFactory
 };
 
 
+// Procedural assembly plugin entry point.
 extern "C"
 {
-
-// Procedural assembly plugin entry point.
-asr::IAssemblyFactory* create_assembly_factory()
-{
-    return new XGenPatchAssemblyFactory();
-}
-
+    APPLESEED_DLL_EXPORT asr::IAssemblyFactory* appleseed_create_assembly_factory()
+    {
+        return new XGenPatchAssemblyFactory();
+    }
 }

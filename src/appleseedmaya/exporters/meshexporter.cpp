@@ -266,7 +266,7 @@ void MeshExporter::createEntities(
     if (sessionMode() != AppleseedSession::ExportSession)
     {
         MString objectName = appleseedName();
-        m_mesh = asr::MeshObjectFactory::create(objectName.asChar(), m_meshParams);
+        m_mesh.reset(asr::MeshObjectFactory().create(objectName.asChar(), m_meshParams));
         createMaterialSlots();
     }
 }
@@ -283,7 +283,8 @@ void MeshExporter::exportShapeMotionStep(float time)
     if (sessionMode() == AppleseedSession::ExportSession)
     {
         MString objectName = appleseedName();
-        m_mesh = asr::MeshObjectFactory::create(objectName.asChar(), m_meshParams);
+        m_mesh.reset(asr::MeshObjectFactory().create(objectName.asChar(), m_meshParams));
+
         createMaterialSlots();
         fillTopology(finalMesh.m_mesh);
         exportGeometry(finalMesh.m_mesh);

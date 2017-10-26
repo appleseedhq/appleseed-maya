@@ -49,6 +49,9 @@
 // Standard headers.
 #include <set>
 
+// Forward declarations.
+namespace renderer { class Project; }
+
 namespace AppleseedSession
 {
 
@@ -151,6 +154,10 @@ MStatus render(Options options);
 
 // Export and batch render the current scene.
 MStatus batchRender(Options options);
+
+// Swatch rendering.
+void exportMaterialSwatch(renderer::Project& project, const MObject& node);
+void exportTextureSwatch(renderer::Project& project, const MObject& node);
 
 // Stop rendering and free resources.
 void endSession();

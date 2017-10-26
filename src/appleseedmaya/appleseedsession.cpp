@@ -1266,6 +1266,16 @@ MStatus batchRender(Options options)
     return MS::kSuccess;
 }
 
+void exportMaterialSwatch(renderer::Project& project, const MObject& node)
+{
+    // TODO: implement this...
+}
+
+void exportTextureSwatch(renderer::Project& project, const MObject& node)
+{
+    // TODO: implement this...
+}
+
 void endSession()
 {
     if (g_globalSession.get())

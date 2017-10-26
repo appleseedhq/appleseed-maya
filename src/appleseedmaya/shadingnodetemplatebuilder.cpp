@@ -57,10 +57,10 @@ namespace asf = foundation;
 namespace
 {
 
-class Node
+class LayoutTree
 {
   public:
-    explicit Node(const OSLShaderInfo& shaderInfo)
+    explicit LayoutTree(const OSLShaderInfo& shaderInfo)
     {
         for (size_t i = 0, e = shaderInfo.paramInfo.size(); i < e; ++i)
         {
@@ -70,13 +70,13 @@ class Node
         }
     }
 
-    Node(const std::string& name, const OSLParamInfo* paramInfo = nullptr)
+    LayoutTree(const std::string& name, const OSLParamInfo* paramInfo = nullptr)
       : m_name(name)
       , m_paramInfo(paramInfo)
     {
     }
 
-    ~Node()
+    ~LayoutTree()
     {
         for (auto i : m_childrenNodes)
             delete i;
@@ -120,9 +120,9 @@ class Node
         aeTemplate = ss.str().c_str();
     }
 
-    std::vector<Node*>  m_childrenNodes;
-    std::string         m_name;
-    const OSLParamInfo* m_paramInfo;
+    std::vector<LayoutTree*>    m_childrenNodes;
+    std::string                 m_name;
+    const OSLParamInfo*         m_paramInfo;
 
 private:
     void addAttribute(const char* page, const char* name, const OSLParamInfo* paramInfo)
@@ -138,11 +138,11 @@ private:
         if (f == l)
         {
             // Add a new attribute.
-            m_childrenNodes.push_back(new Node(name, paramInfo));
+            m_childrenNodes.push_back(new LayoutTree(name, paramInfo));
             return;
         }
 
-        Node* childNode = nullptr;
+        LayoutTree* childNode = nullptr;
         for (const auto node : m_childrenNodes)
         {
             if (*f == node->m_name)
@@ -155,7 +155,7 @@ private:
         if (childNode == nullptr)
         {
             // Create a new page.
-            m_childrenNodes.push_back(new Node(*f));
+            m_childrenNodes.push_back(new LayoutTree(*f));
             childNode = m_childrenNodes.back();
         }
 
@@ -230,7 +230,7 @@ private:
 MStatus buildAndRegisterAETemplate(const OSLShaderInfo& shaderInfo)
 {
     // Build a tree of layouts and attributes.
-    Node attributesTree(shaderInfo);
+    LayoutTree attributesTree(shaderInfo);
 
     // Generate AETemplate procedure.
     MString aeTemplate;

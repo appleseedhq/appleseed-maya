@@ -76,7 +76,7 @@ class AreaLightExporter
       renderer::Project&                                project,
       AppleseedSession::SessionMode                     sessionMode);
 
-    AppleseedEntityPtr<renderer::MeshObject>        m_lightMesh;
+    AppleseedEntityPtr<renderer::Object>            m_lightMesh;
     AppleseedEntityPtr<renderer::ObjectInstance>    m_objectInstance;
     AppleseedEntityPtr<renderer::Material>          m_material;
     AppleseedEntityPtr<renderer::Material>          m_backMaterial;

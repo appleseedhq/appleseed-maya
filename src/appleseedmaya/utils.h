@@ -108,6 +108,14 @@ class AppleseedEntityPtr
         m_ptr = ptr.release();
     }
 
+    template <typename U>
+    void reset(foundation::auto_release_ptr<U> ptr)
+    {
+        reset();
+        m_releaseObj = true;
+        m_ptr = static_cast<T*>(ptr.release());
+    }
+
     AppleseedEntityPtr& operator=(foundation::auto_release_ptr<T> ptr)
     {
         reset(ptr);

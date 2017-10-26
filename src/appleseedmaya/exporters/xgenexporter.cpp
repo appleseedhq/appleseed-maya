@@ -219,8 +219,11 @@ void XGenExporter::createEntities(
             params.insert_path(
                 "parameters.xgen_args", asf::format(xgen_args, patchName.asChar()).c_str());
 
+            const auto factory = asr::AssemblyFactoryRegistrar().lookup("xgen_patch_assembly");
+            assert(factory);
+
             AppleseedEntityPtr<renderer::Assembly> patchAssembly(
-                asr::PluginAssemblyFactory().create(patchName.asChar(), params));
+                factory->create(patchName.asChar(), params));
 
             // Create an assembly instance for the patch.
             const MString patchInstanceName = patchName + "_instance";
