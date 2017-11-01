@@ -383,7 +383,7 @@ class XGenPatchAssembly
         return Model;
     }
 
-    bool expand_contents(
+    bool do_expand_contents(
         const asr::Project&     project,
         const asr::Assembly*    parent,
         asf::IAbortSwitch*      abort_switch = nullptr) override
