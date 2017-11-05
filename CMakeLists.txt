@@ -74,6 +74,7 @@ set (appleseed_maya_version_patch    0)
 #--------------------------------------------------------------------------------------------------
 
 option (USE_STATIC_BOOST    "Use static Boost libraries" ON)
+option (WITH_XGEN           "Build XGen support"         OFF)
 option (WITH_PYTHON_BRIDGE  "Build Python bridge"        OFF)
 
 
@@ -83,9 +84,6 @@ option (WITH_PYTHON_BRIDGE  "Build Python bridge"        OFF)
 
 if (UNIX)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
-    # Remove when C++11 support improves.
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
 endif ()
 
 
@@ -137,7 +135,9 @@ find_package (OSL REQUIRED)
 find_package (Maya REQUIRED)
 message ("Maya API version = ${MAYA_API_VERSION}")
 
-find_package (XGen)
+if (WITH_XGEN)
+    find_package (XGen REQUIRED)
+endif ()
 
 if (WITH_PYTHON_BRIDGE)
     find_package (PythonLibs REQUIRED)
@@ -159,6 +159,6 @@ include_directories (
 
 add_subdirectory (src/appleseedmaya)
 
-if (XGEN_FOUND)
+if (WITH_XGEN)
     add_subdirectory (src/xgenseed)
 endif ()

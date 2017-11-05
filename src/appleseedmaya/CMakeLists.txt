@@ -145,7 +145,7 @@ set (appleseed_maya_exporters_sources
     exporters/shapeexporter.cpp
     exporters/shapeexporter.h
 )
-if (XGEN_FOUND)
+if (WITH_XGEN)
     set (appleseed_maya_exporters_sources
         ${appleseed_maya_exporters_sources}
         exporters/xgenexporter.cpp
@@ -166,6 +166,10 @@ source_group ("exporters" FILES
 
 add_definitions (-D_BOOL)
 add_definitions (-DREQUIRE_IOSTREAM)
+
+if (WITH_XGEN)
+    add_definitions (-DAPPLESEED_MAYA_WITH_XGEN)
+endif ()
 
 if (WITH_PYTHON_BRIDGE)
     add_definitions (-DAPPLESEED_MAYA_WITH_PYTHON_BRIDGE)

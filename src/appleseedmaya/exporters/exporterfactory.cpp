@@ -47,7 +47,9 @@
 #include "appleseedmaya/exporters/shadingengineexporter.h"
 #include "appleseedmaya/exporters/shadingnetworkexporter.h"
 #include "appleseedmaya/exporters/shadingnodeexporter.h"
+#ifdef APPLESEED_MAYA_WITH_XGEN
 #include "appleseedmaya/exporters/xgenexporter.h"
+#endif
 #include "appleseedmaya/logger.h"
 #include "appleseedmaya/utils.h"
 
@@ -91,7 +93,10 @@ MStatus NodeExporterFactory::initialize(const MString& pluginPath)
     MeshExporter::registerExporter();
     PhysicalSkyLightExporter::registerExporter();
     SkyDomeLightExporter::registerExporter();
-    XGenExporter::registerExporter();
+
+    #ifdef APPLESEED_MAYA_WITH_XGEN
+        XGenExporter::registerExporter();
+    #endif
 
     // Register generic shading node exporters.
     ShadingNodeExporter::registerExporters();
