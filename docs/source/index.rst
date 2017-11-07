@@ -26,7 +26,6 @@ Contents
     features/features
     installation/installation
     features/supported_nodes
-    workflow/workflow
     shaders/shaders
     tutorials/tutorials
     about/about
