@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+	<using package='maya'/>
+	<template name='NEasNoise3D'>
+		<attribute name='outColor' type='maya.float3'>
+			<label>Out Color</label>
+		</attribute>
+		<attribute name='outAlpha' type='maya.float'>
+			<label>Out Alpha</label>
+		</attribute>
+		<attribute name='color' type='maya.float3'>
+			<label>Color</label>
+		</attribute>
+		<attribute name='color2' type='maya.float3'>
+			<label>Color 2</label>
+		</attribute>
+		<attribute name='contrast' type='maya.float'>
+			<label>Contrast</label>
+		</attribute>
+		<attribute name='intensity' type='maya.float'>
+			<label>Intensity</label>
+		</attribute>
+		<attribute name='frequency' type='maya.float3'>
+			<label>Frequency</label>
+		</attribute>
+		<attribute name='frameTime' type='maya.float'>
+			<label>Frame Time</label>
+		</attribute>
+		<attribute name='timeScale' type='maya.float'>
+			<label>Time Scale</label>
+		</attribute>
+		<attribute name='period' type='maya.float3'>
+			<label>Period</label>
+		</attribute>
+		<attribute name='periodTime' type='maya.float'>
+			<label>Period Time</label>
+		</attribute>
+		<attribute name='smoothness' type='maya.float'>
+			<label>Smoothness</label>
+		</attribute>
+		<attribute name='jittering' type='maya.float'>
+			<label>Jittering</label>
+		</attribute>
+		<attribute name='direction' type='maya.float3'>
+			<label>Direction</label>
+		</attribute>
+		<attribute name='bandwidth' type='maya.float'>
+			<label>Bandwidth</label>
+		</attribute>
+		<attribute name='amplitude' type='maya.float'>
+			<label>Amplitude</label>
+		</attribute>
+		<attribute name='lacunarity' type='maya.float'>
+			<label>Lacunarity</label>
+		</attribute>
+		<attribute name='offset' type='maya.float'>
+			<label>Offset</label>
+		</attribute>
+		<attribute name='noiseGain' type='maya.float'>
+			<label>Noise Gain</label>
+		</attribute>
+		<attribute name='distortion' type='maya.float'>
+			<label>Distortion</label>
+		</attribute>
+		<attribute name='refPointCamera' type='maya.float3'>
+			<label>Ref Point Camera</label>
+		</attribute>
+		<attribute name='placementMatrix' type='maya.matrix'>
+			<label>Placement Matrix</label>
+		</attribute>
+	</template>
+	<view name='NEDefault' template='NEasNoise3D'>
+		<property name='outColor'/>
+		<property name='outAlpha'/>
+		<property name='color'/>
+		<property name='color2'/>
+		<property name='contrast'/>
+		<property name='intensity'/>
+		<property name='frequency'/>
+		<property name='frameTime'/>
+		<property name='timeScale'/>
+		<property name='period'/>
+		<property name='periodTime'/>
+		<property name='smoothness'/>
+		<property name='jittering'/>
+		<property name='direction'/>
+		<property name='bandwidth'/>
+		<property name='amplitude'/>
+		<property name='lacunarity'/>
+		<property name='offset'/>
+		<property name='noiseGain'/>
+		<property name='distortion'/>
+		<property name='placementMatrix'/>
+		<property name='refPointCamera'/>
+	</view>
+</templates>
