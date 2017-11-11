@@ -42,13 +42,32 @@ def showAbout():
     if mc.window('appleseedAboutDialog', query=True, exists=True):
         mc.deleteUI('appleseedAboutDialog')
 
-    window = mc.window('appleseedAboutDialog', title='appleseed-maya')
+    window = mc.window('appleseedAboutDialog', title='About appleseed-maya')
 
-    mc.columnLayout(rs=20, columnOffset=['both', 22], width=300)
-    mc.text('', height=10)
+    mc.columnLayout(rs=20, columnOffset=['both', 22], width=200)
+
+    # Add some empty space. Is there a better way to do this?
+    mc.text(label='')
+
     mc.image(image='appleseed-logo-256.png')
 
-    mc.text('todo: add info here...')
+    mc.text(
+        label='Plugin version: ' + mc.pluginInfo("appleseedMaya", q=True, v=True),
+        font='boldLabelFont',
+        align='center')
+
+    mc.text(
+        label='Copyright (c) 2017 The appleseedhq Organization.',
+        font='boldLabelFont',
+        align='center')
+
+    mc.text(
+        label='This software is released under the MIT license',
+        font='boldLabelFont',
+        align='center')
+
+    # Add some empty space. Is there a better way to do this?
+    mc.text(label='')
 
     mc.setParent('..')
     mc.showWindow(window)
