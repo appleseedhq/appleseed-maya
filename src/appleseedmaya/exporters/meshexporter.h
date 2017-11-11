@@ -92,7 +92,7 @@ class MeshExporter
         MObject m_data;
     };
 
-    size_t getSmoothLevel(MStatus* ReturnStatus = nullptr) const;
+    int getSmoothLevel(MStatus* ReturnStatus = nullptr) const;
     MeshAndData getFinalMesh(MStatus* ReturnStatus = nullptr) const;
 
     void createMaterialSlots();

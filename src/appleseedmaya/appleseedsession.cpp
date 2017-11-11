@@ -88,6 +88,7 @@
 
 // Standard headers.
 #include <array>
+#include <cassert>
 #include <fstream>
 #include <memory>
 #include <thread>
@@ -1181,9 +1182,11 @@ MStatus batchRender(Options options)
     {
         // Filename of the scene without the __xxxx file suffix
         // and without the .ma or .mb extension.
+        const size_t suffix_length = strlen("__xxxx") + strlen(".mx");
+        assert(sceneName.length() > suffix_length);
         sceneName = MString(
             sceneName.asChar(),
-            sceneName.length() - strlen("__xxxx") - strlen(".mx"));
+            static_cast<int>(sceneName.length() - suffix_length));
     }
     else
         sceneName.set("untitled");

@@ -421,7 +421,7 @@ void MeshExporter::meshAttributesToParams(renderer::ParamArray& params)
         params.insert("medium_priority", mediumPriority);
 }
 
-size_t MeshExporter::getSmoothLevel(MStatus* ReturnStatus) const
+int MeshExporter::getSmoothLevel(MStatus* ReturnStatus) const
 {
     MFnMesh meshFn(node());
 
@@ -442,7 +442,7 @@ MeshExporter::MeshAndData MeshExporter::getFinalMesh(MStatus* ReturnStatus) cons
 {
     MeshAndData finalMesh = {node(), MObject()};
 
-    const size_t smoothLevel = getSmoothLevel();
+    const int smoothLevel = getSmoothLevel();
     if (smoothLevel > 0)
     {
         // We need to create a smooth mesh.

@@ -132,6 +132,8 @@ class XGenCallbacks
             case DontUsePaletteRefCounting:
                 return false;
         }
+
+        return false;
     }
 
     float get(EFloatAttribute attr) const override
@@ -144,6 +146,8 @@ class XGenCallbacks
             case ShutterOffset:
                 return get_param("ShutterOffset", 0.0f);
         }
+
+        return 0.0f;
     }
 
     const char* get(EStringAttribute attr) const override
@@ -191,6 +195,8 @@ class XGenCallbacks
             case RenderMethod:
                 return get_string("RenderMethod");
         }
+
+        return "";
     }
 
     const float* get(EFloatArrayAttribute attr) const override
@@ -204,6 +210,8 @@ class XGenCallbacks
             case Shutter:
                 return nullptr;
         }
+
+        return nullptr;
     }
 
     unsigned int getSize(EFloatArrayAttribute attr) const override
@@ -217,6 +225,8 @@ class XGenCallbacks
             case Shutter:
                 return 0;
         }
+
+        return 0;
     }
 
     const char* getOverride(const char* name) const override
@@ -232,13 +242,10 @@ class XGenCallbacks
         const asf::Transformd& transform = m_transform_sequence.evaluate(in_time, scratch);
         const asf::Matrix4f matrix = transform.get_parent_to_local();
 
-        out_mat =
-        {
-            matrix(0, 0), matrix(0, 1), matrix(0, 2), matrix(0, 3),
-            matrix(1, 0), matrix(1, 1), matrix(1, 2), matrix(1, 3),
-            matrix(2, 0), matrix(2, 1), matrix(2, 2), matrix(2, 3),
-            matrix(3, 0), matrix(3, 1), matrix(3, 2), matrix(3, 3)
-        };
+	    out_mat._00 = matrix(0, 0); out_mat._10 = matrix(0, 1); out_mat._20 = matrix(0, 2); out_mat._30 = matrix(0, 3);
+	    out_mat._01 = matrix(1, 0); out_mat._11 = matrix(1, 1); out_mat._21 = matrix(1, 2); out_mat._31 = matrix(1, 3);
+	    out_mat._02 = matrix(2, 0); out_mat._12 = matrix(2, 1); out_mat._22 = matrix(2, 2); out_mat._32 = matrix(2, 3);
+	    out_mat._03 = matrix(3, 0); out_mat._13 = matrix(3, 1); out_mat._23 = matrix(3, 2); out_mat._33 = matrix(3, 3);
     }
 
     bool getArchiveBoundingBox(const char* in_filename, bbox& out_bbox) const override
