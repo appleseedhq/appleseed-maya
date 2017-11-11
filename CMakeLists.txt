@@ -64,9 +64,10 @@ endif ()
 # Version.
 #--------------------------------------------------------------------------------------------------
 
-set (appleseed_maya_version_major    0)
-set (appleseed_maya_version_minor    1)
-set (appleseed_maya_version_patch    0)
+set (appleseed_maya_version_major       1)
+set (appleseed_maya_version_minor       0)
+set (appleseed_maya_version_patch       0)
+set (appleseed_maya_version_maturity    beta)
 
 
 #--------------------------------------------------------------------------------------------------
