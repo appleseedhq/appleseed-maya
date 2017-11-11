@@ -283,7 +283,7 @@ MStatus registerShadingNodes(MObject plugin)
     // Build list of dirs to look for shaders
     std::vector<bfs::path> shaderPaths;
 
-    // Look relative to the plugin dll / so file.
+    // Look relative to the plugin DLL / so file.
     bfs::path p(pluginFn.loadPath().asChar());
     p = p.parent_path() / ".." / "shaders";
     shaderPaths.push_back(p);

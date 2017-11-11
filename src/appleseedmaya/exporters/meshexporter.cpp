@@ -60,59 +60,58 @@ namespace asr = renderer;
 
 namespace
 {
-void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
-{
-    hash.append(mesh.get_tex_coords_count());
-    for (size_t i = 0, e = mesh.get_tex_coords_count(); i < e; ++i)
-        hash.append(mesh.get_tex_coords(i));
-
-    hash.append(mesh.get_triangle_count());
-    for (size_t i = 0, e = mesh.get_triangle_count(); i < e; ++i)
-        hash.append(mesh.get_triangle(i));
-
-    hash.append(mesh.get_material_slot_count());
-    for (size_t i = 0, e = mesh.get_material_slot_count(); i < e; ++i)
-        hash.append(mesh.get_material_slot(i));
-
-    hash.append(mesh.get_vertex_count());
-    for (size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
-        hash.append(mesh.get_vertex(i));
-
-    hash.append(mesh.get_vertex_normal_count());
-    for (size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
-        hash.append(mesh.get_vertex_normal(i));
-
-    hash.append(mesh.get_vertex_tangent_count());
-    for (size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
-        hash.append(mesh.get_vertex_tangent(i));
-}
-
-void meshObjectHash(
-    const asr::MeshObject&                          mesh,
-    const asf::StringDictionary&                    frontMaterialMappings,
-    const asf::StringDictionary&                    backMaterialMappings,
-    MurmurHash&                                     hash)
-{
-    staticMeshObjectHash(mesh, hash);
-
-    hash.append(mesh.get_motion_segment_count());
-    for (size_t j = 0, je = mesh.get_motion_segment_count(); j < je; ++j)
+    void staticMeshObjectHash(const asr::MeshObject& mesh, MurmurHash& hash)
     {
+        hash.append(mesh.get_tex_coords_count());
+        for (size_t i = 0, e = mesh.get_tex_coords_count(); i < e; ++i)
+            hash.append(mesh.get_tex_coords(i));
+
+        hash.append(mesh.get_triangle_count());
+        for (size_t i = 0, e = mesh.get_triangle_count(); i < e; ++i)
+            hash.append(mesh.get_triangle(i));
+
+        hash.append(mesh.get_material_slot_count());
+        for (size_t i = 0, e = mesh.get_material_slot_count(); i < e; ++i)
+            hash.append(mesh.get_material_slot(i));
+
+        hash.append(mesh.get_vertex_count());
         for (size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
-            mesh.get_vertex_pose(i, j);
+            hash.append(mesh.get_vertex(i));
 
+        hash.append(mesh.get_vertex_normal_count());
         for (size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
-            mesh.get_vertex_normal_pose(i, j);
+            hash.append(mesh.get_vertex_normal(i));
 
+        hash.append(mesh.get_vertex_tangent_count());
         for (size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
-            mesh.get_vertex_tangent_pose(i, j);
+            hash.append(mesh.get_vertex_tangent(i));
     }
 
-    hash.append(mesh.get_parameters());
-    hash.append(frontMaterialMappings);
-    hash.append(backMaterialMappings);
-}
+    void meshObjectHash(
+        const asr::MeshObject&                      mesh,
+        const asf::StringDictionary&                frontMaterialMappings,
+        const asf::StringDictionary&                backMaterialMappings,
+        MurmurHash&                                 hash)
+    {
+        staticMeshObjectHash(mesh, hash);
 
+        hash.append(mesh.get_motion_segment_count());
+        for (size_t j = 0, je = mesh.get_motion_segment_count(); j < je; ++j)
+        {
+            for (size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
+                mesh.get_vertex_pose(i, j);
+
+            for (size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
+                mesh.get_vertex_normal_pose(i, j);
+
+            for (size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
+                mesh.get_vertex_tangent_pose(i, j);
+        }
+
+        hash.append(mesh.get_parameters());
+        hash.append(frontMaterialMappings);
+        hash.append(backMaterialMappings);
+    }
 }
 
 void MeshExporter::registerExporter()
@@ -421,7 +420,7 @@ void MeshExporter::meshAttributesToParams(renderer::ParamArray& params)
         params.insert("medium_priority", mediumPriority);
 }
 
-size_t MeshExporter::getSmoothLevel(MStatus* ReturnStatus) const
+int MeshExporter::getSmoothLevel(MStatus* ReturnStatus) const
 {
     MFnMesh meshFn(node());
 
@@ -442,7 +441,7 @@ MeshExporter::MeshAndData MeshExporter::getFinalMesh(MStatus* ReturnStatus) cons
 {
     MeshAndData finalMesh = {node(), MObject()};
 
-    const size_t smoothLevel = getSmoothLevel();
+    const int smoothLevel = getSmoothLevel();
     if (smoothLevel > 0)
     {
         // We need to create a smooth mesh.

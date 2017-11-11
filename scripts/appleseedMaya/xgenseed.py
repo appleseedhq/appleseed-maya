@@ -77,13 +77,13 @@ def appleseedExport(self, objs, filename, lod, materialNS):
         # Choose to export single file or a sequence.
         frameToken = ""
         if self.startFrame != self.endFrame:
-            frameToken =".${FRAME}"
+            frameToken = ".${FRAME}"
 
             dummyFrameFile = open(objFilename + frameToken + ".appleseed", "wt")
             dummyFrameFile.write("STARTFRAME=%4.4d\nENDFRAME=%4.4d\n" % (int(self.startFrame), int(self.endFrame)))
             dummyFrameFile.close()
 
-            for curFrame in range(int(self.startFrame), int(self.endFrame)+ 1):
+            for curFrame in range(int(self.startFrame), int(self.endFrame) + 1):
                 appleseedExportFrame(self, curFrame, objFilename + ".%4.4d" % int(curFrame))
         else:
             appleseedExportFrame(self, self.startFrame, objFilename)
@@ -92,7 +92,7 @@ def appleseedExport(self, objs, filename, lod, materialNS):
             materials = self.getSGsFromObj(obj)
             if materials and len(materials) > 0:
                 appleseedFilename = objFilename + frameToken + ".appleseedz"
-                appleseedExportAppendFile(self, appleseedFilename, materialNS+materials[0], obj, lod)
+                appleseedExportAppendFile(self, appleseedFilename, materialNS + materials[0], obj, lod)
         self.incProgress()
 
     mc.currentUnit(linear=prevUnits)

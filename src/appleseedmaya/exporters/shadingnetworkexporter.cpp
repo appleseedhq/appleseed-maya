@@ -118,7 +118,7 @@ void ShadingNetworkExporter::createEntities()
 void ShadingNetworkExporter::flushEntities()
 {
     // Add any extra shader and or connections, depending on the context.
-    switch(m_context)
+    switch (m_context)
     {
         case SurfaceNetworkContext:
         {

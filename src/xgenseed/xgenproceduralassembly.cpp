@@ -48,7 +48,6 @@
 #include <memory>
 #include <sstream>
 
-
 namespace asf = foundation;
 namespace asr = renderer;
 using namespace XGenRenderAPI;
@@ -56,415 +55,421 @@ using namespace XGenRenderAPI::Utils;
 
 namespace
 {
+    const char* Model = "xgen_patch_assembly";
 
-const char* Model = "xgen_patch_assembly";
-
-}
-
-class XGenCallbacks
-  : public ProceduralCallbacks
-{
-  public:
+    class XGenCallbacks
+      : public ProceduralCallbacks
+    {
+      public:
         XGenCallbacks(
-        const asr::Project& project,
-        asr::Assembly&      assembly)
-      : m_assembly(assembly)
-      , m_params(assembly.get_parameters())
-    {
-        add_xgen_params(project);
-        compute_transform_sequence(assembly);
-    }
-
-    void flush(const char* in_geom, PrimitiveCache* in_cache) override
-    {
-        if (in_cache->get(PrimitiveCache::PrimIsSpline))
+            const asr::Project& project,
+            asr::Assembly&      assembly)
+          : m_assembly(assembly)
+          , m_params(assembly.get_parameters())
         {
-            flush_splines(in_geom, in_cache);
+            add_xgen_params(project);
+            compute_transform_sequence(assembly);
         }
-        else
-        {
-            const char* primitive_type = in_cache->get(PrimitiveCache::PrimitiveType);
 
-            if (strcmp(primitive_type, "CardPrimitive") == 0)
-                flush_cards(in_geom, in_cache);
-            else if (strcmp(primitive_type, "SpherePrimitive") == 0)
-                flush_spheres(in_geom, in_cache);
-            else if (strcmp(primitive_type, "ArchivePrimitive") ==0)
-                flush_archives(in_geom, in_cache);
+        void flush(const char* in_geom, PrimitiveCache* in_cache) override
+        {
+            if (in_cache->get(PrimitiveCache::PrimIsSpline))
+            {
+                flush_splines(in_geom, in_cache);
+            }
             else
             {
-                RENDERER_LOG_ERROR(
-                    "XGenCallbacks: unknown primitive type %s found", primitive_type);
+                const char* primitive_type = in_cache->get(PrimitiveCache::PrimitiveType);
+
+                if (strcmp(primitive_type, "CardPrimitive") == 0)
+                    flush_cards(in_geom, in_cache);
+                else if (strcmp(primitive_type, "SpherePrimitive") == 0)
+                    flush_spheres(in_geom, in_cache);
+                else if (strcmp(primitive_type, "ArchivePrimitive") ==0)
+                    flush_archives(in_geom, in_cache);
+                else
+                {
+                    RENDERER_LOG_ERROR(
+                        "XGenCallbacks: unknown primitive type %s found", primitive_type);
+                }
             }
         }
-    }
 
-    void flush_splines(const char* in_geom, PrimitiveCache* in_cache)
-    {
-        RENDERER_LOG_DEBUG("XGenCallbacks: flush_splines called");
-    }
-
-    void flush_cards(const char* in_geom, PrimitiveCache* in_cache)
-    {
-        RENDERER_LOG_DEBUG("XGenCallbacks: flush_cards called");
-    }
-
-    void flush_spheres(const char* in_geom, PrimitiveCache* in_cache)
-    {
-        RENDERER_LOG_DEBUG("XGenCallbacks: flush_spheres called");
-    }
-
-    void flush_archives(const char* in_geom, PrimitiveCache* in_cache)
-    {
-        RENDERER_LOG_DEBUG("XGenCallbacks: flush_archives called");
-    }
-
-    void log(const char* in_str)  override
-    {
-        RENDERER_LOG_INFO("XGen procedural assembly: %s", in_str);
-    }
-
-    bool get(EBoolAttribute attr) const override
-    {
-        switch (attr)
+        void flush_splines(const char* in_geom, PrimitiveCache* in_cache)
         {
-            case ClearDescriptionCache:
-            case DontUsePaletteRefCounting:
-                return false;
+            RENDERER_LOG_DEBUG("XGenCallbacks: flush_splines called");
         }
-    }
 
-    float get(EFloatAttribute attr) const override
-    {
-        switch (attr)
+        void flush_cards(const char* in_geom, PrimitiveCache* in_cache)
         {
-            case ShadowMotionBlur:
-                return get_param("ShadowMotionBlur", 0.0f);
-
-            case ShutterOffset:
-                return get_param("ShutterOffset", 0.0f);
+            RENDERER_LOG_DEBUG("XGenCallbacks: flush_cards called");
         }
-    }
 
-    const char* get(EStringAttribute attr) const override
-    {
-        switch (attr)
+        void flush_spheres(const char* in_geom, PrimitiveCache* in_cache)
         {
-            case BypassFXModulesAfterBGM:
-                return get_string("BypassFXModulesAfterBGM");
+            RENDERER_LOG_DEBUG("XGenCallbacks: flush_spheres called");
+        }
 
-            case CacheDir:
-                return get_string("CacheDir", "xgenCache/");
+        void flush_archives(const char* in_geom, PrimitiveCache* in_cache)
+        {
+            RENDERER_LOG_DEBUG("XGenCallbacks: flush_archives called");
+        }
 
-            case Generator:
-                return get_string("Generator", "undefined");
+        void log(const char* in_str)  override
+        {
+            RENDERER_LOG_INFO("XGen procedural assembly: %s", in_str);
+        }
 
-            case Off:
+        bool get(EBoolAttribute attr) const override
+        {
+            switch (attr)
             {
-                const asr::ParamArray& params = get_parameters();
+                case ClearDescriptionCache:
+                case DontUsePaletteRefCounting:
+                    return false;
+            }
 
-                if (params.strings().exist("Off"))
+            return false;
+        }
+
+        float get(EFloatAttribute attr) const override
+        {
+            switch (attr)
+            {
+                case ShadowMotionBlur:
+                    return get_param("ShadowMotionBlur", 0.0f);
+
+                case ShutterOffset:
+                    return get_param("ShutterOffset", 0.0f);
+            }
+
+            return 0.0f;
+        }
+
+        const char* get(EStringAttribute attr) const override
+        {
+            switch (attr)
+            {
+                case BypassFXModulesAfterBGM:
+                    return get_string("BypassFXModulesAfterBGM");
+
+                case CacheDir:
+                    return get_string("CacheDir", "xgenCache/");
+
+                case Generator:
+                    return get_string("Generator", "undefined");
+
+                case Off:
                 {
-                    const char* str = params.get_path("Off");
-                    if (stob(str))
-                        return "xgen_OFF";
+                    const asr::ParamArray& params = get_parameters();
+
+                    if (params.strings().exist("Off"))
+                    {
+                        const char* str = params.get_path("Off");
+                        if (stob(str))
+                            return "xgen_OFF";
+                    }
+
+                    return "";
                 }
 
-                return "";
+                case Phase:
+                    return get_string("Phase", "color");
+
+                case RenderCam:
+                    return get_string("irRenderCam");
+
+                case RenderCamFOV:
+                    return get_string("irRenderCamFOV");
+
+                case RenderCamRatio:
+                    return get_string("irRenderCamRatio");
+
+                case RenderCamXform:
+                    return get_string("irRenderCamXform");
+
+                case RenderMethod:
+                    return get_string("RenderMethod");
             }
 
-            case Phase:
-                return get_string("Phase", "color");
-
-            case RenderCam:
-                return get_string("irRenderCam");
-
-            case RenderCamFOV:
-                return get_string("irRenderCamFOV");
-
-            case RenderCamRatio:
-                return get_string("irRenderCamRatio");
-
-            case RenderCamXform:
-                return get_string("irRenderCamXform");
-
-            case RenderMethod:
-                return get_string("RenderMethod");
-        }
-    }
-
-    const float* get(EFloatArrayAttribute attr) const override
-    {
-        switch (attr)
-        {
-            case DensityFalloff:
-            case LodHi:
-            case LodLow:
-            case LodMed:
-            case Shutter:
-                return nullptr;
-        }
-    }
-
-    unsigned int getSize(EFloatArrayAttribute attr) const override
-    {
-        switch (attr)
-        {
-            case DensityFalloff:
-            case LodHi:
-            case LodLow:
-            case LodMed:
-            case Shutter:
-                return 0;
-        }
-    }
-
-    const char* getOverride(const char* name) const override
-    {
-        return get_string(name);
-    }
-
-    void getTransform(float in_time, mat44& out_mat) const override
-    {
-        RENDERER_LOG_DEBUG("XGenCallbacks: getTransform called");
-
-        asf::Transformd scratch;
-        const asf::Transformd& transform = m_transform_sequence.evaluate(in_time, scratch);
-        const asf::Matrix4f matrix = transform.get_parent_to_local();
-
-        out_mat =
-        {
-            matrix(0, 0), matrix(0, 1), matrix(0, 2), matrix(0, 3),
-            matrix(1, 0), matrix(1, 1), matrix(1, 2), matrix(1, 3),
-            matrix(2, 0), matrix(2, 1), matrix(2, 2), matrix(2, 3),
-            matrix(3, 0), matrix(3, 1), matrix(3, 2), matrix(3, 3)
-        };
-    }
-
-    bool getArchiveBoundingBox(const char* in_filename, bbox& out_bbox) const override
-    {
-        RENDERER_LOG_DEBUG("XGenCallbacks: getArchiveBoundingBox called");
-        return false;
-    }
-
-  private:
-    asr::Assembly&          m_assembly;
-    asr::ParamArray         m_params;
-    asr::TransformSequence  m_transform_sequence;
-
-    const asr::ParamArray& get_parameters() const
-    {
-        return m_params;
-    }
-
-    const char* get_string(const char* key, const char* default_value = "") const
-    {
-        if (m_params.strings().exist(key))
-            return m_params.get(key);
-
-        return default_value;
-    }
-
-    template <typename T>
-    T get_param(const char* key, const T& default_value) const
-    {
-        return m_params.get_optional(key, default_value);
-    }
-
-    void add_xgen_params(const asr::Project& project)
-    {
-        // Fetch the camera.
-        const asr::Frame* frame = project.get_frame();
-        const asr::Camera *camera = project.get_scene()->cameras().get_by_name(
-            frame->get_active_camera_name());
-
-        bool camera_is_persp = false;
-        if (strcmp(camera->get_model(), "pinhole_camera") == 0)
-            camera_is_persp = true;
-        else if (strcmp(camera->get_model(), "thinlens_camera") == 0)
-            camera_is_persp = true;
-
-        // Get the camera transform.
-        const asf::Transformd& transform =
-            camera->transform_sequence().get_earliest_transform();
-
-        if (!m_params.strings().exist("irRenderCam"))
-        {
-            asf::Vector3d camera_pos_or_dir;
-
-            if (camera_is_persp)
-                camera_pos_or_dir = transform.get_local_to_parent().extract_translation();
-            else
-                camera_pos_or_dir = transform.vector_to_parent(asf::Vector3d(0.0, 0.0, 1.0));
-
-            m_params.insert_path(
-                "irRenderCam",
-                asf::format(
-                    "{0}, {1}, {2}, {3}",
-                    camera_is_persp ? "false" : "true",
-                    camera_pos_or_dir.x,
-                    camera_pos_or_dir.y,
-                    camera_pos_or_dir.z));
+            return "";
         }
 
-        if (!m_params.strings().exist("irRenderCamFOV"))
+        const float* get(EFloatArrayAttribute attr) const override
         {
-            if (camera_is_persp)
+            switch (attr)
             {
-                m_params.insert_path("irRenderCamFOV", "54.0");
+                case DensityFalloff:
+                case LodHi:
+                case LodLow:
+                case LodMed:
+                case Shutter:
+                    return nullptr;
             }
-            else
-                m_params.insert_path("irRenderCamFOV", "90.0");
+
+            return nullptr;
         }
 
-        if (!m_params.strings().exist("irRenderCamRatio"))
+        unsigned int getSize(EFloatArrayAttribute attr) const override
         {
-            m_params.insert_path("irRenderCamRatio", "1.0");
-        }
-
-        if (!m_params.strings().exist("irRenderCamXform"))
-        {
-            const asf::Matrix4d& m = transform.get_parent_to_local();
-            std::stringstream ss;
-            ss << m(0, 0) << "," << m(0, 1) << "," << m(0, 2) << "," << m(0, 3) << ",";
-            ss << m(1, 0) << "," << m(1, 1) << "," << m(1, 2) << "," << m(1, 3) << ",";
-            ss << m(2, 0) << "," << m(2, 1) << "," << m(2, 2) << "," << m(2, 3) << ",";
-            ss << m(3, 0) << "," << m(3, 1) << "," << m(3, 2) << "," << m(3, 3);
-            m_params.insert_path("irRenderCamXform", ss.str().c_str());
-        }
-    }
-
-    void compute_transform_sequence(const asr::Assembly& assembly)
-    {
-        const asr::Assembly* parent_assembly =
-            static_cast<const asr::Assembly*>(assembly.get_parent());
-
-        const asr::AssemblyInstance* assembly_instance = nullptr;
-        for (const auto& i : parent_assembly->assembly_instances())
-        {
-            if (strcmp(assembly.get_name(), i.get_assembly_name()) == 0)
+            switch (attr)
             {
-                assembly_instance = &i;
-                break;
+                case DensityFalloff:
+                case LodHi:
+                case LodLow:
+                case LodMed:
+                case Shutter:
+                    return 0;
             }
+
+            return 0;
         }
 
-        assert(assembly_instance != nullptr);
-
-        // Compose all the transformation sequences.
-        while (assembly_instance)
+        const char* getOverride(const char* name) const override
         {
-            m_transform_sequence =
-                assembly_instance->transform_sequence() * m_transform_sequence;
-
-            assembly_instance = static_cast<const asr::AssemblyInstance*>(
-                assembly_instance->get_parent());
+            return get_string(name);
         }
-    }
-};
 
-
-class XGenPatchAssembly
-  : public asr::ProceduralAssembly
-{
-  public:
-    XGenPatchAssembly(const char* name, const asr::ParamArray params)
-      : asr::ProceduralAssembly(name, params)
-    {
-    }
-
-    void release() override
-    {
-        delete this;
-    }
-
-    const char* get_model() const override
-    {
-        return Model;
-    }
-
-    bool do_expand_contents(
-        const asr::Project&     project,
-        const asr::Assembly*    parent,
-        asf::IAbortSwitch*      abort_switch = nullptr) override
-    {
-        std::string xgen_args;
-
-        try
+        void getTransform(float in_time, mat44& out_mat) const override
         {
-            xgen_args = get_parameters().get("xgen_args");
+            RENDERER_LOG_DEBUG("XGenCallbacks: getTransform called");
+
+            asf::Transformd scratch;
+            const asf::Transformd& transform = m_transform_sequence.evaluate(in_time, scratch);
+            const asf::Matrix4f matrix = transform.get_parent_to_local();
+
+	        out_mat._00 = matrix(0, 0); out_mat._10 = matrix(0, 1); out_mat._20 = matrix(0, 2); out_mat._30 = matrix(0, 3);
+	        out_mat._01 = matrix(1, 0); out_mat._11 = matrix(1, 1); out_mat._21 = matrix(1, 2); out_mat._31 = matrix(1, 3);
+	        out_mat._02 = matrix(2, 0); out_mat._12 = matrix(2, 1); out_mat._22 = matrix(2, 2); out_mat._32 = matrix(2, 3);
+	        out_mat._03 = matrix(3, 0); out_mat._13 = matrix(3, 1); out_mat._23 = matrix(3, 2); out_mat._33 = matrix(3, 3);
         }
-        catch (const asf::ExceptionDictionaryKeyNotFound&)
+
+        bool getArchiveBoundingBox(const char* in_filename, bbox& out_bbox) const override
         {
-            RENDERER_LOG_ERROR("XGen procedural error: missing xgen_args parameter");
+            RENDERER_LOG_DEBUG("XGenCallbacks: getArchiveBoundingBox called");
             return false;
         }
 
-        XGenCallbacks xgen_callbacks(project, *this);
-        std::unique_ptr<PatchRenderer> patch_renderer(
-            PatchRenderer::init(&xgen_callbacks, xgen_args.c_str()));
+      private:
+        asr::Assembly&          m_assembly;
+        asr::ParamArray         m_params;
+        asr::TransformSequence  m_transform_sequence;
 
-        if (!patch_renderer)
+        const asr::ParamArray& get_parameters() const
         {
-            RENDERER_LOG_ERROR("Error creating XGen patch renderer");
-            return false;
+            return m_params;
         }
 
-        bbox bbox;
-        unsigned int face_id;
-        bool success = true;
-
-        while (patch_renderer->nextFace(bbox, face_id))
+        const char* get_string(const char* key, const char* default_value = "") const
         {
-            if (isEmpty(bbox))
-                continue;
+            if (m_params.strings().exist(key))
+                return m_params.get(key);
 
-            std::unique_ptr<FaceRenderer> face_renderer(FaceRenderer::init(
-                patch_renderer.get(),
-                face_id,
-                &xgen_callbacks));
+            return default_value;
+        }
 
-            if (face_renderer)
+        template <typename T>
+        T get_param(const char* key, const T& default_value) const
+        {
+            return m_params.get_optional(key, default_value);
+        }
+
+        void add_xgen_params(const asr::Project& project)
+        {
+            // Fetch the camera.
+            const asr::Frame* frame = project.get_frame();
+            const asr::Camera *camera = project.get_scene()->cameras().get_by_name(
+                frame->get_active_camera_name());
+
+            bool camera_is_persp = false;
+            if (strcmp(camera->get_model(), "pinhole_camera") == 0)
+                camera_is_persp = true;
+            else if (strcmp(camera->get_model(), "thinlens_camera") == 0)
+                camera_is_persp = true;
+
+            // Get the camera transform.
+            const asf::Transformd& transform =
+                camera->transform_sequence().get_earliest_transform();
+
+            if (!m_params.strings().exist("irRenderCam"))
             {
-                success = success && face_renderer->render();
+                asf::Vector3d camera_pos_or_dir;
+
+                if (camera_is_persp)
+                    camera_pos_or_dir = transform.get_local_to_parent().extract_translation();
+                else
+                    camera_pos_or_dir = transform.vector_to_parent(asf::Vector3d(0.0, 0.0, 1.0));
+
+                m_params.insert_path(
+                    "irRenderCam",
+                    asf::format(
+                        "{0}, {1}, {2}, {3}",
+                        camera_is_persp ? "false" : "true",
+                        camera_pos_or_dir.x,
+                        camera_pos_or_dir.y,
+                        camera_pos_or_dir.z));
             }
-            else
+
+            if (!m_params.strings().exist("irRenderCamFOV"))
             {
-                RENDERER_LOG_ERROR("Error creating XGen face renderer");
-                success = false;
+                if (camera_is_persp)
+                {
+                    m_params.insert_path("irRenderCamFOV", "54.0");
+                }
+                else
+                    m_params.insert_path("irRenderCamFOV", "90.0");
+            }
+
+            if (!m_params.strings().exist("irRenderCamRatio"))
+            {
+                m_params.insert_path("irRenderCamRatio", "1.0");
+            }
+
+            if (!m_params.strings().exist("irRenderCamXform"))
+            {
+                const asf::Matrix4d& m = transform.get_parent_to_local();
+                std::stringstream ss;
+                ss << m(0, 0) << "," << m(0, 1) << "," << m(0, 2) << "," << m(0, 3) << ",";
+                ss << m(1, 0) << "," << m(1, 1) << "," << m(1, 2) << "," << m(1, 3) << ",";
+                ss << m(2, 0) << "," << m(2, 1) << "," << m(2, 2) << "," << m(2, 3) << ",";
+                ss << m(3, 0) << "," << m(3, 1) << "," << m(3, 2) << "," << m(3, 3);
+                m_params.insert_path("irRenderCamXform", ss.str().c_str());
             }
         }
 
-        return success;
-    }
-};
+        void compute_transform_sequence(const asr::Assembly& assembly)
+        {
+            const asr::Assembly* parent_assembly =
+                static_cast<const asr::Assembly*>(assembly.get_parent());
 
+            const asr::AssemblyInstance* assembly_instance = nullptr;
+            for (const auto& i : parent_assembly->assembly_instances())
+            {
+                if (strcmp(assembly.get_name(), i.get_assembly_name()) == 0)
+                {
+                    assembly_instance = &i;
+                    break;
+                }
+            }
 
-class XGenPatchAssemblyFactory
-  : public asr::IAssemblyFactory
-{
-  public:
-    void release() override
+            assert(assembly_instance != nullptr);
+
+            // Compose all the transformation sequences.
+            while (assembly_instance)
+            {
+                m_transform_sequence =
+                    assembly_instance->transform_sequence() * m_transform_sequence;
+
+                assembly_instance = static_cast<const asr::AssemblyInstance*>(
+                    assembly_instance->get_parent());
+            }
+        }
+    };
+
+    class XGenPatchAssembly
+      : public asr::ProceduralAssembly
     {
-        delete this;
-    }
+      public:
+        XGenPatchAssembly(const char* name, const asr::ParamArray params)
+          : asr::ProceduralAssembly(name, params)
+        {
+        }
 
-    const char* get_model() const override
+        void release() override
+        {
+            delete this;
+        }
+
+        const char* get_model() const override
+        {
+            return Model;
+        }
+
+        bool do_expand_contents(
+            const asr::Project&     project,
+            const asr::Assembly*    parent,
+            asf::IAbortSwitch*      abort_switch = nullptr) override
+        {
+            std::string xgen_args;
+
+            try
+            {
+                xgen_args = get_parameters().get("xgen_args");
+            }
+            catch (const asf::ExceptionDictionaryKeyNotFound&)
+            {
+                RENDERER_LOG_ERROR("XGen procedural error: missing xgen_args parameter");
+                return false;
+            }
+
+            XGenCallbacks xgen_callbacks(project, *this);
+            std::unique_ptr<PatchRenderer> patch_renderer(
+                PatchRenderer::init(&xgen_callbacks, xgen_args.c_str()));
+
+            if (!patch_renderer)
+            {
+                RENDERER_LOG_ERROR("Error creating XGen patch renderer");
+                return false;
+            }
+
+            bbox bbox;
+            unsigned int face_id;
+            bool success = true;
+
+            while (patch_renderer->nextFace(bbox, face_id))
+            {
+                if (isEmpty(bbox))
+                    continue;
+
+                std::unique_ptr<FaceRenderer> face_renderer(FaceRenderer::init(
+                    patch_renderer.get(),
+                    face_id,
+                    &xgen_callbacks));
+
+                if (face_renderer)
+                {
+                    success = success && face_renderer->render();
+                }
+                else
+                {
+                    RENDERER_LOG_ERROR("Error creating XGen face renderer");
+                    success = false;
+                }
+            }
+
+            return success;
+        }
+    };
+
+    class XGenPatchAssemblyFactory
+      : public asr::IAssemblyFactory
     {
-        return Model;
-    }
+      public:
+        void release() override
+        {
+            delete this;
+        }
 
-    asf::auto_release_ptr<asr::Assembly> create(
-        const char*             name,
-        const asr::ParamArray&  params = asr::ParamArray()) const override
-    {
-        return asf::auto_release_ptr<asr::Assembly>(
-            new XGenPatchAssembly(name, params));
-    }
-};
+        const char* get_model() const override
+        {
+            return Model;
+        }
+
+        asf::auto_release_ptr<asr::Assembly> create(
+            const char*             name,
+            const asr::ParamArray&  params = asr::ParamArray()) const override
+        {
+            return asf::auto_release_ptr<asr::Assembly>(
+                new XGenPatchAssembly(name, params));
+        }
+    };
+}
 
 
-// Procedural assembly plugin entry point.
+//
+// Plugin entry point.
+//
+
 extern "C"
 {
     APPLESEED_DLL_EXPORT asr::IAssemblyFactory* appleseed_create_assembly_factory()

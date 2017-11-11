@@ -52,8 +52,10 @@ SETTINGS_FILENAME = "appleseed.maya.package.configuration.xml"
 def info(message):
     print("  " + message)
 
+
 def progress(message):
     print("  " + message + "...")
+
 
 def fatal(message):
     print("Fatal: " + message + ". Aborting.")
@@ -61,9 +63,11 @@ def fatal(message):
         print(traceback.format_exc())
     sys.exit(1)
 
+
 def copy_glob(input_pattern, output_path):
     for input_file in glob.glob(input_pattern):
         shutil.copy(input_file, output_path)
+
 
 def safe_delete_file(path):
     try:
@@ -72,11 +76,13 @@ def safe_delete_file(path):
     except OSError:
         fatal("Failed to delete file '" + path + "'")
 
+
 def on_rmtree_error(func, path, exc_info):
     # path contains the path of the file that couldn't be removed.
     # Let's just assume that it's read-only and unlink it.
     os.chmod(path, stat.S_IWRITE)
     os.unlink(path)
+
 
 def run_subprocess(cmdline):
     p = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -103,12 +109,12 @@ class Settings:
     def load_values(self, tree):
         self.build_path = self.__get_required(tree, "build_path")
         self.appleseed_bin_path = self.__get_required(tree, "appleseed_bin_path")
-        self.maketx_path = self.__get_required(tree, "maketx_path")
         self.appleseed_lib_path = self.__get_required(tree, "appleseed_lib_path")
-        self.appleseed_python_path = self.__get_required(tree, "appleseed_python_path")
         self.appleseed_shaders_path = self.__get_required(tree, "appleseed_shaders_path")
         self.appleseed_schemas_path = self.__get_required(tree, "appleseed_schemas_path")
         self.appleseed_settings_path = self.__get_required(tree, "appleseed_settings_path")
+        self.appleseed_python_path = self.__get_required(tree, "appleseed_python_path")
+        self.maketx_path = self.__get_required(tree, "maketx_path")
         self.package_output_path = self.__get_required(tree, "package_output_path")
         self.maya_version = self.__get_maya_version()
 
@@ -118,10 +124,10 @@ class Settings:
         print("  Build path:                  " + self.build_path)
         print("  Path to appleseed binaries:  " + self.appleseed_bin_path)
         print("  Path to appleseed libraries: " + self.appleseed_lib_path)
-        print("  Path to appleseed.python:    " + self.appleseed_python_path)
-        print("  Path to appleseed.shaders:   " + self.appleseed_shaders_path)
-        print("  Path to appleseed settings:  " + self.appleseed_settings_path)
+        print("  Path to appleseed shaders:   " + self.appleseed_shaders_path)
         print("  Path to appleseed schemas:   " + self.appleseed_schemas_path)
+        print("  Path to appleseed settings:  " + self.appleseed_settings_path)
+        print("  Path to appleseed.python:    " + self.appleseed_python_path)
         print("  Path to maketx:              " + self.maketx_path)
         print("  Output directory:            " + self.package_output_path)
         print("")
@@ -223,17 +229,16 @@ class PackageBuilder(object):
             self.major_version,
             self.minor_version,
             self.patch_version,
-            self.package_output_path
-            ))
+            self.package_output_path))
 
         info('Maya version = %s' % self.maya_version)
 
         # Remove old deploy directory
-        #try:
-        #    shutil.rmtree(args.directory, onerror=remove_readonly)
-        #except Exception as e:
-        #    print "Failed to remove previous deploy, error = ", str(e)
-        #    sys.exit(0)
+        # try:
+        #     shutil.rmtree(args.directory, onerror=remove_readonly)
+        # except Exception as e:
+        #     print "Failed to remove previous deploy, error = ", str(e)
+        #     sys.exit(0)
 
         info('Creating deploy dir: %s' % self.package_output_path)
         if not os.path.exists(self.package_output_path):
@@ -362,8 +367,7 @@ class LinuxPackageBuilder(PackageBuilder):
                 self.maya_version,
                 self.major_version,
                 self.minor_version,
-                self.patch_version
-            ))
+                self.patch_version))
             f.write('plug-ins: plug-ins/{0}\n'.format(self.maya_version))
             f.write('PATH +:= bin\n')
             f.write('PYTHONPATH +:= scripts\n')
@@ -408,8 +412,8 @@ class LinuxPackageBuilder(PackageBuilder):
         for bin in glob.glob(os.path.join(self.package_output_path, 'bin', '*')):
             self.run("chrpath -r \$ORIGIN/../lib " + bin)
 
-        #for lib in glob.glob(os.path.join(self.package_output_path, 'lib', '*')):
-        #    self.run("chrpath -d " + lib)
+        # for lib in glob.glob(os.path.join(self.package_output_path, 'lib', '*')):
+        #     self.run("chrpath -d " + lib)
 
         plugins_dir = os.path.join(self.package_output_path, 'plug-ins', self.maya_version)
         for plugin in glob.glob(os.path.join(plugins_dir, '*.so')):
@@ -476,7 +480,7 @@ class WindowsPackageBuilder(PackageBuilder):
 #--------------------------------------------------------------------------------------------------
 
 def main():
-    print("appleseed.maya deploy version " + VERSION)
+    print("appleseed-maya deploy version " + VERSION)
 
     settings = Settings()
     settings.load()
