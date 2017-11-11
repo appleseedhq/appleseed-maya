@@ -129,7 +129,7 @@ def register():
         ("hyperShadePanelBuildCreateMenu", hyperShadePanelBuildCreateMenuCallback),
         ("hyperShadePanelBuildCreateSubMenu", hyperShadePanelBuildCreateSubMenuCallback),
         ("hyperShadePanelPluginChange", hyperShadePanelPluginChangeCallback),
-        ("createRenderNodeSelectNodeCategories",createRenderNodeSelectNodeCategoriesCallback),
+        ("createRenderNodeSelectNodeCategories", createRenderNodeSelectNodeCategoriesCallback),
         ("createRenderNodePluginChange", createRenderNodePluginChangeCallback),
         ("renderNodeClassification", renderNodeClassificationCallback),
         ("createRenderNodeCommand", createRenderNodeCallback),
@@ -156,7 +156,7 @@ def register():
             evalDeferred("showHelp -absolute \\\"http://appleseedhq.net\\\"");
         }
         '''
-    )
+             )
 
     pm.renderer(
         "appleseed",
