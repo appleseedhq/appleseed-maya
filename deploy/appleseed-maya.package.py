@@ -103,12 +103,12 @@ class Settings:
     def load_values(self, tree):
         self.build_path = self.__get_required(tree, "build_path")
         self.appleseed_bin_path = self.__get_required(tree, "appleseed_bin_path")
-        self.maketx_path = self.__get_required(tree, "maketx_path")
         self.appleseed_lib_path = self.__get_required(tree, "appleseed_lib_path")
-        self.appleseed_python_path = self.__get_required(tree, "appleseed_python_path")
         self.appleseed_shaders_path = self.__get_required(tree, "appleseed_shaders_path")
         self.appleseed_schemas_path = self.__get_required(tree, "appleseed_schemas_path")
         self.appleseed_settings_path = self.__get_required(tree, "appleseed_settings_path")
+        self.appleseed_python_path = self.__get_required(tree, "appleseed_python_path")
+        self.maketx_path = self.__get_required(tree, "maketx_path")
         self.package_output_path = self.__get_required(tree, "package_output_path")
         self.maya_version = self.__get_maya_version()
 
@@ -118,10 +118,10 @@ class Settings:
         print("  Build path:                  " + self.build_path)
         print("  Path to appleseed binaries:  " + self.appleseed_bin_path)
         print("  Path to appleseed libraries: " + self.appleseed_lib_path)
-        print("  Path to appleseed.python:    " + self.appleseed_python_path)
-        print("  Path to appleseed.shaders:   " + self.appleseed_shaders_path)
-        print("  Path to appleseed settings:  " + self.appleseed_settings_path)
+        print("  Path to appleseed shaders:   " + self.appleseed_shaders_path)
         print("  Path to appleseed schemas:   " + self.appleseed_schemas_path)
+        print("  Path to appleseed settings:  " + self.appleseed_settings_path)
+        print("  Path to appleseed.python:    " + self.appleseed_python_path)
         print("  Path to maketx:              " + self.maketx_path)
         print("  Output directory:            " + self.package_output_path)
         print("")
@@ -476,7 +476,7 @@ class WindowsPackageBuilder(PackageBuilder):
 #--------------------------------------------------------------------------------------------------
 
 def main():
-    print("appleseed.maya deploy version " + VERSION)
+    print("appleseed-maya deploy version " + VERSION)
 
     settings = Settings()
     settings.load()
