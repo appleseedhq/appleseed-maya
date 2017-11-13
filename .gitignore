@@ -1,7 +1,9 @@
 build/
+deploy/appleseed-maya.package.configuration.xml
+package/
 src/appleseedmaya/version.h
-*.pyc
-*.oso
 *~
-*.swp
 *.bak
+*.oso
+*.pyc
+*.swp
