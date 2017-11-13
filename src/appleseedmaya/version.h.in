@@ -32,6 +32,7 @@
 #define APPLESEED_MAYA_VERSION_MAJOR     ${appleseed_maya_version_major}
 #define APPLESEED_MAYA_VERSION_MINOR     ${appleseed_maya_version_minor}
 #define APPLESEED_MAYA_VERSION_PATCH     ${appleseed_maya_version_patch}
+#define APPLESEED_MAYA_VERSION_MATURITY  "${appleseed_maya_version_maturity}"
 
 #define APPLESEED_MAYA_VERSION               \
     APPLESEED_MAYA_VERSION_MAJOR * 10000 +   \
@@ -39,6 +40,6 @@
     APPLESEED_MAYA_VERSION_PATCH
 
 #define APPLESEED_MAYA_VERSION_STRING        \
-    "${appleseed_maya_version_major}.${appleseed_maya_version_minor}.${appleseed_maya_version_patch}"
+    "${appleseed_maya_version_major}.${appleseed_maya_version_minor}.${appleseed_maya_version_patch}-${appleseed_maya_version_maturity}"
 
 #endif  // !APPLESEED_MAYA_VERSION_H
