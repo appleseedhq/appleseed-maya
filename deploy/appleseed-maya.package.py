@@ -27,22 +27,26 @@
 # THE SOFTWARE.
 #
 
+from __future__ import print_function
+from distutils.dir_util import copy_tree
+from xml.etree.ElementTree import ElementTree
 import glob
 import os
 import platform
 import shutil
+import stat
 import subprocess
 import sys
-from distutils.dir_util import copy_tree
-from xml.etree.ElementTree import ElementTree
+import time
+import traceback
 
 
 #--------------------------------------------------------------------------------------------------
 # Constants.
 #--------------------------------------------------------------------------------------------------
 
-VERSION = "0.1.0"
-SETTINGS_FILENAME = "appleseed.maya.package.configuration.xml"
+VERSION = "1.0.0"
+SETTINGS_FILENAME = "appleseed-maya.package.configuration.xml"
 
 
 #--------------------------------------------------------------------------------------------------
@@ -64,9 +68,8 @@ def fatal(message):
     sys.exit(1)
 
 
-def copy_glob(input_pattern, output_path):
-    for input_file in glob.glob(input_pattern):
-        shutil.copy(input_file, output_path)
+def exe(filepath):
+    return filepath + ".exe" if os.name == "nt" else filepath
 
 
 def safe_delete_file(path):
@@ -84,10 +87,34 @@ def on_rmtree_error(func, path, exc_info):
     os.unlink(path)
 
 
+def safe_delete_directory(path):
+    Attempts = 10
+    for attempt in range(Attempts):
+        try:
+            if os.path.exists(path):
+                shutil.rmtree(path, onerror=on_rmtree_error)
+            return
+        except OSError:
+            if attempt < Attempts - 1:
+                time.sleep(0.5)
+            else:
+                fatal("Failed to delete directory '" + path + "'")
+
+
+def safe_make_directory(path):
+    if not os.path.isdir(path):
+        os.makedirs(path)
+
+
 def run_subprocess(cmdline):
     p = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
     return p.returncode, out, err
+
+
+def copy_glob(input_pattern, output_path):
+    for input_file in glob.glob(input_pattern):
+        shutil.copy(input_file, output_path)
 
 
 #--------------------------------------------------------------------------------------------------
@@ -108,6 +135,7 @@ class Settings:
 
     def load_values(self, tree):
         self.build_path = self.__get_required(tree, "build_path")
+        self.bin_path = self.__get_required(tree, "bin_path")
         self.appleseed_bin_path = self.__get_required(tree, "appleseed_bin_path")
         self.appleseed_lib_path = self.__get_required(tree, "appleseed_lib_path")
         self.appleseed_shaders_path = self.__get_required(tree, "appleseed_shaders_path")
@@ -116,20 +144,22 @@ class Settings:
         self.appleseed_python_path = self.__get_required(tree, "appleseed_python_path")
         self.maketx_path = self.__get_required(tree, "maketx_path")
         self.package_output_path = self.__get_required(tree, "package_output_path")
+
         self.maya_version = self.__get_maya_version()
 
     def print_summary(self):
         print("")
-        print("  Maya version:                " + self.maya_version)
-        print("  Build path:                  " + self.build_path)
-        print("  Path to appleseed binaries:  " + self.appleseed_bin_path)
-        print("  Path to appleseed libraries: " + self.appleseed_lib_path)
-        print("  Path to appleseed shaders:   " + self.appleseed_shaders_path)
-        print("  Path to appleseed schemas:   " + self.appleseed_schemas_path)
-        print("  Path to appleseed settings:  " + self.appleseed_settings_path)
-        print("  Path to appleseed.python:    " + self.appleseed_python_path)
-        print("  Path to maketx:              " + self.maketx_path)
-        print("  Output directory:            " + self.package_output_path)
+        print("  Maya version:                    " + self.maya_version)
+        print("  Build path:                      " + self.build_path)
+        print("  Path to appleseed-maya binaries: " + self.bin_path)
+        print("  Path to appleseed binaries:      " + self.appleseed_bin_path)
+        print("  Path to appleseed libraries:     " + self.appleseed_lib_path)
+        print("  Path to appleseed shaders:       " + self.appleseed_shaders_path)
+        print("  Path to appleseed schemas:       " + self.appleseed_schemas_path)
+        print("  Path to appleseed settings:      " + self.appleseed_settings_path)
+        print("  Path to appleseed.python:        " + self.appleseed_python_path)
+        print("  Path to maketx:                  " + self.maketx_path)
+        print("  Output directory:                " + self.package_output_path)
         print("")
 
     def __get_required(self, tree, key):
@@ -142,9 +172,8 @@ class Settings:
         maya_include_dir = None
 
         # Find the Maya include dir from CMake's cache.
-        f = open(os.path.join(self.build_path, 'CMakeCache.txt'), 'r')
-        lines = f.readlines()
-        f.close()
+        with open(os.path.join(self.build_path, 'CMakeCache.txt'), 'r') as f:
+            lines = f.readlines()
 
         token = 'MAYA_INCLUDE_DIR:PATH='
         for line in lines:
@@ -153,9 +182,8 @@ class Settings:
                 break
 
         # Find the Maya version from Maya's MTypes.h header.
-        f = open(os.path.join(maya_include_dir, 'maya', 'MTypes.h'), 'r')
-        lines = f.readlines()
-        f.close()
+        with open(os.path.join(maya_include_dir, 'maya', 'MTypes.h'), 'r') as f:
+            lines = f.readlines()
 
         for line in lines:
             if '#define' in line:
@@ -171,43 +199,90 @@ class Settings:
 class PackageBuilder(object):
 
     def __init__(self, settings):
-        self.package_output_path = settings.package_output_path
-        self.build_path = settings.build_path
-        self.appleseed_bin_path = settings.appleseed_bin_path
-        self.maketx_path = settings.maketx_path
-        self.appleseed_lib_path = settings.appleseed_lib_path
-        self.appleseed_python_path = settings.appleseed_python_path
-        self.appleseed_shaders_path = settings.appleseed_shaders_path
-        self.appleseed_schemas_path = settings.appleseed_schemas_path
-        self.appleseed_settings_path = settings.appleseed_settings_path
+        self.settings = settings
 
-        self.maya_version = settings.maya_version
-        (self.major_version, self.minor_version, self.patch_version) = self.__get_appleseed_maya_version()
+    def build_package(self):
+        progress("Removing leftovers from previous invocations")
+        safe_delete_directory(self.settings.package_output_path)
+
+        progress('Creating deployment directory')
+        safe_make_directory(self.settings.package_output_path)
+
+        this_dir = os.path.dirname(os.path.realpath(__file__))
+        root_dir = os.path.join(this_dir, '..')
+
+        progress('Copying license')
+        shutil.copy(os.path.join(this_dir, '..', 'LICENSE.txt'), self.settings.package_output_path)
+
+        progress('Copying icons')
+        copy_tree(os.path.join(root_dir, 'icons'), os.path.join(self.settings.package_output_path, 'icons'))
+
+        progress('Copying presets')
+        copy_tree(os.path.join(root_dir, 'presets'), os.path.join(self.settings.package_output_path, 'presets'))
+
+        progress('Copying resources')
+        copy_tree(os.path.join(root_dir, 'resources'), os.path.join(self.settings.package_output_path, 'resources'))
+
+        progress('Copying scripts')
+        copy_tree(os.path.join(root_dir, 'scripts'), os.path.join(self.settings.package_output_path, 'scripts'))
+
+        progress('Copying appleseed.python')
+        copy_tree(self.settings.appleseed_python_path, os.path.join(self.settings.package_output_path, 'scripts'))
+
+        progress('Removing pyc files')
+        for root, dirs, files in os.walk(os.path.join(self.settings.package_output_path, 'scripts')):
+            for f in files:
+                if f.endswith('.pyc'):
+                    safe_delete_file(os.path.join(root, f))
+
+        progress('Generating module file')
+        self.generate_module_file()
+
+        progress('Copying binaries')
+        self.copy_binaries()
+
+        progress('Copying schemas')
+        copy_tree(self.settings.appleseed_schemas_path, os.path.join(self.settings.package_output_path, 'schemas'))
+        safe_delete_file(os.path.join(self.settings.package_output_path, 'schemas', '.gitignore'))
+
+        progress('Copying settings')
+        # TODO: copy settings from repo, not from working copy.
+        copy_tree(self.settings.appleseed_settings_path, os.path.join(self.settings.package_output_path, 'settings'))
+
+        progress('Copying shaders')
+        self.copy_shaders()
+
+        progress('Copying plugins')
+        self.copy_plugins()
+
+        progress('Copying dependencies')
+        self.copy_dependencies()
+
+        progress('Post-processing package')
+        self.post_process_package()
 
     def run(self, cmdline):
         info("Running command line: {0}".format(cmdline))
         os.system(cmdline)
 
     def copy_binaries(self):
-        bin_dir = os.path.join(self.package_output_path, 'bin')
-        if not os.path.exists(bin_dir):
-            os.makedirs(bin_dir)
+        bin_dir = os.path.join(self.settings.package_output_path, 'bin')
+        safe_make_directory(bin_dir)
 
-        binaries_to_copy = ['appleseed.cli']
+        binaries_to_copy = [exe('appleseed.cli')]
         for bin in binaries_to_copy:
-            shutil.copy(os.path.join(self.appleseed_bin_path, bin), bin_dir)
+            shutil.copy(os.path.join(self.settings.appleseed_bin_path, bin), bin_dir)
 
-        shutil.copy(self.maketx_path, bin_dir)
+        shutil.copy(self.settings.maketx_path, bin_dir)
 
     def copy_shaders(self):
-        shaders_dir = os.path.join(self.package_output_path, 'shaders')
-        if not os.path.exists(shaders_dir):
-            os.makedirs(shaders_dir)
+        shaders_dir = os.path.join(self.settings.package_output_path, 'shaders')
+        safe_make_directory(shaders_dir)
 
-        for shader in glob.glob(os.path.join(self.appleseed_shaders_path, 'shaders', 'maya', '*.oso')):
+        for shader in glob.glob(os.path.join(self.settings.appleseed_shaders_path, 'maya', '*.oso')):
             shutil.copy(shader, shaders_dir)
 
-        for root, dirs, files in os.walk(os.path.join(self.appleseed_shaders_path, 'shaders', 'appleseed')):
+        for root, dirs, files in os.walk(os.path.join(self.settings.appleseed_shaders_path, 'appleseed')):
             for f in files:
                 if f.endswith('.oso'):
                     shutil.copy(os.path.join(root, f), shaders_dir)
@@ -215,94 +290,35 @@ class PackageBuilder(object):
     def copy_plugins(self):
         plugin_ext = self.plugin_extension()
 
-        plugins_dir = os.path.join(self.package_output_path, 'plug-ins', self.maya_version)
-        if not os.path.exists(plugins_dir):
-            os.makedirs(plugins_dir)
+        plugins_dir = os.path.join(self.settings.package_output_path, 'plug-ins', self.settings.maya_version)
+        safe_make_directory(plugins_dir)
 
         shutil.copy(
-            os.path.join(self.build_path, 'src', 'appleseedmaya', 'appleseedMaya' + plugin_ext),
-            plugins_dir
-        )
+            os.path.join(self.settings.bin_path, 'appleseedMaya' + plugin_ext),
+            plugins_dir)
 
-    def build_package(self):
-        info('Deploying appleseedMaya %s.%s.%s to %s...' % (
-            self.major_version,
-            self.minor_version,
-            self.patch_version,
-            self.package_output_path))
+    def do_generate_module_file(self, platform):
+        (major_version, minor_version, patch_version) = self.__get_appleseed_maya_version()
 
-        info('Maya version = %s' % self.maya_version)
-
-        # Remove old deploy directory
-        # try:
-        #     shutil.rmtree(args.directory, onerror=remove_readonly)
-        # except Exception as e:
-        #     print "Failed to remove previous deploy, error = ", str(e)
-        #     sys.exit(0)
-
-        info('Creating deploy dir: %s' % self.package_output_path)
-        if not os.path.exists(self.package_output_path):
-            os.makedirs(self.package_output_path)
-
-        this_dir = os.path.dirname(os.path.realpath(__file__))
-        root_dir = os.path.join(this_dir, '..')
-
-        info('Copying license...')
-        shutil.copy(os.path.join(this_dir, '..', 'LICENSE.txt'), self.package_output_path)
-
-        info('Copying icons...')
-        copy_tree(os.path.join(root_dir, 'icons'), os.path.join(self.package_output_path, 'icons'))
-
-        info('Copying presets...')
-        copy_tree(os.path.join(root_dir, 'presets'), os.path.join(self.package_output_path, 'presets'))
-
-        info('Copying resources...')
-        copy_tree(os.path.join(root_dir, 'resources'), os.path.join(self.package_output_path, 'resources'))
-
-        info('Copying scripts...')
-        copy_tree(os.path.join(root_dir, 'scripts'), os.path.join(self.package_output_path, 'scripts'))
-
-        info('Copying appleseed.python...')
-        copy_tree(self.appleseed_python_path, os.path.join(self.package_output_path, 'scripts'))
-
-        info('Removing pyc files...')
-        for root, dirs, files in os.walk(os.path.join(self.package_output_path, 'scripts')):
-            for f in files:
-                if f.endswith('.pyc'):
-                    os.remove(os.path.join(root, f))
-
-        info('Generating module file...')
-        self.generate_module_file()
-
-        info('Copying binaries...')
-        self.copy_binaries()
-
-        info('Copying schemas...')
-        copy_tree(os.path.join(self.appleseed_schemas_path, 'schemas'), os.path.join(self.package_output_path, 'schemas'))
-
-        info('Copying settings...')
-        copy_tree(os.path.join(self.appleseed_settings_path, 'settings'), os.path.join(self.package_output_path, 'settings'))
-
-        info('Copying shaders...')
-        self.copy_shaders()
-
-        info('Copying plugins...')
-        self.copy_plugins()
-
-        info('Copying dependencies...')
-        self.copy_dependencies()
-
-        info('Post-processing package...')
-        self.post_process_package()
+        with open(os.path.join(self.settings.package_output_path, 'appleseed-maya.mod'), 'w') as f:
+            f.write('+ MAYAVERSION:{0} PLATFORM:{1} appleseed-maya {2}.{3}.{4} .\n'.format(
+                self.settings.maya_version,
+                platform,
+                major_version,
+                minor_version,
+                patch_version))
+            f.write('plug-ins: plug-ins/{0}\n'.format(self.settings.maya_version))
+            f.write('PATH +:= bin\n')
+            f.write('PYTHONPATH +:= scripts\n')
+            f.write('APPLESEED_SEARCHPATH +:= shaders\n')
 
     def __get_appleseed_maya_version(self):
         this_dir = os.path.dirname(os.path.realpath(__file__))
         src_dir = os.path.join(this_dir, '..', 'src', 'appleseedmaya')
 
         # Find the Maya include dir from CMake's cache.
-        f = open(os.path.join(src_dir, 'version.h'), 'r')
-        lines = f.readlines()
-        f.close()
+        with open(os.path.join(src_dir, 'version.h'), 'r') as f:
+            lines = f.readlines()
 
         major = -1
         minor = -1
@@ -361,39 +377,27 @@ class LinuxPackageBuilder(PackageBuilder):
         return '.so'
 
     def generate_module_file(self):
-
-        with open(os.path.join(self.package_output_path, 'appleseedMaya.mod'), 'w') as f:
-            f.write('+ MAYAVERSION:{0} PLATFORM:linux appleseedMaya {1}.{2}.{3} .\n'.format(
-                self.maya_version,
-                self.major_version,
-                self.minor_version,
-                self.patch_version))
-            f.write('plug-ins: plug-ins/{0}\n'.format(self.maya_version))
-            f.write('PATH +:= bin\n')
-            f.write('PYTHONPATH +:= scripts\n')
-            f.write('APPLESEED_SEARCHPATH +:= shaders\n')
+        self.do_generate_module_file("linux")
 
     def copy_dependencies(self):
-
         # Create the lib directory.
-        lib_dir = os.path.join(self.package_output_path, 'lib')
-        if not os.path.exists(lib_dir):
-            os.makedirs(lib_dir)
+        lib_dir = os.path.join(self.settings.package_output_path, 'lib')
+        safe_make_directory(lib_dir)
 
         # Copy appleseed libraries.
         libraries_to_copy = ['libappleseed.so', 'libappleseed.shared.so']
         for lib in libraries_to_copy:
-            shutil.copy(os.path.join(self.appleseed_lib_path, lib), lib_dir)
+            shutil.copy(os.path.join(self.settings.appleseed_lib_path, lib), lib_dir)
 
         # Get shared libs needed by binaries.
         all_libs = set()
-        for bin in glob.glob(os.path.join(self.package_output_path, 'bin', '*')):
+        for bin in glob.glob(os.path.join(self.settings.package_output_path, 'bin', '*')):
             libs = self.__get_dependencies_for_file(bin)
             all_libs = all_libs.union(libs)
 
-        # Get shared libs needed by appleseed.python
+        # Get shared libs needed by appleseed.python.
         libs = self.__get_dependencies_for_file(
-            os.path.join(self.package_output_path, 'scripts', 'appleseed', '_appleseedpython.so'))
+            os.path.join(self.settings.package_output_path, 'scripts', 'appleseed', '_appleseedpython.so'))
         all_libs = all_libs.union(libs)
 
         # Get shared libs needed by libraries.
@@ -409,17 +413,17 @@ class LinuxPackageBuilder(PackageBuilder):
             shutil.copy(lib, lib_dir)
 
     def post_process_package(self):
-        for bin in glob.glob(os.path.join(self.package_output_path, 'bin', '*')):
+        for bin in glob.glob(os.path.join(self.settings.package_output_path, 'bin', '*')):
             self.run("chrpath -r \$ORIGIN/../lib " + bin)
 
-        # for lib in glob.glob(os.path.join(self.package_output_path, 'lib', '*')):
+        # for lib in glob.glob(os.path.join(self.settings.package_output_path, 'lib', '*')):
         #     self.run("chrpath -d " + lib)
 
-        plugins_dir = os.path.join(self.package_output_path, 'plug-ins', self.maya_version)
+        plugins_dir = os.path.join(self.settings.package_output_path, 'plug-ins', self.settings.maya_version)
         for plugin in glob.glob(os.path.join(plugins_dir, '*.so')):
             self.run("chrpath -r \$ORIGIN/../../lib " + plugin)
 
-        appleseed_python_dir = os.path.join(self.package_output_path, 'scripts', 'appleseed')
+        appleseed_python_dir = os.path.join(self.settings.package_output_path, 'scripts', 'appleseed')
         for py_cpp_module in glob.glob(os.path.join(appleseed_python_dir, '*.so')):
             self.run("chrpath -r \$ORIGIN/../../lib " + py_cpp_module)
 
@@ -466,13 +470,17 @@ class WindowsPackageBuilder(PackageBuilder):
         return '.mll'
 
     def generate_module_file(self):
-        raise NotImplementedError()
+        self.do_generate_module_file("win64")
 
     def copy_dependencies(self):
-        raise NotImplementedError()
+        bin_dir = os.path.join(self.settings.package_output_path, 'bin')
+
+        dlls_to_copy = ['appleseed.dll', 'appleseed.shared.dll']
+        for dll in dlls_to_copy:
+            shutil.copy(os.path.join(self.settings.appleseed_bin_path, dll), bin_dir)
 
     def post_process_package(self):
-        raise NotImplementedError()
+        pass
 
 
 #--------------------------------------------------------------------------------------------------
@@ -480,7 +488,7 @@ class WindowsPackageBuilder(PackageBuilder):
 #--------------------------------------------------------------------------------------------------
 
 def main():
-    print("appleseed-maya deploy version " + VERSION)
+    print("appleseed-maya.package version " + VERSION)
 
     settings = Settings()
     settings.load()

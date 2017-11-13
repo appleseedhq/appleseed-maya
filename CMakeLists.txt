@@ -33,24 +33,18 @@
 
 cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 
-project (appleseed-maya)
-
-set (CMAKE_MODULE_PATH
-    ${CMAKE_MODULE_PATH}
-    ${PROJECT_SOURCE_DIR}/cmake/Modules
-)
-
 
 #--------------------------------------------------------------------------------------------------
-# Create the build configurations.
+# Project configuration.
 #--------------------------------------------------------------------------------------------------
-
-set (CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 
 # Prevent in-source builds.
 if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message (FATAL_ERROR "In-source builds are not permitted; run CMake inside an empty build directory.")
 endif ()
+
+# Create build configurations. Must come before project ().
+set (CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 
 # Select a build configuration if none is selected yet.
 if (NOT CMAKE_BUILD_TYPE)
@@ -58,6 +52,14 @@ if (NOT CMAKE_BUILD_TYPE)
          CACHE STRING "Choose the type of build, options are: ${CMAKE_CONFIGURATION_TYPES}" FORCE)
     set_property (CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${CMAKE_CONFIGURATION_TYPES})
 endif ()
+
+project (appleseed-maya)
+
+# Must come after project ().
+set (CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    ${PROJECT_SOURCE_DIR}/cmake/Modules
+)
 
 
 #--------------------------------------------------------------------------------------------------
