@@ -39,6 +39,7 @@ import subprocess
 import sys
 import time
 import traceback
+import urllib
 
 
 #--------------------------------------------------------------------------------------------------
@@ -287,9 +288,8 @@ class PackageBuilder(object):
         dir_util.copy_tree(self.settings.appleseed_schemas_path, os.path.join(self.settings.package_output_path, "schemas"))
         safe_delete_file(os.path.join(self.settings.package_output_path, "schemas", ".gitignore"))
 
-        progress("Copying settings")
-        # TODO: copy settings from repo, not from working copy.
-        dir_util.copy_tree(self.settings.appleseed_settings_path, os.path.join(self.settings.package_output_path, "settings"))
+        progress("Downloading settings files")
+        self.download_settings()
 
         progress("Copying shaders")
         self.copy_shaders()
@@ -326,6 +326,16 @@ class PackageBuilder(object):
             shutil.copy(os.path.join(self.settings.appleseed_bin_path, bin), bin_dir)
 
         shutil.copy(self.settings.maketx_path, bin_dir)
+
+    def download_settings(self):
+        settings_dir = os.path.join(self.settings.package_output_path, "settings")
+        safe_make_directory(settings_dir)
+
+        settings_to_download = ["appleseed.cli.xml"]
+        for file in settings_to_download:
+            urllib.urlretrieve(
+                "https://raw.githubusercontent.com/appleseedhq/appleseed/master/sandbox/settings/{0}".format(file),
+                os.path.join(settings_dir, file))
 
     def copy_shaders(self):
         shaders_dir = os.path.join(self.settings.package_output_path, "shaders")
