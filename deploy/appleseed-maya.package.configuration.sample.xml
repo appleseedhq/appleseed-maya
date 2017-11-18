@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <!-- The name of the target platform. This parameter is only used to name the final archive.
+         Example values: win64, linux64, mac64, etc. -->
+    <platform>win64</platform>
+
     <!-- The path to the appleseed-maya directory containing CMakeCache.txt (build, usually). -->
     <build_path>/path/to/appleseed-maya/build</build_path>
 
