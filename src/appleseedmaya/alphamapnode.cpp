@@ -88,7 +88,12 @@ MStringArray AlphaMapNode::getFilesToArchive(
     MStatus status = MS::kSuccess;
 
     MPlug fileNamePlug(thisMObject(), m_map);
+
+#if MAYA_API_VERSION >= 201800
+    MString fileName = fileNamePlug.asString(&status);
+#else
     MString fileName = fileNamePlug.asString(MDGContext::fsNormal, &status);
+#endif
 
     if (status == MS::kSuccess && fileName.length() > 0)
     {
