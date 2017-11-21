@@ -46,7 +46,7 @@ import urllib
 # Constants.
 #--------------------------------------------------------------------------------------------------
 
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 SETTINGS_FILENAME = "appleseed-maya.package.configuration.xml"
 
 
@@ -195,6 +195,7 @@ class Settings:
         major = -1
         minor = -1
         patch = -1
+        maturity = None
 
         # Find the Maya include dir from CMake's cache.
         with open(os.path.join(self.root_dir, "src", "appleseedmaya", "version.h"), "r") as f:
@@ -207,11 +208,13 @@ class Settings:
                         minor = int(tokens[2])
                     elif tokens[1] == "APPLESEED_MAYA_VERSION_PATCH":
                         patch = int(tokens[2])
+                    elif tokens[1] == "APPLESEED_MAYA_VERSION_MATURITY":
+                        maturity = tokens[2].strip("\"")
 
-        if major == -1 or minor == -1 or patch == -1:
+        if major == -1 or minor == -1 or patch == -1 or maturity == None:
             return None
 
-        return "{0}.{1}.{2}".format(major, minor, patch)
+        return "{0}.{1}.{2}-{3}".format(major, minor, patch, maturity)
 
     def print_summary(self):
         print("")
