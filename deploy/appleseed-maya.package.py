@@ -273,7 +273,7 @@ class PackageBuilder(object):
         dir_util.copy_tree(os.path.join(self.settings.root_dir, "scripts"), os.path.join(self.settings.package_output_path, "scripts"))
 
         progress("Copying appleseed.python")
-        dir_util.copy_tree(self.settings.appleseed_python_path, os.path.join(self.settings.package_output_path, "scripts"))
+        dir_util.copy_tree(os.path.expandvars(self.settings.appleseed_python_path), os.path.join(self.settings.package_output_path, "scripts"))
 
         progress("Removing pyc files")
         for root, dirs, files in os.walk(os.path.join(self.settings.package_output_path, "scripts")):
@@ -288,7 +288,7 @@ class PackageBuilder(object):
         self.copy_binaries()
 
         progress("Copying schemas")
-        dir_util.copy_tree(self.settings.appleseed_schemas_path, os.path.join(self.settings.package_output_path, "schemas"))
+        dir_util.copy_tree(os.path.expandvars(self.settings.appleseed_schemas_path), os.path.join(self.settings.package_output_path, "schemas"))
         safe_delete_file(os.path.join(self.settings.package_output_path, "schemas", ".gitignore"))
 
         progress("Downloading settings files")
@@ -326,9 +326,9 @@ class PackageBuilder(object):
 
         binaries_to_copy = [exe("appleseed.cli")]
         for bin in binaries_to_copy:
-            shutil.copy(os.path.join(self.settings.appleseed_bin_path, bin), bin_dir)
+            shutil.copy(os.path.join(os.path.expandvars(self.settings.appleseed_bin_path), bin), bin_dir)
 
-        shutil.copy(self.settings.maketx_path, bin_dir)
+        shutil.copy(os.path.expandvars(self.settings.maketx_path), bin_dir)
 
     def download_settings(self):
         settings_dir = os.path.join(self.settings.package_output_path, "settings")
@@ -344,10 +344,10 @@ class PackageBuilder(object):
         shaders_dir = os.path.join(self.settings.package_output_path, "shaders")
         safe_make_directory(shaders_dir)
 
-        for shader in glob.glob(os.path.join(self.settings.appleseed_shaders_path, "maya", "*.oso")):
+        for shader in glob.glob(os.path.join(os.path.expandvars(self.settings.appleseed_shaders_path), "maya", "*.oso")):
             shutil.copy(shader, shaders_dir)
 
-        for root, dirs, files in os.walk(os.path.join(self.settings.appleseed_shaders_path, "appleseed")):
+        for root, dirs, files in os.walk(os.path.join(os.path.expandvars(self.settings.appleseed_shaders_path), "appleseed")):
             for f in files:
                 if f.endswith(".oso"):
                     shutil.copy(os.path.join(root, f), shaders_dir)
@@ -427,7 +427,7 @@ class LinuxPackageBuilder(PackageBuilder):
         # Copy appleseed libraries.
         libraries_to_copy = ["libappleseed.so", "libappleseed.shared.so"]
         for lib in libraries_to_copy:
-            shutil.copy(os.path.join(self.settings.appleseed_lib_path, lib), lib_dir)
+            shutil.copy(os.path.join(os.path.expandvars(self.settings.appleseed_lib_path), lib), lib_dir)
 
         # Get shared libs needed by binaries.
         all_libs = set()
