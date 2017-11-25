@@ -368,7 +368,11 @@ void RenderGlobalsNode::applyGlobalsToProject(
 
     int maxTexCacheSize;
     if (AttributeUtils::get(MPlug(globals, m_maxTextureCacheSize), maxTexCacheSize))
-        INSERT_PATH_IN_CONFIGS("texture_store.max_size", maxTexCacheSize * 1024 * 1024)
+    {
+        uint64_t texCacheSizeinBytes = maxTexCacheSize;
+        texCacheSizeinBytes *= 1024 * 1024;
+        INSERT_PATH_IN_CONFIGS("texture_store.max_size", texCacheSizeinBytes);
+    }
 
     #undef INSERT_PATH_IN_CONFIGS
     #undef REMOVE_PATH_IN_CONFIGS
