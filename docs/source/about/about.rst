@@ -25,5 +25,5 @@ appleseed-maya is an `open-source MIT licensed <https://opensource.org/licenses/
 
 .. rubric:: Footnotes
 
-.. [#] Besides Linux, macOS and Windows, appleseed was known to build and run on the Raspberry Pi3, and IBM Power8.
+.. [#] Besides Linux, macOS and Windows, appleseed was known to build and run on the Raspberry Pi3, and IBM POWER8.
 
