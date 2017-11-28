@@ -3,7 +3,7 @@
 Limitations
 ===========
 
-Presently appleseed has the following limitations
+Presently appleseed has the following limitations:
 
 * Swatch rendering is not supported yet
 * IPR is not supported yet

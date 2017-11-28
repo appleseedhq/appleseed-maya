@@ -6,28 +6,17 @@ Installation
 
 .. dummy directive:
 
-Manual Setup
-============
+The plugin is a Maya module.
 
-The plugin is a Maya module. To use it, simply uncompress the zip file and add the path containing the :file:`appleseed-maya.mod` file to your `Maya.env file <https://knowledge.autodesk.com/support/maya/learn-explore/caas/CloudHelp/cloudhelp/2016/ENU/Maya/files/GUID-8EFB1AC1-ED7D-4099-9EEE-624097872C04-htm.html>`_, or to the `MAYA_MODULE_PATH environment variable <https://knowledge.autodesk.com/support/maya/learn-explore/caas/CloudHelp/cloudhelp/2015/ENU/Maya/files/Environment-Variables-File-path-variables-htm.html>`_.
+ **1.** Uncompress the zip file.
 
-Example:
+ **2.** Add the path containing the appleseed-maya.mod file to your Maya.env [#]_ file or to the MAYA_MODULE_PATH environment variable.
 
-**1. Add to your ${HOME}/maya/2017/Maya.env file**
+ **3.** Launch Maya and enable the plugin in the Plug-in Manager.
 
-.. code-block:: bash
-   :linenos:
+-----
 
-   MAYA_MODULE_PATH = /path/to/appleseed-maya-dir
+.. rubric:: Footnotes
 
-**2. Append to your MAYA_MODULE_PATH env var directly**
-
-.. code-block:: bash
-   :linenos:
-
-   export MAYA_MODULE_PATH = /path/to/appleseed-maya-dir:${MAYA_MODULE_PATH}
-
-Change the file paths and environment variable setting syntax according to your operating system.
-
-|
+.. [#] See `Setting environment variables using Maya.env <https://knowledge.autodesk.com/support/maya/learn-explore/caas/CloudHelp/cloudhelp/2016/ENU/Maya/files/GUID-8EFB1AC1-ED7D-4099-9EEE-624097872C04-htm.html>`_.
 
