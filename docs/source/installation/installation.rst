@@ -6,30 +6,17 @@ Installation
 
 .. dummy directive:
 
-Manual Setup
-============
+The plugin is a Maya module.
 
-**1. Set environment variables**
+ **1.** Uncompress the zip file.
 
-.. code-block:: bash
-   :linenos:
+ **2.** Add the path containing the appleseed-maya.mod file to your Maya.env [#]_ file or to the MAYA_MODULE_PATH environment variable.
 
-    export THIS_DIR=<path to appleseed-maya source>
-    export MAYA_PLUG_IN_PATH=${BUILD_DIR}/src/appleseedmaya
-    export MAYA_SCRIPT_PATH=${THIS_DIR}/scripts
-    export PYTHONPATH=$PYTHONPATH:${APPLESEED_DIR}/lib/python2.7:${THIS_DIR}/scripts
-    export XBMLANGPATH=${THIS_DIR}/icons
-    export MAYA_PRESET_PATH=${THIS_DIR}/presets:$MAYA_PRESET_PATH
-    export APPLESEED_SEARCHPATH=${APPLESEED_DIR}/sandbox/shaders/maya
-
-**2. Launch Maya and load the plugin**
+ **3.** Launch Maya and enable the plugin in the Plug-in Manager.
 
 -----
 
-Using a module (.mod)
-=====================
+.. rubric:: Footnotes
 
-To be written here.
-
-.. seealso:: How to install modules in Maya
+.. [#] See `Setting environment variables using Maya.env <https://knowledge.autodesk.com/support/maya/learn-explore/caas/CloudHelp/cloudhelp/2016/ENU/Maya/files/GUID-8EFB1AC1-ED7D-4099-9EEE-624097872C04-htm.html>`_.
 

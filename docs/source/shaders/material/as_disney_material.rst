@@ -114,12 +114,12 @@ Outputs
 Screenshots
 -----------
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f1.png
+.. thumbnail:: /_images/screenshots/disney/asDisney_material_aniso_metal_1.png
    :group: shots_voronoi2d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the first feature nearest to the evaluated cell.
+   Disney material with anisotropy mapped to the rotation angle, a brushed metal look.
 
 -----
 

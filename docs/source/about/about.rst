@@ -18,13 +18,12 @@ About
 
 |
 
-appleseed-maya is an open-source multi-platform [#]_ renderer integration plugin Autodesk® Maya® 2017 and later.
-
+appleseed-maya is an `open-source MIT licensed <https://opensource.org/licenses/MIT>`_ multi-platform renderer integration plugin Autodesk® Maya® 2017 and later.
 
 
 ----
 
 .. rubric:: Footnotes
 
-.. [#] Tested on Linux and Windows, unstested on OSX.
+.. [#] Besides Linux, macOS and Windows, appleseed was known to build and run on the Raspberry Pi3, and IBM POWER8.
 

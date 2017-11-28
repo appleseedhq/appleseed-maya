@@ -4,6 +4,11 @@
 Supported HyperShade Nodes
 **************************
 
+Support status for the Hypershade nodes, and some extra plugin nodes.
+If the node support status is empty, it means that the node might or might not be supported at a later date.
+
+-----
+
 .. include:: nodes_utilities.rst
 
 -----
