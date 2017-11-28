@@ -319,6 +319,10 @@ class PackageBuilder(object):
             f.write("PATH +:= bin\n")
             f.write("PYTHONPATH +:= scripts\n")
             f.write("APPLESEED_SEARCHPATH +:= shaders\n")
+            f.write("MAYA_PRESET_PATH +:= presets\n")
+            f.write("MAYA_CUSTOM_TEMPLATE_PATH +:= scripts/appleseedMaya/AETemplates\n")
+            f.write("MAYA_SHELF_PATH +:= prefs/shelves\n")
+            f.write("XBMLANGPATH +:= icons/%B\n")
 
     def copy_binaries(self):
         bin_dir = os.path.join(self.settings.package_output_path, "bin")

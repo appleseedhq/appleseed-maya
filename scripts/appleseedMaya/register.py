@@ -37,7 +37,7 @@ import maya.mel as mel
 import maya.OpenMaya as om
 
 # appleseedMaya imports.
-from aetemplate import appleseedAETemplateCallback
+from AETemplates import appleseedAETemplateCallback
 from hypershadeCallbacks import *
 from logger import logger
 from menu import createMenu, deleteMenu
@@ -115,14 +115,14 @@ def register():
         hook="AETemplateCustomContent",
         owner="appleseed")
 
-    # Manually load templates in aetemplate folder.
-    templatesDir = os.path.join(thisDir, "aetemplate")
+    # Manually load templates in AETemplates folder.
+    templatesDir = os.path.join(thisDir, "AETemplates")
     logger.debug("Registering AETemplates in %s" % templatesDir)
     for file in os.listdir(templatesDir):
         if fnmatch.fnmatch(file, '*template.py'):
             templateModule = file.replace(".py", "")
             logger.debug("Registering AE template %s" % templateModule)
-            mel.eval('python("import appleseedMaya.aetemplate.%s")' % templateModule)
+            mel.eval('python("import appleseedMaya.AETemplates.%s")' % templateModule)
 
     # Hypershade callbacks
     asHypershadeCallbacks = [
