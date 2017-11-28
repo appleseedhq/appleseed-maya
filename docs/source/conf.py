@@ -61,8 +61,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinxcontrib.bibtex',
     'sphinxcontrib.images',
-    'sphinxcontrib.css3image',
-    'sphinx_autorun'
+    'sphinxcontrib.css3image'
     ]
 
 todo_include_todos = True
