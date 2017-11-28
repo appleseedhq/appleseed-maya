@@ -20,7 +20,7 @@ Choice
 Chooser
 Clamp               Supported
 Clearcoat           Supported
-Color Profile
+Color Profile       Supported (**WIP**)
 Compose Matrix
 Condition           Supported
 Curve Info
@@ -31,7 +31,7 @@ Euler to Quat
 Four by Four Matrix Supported
 Frame Cache         **Unsupported**
 Gamma Correct       Supported
-Height Field
+Height Field        **Unsupported**
 HSV to RGB          Supported
 Inverse Matrix      Supported
 Light Info
@@ -45,14 +45,14 @@ Particle Sample
 Plus Minus Average  Supported
 Projection          **Unsupported** [#]_
 Quad Switch         Supported (**WIP**)
-Quat Add
-Quat Conjugate
-Quat Invert
-Quat Negate
-Quat Normalize
-Quat Prod
-Quat Sub
-Quat to Euler
+quatNodes Add       
+quatNodes Conjugate
+quatNodes Invert    
+quatNodes Negate    
+quatNodes Normalize 
+quatNodes Prod      
+quatNodes Sub       
+quatNodes to Euler  
 Remap Color         Supported
 Remap HSV           Supported
 Remap Value         Supported
@@ -62,8 +62,8 @@ Sampler Info        Supported
 SetRange            Supported
 SingleSwitch        Supported (**WIP**)
 Stencil             Supported
-Surface Info
-Surf.Luminance
+Surface Info        
+Surf.Luminance      **Unsupported**
 Transpose Matrix    Supported
 Triple Switch       Supported (**WIP**)
 Unit Conversion

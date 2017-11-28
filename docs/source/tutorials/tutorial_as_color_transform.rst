@@ -4,7 +4,6 @@
 Transforming Colors
 *******************
 
-
 In this example, we'll be adjusting the colors of an input texture. Ideally
 this would be done offline, but sometimes that's either not convenient or
 there is a specific need to do it online as a part of a particular effect,

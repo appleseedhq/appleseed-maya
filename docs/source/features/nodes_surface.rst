@@ -19,7 +19,7 @@ Blinn               Supported
 CgFX Shader         **Unsupported**
 Hair Tube Shader
 Lambert             Supported
-Layered Shader
+Layered Shader      **Unsupported** [#]_
 Ocean Shader
 Phong               Supported
 PhongE              Supported
@@ -28,4 +28,8 @@ Shading Map         **Unsupported**
 Surface Shader
 Use Background
 =================== ==================
+
+.. rubric:: Footnotes
+
+.. [#] An alternative appleseed node will be provided for layering shaders and textures.
 
