@@ -46,7 +46,7 @@ import urllib
 # Constants.
 #--------------------------------------------------------------------------------------------------
 
-VERSION = "1.1.1"
+VERSION = "1.1.2"
 SETTINGS_FILENAME = "appleseed-maya.package.configuration.xml"
 
 
