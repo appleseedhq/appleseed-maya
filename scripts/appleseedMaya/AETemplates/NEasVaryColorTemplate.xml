@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasVaryColor'>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='varyHue' type='maya.float'>
+            <label>Vary Hue</label>
+        </attribute>
+        <attribute name='varySaturation' type='maya.float'>
+            <label>Vary Saturation</label>
+        </attribute>
+        <attribute name='varyValue' type='maya.float'>
+            <label>Vary Value</label>
+        </attribute>
+        <attribute name='varyRed' type='maya.float'>
+            <label>Vary Red</label>
+        </attribute>
+        <attribute name='varyGreen' type='maya.float'>
+            <label>Vary Green</label>
+        </attribute>
+        <attribute name='varyBlue' type='maya.float'>
+            <label>Vary Blue</label>
+        </attribute>
+        <attribute name='varyLStar' type='maya.float'>
+            <label>Vary LStar</label>
+        </attribute>
+        <attribute name='varyAStar' type='maya.float'>
+            <label>Vary AStar</label>
+        </attribute>
+        <attribute name='varyBStar' type='maya.float'>
+            <label>Vary BStar</label>
+        </attribute>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='outGreyscale' type='maya.float'>
+            <label>Out Greyscale</label>
+        </attribute>
+        <attribute name='outHash' type='maya.long'>
+            <label>Out Hash</label>
+        </attribute>
+        <attribute name='outID' type='maya.float3'>
+            <label>Out ID</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasVaryColor'>
+        <property name='color'/>
+        <property name='varyHue'/>
+        <property name='varySaturation'/>
+        <property name='varyValue'/>
+        <property name='varyRed'/>
+        <property name='varyGreen'/>
+        <property name='varyBlue'/>
+        <property name='varyLStar'/>
+        <property name='varyAStar'/>
+        <property name='varyBStar'/>
+        <property name='outColor'/>
+        <property name='outGreyscale'/>
+        <property name='outHash'/>
+        <property name='outID'/>
+    </view>
+</templates>

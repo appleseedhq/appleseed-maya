@@ -63,6 +63,37 @@ enum AppleseedMayaTypeIds
     AsSkinNodeTypeId                = 0x001279d6,   // 1210838
     AsPlasticNodeTypeId             = 0x001279d7,   // 1210839
     AsThinFilmNodeTypeId            = 0x001279d8,   // 1210840
+    AsIdManifoldNodeTypeId          = 0x001279d9,   // 1210841
+    AsVaryTextureNodeTypeId         = 0x001279da,   // 1210842
+    AsDoubleShadeNodeTypeId         = 0x001279db,   // 1210843
+    AsRaySwitchNodeTypeId           = 0x001279dc,   // 1210844
+    AsLayerShaderNodeTypeId         = 0x001279dd,   // 1210845
+    AsLayerTextureNodeTypeId        = 0x001279de,   // 1210846
+    AsFlakesNodeTypeId              = 0x001279df,   // 1210847
+    AsAnisoVectorFieldNodeTypeId    = 0x001278e0,   // 1210848
+    AsCreateMaskNodeTypeId          = 0x001278e1,   // 1210849
+    AsRampNodeTypeId                = 0x001278e2,   // 1210850
+    AsVolumeRampNodeTypeId          = 0x001278e3,   // 1210851
+    AsSubsurfaceMaterialNodeTypeId  = 0x001279e4,   // 1210852
+    AsTriPlanarNodeTypeId           = 0x001279e5,   // 1210853
+    AsDirtNodeTypeId                = 0x001279e6,   // 1210854
+    AsCurvatureNodeTypeId           = 0x001279e7,   // 1210855
+    AsBevelNodeTypeId               = 0x001279e8,   // 1210856
+    AsHairMaterialNodeTypeId        = 0x001279e9,   // 1210857
+    AsClothMaterialNodeTypeId       = 0x001279ea,   // 1210858
+    AsVolumeMaterialNodeTypeId      = 0x001279eb,   // 1210859
+    AsShadowCatcherNodeTypeId       = 0x001279ec,   // 1210860
+    AsEmissionMaterialNodeTypeId    = 0x001279ed,   // 1210861
+    AsMatteNodeTypeId               = 0x001279ee,   // 1210862
+    AsGlobalsNodeTypeId             = 0x001279ef,   // 1210863
+    AsSpaceTransformNodeTypeId      = 0x001279f0,   // 1210864
+    AsFresnelNodeTypeId             = 0x001279f1,   // 1210865
+    AsSwizzleNodeTypeId             = 0x001279f2,   // 1210866
+    AsBakePointcloudNodeTypeId      = 0x001279f3,   // 1210867
+    AsReadPointcloudNodeTypeId      = 0x001279f4,   // 1210868
+    AsMDLMaterialNodeTypeId         = 0x001279f5,   // 1210869
+    AsMatcapMaterialNodeTypeId      = 0x001279f6,   // 1210870
+    AsAngleBetweenNodeTypeId        = 0x001279f7,   // 1210871
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };
