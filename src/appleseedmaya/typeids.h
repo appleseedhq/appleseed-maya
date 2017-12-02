@@ -63,7 +63,7 @@ enum AppleseedMayaTypeIds
     AsSkinNodeTypeId                = 0x001279d6,   // 1210838
     AsPlasticNodeTypeId             = 0x001279d7,   // 1210839
     AsThinFilmNodeTypeId            = 0x001279d8,   // 1210840
-    AsManifoldsNodeTypeId           = 0x001279d9,   // 1210841
+    AsIdManifoldsNodeTypeId         = 0x001279d9,   // 1210841
     AsVaryTextureNodeTypeId         = 0x001279da,   // 1210842
     AsDoubleShadeNodeTypeId         = 0x001279db,   // 1210843
     AsRaySwitchNodeTypeId           = 0x001279dc,   // 1210844
