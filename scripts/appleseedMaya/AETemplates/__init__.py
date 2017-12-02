@@ -57,7 +57,7 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
 
     def __meshAlphaCreateNewPyCmd(self, attr):
         (nodeName, attrName) = attr.split('.')
-        thisClass = 'appleseedMaya.aetemplate.AEappleseedNodeTemplate'
+        thisClass = 'appleseedMaya.AETemplates.AEappleseedNodeTemplate'
         return "%s.meshAlphaMapCreateNew('%s', '%s')" % (thisClass, nodeName, attrName)
 
     def meshAlphaMapNew(self, attr):

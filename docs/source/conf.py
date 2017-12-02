@@ -13,9 +13,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
-import os
-
+import os, sys
 import sphinx_bootstrap_theme
 
 # Workaround for make_admonition error with sphinx 1.6.4
@@ -36,7 +34,10 @@ def get_version():
     """
     Returns project version as string from 'git describe' command.
     """
-    pipe = Popen('git describe --tags --always', stdout=PIPE, shell=True)
+    pipe = Popen(
+        'git describe --tags --always --abbrev=0',
+        stdout=PIPE, shell=True)
+
     version = pipe.stdout.read()
 
     if version:
@@ -60,8 +61,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinxcontrib.bibtex',
     'sphinxcontrib.images',
-    'sphinxcontrib.css3image',
-    'sphinx_autorun'
+    'sphinxcontrib.css3image'
     ]
 
 todo_include_todos = True
