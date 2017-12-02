@@ -1,24 +1,24 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <templates>
-	<using package='maya'/>
-	<template name='NEasIdManifold'>
-		<attribute name='outputMode' type='maya.enum'>
-			<label>Output Mode</label>
-		</attribute>
-		<attribute name='outGreyscale' type='maya.float'>
-			<label>Out Greyscale</label>
-		</attribute>
-		<attribute name='outHash' type='maya.long'>
-			<label>Out Hash</label>
-		</attribute>
-		<attribute name='outID' type='maya.float3'>
-			<label>Out ID</label>
-		</attribute>
-	</template>
-	<view name='NEDefault' template='NEasIdManifold'>
-		<property name='outputMode'/>
-		<property name='outGreyscale'/>
-		<property name='outHash'/>
-		<property name='outID'/>
-	</view>
+    <using package='maya'/>
+    <template name='NEasIdManifold'>
+        <attribute name='outputMode' type='maya.enum'>
+            <label>Output Mode</label>
+        </attribute>
+        <attribute name='outGreyscale' type='maya.float'>
+            <label>Out Greyscale</label>
+        </attribute>
+        <attribute name='outHash' type='maya.long'>
+            <label>Out Hash</label>
+        </attribute>
+        <attribute name='outID' type='maya.float3'>
+            <label>Out ID</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasIdManifold'>
+        <property name='outputMode'/>
+        <property name='outGreyscale'/>
+        <property name='outHash'/>
+        <property name='outID'/>
+    </view>
 </templates>
