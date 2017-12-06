@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasPlastic'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='outTransparency' type='maya.float3'>
+            <label>Out Transparency</label>
+        </attribute>
+        <attribute name='outMatteOpacity' type='maya.float3'>
+            <label>Out Matte Opacity</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='diffuseWeight' type='maya.float'>
+            <label>Diffuse Weight</label>
+        </attribute>
+        <attribute name='scattering' type='maya.float'>
+            <label>Scattering</label>
+        </attribute>
+        <attribute name='specularColor' type='maya.float3'>
+            <label>Specular Color</label>
+        </attribute>  
+        <attribute name='specularWeight' type='maya.float'>
+            <label>Specular Weight</label>
+        </attribute>
+        <attribute name='ior' type='maya.float'>
+            <label>Ior</label>
+        </attribute>
+        <attribute name='specularRoughness' type='maya.float'>
+            <label>Specular Roughness</label>
+        </attribute>
+        <attribute name='specularSpread' type='maya.float'>
+            <label>Specular Spread</label>
+        </attribute>
+        <attribute name='matteOpacityColor' type='maya.float3'>
+            <label>Matte Opacity Color</label>
+        </attribute>
+        <attribute name='matteOpacity' type='maya.float'>
+            <label>Matte Opacity</label>
+        </attribute>
+        <attribute name='normalCamera' type='maya.float3'>
+            <label>Normal Camera</label>
+        </attribute>
+        <attribute name='transparency' type='maya.float3'>
+            <label>Transparency</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasPlastic'>
+        <property name='outColor'/>
+        <property name='outTransparency'/>
+        <property name='outMatteOpacity'/>
+        <property name='color'/>
+        <property name='diffuseWeight'/>
+        <property name='scattering'/>
+        <property name='specularColor'/>
+        <property name='specularWeight'/>
+        <property name='ior'/>
+        <property name='specularRoughness'/>
+        <property name='specularSpread'/>
+        <property name='matteOpacityColor'/>
+        <property name='matteOpacity'/>
+        <property name='normalCamera'/>
+        <property name='transparency'/>
+    </view>
+</templates>

@@ -2,6 +2,12 @@
 <templates>
     <using package='maya'/>
     <template name='NEasDoubleShade'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='outAlpha' type='maya.float'>
+            <label>Out Alpha</label>
+        </attribute>
         <attribute name='color' type='maya.float3'>
             <label>Color</label>
         </attribute>
@@ -14,19 +20,13 @@
         <attribute name='alpha2' type='maya.float'>
             <label>Alpha 2</label>
         </attribute>
-        <attribute name='outColor' type='maya.float3'>
-            <label>Out Color</label>
-        </attribute>
-        <attribute name='outAlpha' type='maya.float'>
-            <label>Out Alpha</label>
-        </attribute>
     </template>
     <view name='NEDefault' template='NEasDoubleShade'>
+        <property name='outColor'/>
+        <property name='outAlpha'/>
         <property name='color'/>
         <property name='alpha'/>
         <property name='color2'/>
         <property name='alpha2'/>
-        <property name='outColor'/>
-        <property name='outAlpha'/>
     </view>
 </templates>

@@ -2,6 +2,18 @@
 <templates>
     <using package='maya'/>
     <template name='NEasVaryColor'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='outGreyscale' type='maya.float'>
+            <label>Out Greyscale</label>
+        </attribute>
+        <attribute name='outHash' type='maya.long'>
+            <label>Out Hash</label>
+        </attribute>
+        <attribute name='outID' type='maya.float3'>
+            <label>Out ID</label>
+        </attribute>
         <attribute name='color' type='maya.float3'>
             <label>Color</label>
         </attribute>
@@ -32,20 +44,12 @@
         <attribute name='varyBStar' type='maya.float'>
             <label>Vary BStar</label>
         </attribute>
-        <attribute name='outColor' type='maya.float3'>
-            <label>Out Color</label>
-        </attribute>
-        <attribute name='outGreyscale' type='maya.float'>
-            <label>Out Greyscale</label>
-        </attribute>
-        <attribute name='outHash' type='maya.long'>
-            <label>Out Hash</label>
-        </attribute>
-        <attribute name='outID' type='maya.float3'>
-            <label>Out ID</label>
-        </attribute>
     </template>
     <view name='NEDefault' template='NEasVaryColor'>
+        <property name='outColor'/>
+        <property name='outGreyscale'/>
+        <property name='outHash'/>
+        <property name='outID'/>
         <property name='color'/>
         <property name='varyHue'/>
         <property name='varySaturation'/>
@@ -56,9 +60,5 @@
         <property name='varyLStar'/>
         <property name='varyAStar'/>
         <property name='varyBStar'/>
-        <property name='outColor'/>
-        <property name='outGreyscale'/>
-        <property name='outHash'/>
-        <property name='outID'/>
     </view>
 </templates>
