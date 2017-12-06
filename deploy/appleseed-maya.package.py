@@ -322,6 +322,7 @@ class PackageBuilder(object):
             f.write("MAYA_PRESET_PATH +:= presets\n")
             f.write("MAYA_CUSTOM_TEMPLATE_PATH +:= scripts/appleseedMaya/AETemplates\n")
             f.write("MAYA_SHELF_PATH +:= prefs/shelves\n")
+            f.write("MAYA_RENDER_DESC_PATH+:=renderdesc\n")
             f.write("XBMLANGPATH +:= icons/%B\n")
 
     def copy_binaries(self):
