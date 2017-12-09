@@ -94,6 +94,8 @@ enum AppleseedMayaTypeIds
     AsMDLMaterialNodeTypeId         = 0x001279f5,   // 1210869
     AsMatcapMaterialNodeTypeId      = 0x001279f6,   // 1210870
     AsAngleBetweenNodeTypeId        = 0x001279f7,   // 1210871
+    AsBlendNormalsNodeTypeId        = 0x001279f8,   // 1210872
+    AsMetalMaterialNodeTypeId       = 0x001279f9,   // 1210873
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };

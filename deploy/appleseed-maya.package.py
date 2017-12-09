@@ -269,6 +269,9 @@ class PackageBuilder(object):
         progress("Copying resources")
         dir_util.copy_tree(os.path.join(self.settings.root_dir, "resources"), os.path.join(self.settings.package_output_path, "resources"))
 
+        progress("Copying renderDesc")
+        dir_util.copy_tree(os.path.join(self.settings.root_dir, "renderDesc"), os.path.join(self-settings.package_output_path, "renderDesc"))
+
         progress("Copying scripts")
         dir_util.copy_tree(os.path.join(self.settings.root_dir, "scripts"), os.path.join(self.settings.package_output_path, "scripts"))
 
@@ -322,7 +325,7 @@ class PackageBuilder(object):
             f.write("MAYA_PRESET_PATH +:= presets\n")
             f.write("MAYA_CUSTOM_TEMPLATE_PATH +:= scripts/appleseedMaya/AETemplates\n")
             f.write("MAYA_SHELF_PATH +:= prefs/shelves\n")
-            f.write("MAYA_RENDER_DESC_PATH+:=renderdesc\n")
+            f.write("MAYA_RENDER_DESC_PATH +:= renderDesc\n")
             f.write("XBMLANGPATH +:= icons/%B\n")
 
     def copy_binaries(self):
