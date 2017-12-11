@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+	<using package='maya'/>
+	<template name='NEasFalloffAngle'>
+		<attribute name='result' type='maya.float'>
+			<label>Result</label>
+		</attribute>
+		<attribute name='vector1' type='maya.float3'>
+			<label>Vector 1</label>
+		</attribute>
+		<attribute name='vector2' type='maya.float3'>
+			<label>Vector 2</label>
+		</attribute>
+		<attribute name='smoothLowerBound' type='maya.float'>
+			<label>Smooth Lower Bound</label>
+		</attribute>
+		<attribute name='smoothUpperBound' type='maya.float'>
+			<label>Smooth Upper Bound</label>
+		</attribute>
+	</template>
+	<view name='NEDefault' template='NEasFalloffAngle'>
+		<property name='result'/>
+		<property name='vector1'/>
+		<property name='vector2'/> 
+		<property name='smoothLowerBound'/>
+		<property name='smoothUpperBound'/>
+	</view>
+</templates>

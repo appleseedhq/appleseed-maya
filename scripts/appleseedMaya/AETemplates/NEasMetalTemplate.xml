@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+	<using package='maya'/>
+	<template name='NEasMetal'>
+		<attribute name='anisotropyAmount' type='maya.float'>
+			<label>Anisotropy Amount</label>
+		</attribute>
+		<attribute name='anisotropyAngle' type='maya.float'>
+			<label>Anisotropy Angle</label>
+		</attribute>
+		<attribute name='anisotropyMap' type='maya.float3'>
+			<label>Anisotropy Map</label>
+		</attribute>
+		<attribute name='edgeReflectance' type='maya.float3'>
+			<label>Edge Reflectance</label>
+		</attribute>
+		<attribute name='energyCompensation' type='maya.float'>
+			<label>Energy Compensation</label>
+		</attribute>
+		<attribute name='faceReflectance' type='maya.float3'>
+			<label>Face Reflectance</label>
+		</attribute>
+		<attribute name='matteOpacity' type='maya.float'>
+			<label>Matte Opacity</label>
+		</attribute>
+		<attribute name='matteOpacityColor' type='maya.float3'>
+			<label>Matte Opacity Color</label>
+		</attribute>
+		<attribute name='normalCamera' type='maya.float3'>
+			<label>Normal Camera</label>
+		</attribute>
+		<attribute name='outColor' type='maya.float3'>
+			<label>Out Color</label>
+		</attribute>
+		<attribute name='roughness' type='maya.float'>
+			<label>Roughness</label>
+		</attribute>
+		<attribute name='outMatteOpacity' type='maya.float3'>
+			<label>Out Matte Opacity</label>
+		</attribute>
+		<attribute name='outTransparency' type='maya.float3'>
+			<label>Out Transparency</label>
+		</attribute>
+	</template>
+	<view name='NEDefault' template='NEasMetal'>
+		<property name='anisotropyAmount'/>
+		<property name='anisotropyAngle'/>
+		<property name='anisotropyMap'/>
+		<property name='edgeReflectance'/>
+		<property name='energyCompensation'/>
+		<property name='faceReflectance'/>
+		<property name='matteOpacity'/>
+		<property name='matteOpacityColor'/>
+		<property name='normalCamera'/>
+		<property name='outColor'/>
+		<property name='roughness'/>
+		<property name='outMatteOpacity'/>
+		<property name='outTransparency'/>
+	</view>
+</templates>

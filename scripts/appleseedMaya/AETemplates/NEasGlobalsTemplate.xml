@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+	<using package='maya'/>
+	<template name='NEasGlobals'>
+		<attribute name='dtime' type='maya.float'>
+			<label>Dtime</label>
+		</attribute>
+		<attribute name='time' type='maya.float'>
+			<label>Time</label>
+		</attribute>
+		<attribute name='uCoord' type='maya.float'>
+			<label>U Coord</label>
+		</attribute>
+		<attribute name='vCoord' type='maya.float'>
+			<label>V Coord</label>
+		</attribute>
+		<attribute name='worldBn' type='maya.float3'>
+			<label>World Bn</label>
+		</attribute>
+		<attribute name='worldDNdu' type='maya.float3'>
+			<label>World DNdu</label>
+		</attribute>
+		<attribute name='worldDNdv' type='maya.float3'>
+			<label>World DNdv</label>
+		</attribute>
+		<attribute name='worldDPdtime' type='maya.float3'>
+			<label>World DPdtime</label>
+		</attribute>
+		<attribute name='worldDPdu' type='maya.float3'>
+			<label>World DPdu</label>
+		</attribute>
+		<attribute name='worldDPdv' type='maya.float3'>
+			<label>World DPdv</label>
+		</attribute>
+		<attribute name='worldDPdx' type='maya.float3'>
+			<label>World DPdx</label>
+		</attribute>
+		<attribute name='worldDPdz' type='maya.float3'>
+			<label>World DPdz</label>
+		</attribute>
+		<attribute name='worldDPdy' type='maya.float3'>
+			<label>World DPdy</label>
+		</attribute>
+		<attribute name='worldN' type='maya.float3'>
+			<label>World N</label>
+		</attribute>
+		<attribute name='worldI' type='maya.float3'>
+			<label>World I</label>
+		</attribute>
+		<attribute name='worldP' type='maya.float3'>
+			<label>World P</label>
+		</attribute>
+		<attribute name='worldNg' type='maya.float3'>
+			<label>World Ng</label>
+		</attribute>
+		<attribute name='worldPs' type='maya.float3'>
+			<label>World Ps</label>
+		</attribute>
+		<attribute name='worldTn' type='maya.float3'>
+			<label>World Tn</label>
+		</attribute>
+	</template>
+	<view name='NEDefault' template='NEasGlobals'>
+		<property name='dtime'/>
+		<property name='time'/>
+		<property name='uCoord'/>
+		<property name='vCoord'/>
+		<property name='worldBn'/>
+		<property name='worldDNdu'/>
+		<property name='worldDNdv'/>
+		<property name='worldDPdtime'/>
+		<property name='worldDPdu'/>
+		<property name='worldDPdv'/>
+		<property name='worldDPdx'/>
+		<property name='worldDPdz'/>
+		<property name='worldDPdy'/>
+		<property name='worldN'/>
+		<property name='worldI'/>
+		<property name='worldP'/>
+		<property name='worldNg'/>
+		<property name='worldPs'/>
+		<property name='worldTn'/>
+	</view>
+</templates>

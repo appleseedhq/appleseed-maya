@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+	<using package='maya'/>
+	<template name='NEasAttributes'>
+		<attribute name='assemblyInstanceId' type='maya.long'>
+			<label>Assembly Instance Id</label>
+		</attribute>
+		<attribute name='assemblyInstanceName' type='maya.string'>
+			<label>Assembly Instance Name</label>
+		</attribute>
+		<attribute name='assemblyName' type='maya.string'>
+			<label>Assembly Name</label>
+		</attribute>
+		<attribute name='cameraClipFar' type='maya.float'>
+			<label>Camera Clip Far</label>
+		</attribute>
+		<attribute name='cameraClipNear' type='maya.float'>
+			<label>Camera Clip Near</label>
+		</attribute>
+		<attribute name='cameraFov' type='maya.float'>
+			<label>Camera Fov</label>
+		</attribute>
+		<attribute name='cameraPixelAspect' type='maya.float'>
+			<label>Camera Pixel Aspect</label>
+		</attribute>
+		<attribute name='cameraProjection' type='maya.string'>
+			<label>Camera Projection</label>
+		</attribute>
+		<attribute name='cameraResolutionX' type='maya.long'>
+			<label>Camera Resolution X</label>
+		</attribute>
+		<attribute name='cameraResolutionY' type='maya.long'>
+			<label>Camera Resolution Y</label>
+		</attribute>
+		<attribute name='cameraScreenWindowXMax' type='maya.float'>
+			<label>Camera Screen Window XMax</label>
+		</attribute>
+		<attribute name='cameraScreenWindowXMin' type='maya.float'>
+			<label>Camera Screen Window XMin</label>
+		</attribute>
+		<attribute name='cameraScreenWindowYMax' type='maya.float'>
+			<label>Camera Screen Window YMax</label>
+		</attribute>
+		<attribute name='cameraScreenWindowYMin' type='maya.float'>
+			<label>Camera Screen Window YMin</label>
+		</attribute>
+		<attribute name='cameraShutterClose' type='maya.float'>
+			<label>Camera Shutter Close</label>
+		</attribute>
+		<attribute name='cameraShutterOpen' type='maya.float'>
+			<label>Camera Shutter Open</label>
+		</attribute>
+		<attribute name='objectInstanceId' type='maya.long'>
+			<label>Object Instance Id</label>
+		</attribute>
+		<attribute name='objectInstanceIndex' type='maya.long'>
+			<label>Object Instance Index</label>
+		</attribute>
+		<attribute name='objectInstanceName' type='maya.string'>
+			<label>Object Instance Name</label>
+		</attribute>
+		<attribute name='objectName' type='maya.string'>
+			<label>Object Name</label>
+		</attribute>
+		<attribute name='pathHasRayDifferentials' type='maya.long'>
+			<label>Path Has Ray Differentials</label>
+		</attribute>
+		<attribute name='pathRayDepth' type='maya.long'>
+			<label>Path Ray Depth</label>
+		</attribute>
+		<attribute name='pathRayIor' type='maya.float'>
+			<label>Path Ray Ior</label>
+		</attribute>
+		<attribute name='pathRayLength' type='maya.float'>
+			<label>Path Ray Length</label>
+		</attribute>
+	</template>
+	<view name='NEDefault' template='NEasAttributes'>
+		<property name='assemblyInstanceId'/>
+		<property name='assemblyInstanceName'/>
+		<property name='assemblyName'/>
+		<property name='cameraClipFar'/>
+		<property name='cameraClipNear'/>
+		<property name='cameraFov'/>
+		<property name='cameraPixelAspect'/>
+		<property name='cameraProjection'/>
+		<property name='cameraResolutionX'/>
+		<property name='cameraResolutionY'/>
+		<property name='cameraScreenWindowXMax'/>
+		<property name='cameraScreenWindowXMin'/>
+		<property name='cameraScreenWindowYMax'/>
+		<property name='cameraScreenWindowYMin'/>
+		<property name='cameraShutterClose'/>
+		<property name='cameraShutterOpen'/>
+		<property name='objectInstanceId'/>
+		<property name='objectInstanceIndex'/>
+		<property name='objectInstanceName'/>
+		<property name='objectName'/>
+		<property name='pathHasRayDifferentials'/>
+		<property name='pathRayDepth'/>
+		<property name='pathRayIor'/>
+		<property name='pathRayLength'/>
+	</view>
+</templates>
