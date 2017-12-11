@@ -1,36 +1,36 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <templates>
-	<using package='maya'/>
-	<template name='NEasCreateMask'>
-		<attribute name='result' type='maya.float'>
-			<label>Result</label>
-		</attribute>
-		<attribute name='color' type='maya.float3'>
-			<label>Color</label>
-		</attribute>
-		<attribute name='greyscale' type='maya.float'>
-			<label>Greyscale</label>
-		</attribute>
-		<attribute name='thresholdValue' type='maya.float'>
-			<label>Threshold Value</label>
-		</attribute>
-		<attribute name='thresholdContrast' type='maya.float'>
-			<label>Threshold Contrast</label>
-		</attribute>
-		<attribute name='thresholdLowerBound' type='maya.float'>
-			<label>Threshold Lower Bound</label>
-		</attribute>
-		<attribute name='thresholdUpperBound' type='maya.float'>
-			<label>Threshold Upper Bound</label>
-		</attribute>
-	</template>
-	<view name='NEDefault' template='NEasCreateMask'>
-		<property name='result'/>
-		<property name='color'/>
-		<property name='greyscale'/>
-		<property name='thresholdValue'/>
-		<property name='thresholdContrast'/>
-		<property name='thresholdLowerBound'/>
-		<property name='thresholdUpperBound'/>
-	</view>
+    <using package='maya'/>
+    <template name='NEasCreateMask'>
+        <attribute name='result' type='maya.float'>
+            <label>Result</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='greyscale' type='maya.float'>
+            <label>Greyscale</label>
+        </attribute>
+        <attribute name='thresholdValue' type='maya.float'>
+            <label>Threshold Value</label>
+        </attribute>
+        <attribute name='thresholdContrast' type='maya.float'>
+            <label>Threshold Contrast</label>
+        </attribute>
+        <attribute name='thresholdLowerBound' type='maya.float'>
+            <label>Threshold Lower Bound</label>
+        </attribute>
+        <attribute name='thresholdUpperBound' type='maya.float'>
+            <label>Threshold Upper Bound</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasCreateMask'>
+        <property name='result'/>
+        <property name='color'/>
+        <property name='greyscale'/>
+        <property name='thresholdValue'/>
+        <property name='thresholdContrast'/>
+        <property name='thresholdLowerBound'/>
+        <property name='thresholdUpperBound'/>
+    </view>
 </templates>

@@ -23,12 +23,6 @@
         <attribute name='vector' type='maya.float3'>
             <label>Vector</label>
         </attribute>
-        <attribute name='fromMatrix' type='maya.matrix'>
-            <label>From Matrix</label>
-        </attribute>
-        <attribute name='toMatrix' type='maya.matrix'>
-            <label>To Matrix</label>
-        </attribute>
     </template>
     <view name='NEDefault' template='NEasSpaceTransform'>
         <property name='outTransformedPoint'/>
@@ -38,7 +32,5 @@
         <property name='point'/>
         <property name='normal'/>
         <property name='vector'/>
-        <property name='fromMatrix'/>
-        <property name='toMatrix'/>
     </view>
 </templates>
