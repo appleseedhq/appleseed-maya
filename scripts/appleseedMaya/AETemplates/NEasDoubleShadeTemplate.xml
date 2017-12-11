@@ -14,10 +14,7 @@
     </template>
     <view name='NEDefault' template='NEasDoubleShade'>
         <property name='outColor'/>
-        <property name='outAlpha'/>
         <property name='color'/>
-        <property name='alpha'/>
         <property name='color2'/>
-        <property name='alpha2'/>
     </view>
 </templates>

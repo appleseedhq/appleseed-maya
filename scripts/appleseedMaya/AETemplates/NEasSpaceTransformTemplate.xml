@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasSpaceTransform'>
+        <attribute name='outTransformedPoint' type='maya.float3'>
+            <label>Transformed Point</label>
+        </attribute>
+        <attribute name='outTransformedNormal' type='maya.float3'>
+            <label>Out Transformed Normal</label>
+        </attribute>
+        <attribute name='outTransformedVector' type='maya.float3'>
+            <label>Out Transformed Vector</label>
+        </attribute>
+        <attribute name='outTransformMatrix' type='maya.matrix'>
+            <label>Out Transform Matrix</label>
+        </attribute>
+        <attribute name='point' type='maya.float3'>
+            <label>Point</label>
+        </attribute>
+        <attribute name='normal' type='maya.float3'>
+            <label>Normal</label>
+        </attribute>
+        <attribute name='vector' type='maya.float3'>
+            <label>Vector</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasSpaceTransform'>
+        <property name='outTransformedPoint'/>
+        <property name='outTransformedNormal'/>
+        <property name='outTransformedVector'/>
+        <property name='outTransformMatrix'/>
+        <property name='point'/>
+        <property name='normal'/>
+        <property name='vector'/>
+    </view>
+</templates>
