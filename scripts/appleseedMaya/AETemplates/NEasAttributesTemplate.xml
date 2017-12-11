@@ -17,8 +17,8 @@
         <attribute name='cameraClipNear' type='maya.float'>
             <label>Camera Clip Near</label>
         </attribute>
-        <attribute name='cameraFov' type='maya.float'>
-            <label>Camera Fov</label>
+        <attribute name='cameraFOV' type='maya.float'>
+            <label>Camera FOV</label>
         </attribute>
         <attribute name='cameraPixelAspect' type='maya.float'>
             <label>Camera Pixel Aspect</label>
@@ -68,8 +68,8 @@
         <attribute name='pathRayDepth' type='maya.long'>
             <label>Path Ray Depth</label>
         </attribute>
-        <attribute name='pathRayIor' type='maya.float'>
-            <label>Path Ray Ior</label>
+        <attribute name='pathRayIOR' type='maya.float'>
+            <label>Path Ray IOR</label>
         </attribute>
         <attribute name='pathRayLength' type='maya.float'>
             <label>Path Ray Length</label>
@@ -81,7 +81,7 @@
         <property name='assemblyName'/>
         <property name='cameraClipFar'/>
         <property name='cameraClipNear'/>
-        <property name='cameraFov'/>
+        <property name='cameraFOV'/>
         <property name='cameraPixelAspect'/>
         <property name='cameraProjection'/>
         <property name='cameraResolutionX'/>
@@ -98,7 +98,7 @@
         <property name='objectName'/>
         <property name='pathHasRayDifferentials'/>
         <property name='pathRayDepth'/>
-        <property name='pathRayIor'/>
+        <property name='pathRayIOR'/>
         <property name='pathRayLength'/>
     </view>
 </templates>
