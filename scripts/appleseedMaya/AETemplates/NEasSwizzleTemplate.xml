@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasSwizzle'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='outAlpha' type='maya.float'>
+            <label>Out Alpha</label>
+        </attribute>
+        <attribute name='outVector' type='maya.float3'>
+            <label>Out Vector</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='alpha' type='maya.float'>
+            <label>Alpha</label>
+        </attribute>
+        <attribute name='vector' type='maya.float3'>
+            <label>Vector</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasSwizzle'>
+        <property name='outColor'/>
+        <property name='outAlpha'/>
+        <property name='outVector'/>
+        <property name='color'/>
+        <property name='alpha'/>
+        <property name='vector'/>
+    </view>
+</templates>
