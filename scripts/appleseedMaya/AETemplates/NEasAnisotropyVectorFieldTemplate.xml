@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasAnisotropyVectorField'>
+        <attribute name='anisotropyVector' type='maya.float3'>
+            <label>Anisotropy Vector</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='rotationValue' type='maya.float'>
+            <label>Rotation Value</label>
+        </attribute>
+        <attribute name='normalCamera' type='maya.float3'>
+            <label>Normal Camera</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasAnisotropyVectorField'>
+        <property name='anisotropyVector'/>
+        <property name='color'/>
+        <property name='rotationValue'/>
+        <property name='normalCamera'/>
+    </view>
+</templates>
