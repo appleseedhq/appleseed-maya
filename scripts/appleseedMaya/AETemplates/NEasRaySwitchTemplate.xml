@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasRaySwitch'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='colorLight' type='maya.float3'>
+            <label>Color Light</label>
+        </attribute>
+        <attribute name='colorShadow' type='maya.float3'>
+            <label>Color Shadow</label>
+        </attribute>
+        <attribute name='colorTransparency' type='maya.float3'>
+            <label>Color Transparency</label>
+        </attribute>
+        <attribute name='colorProbe' type='maya.float3'>
+            <label>Color Probe</label>
+        </attribute>
+        <attribute name='colorDiffuse' type='maya.float3'>
+            <label>Color Diffuse</label>
+        </attribute>
+        <attribute name='colorGlossy' type='maya.float3'>
+            <label>Color Glossy</label>
+        </attribute>
+        <attribute name='colorSpecular' type='maya.float3'>
+            <label>Color Specular</label>
+        </attribute>
+        <attribute name='colorSubsurface' type='maya.float3'>
+            <label>Color Subsurface</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasRaySwitch'>
+        <property name='outColor'/>
+        <property name='color'/>
+        <property name='colorLight'/>
+        <property name='colorShadow'/>
+        <property name='colorTransparency'/>
+        <property name='colorProbe'/>
+        <property name='colorDiffuse'/>
+        <property name='colorGlossy'/>
+        <property name='colorSpecular'/>
+        <property name='colorSubsurface'/>
+    </view>
+</templates>
