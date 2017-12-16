@@ -47,6 +47,7 @@
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnStringData.h>
 #include <maya/MFnTypedAttribute.h>
+#include <maya/MObjectArray.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
@@ -177,6 +178,9 @@ MStatus ShadingNode::initialize()
     assert(g_currentShaderInfo);
     const OSLShaderInfo* shaderInfo = g_currentShaderInfo;
     g_currentShaderInfo = nullptr;
+
+    MObjectArray inputAttributes;
+    MObjectArray outputAttributes;
 
     // todo: lots of refactoring possibilities here...
     for (size_t i = 0, e = shaderInfo->paramInfo.size(); i < e; ++i)
@@ -435,6 +439,11 @@ MStatus ShadingNode::initialize()
 
         if (!attr.isNull())
         {
+            if (p.isOutput)
+                outputAttributes.append(attr);
+            else
+                inputAttributes.append(attr);
+
             status = addAttribute(attr);
             CHECK_STATUS_AND_HANDLE_ERROR
         }
@@ -442,8 +451,13 @@ MStatus ShadingNode::initialize()
 
     #undef CHECK_STATUS_AND_HANDLE_ERROR
 
-    // TODO: set dependencies between in and out attributes.
-    // it's needed for swatches to update correctly.
+    // Set dependencies between input and output attributes.
+    // This is needed for swatches to update correctly.
+    for (unsigned int i = 0 , ie = inputAttributes.length() ; i < ie ; ++i)
+    {
+        for (unsigned int j = 0 , je = outputAttributes.length() ; j < je ; ++j)
+            attributeAffects(inputAttributes[i], outputAttributes[j]);
+    }
 
     return MS::kSuccess;
 }
