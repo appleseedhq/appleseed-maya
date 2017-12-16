@@ -442,6 +442,9 @@ MStatus ShadingNode::initialize()
 
     #undef CHECK_STATUS_AND_HANDLE_ERROR
 
+    // TODO: set dependencies between in and out attributes.
+    // it's needed for swatches to update correctly.
+
     return MS::kSuccess;
 }
 

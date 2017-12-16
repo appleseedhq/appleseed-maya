@@ -39,6 +39,7 @@ enum ShadingNetworkContext
     // DisplacementContext,
     // LightAttenuationContext,
     // ...
+    SurfaceSwatchNetworkContext,
     TextureSwatchNetworkContext,
     NumShadingNetworkContexts
 };

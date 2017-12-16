@@ -50,9 +50,9 @@ ShadingEngineExporter::ShadingEngineExporter(
     const MObject&                  object,
     asr::Assembly&                  mainAssembly,
     AppleseedSession::SessionMode   sessionMode)
-  : m_object(object)
+  : m_sessionMode(sessionMode)
+  , m_object(object)
   , m_mainAssembly(mainAssembly)
-  , m_sessionMode(sessionMode)
 {
 }
 

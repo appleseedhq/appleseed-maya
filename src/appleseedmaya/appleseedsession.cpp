@@ -53,6 +53,7 @@
 #include "renderer/api/project.h"
 #include "renderer/api/rendering.h"
 #include "renderer/api/scene.h"
+#include "renderer/api/shadergroup.h"
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
@@ -1269,14 +1270,77 @@ MStatus batchRender(Options options)
     return MS::kSuccess;
 }
 
-void exportMaterialSwatch(renderer::Project& project, const MObject& node)
+namespace
 {
-    // TODO: implement this...
+
+bool doExportSwatch(
+    asr::Project&               project,
+    const MObject&              node,
+    const MPlug&                outputPlug,
+    const ShadingNetworkContext context)
+{
+    asr::Scene* scene = project.get_scene();
+    assert(scene);
+
+    asr::Assembly* ass = scene->assemblies().get_by_name("assembly");
+    assert(ass);
+
+    ass->shader_groups().clear();
+
+    ShadingNetworkExporterPtr exporter(NodeExporterFactory::createShadingNetworkExporter(
+        context,
+        node,
+        outputPlug,
+        *ass,
+        FinalRenderSession));
+
+    exporter->createEntities();
+    exporter->flushEntities();
+
+    asr::Material* material = ass->materials().get_by_index(0);
+    assert(material);
+
+    material->get_parameters().insert("osl_surface", exporter->shaderGroupName().asChar());
+    return true;
 }
 
-void exportTextureSwatch(renderer::Project& project, const MObject& node)
+}
+
+bool exportMaterialSwatch(asr::Project& project, const MObject& node)
 {
-    // TODO: implement this...
+    MFnDependencyNode depNodeFn(node);
+    MPlug outputPlug = depNodeFn.findPlug("outColor");
+
+    if (outputPlug.isNull())
+        return false;
+
+    return doExportSwatch(
+        project,
+        node,
+        outputPlug,
+        SurfaceSwatchNetworkContext);
+}
+
+bool exportTextureSwatch(asr::Project& project, const MObject& node)
+{
+    MFnDependencyNode depNodeFn(node);
+
+    // Try outColor first.
+    MPlug outputPlug = depNodeFn.findPlug("outColor");
+
+    // Try outAlpha next.
+    if (outputPlug.isNull())
+        outputPlug = depNodeFn.findPlug("outAlpha");
+
+    // Give up if we don't have a plug.
+    if (outputPlug.isNull())
+        return false;
+
+    return doExportSwatch(
+        project,
+        node,
+        outputPlug,
+        TextureSwatchNetworkContext);
 }
 
 void endSession()

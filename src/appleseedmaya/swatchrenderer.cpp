@@ -105,9 +105,6 @@ namespace
             cfg_params->insert("rendering_threads", NumThreads);
             cfg_params->insert_path("uniform_pixel_renderer.samples", "4");
 
-            // While testing.
-            cfg_params->insert_path("shading_engine.override_shading.mode", "uv");
-
             // Create some basic project entities.
 
             // Create the scene.
@@ -128,7 +125,7 @@ namespace
             // Create the environment.
             asf::auto_release_ptr<asr::EnvironmentEDF> environmentEDF(asr::ConstantEnvironmentEDFFactory().create(
                 "environmentEDF",
-                asr::ParamArray().insert("radiance", "0.2")));
+                asr::ParamArray().insert("radiance", "0.025")));
             m_project->get_scene()->environment_edfs().insert(environmentEDF);
 
             asf::auto_release_ptr<asr::EnvironmentShader> environmentShader(asr::EDFEnvironmentShaderFactory().create(
@@ -226,7 +223,7 @@ namespace
         void createTextureSceneGeometry()
         {
             // Create the geometry.
-            const float size = 2.345f;
+            const float size = 2.5f;
             asr::ParamArray params;
             params.insert("primitive", "grid");
             params.insert("resolution_u", 1);
@@ -256,11 +253,6 @@ namespace
             m_mainAssembly->object_instances().insert(objInstance);
         }
 
-        void removeAllShaderGroups()
-        {
-            m_mainAssembly->shader_groups().clear();
-            m_material->get_parameters().remove_path("osl_surface");
-        }
 
         void render(const size_t resolution, MImage& dstImage)
         {
@@ -403,18 +395,20 @@ bool SwatchRenderer::doIteration()
 
     if (strstr(classification.asChar(), "rendernode/appleseed/surface") != nullptr)
     {
-        // Material swatch.
-        g_materialSwatchProject.removeAllShaderGroups();
-        AppleseedSession::exportMaterialSwatch(g_materialSwatchProject.getProject(), node());
-        g_materialSwatchProject.render(resolution(), image());
+        if (AppleseedSession::exportMaterialSwatch(g_materialSwatchProject.getProject(), node()))
+        {
+            g_materialSwatchProject.render(resolution(), image());
+            return true;
+        }
     }
-    else // if (strstr(classification.asChar(), "rendernode/appleseed/texture") != nullptr)
+    else if (strstr(classification.asChar(), "rendernode/appleseed/texture") != nullptr)
     {
-        // Texture swatch.
-        g_textureSwatchProject.removeAllShaderGroups();
         AppleseedSession::exportTextureSwatch(g_textureSwatchProject.getProject(), node());
-        g_textureSwatchProject.render(resolution(), image());
+        {
+            g_textureSwatchProject.render(resolution(), image());
+            return true;
+        }
     }
 
-    return true;
+    return false;
 }

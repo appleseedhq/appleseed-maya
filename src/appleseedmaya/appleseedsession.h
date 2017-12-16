@@ -156,8 +156,8 @@ MStatus render(Options options);
 MStatus batchRender(Options options);
 
 // Swatch rendering.
-void exportMaterialSwatch(renderer::Project& project, const MObject& node);
-void exportTextureSwatch(renderer::Project& project, const MObject& node);
+bool exportMaterialSwatch(renderer::Project& project, const MObject& node);
+bool exportTextureSwatch(renderer::Project& project, const MObject& node);
 
 // Stop rendering and free resources.
 void endSession();

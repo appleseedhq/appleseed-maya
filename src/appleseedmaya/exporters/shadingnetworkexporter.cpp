@@ -83,10 +83,10 @@ ShadingNetworkExporter::ShadingNetworkExporter(
     renderer::Assembly&           mainAssembly,
     AppleseedSession::SessionMode sessionMode)
   : m_context(context)
+  , m_sessionMode(sessionMode)
   , m_object(object)
   , m_outputPlug(outputPlug)
   , m_mainAssembly(mainAssembly)
-  , m_sessionMode(sessionMode)
 {
 }
 
@@ -121,6 +121,7 @@ void ShadingNetworkExporter::flushEntities()
     switch (m_context)
     {
         case SurfaceNetworkContext:
+        case SurfaceSwatchNetworkContext:
         {
             // Create the shader to surface adaptor.
             m_shaderGroup->add_shader(
