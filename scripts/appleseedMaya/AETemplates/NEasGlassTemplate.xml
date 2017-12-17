@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasGlass'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='outTransparency' type='maya.float3'>
+            <label>Out Transparency</label>
+        </attribute>
+        <attribute name='outMatteOpacity' type='maya.float3'>
+            <label>Out Matte Opacity</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='roughness' type='maya.float'>
+            <label>Roughness</label>
+        </attribute>
+        <attribute name='specularSpread' type='maya.float'>
+            <label>Specular Spread</label>
+        </attribute>
+        <attribute name='anisotropyAmount' type='maya.float'>
+            <label>Anisotropy Amount</label>
+        </attribute>
+        <attribute name='anisotropyAngle' type='maya.float'>
+            <label>Anisotropy Angle</label>
+        </attribute>
+        <attribute name='anisotropyVectorMap' type='maya.float3'>
+            <label>Anisotropy Vector Map</label>
+        </attribute>
+        <attribute name='anisotropyDirection' type='maya.float3'>
+            <label>Anisotropy Direction</label>
+        </attribute>
+        <attribute name='reflectionTint' type='maya.float3'>
+            <label>Reflection Tint</label>
+        </attribute>
+        <attribute name='refractionTint' type='maya.float3'>
+            <label>Refraction Tint</label>
+        </attribute>
+        <attribute name='transmittanceAmount' type='maya.float'>
+            <label>Transmittance Amount</label>
+        </attribute>
+        <attribute name='volumeTransmittance' type='maya.float3'>
+            <label>Volume Transmittance</label>
+        </attribute>
+        <attribute name='volumeTransmittanceDistance' type='maya.float'>
+            <label>Volume Transmittance Distance</label>
+        </attribute>
+        <attribute name='normalCamera' type='maya.float3'>
+            <label>Normal Camera</label>
+        </attribute>
+        <attribute name='matteOpacity' type='maya.float'>
+            <label>Matte Opacity</label>
+        </attribute>
+        <attribute name='matteOpacityColor' type='maya.float3'>
+            <label>Matte Opacity Color</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasGlass'>
+        <property name='outColor'/>
+        <property name='outTransparency'/>
+        <property name='outMatteOpacity'/>
+        <property name='color'/>
+        <property name='roughness'/>
+        <property name='specularSpread'/>
+        <property name='anisotropyAmount'/>
+        <property name='anisotropyAngle'/>
+        <property name='anisotropyVectorMap'/>
+        <property name='anisotropyDirection'/>
+        <property name='reflectionTint'/>
+        <property name='refractionTint'/>
+        <property name='transmittanceAmount'/>
+        <property name='volumeTransmittance'/>
+        <property name='volumeTransmittanceDistance'/>
+        <property name='normalCamera'/>
+        <property name='matteOpacity'/>
+        <property name='matteOpacityColor'/>
+    </view>
+</templates>

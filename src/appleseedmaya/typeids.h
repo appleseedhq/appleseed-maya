@@ -43,7 +43,7 @@ enum AppleseedMayaTypeIds
     PhysicalSkyLightNodeTypeId      = 0x001279c2,   // 1210818
     AsDisneyNodeTypeId              = 0x001279c3,   // 1210819
     AsGlassNodeTypeId               = 0x001279c4,   // 1210820
-    AsCarPaintMaterialNodeTypeId    = 0x001279c5,   // 1210821
+    AsCarPaintNodeTypeId            = 0x001279c5,   // 1210821
     AsVoronoi3DNodeTypeId           = 0x001279c6,   // 1210822
     AsVoronoi2DNodeTypeId           = 0x001279c7,   // 1210823
     AsColorTransformNodeTypeId      = 0x001279c8,   // 1210824
@@ -74,16 +74,16 @@ enum AppleseedMayaTypeIds
     AsCreateMaskNodeTypeId          = 0x001278e1,   // 1210849
     AsRampNodeTypeId                = 0x001278e2,   // 1210850
     AsVolumeRampNodeTypeId          = 0x001278e3,   // 1210851
-    AsSubsurfaceMaterialNodeTypeId  = 0x001279e4,   // 1210852
+    AsSubsurfaceNodeTypeId          = 0x001279e4,   // 1210852
     AsTriPlanarNodeTypeId           = 0x001279e5,   // 1210853
     AsDirtNodeTypeId                = 0x001279e6,   // 1210854
     AsCurvatureNodeTypeId           = 0x001279e7,   // 1210855
     AsBevelNodeTypeId               = 0x001279e8,   // 1210856
-    AsHairMaterialNodeTypeId        = 0x001279e9,   // 1210857
-    AsClothMaterialNodeTypeId       = 0x001279ea,   // 1210858
-    AsVolumeMaterialNodeTypeId      = 0x001279eb,   // 1210859
+    AsHairNodeTypeId                = 0x001279e9,   // 1210857
+    AsClothNodeTypeId               = 0x001279ea,   // 1210858
+    AsVolumeNodeTypeId              = 0x001279eb,   // 1210859
     AsShadowCatcherNodeTypeId       = 0x001279ec,   // 1210860
-    AsEmissionMaterialNodeTypeId    = 0x001279ed,   // 1210861
+    AsEmissionNodeTypeId            = 0x001279ed,   // 1210861
     AsMatteNodeTypeId               = 0x001279ee,   // 1210862
     AsGlobalsNodeTypeId             = 0x001279ef,   // 1210863
     AsSpaceTransformNodeTypeId      = 0x001279f0,   // 1210864
@@ -92,10 +92,10 @@ enum AppleseedMayaTypeIds
     AsBakePointcloudNodeTypeId      = 0x001279f3,   // 1210867
     AsReadPointcloudNodeTypeId      = 0x001279f4,   // 1210868
     AsMDLMaterialNodeTypeId         = 0x001279f5,   // 1210869
-    AsMatcapMaterialNodeTypeId      = 0x001279f6,   // 1210870
+    AsMatcapNodeTypeId              = 0x001279f6,   // 1210870
     AsAngleBetweenNodeTypeId        = 0x001279f7,   // 1210871
     AsBlendNormalsNodeTypeId        = 0x001279f8,   // 1210872
-    AsMetalMaterialNodeTypeId       = 0x001279f9,   // 1210873
+    AsMetalNodeTypeId               = 0x001279f9,   // 1210873
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };
