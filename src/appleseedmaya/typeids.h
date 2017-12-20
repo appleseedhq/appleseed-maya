@@ -96,6 +96,9 @@ enum AppleseedMayaTypeIds
     AsAngleBetweenNodeTypeId        = 0x001279f7,   // 1210871
     AsBlendNormalsNodeTypeId        = 0x001279f8,   // 1210872
     AsMetalNodeTypeId               = 0x001279f9,   // 1210873
+    AsTextureNodeTypeId             = 0x001279fa,   // 1210874
+    AsCubeTextureNodeTypeId         = 0x001279fb,   // 1210875
+    AsTextureInfoNodeTypeId         = 0x001279fc,   // 1210876
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };
