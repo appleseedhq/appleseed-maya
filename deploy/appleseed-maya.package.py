@@ -46,7 +46,7 @@ import urllib
 # Constants.
 #--------------------------------------------------------------------------------------------------
 
-VERSION = "1.1.2"
+VERSION = "1.1.3"
 SETTINGS_FILENAME = "appleseed-maya.package.configuration.xml"
 
 
@@ -266,11 +266,8 @@ class PackageBuilder(object):
         progress("Copying presets")
         dir_util.copy_tree(os.path.join(self.settings.root_dir, "presets"), os.path.join(self.settings.package_output_path, "presets"))
 
-        progress("Copying resources")
-        dir_util.copy_tree(os.path.join(self.settings.root_dir, "resources"), os.path.join(self.settings.package_output_path, "resources"))
-
         progress("Copying renderDesc")
-        dir_util.copy_tree(os.path.join(self.settings.root_dir, "renderDesc"), os.path.join(self-settings.package_output_path, "renderDesc"))
+        dir_util.copy_tree(os.path.join(self.settings.root_dir, "renderDesc"), os.path.join(self.settings.package_output_path, "renderDesc"))
 
         progress("Copying scripts")
         dir_util.copy_tree(os.path.join(self.settings.root_dir, "scripts"), os.path.join(self.settings.package_output_path, "scripts"))
