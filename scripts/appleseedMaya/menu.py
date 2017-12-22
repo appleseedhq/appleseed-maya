@@ -57,12 +57,12 @@ def showAbout():
         align='center')
 
     mc.text(
-        label='Copyright (c) 2017 The appleseedhq Organization.',
+        label='Copyright (c) 2017 The appleseedhq Organization',
         font='boldLabelFont',
         align='center')
 
     mc.text(
-        label='This software is released under the MIT license',
+        label='This software is released under the MIT license.',
         font='boldLabelFont',
         align='center')
 
