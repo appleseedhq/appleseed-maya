@@ -234,7 +234,7 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_shutterClose, "shutterClose")
 
     // Rendering threads.
-    m_renderingThreads = numAttrFn.create("threads", "threads", MFnNumericData::kInt, 0, &status);
+    m_renderingThreads = numAttrFn.create("threads", "threads", MFnNumericData::kInt, -1, &status);
     CHECKED_ADD_ATTRIBUTE(m_renderingThreads, "threads")
 
     // Texture cache size.
@@ -262,6 +262,7 @@ MStatus RenderGlobalsNode::compute(const MPlug& plug, MDataBlock& dataBlock)
 
 void RenderGlobalsNode::applyGlobalsToProject(
     const MObject&                              globals,
+    AppleseedSession::SessionMode               sessionMode,
     asr::Project&                               project)
 {
     asr::ParamArray& finalParams = project.configurations().get_by_name("final")->get_parameters();
@@ -357,13 +358,18 @@ void RenderGlobalsNode::applyGlobalsToProject(
     if (AttributeUtils::get(MPlug(globals, m_envSamples), envSamples))
         INSERT_PATH_IN_CONFIGS("pt.ibl_env_samples", envSamples)
 
-    int threads;
-    if (AttributeUtils::get(MPlug(globals, m_renderingThreads), threads))
+    // Only save rendering threads for interactive renders.
+    if (sessionMode == AppleseedSession::FinalRenderSession ||
+        sessionMode == AppleseedSession::ProgressiveRenderSession)
     {
-        if (threads == 0)
-            INSERT_PATH_IN_CONFIGS("rendering_threads", "auto")
-        else
-            INSERT_PATH_IN_CONFIGS("rendering_threads", threads)
+        int threads;
+        if (AttributeUtils::get(MPlug(globals, m_renderingThreads), threads))
+        {
+            if (threads == 0)
+                INSERT_PATH_IN_CONFIGS("rendering_threads", "auto")
+            else
+                INSERT_PATH_IN_CONFIGS("rendering_threads", threads)
+        }
     }
 
     int maxTexCacheSize;

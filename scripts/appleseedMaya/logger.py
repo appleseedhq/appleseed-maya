@@ -33,7 +33,7 @@ import logging
 
 def __createLogger():
     logger = logging.getLogger(__name__)
-    logLevel = os.environ.get('APPLESEED_MAYA_LOG_LEVEL', 'info')
+    logLevel = os.environ.get('APPLESEED_MAYA_LOG_LEVEL', 'warning')
 
     if logLevel == 'debug':
         logger.setLevel(logging.DEBUG)

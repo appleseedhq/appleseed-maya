@@ -57,6 +57,7 @@ class RenderGlobalsNode
 
     static void applyGlobalsToProject(
         const MObject&                              globals,
+        AppleseedSession::SessionMode               sessionMode,
         renderer::Project&                          project);
 
     static void collectMotionBlurSampleTimes(

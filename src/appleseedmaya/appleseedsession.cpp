@@ -652,6 +652,7 @@ namespace
             {
                 RenderGlobalsNode::applyGlobalsToProject(
                     appleseedRenderGlobalsNode,
+                    m_sessionMode,
                     *m_project);
             }
 
@@ -727,6 +728,10 @@ namespace
             if (dagNodeFn.typeName() == "transform")
                 return;
 
+            // Skip Maya's world node.
+            if (dagNodeFn.typeName() == "dagNode" && dagNodeFn.name() == "world")
+                return;
+
             DagNodeExporterPtr exporter;
 
             try
@@ -739,7 +744,8 @@ namespace
             catch (const NoExporterForNode&)
             {
                 RENDERER_LOG_WARNING(
-                    "No dag exporter found for node type %s",
+                    "No dag exporter found for node %s of type %s",
+                    dagNodeFn.name().asChar(),
                     dagNodeFn.typeName().asChar());
                 return;
             }
@@ -1141,7 +1147,7 @@ namespace
 
         try
         {
-            beginSession(FinalRenderSession, options, ComputationPtr());
+            beginSession(BatchRenderSession, options, ComputationPtr());
             g_globalSession->exportProject();
             g_globalSession->batchRender();
             g_globalSession->writeMainImage(outputFilename.asChar());

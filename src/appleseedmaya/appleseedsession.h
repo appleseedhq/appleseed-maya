@@ -63,6 +63,7 @@ enum SessionMode
     NoSession,
     ExportSession,
     FinalRenderSession,
+    BatchRenderSession,
     ProgressiveRenderSession
 };
 

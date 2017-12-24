@@ -285,8 +285,14 @@ void SkyDomeLightExporter::createEntities(
 void SkyDomeLightExporter::exportTransformMotionStep(float time)
 {
     asf::Matrix4d m = convert(dagPath().inclusiveMatrix());
-    asf::Matrix4d invM = convert(dagPath().inclusiveMatrixInverse());
-    asf::Transformd xform(m, invM);
+
+    // Keep only the rotation components of the matrix.
+    asf::Vector3d s, t;
+    asf::Quaterniond r;
+    m.decompose(s, r, t);
+    m = asf::Matrix4d::make_rotation(r);
+
+    asf::Transformd xform(m);
     m_envLight->transform_sequence().set_transform(time, xform);
 }
 

@@ -67,24 +67,26 @@ namespace
             const char*                      header,
             const char*                      message)
         {
+            const MString prefix("appleseed:");
+
             switch (category)
             {
                 case asf::LogMessage::Debug:
-                    MGlobal::displayInfo(MString("[Debug] ") + MString(message));
+                    MGlobal::displayInfo(prefix + MString(message));
                 break;
 
                 case asf::LogMessage::Info:
-                    MGlobal::displayInfo(MString("[Info] ") + message);
+                    MGlobal::displayInfo(prefix + message);
                 break;
 
                 case asf::LogMessage::Warning:
-                    MGlobal::displayWarning(MString("[Warning] ") + message);
+                    MGlobal::displayWarning(prefix + message);
                 break;
 
                 case asf::LogMessage::Error:
                 case asf::LogMessage::Fatal:
                 default:
-                    MGlobal::displayError(MString("[Error] ") + message);
+                    MGlobal::displayError(prefix + message);
                 break;
             }
         }
@@ -97,7 +99,7 @@ MStatus initialize()
 {
     asr::global_logger().add_target(&gLogTarget);
 
-    asf::LogMessage::Category level = asf::LogMessage::Info;
+    asf::LogMessage::Category level = asf::LogMessage::Warning;
     if (const char* logLevel = getenv("APPLESEED_MAYA_LOG_LEVEL"))
     {
         if (strcmp(logLevel, "debug") == 0)

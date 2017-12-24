@@ -236,14 +236,12 @@ MStatus buildAndRegisterAETemplate(const OSLShaderInfo& shaderInfo)
     MString aeTemplate;
     attributesTree.generateAETemplate(shaderInfo, aeTemplate);
 
-    #ifndef NDEBUG
+    #if 0
         // Log AETemplate procedure.
-        /*
         std::cout << "================================" << std::endl;
         std::cout << "Shader: " << shaderInfo.mayaName.asChar() << std::endl << std::endl;
         std::cout << aeTemplate << std::endl;
         std::cout << "================================" << std::endl << std::endl;
-        */
     #endif
 
     // Execute AETemplate procedure.

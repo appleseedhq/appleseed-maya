@@ -163,12 +163,11 @@ namespace
 
             gShadersInfo[shaderInfo.mayaName] = shaderInfo;
 
-
             if (shaderInfo.typeId != 0)
             {
                 // This shader is not a builtin node or a node from other plugin.
                 // Create a MPxNode for this shader.
-                RENDERER_LOG_INFO(
+                RENDERER_LOG_DEBUG(
                     "Registering MPxNode for OSL shader %s.",
                     shaderInfo.shaderName.asChar());
 
@@ -309,14 +308,14 @@ MStatus registerShadingNodes(MObject plugin)
     // Iterate in reverse order to allow overriding of shaders.
     for (int i = static_cast<int>(shaderPaths.size()) - 1; i >= 0; --i)
     {
-        RENDERER_LOG_INFO(
+        RENDERER_LOG_DEBUG(
             "Looking for OSL shaders in path %s.",
             shaderPaths[i].string().c_str());
 
         registerShadersInDirectory(shaderPaths[i], pluginFn, *query);
     }
 
-    // Refresh the hypershade.
+    // Refresh the hypershade window.
     MString command("if (`window -exists createRenderNodeWindow`) {refreshCreateRenderNodeWindow(\"\");}\n");
     MGlobal::executeCommand(command);
 
@@ -327,7 +326,7 @@ MStatus unregisterShadingNodes(MObject plugin)
 {
     MFnPlugin pluginFn(plugin);
 
-    RENDERER_LOG_INFO("Unregistering shading nodes.");
+    RENDERER_LOG_DEBUG("Unregistering shading nodes.");
 
     for (auto it = gShadersInfo.begin(), e = gShadersInfo.end(); it != e; ++it)
     {
