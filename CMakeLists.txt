@@ -68,7 +68,7 @@ set (CMAKE_MODULE_PATH
 
 set (appleseed_maya_version_major       1)
 set (appleseed_maya_version_minor       0)
-set (appleseed_maya_version_patch       0)
+set (appleseed_maya_version_patch       1)
 set (appleseed_maya_version_maturity    beta)
 
 
