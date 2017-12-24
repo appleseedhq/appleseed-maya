@@ -44,7 +44,7 @@ def appleseedExportFrame(self, frame, objFilename):
         objFilename + ".appleseedz",
         force=True,
         options="activeCamera=perspShape;",
-        typ="appleseed",
+        typ="appleseedz",
         es=True,
         pr=True,
         de=False

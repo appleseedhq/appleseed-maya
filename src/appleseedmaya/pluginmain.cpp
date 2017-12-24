@@ -229,6 +229,17 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to register appleseed translator");
 
+    status = fnPlugin.registerFileTranslator(
+            AppleseedzTranslator::translatorName,
+            "",                                 // pixmap name
+            AppleseedzTranslator::creator,
+            "appleseedTranslatorOpts",          // options display script name
+            "",                                 // default options which are passed to the display script
+            true);                              // can use MGlobal::executeCommand
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG_LOG(
+        status,
+        "appleseedMaya: failed to register appleseedz translator");
+
     /***************************/
     // Internal.
 
@@ -385,6 +396,11 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
     APPLESEED_MAYA_CHECK_MSTATUS_MSG_LOG(
         status,
         "appleseedMaya: failed to deregister appleseed translator");
+
+    status = fnPlugin.deregisterFileTranslator(AppleseedzTranslator::translatorName);
+    APPLESEED_MAYA_CHECK_MSTATUS_MSG_LOG(
+        status,
+        "appleseedMaya: failed to deregister appleseedz translator");
 
     /***************************/
     // Scripts.

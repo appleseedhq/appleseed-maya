@@ -61,4 +61,24 @@ class AppleseedTranslator
     MString defaultExtension() const override;
 };
 
+class AppleseedzTranslator
+  : public MPxFileTranslator
+{
+  public:
+    static const MString translatorName;
+
+    AppleseedzTranslator();
+
+    static void* creator();
+
+    MStatus writer(
+        const MFileObject&  file,
+        const MString&      optionsString,
+        FileAccessMode      mode) override;
+
+    bool haveWriteMethod() const override;
+
+    MString defaultExtension() const override;
+};
+
 #endif  // !APPLESEED_MAYA_APPLESEEDTRANSLATOR_H

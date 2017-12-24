@@ -55,35 +55,18 @@
 namespace bfs = boost::filesystem;
 namespace asf = foundation;
 
-const MString AppleseedTranslator::translatorName("appleseed");
-
-AppleseedTranslator::AppleseedTranslator()
+namespace
 {
-}
 
-void* AppleseedTranslator::creator()
+void parseOptions(
+    const MString&                      optsString,
+    MPxFileTranslator::FileAccessMode   mode,
+    AppleseedSession::Options&          options)
 {
-    return new AppleseedTranslator();
-}
-
-MString AppleseedTranslator::defaultExtension() const
-{
-    return "appleseed";
-}
-
-MStatus AppleseedTranslator::writer(
-    const MFileObject&                  file,
-    const MString&                      opts,
-    MPxFileTranslator::FileAccessMode   mode)
-{
-    RENDERER_LOG_DEBUG("AppleseedTranslator::write called, options = %s", opts.asChar());
-
-    AppleseedSession::Options options;
-
     // Break the options string into a list of individual options.
     std::vector<std::string> tokens;
     asf::tokenize(
-        asf::trim_both(opts.asChar()),
+        asf::trim_both(optsString.asChar()),
         ";",
         tokens);
 
@@ -132,46 +115,100 @@ MStatus AppleseedTranslator::writer(
     MRenderUtil::getCommonRenderSettings(renderSettings);
     options.m_width = renderSettings.width;
     options.m_height = renderSettings.height;
+}
 
-    // Write the bounding box of the project scene.
-    options.m_writeBoundingBox = true;
+}
 
-    // Export the scene.
+const MString AppleseedTranslator::translatorName("appleseed");
 
-    // Check if we are exporting a packed project.
-    if (asf::ends_with(file.fullName().asChar(), ".appleseedz"))
-    {
-        // Export the project in a tmp directory.
-        const bfs::path originalProjectPath(file.fullName().asChar());
-        const bfs::path packDirectory(originalProjectPath.parent_path() / "_asTmpProjectPacking");
+AppleseedTranslator::AppleseedTranslator()
+{
+}
 
-        if (!bfs::create_directory(packDirectory))
-        {
-            RENDERER_LOG_ERROR(
-                "Could not create tmp packing directory: %s",
-                packDirectory.string().c_str());
-            return MS::kFailure;
-        }
+void* AppleseedTranslator::creator()
+{
+    return new AppleseedTranslator();
+}
 
-        const bfs::path packedProjectPath(packDirectory / originalProjectPath.filename());
-        const MStatus result = AppleseedSession::projectExport(packedProjectPath.string().c_str(), options);
+MString AppleseedTranslator::defaultExtension() const
+{
+    return "appleseed";
+}
 
-        if (result)
-        {
-            // Move the packed project to the requested place.
-            bfs::rename(packedProjectPath, originalProjectPath);
-        }
+MStatus AppleseedTranslator::writer(
+    const MFileObject&                  file,
+    const MString&                      opts,
+    MPxFileTranslator::FileAccessMode   mode)
+{
+    RENDERER_LOG_DEBUG("AppleseedTranslator::write called, options = %s", opts.asChar());
 
-        // Cleanup packing directory.
-        bfs::remove_all(packDirectory);
+    AppleseedSession::Options options;
+    parseOptions(opts, mode, options);
 
-        return result;
-    }
-    else
-        return AppleseedSession::projectExport(file.fullName(), options);
+    return AppleseedSession::projectExport(file.fullName(), options);
 }
 
 bool AppleseedTranslator::haveWriteMethod() const
+{
+    return true;
+}
+
+const MString AppleseedzTranslator::translatorName("appleseedz");
+
+AppleseedzTranslator::AppleseedzTranslator()
+{
+}
+
+void* AppleseedzTranslator::creator()
+{
+    return new AppleseedzTranslator();
+}
+
+MString AppleseedzTranslator::defaultExtension() const
+{
+    return "appleseedz";
+}
+
+MStatus AppleseedzTranslator::writer(
+    const MFileObject&                  file,
+    const MString&                      opts,
+    MPxFileTranslator::FileAccessMode   mode)
+{
+    RENDERER_LOG_DEBUG("AppleseedzTranslator::write called, options = %s", opts.asChar());
+
+    AppleseedSession::Options options;
+    parseOptions(opts, mode, options);
+
+    // Write the bounding box of the project scene.
+    //options.m_writeBoundingBox = false;
+
+    // Export the project in a tmp directory.
+    const bfs::path originalProjectPath(file.fullName().asChar());
+    const bfs::path packDirectory(originalProjectPath.parent_path() / "_asTmpProjectPacking");
+
+    if (!bfs::create_directory(packDirectory))
+    {
+        RENDERER_LOG_ERROR(
+            "Could not create tmp packing directory: %s",
+            packDirectory.string().c_str());
+        return MS::kFailure;
+    }
+
+    // Pack the tmp project.
+    const bfs::path packedProjectPath(packDirectory / originalProjectPath.filename());
+    const MStatus result = AppleseedSession::projectExport(packedProjectPath.string().c_str(), options);
+
+    // Move the packed project to the requested place.
+    if (result)
+        bfs::rename(packedProjectPath, originalProjectPath);
+
+    // Cleanup packing directory.
+    bfs::remove_all(packDirectory);
+
+    return result;
+}
+
+bool AppleseedzTranslator::haveWriteMethod() const
 {
     return true;
 }
