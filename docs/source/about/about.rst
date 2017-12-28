@@ -9,7 +9,7 @@ About
     .. css3image:: /_static/appleseed-logo-256.png
         :align: center
         :margin: 40px 40px 40px 40px
-        :target: http://appleseedhq.net/
+        :target: https://appleseedhq.net/
 
 .. only:: latex
 
@@ -18,7 +18,7 @@ About
 
 |
 
-appleseed-maya is an `open-source MIT licensed <https://opensource.org/licenses/MIT>`_ multi-platform renderer integration plugin Autodesk® Maya® 2017 and later.
+appleseed-maya is an `open-source, MIT-licensed <https://opensource.org/licenses/MIT>`_ multi-platform renderer integration plugin for Autodesk® Maya® 2017 and later.
 
 
 ----
