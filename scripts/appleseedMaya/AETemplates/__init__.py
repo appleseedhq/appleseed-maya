@@ -105,8 +105,8 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
             self.__buildVisibilitySection()
             self.callCustom(
                 self.meshAlphaMapNew, self.meshAlphaMapUpdate, 'asAlphaMap')
-            #self.addControl('asAlphaMap', label='Alpha Map')
             self.addControl('asMediumPriority', label='Medium Priority')
+            self.addControl('asSubsurfaceSet', label='SSS Set')
 
             self.beginLayout('Export', collapse=1)
             self.addControl('asExportUVs', label='Export UVs')

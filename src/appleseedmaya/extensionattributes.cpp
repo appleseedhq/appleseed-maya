@@ -160,6 +160,11 @@ namespace
         AttributeUtils::makeInput(numAttrFn);
         modifier.addExtensionAttribute(nodeClass, attr);
 
+        MFnTypedAttribute typedAttrFn;
+        attr = typedAttrFn.create("asSubsurfaceSet", "asSubsurfaceSet", MFnData::kString);
+        AttributeUtils::makeInput(typedAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
         attr = createNumericAttribute<bool>(
             numAttrFn,
             "asExportUVs",

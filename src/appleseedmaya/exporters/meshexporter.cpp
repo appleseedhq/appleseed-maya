@@ -418,6 +418,13 @@ void MeshExporter::meshAttributesToParams(renderer::ParamArray& params)
     int mediumPriority = 0;
     if (AttributeUtils::get(node(), "asMediumPriority", mediumPriority))
         params.insert("medium_priority", mediumPriority);
+
+    MString sssSet;
+    if (AttributeUtils::get(node(), "asSubsurfaceSet", sssSet))
+    {
+        if (sssSet.length() != 0)
+            params.insert_path("sss_set_id", sssSet.asChar());
+    }
 }
 
 int MeshExporter::getSmoothLevel(MStatus* ReturnStatus) const
