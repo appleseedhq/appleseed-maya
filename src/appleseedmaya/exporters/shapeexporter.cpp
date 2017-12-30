@@ -29,6 +29,9 @@
 // Interface header.
 #include "shapeexporter.h"
 
+// appleseed-maya headers.
+#include "appleseedmaya/attributeutils.h"
+
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 
@@ -139,6 +142,17 @@ void ShapeExporter::createObjectInstance(const MString& objectName)
     }
 
     const MString objectInstanceName = appleseedName() + MString("_instance");
+
+    // Get object instance params.
+    {
+        MString sssSet;
+        if (AttributeUtils::get(node(), "asSubsurfaceSet", sssSet))
+        {
+            if (sssSet.length() != 0)
+                params.insert_path("sss_set_id", sssSet.asChar());
+        }
+    }
+
     m_objectInstance.reset(
         asr::ObjectInstanceFactory::create(
             objectInstanceName.asChar(),
