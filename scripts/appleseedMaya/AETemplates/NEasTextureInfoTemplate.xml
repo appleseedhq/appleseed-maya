@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasTextureInfo'>
+        <attribute name='textureFile' type='maya.string'>
+            <label>Texture File</label>
+        </attribute>
+        <attribute name='averageColor' type='maya.float3'>
+            <label>Average Color</label>
+        </attribute>
+        <attribute name='averageAlpha' type='maya.float'>
+            <label>Average Alpha</label>
+        </attribute>
+        <attribute name='dataWindowMaximum' type='maya.float3'>
+            <label>Data Window Maximum</label>
+        </attribute>
+        <attribute name='dataWindowMinimum' type='maya.float3'>
+            <label>Data Window Minimum</label>
+        </attribute>
+        <attribute name='displayWindowMaximum' type='maya.float3'>
+            <label>Display Window Maximum</label>
+        </attribute>
+        <attribute name='displayWindowMinimum' type='maya.float3'>
+            <label>Display Window Minimum</label>
+        </attribute>
+        <attribute name='numChannels' type='maya.long'>
+            <label>Num Channels</label>
+        </attribute>
+        <attribute name='numSubImages' type='maya.long'>
+            <label>Num Sub Images</label>
+        </attribute>
+        <attribute name='resolution' type='maya.float3'>
+            <label>Resolution</label>
+        </attribute>
+        <attribute name='textureFormat' type='maya.string'>
+            <label>Texture Format</label>
+        </attribute>
+        <attribute name='textureType' type='maya.string'>
+            <label>Texture Type</label>
+        </attribute>
+        <attribute name='worldToCameraMatrix' type='maya.matrix'>
+            <label>World To Camera Matrix</label>
+        </attribute>
+        <attribute name='worldToScreenMatrix' type='maya.matrix'>
+            <label>World To Screen Matrix</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasTextureInfo'>
+        <property name='textureFile'/>
+        <property name='averageColor'/>
+        <property name='averageAlpha'/>
+        <property name='dataWindowMaximum'/>
+        <property name='dataWindowMinimum'/>
+        <property name='displayWindowMaximum'/>
+        <property name='displayWindowMinimum'/>
+        <property name='numChannels'/>
+        <property name='numSubImages'/>
+        <property name='resolution'/>
+        <property name='textureFormat'/>
+        <property name='textureType'/>
+        <property name='worldToCameraMatrix'/>
+        <property name='worldToScreenMatrix'/>
+    </view>
+</templates>

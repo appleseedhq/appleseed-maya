@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasTexture'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='outAlpha' type='maya.float'>
+            <label>Out Alpha</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='alpha' type='maya.float'>
+            <label>Alpha</label>
+        </attribute>
+        <attribute name='sBlurAmount' type='maya.float'>
+            <label>S Blur Amount</label>
+        </attribute>
+        <attribute name='sFilterWidth' type='maya.float'>
+            <label>S Filter Width</label>
+        </attribute>
+        <attribute name='tBlurAmount' type='maya.float'>
+            <label>T Blur Amount</label>
+        </attribute>
+        <attribute name='tFilterWidth' type='maya.float'>
+            <label>T Filter Width</label>
+        </attribute>
+        <attribute name='uvCoord' type='maya.float2'>
+            <label>UV Coord</label>
+        </attribute>
+        <attribute name='uvFilterSize' type='maya.float2'>
+            <label>UV Filter Size</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasTexture'>
+        <property name='outColor'/>
+        <property name='outAlpha'/>
+        <property name='color'/>
+        <property name='alpha'/>
+        <property name='sBlurAmount'/>
+        <property name='sFilterWidth'/>
+        <property name='tBlurAmount'/>
+        <property name='tFilterWidth'/>
+        <property name='uvCoord'/>
+        <property name='uvFilterSize'/>
+    </view>
+</templates>

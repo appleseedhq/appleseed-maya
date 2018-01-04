@@ -32,14 +32,8 @@
 if(APPLE)
   find_path(MAYA_BASE_DIR ../../devkit/include/maya/MFn.h PATH
     ENV MAYA_LOCATION
-    "/Applications/Autodesk/maya2016/Maya.app/Contents"
-    "/Applications/Autodesk/maya2015/Maya.app/Contents"
-    "/Applications/Autodesk/maya2014/Maya.app/Contents"
-    "/Applications/Autodesk/maya2013/Maya.app/Contents"
-    "/Applications/Autodesk/maya2012.17/Maya.app/Contents"
-    "/Applications/Autodesk/maya2012/Maya.app/Contents"
-    "/Applications/Autodesk/maya2011/Maya.app/Contents"
-    "/Applications/Autodesk/maya2010/Maya.app/Contents"
+    "/Applications/Autodesk/maya2017/Maya.app/Contents"
+    "/Applications/Autodesk/maya2018/Maya.app/Contents"
   )
   find_path(MAYA_LIBRARY_DIR libOpenMaya.dylib
     PATHS
@@ -55,14 +49,8 @@ if(UNIX)
   find_path(MAYA_BASE_DIR include/maya/MFn.h
     PATH
       ENV MAYA_LOCATION
-      "/usr/autodesk/maya2016"
-      "/usr/autodesk/maya2015-x64"
-      "/usr/autodesk/maya2014-x64"
-      "/usr/autodesk/maya2013-x64"
-      "/usr/autodesk/maya2012.17-x64"
-      "/usr/autodesk/maya2012-x64"
-      "/usr/autodesk/maya2011-x64"
-      "/usr/autodesk/maya2010-x64"
+      "/usr/autodesk/maya2017"
+      "/usr/autodesk/maya2018"
   )
   find_path(MAYA_LIBRARY_DIR libOpenMaya.so
     PATHS
@@ -78,22 +66,8 @@ if(WIN32)
   find_path(MAYA_BASE_DIR include/maya/MFn.h
     PATH
       ENV MAYA_LOCATION
-        "C:/Program Files/Autodesk/Maya2016"
-        "C:/Program Files/Autodesk/Maya2015"
-        "C:/Program Files/Autodesk/Maya2014"
-        "C:/Program Files/Autodesk/Maya2013"
-        "C:/Program Files/Autodesk/Maya2012-x64"
-        "C:/Program Files/Autodesk/Maya2012"
-        "C:/Program Files (x86)/Autodesk/Maya2012"
-        "C:/Autodesk/maya-2012x64"
-        "C:/Program Files/Autodesk/Maya2011-x64"
-        "C:/Program Files/Autodesk/Maya2011"
-        "C:/Program Files (x86)/Autodesk/Maya2011"
-        "C:/Autodesk/maya-2011x64"
-        "C:/Program Files/Autodesk/Maya2010-x64"
-        "C:/Program Files/Autodesk/Maya2010"
-        "C:/Program Files (x86)/Autodesk/Maya2010"
-        "C:/Autodesk/maya-2010x64"
+        "C:/Program Files/Autodesk/Maya2017"
+        "C:/Program Files/Autodesk/Maya2018"
   )
   find_path(MAYA_LIBRARY_DIR OpenMaya.lib
     PATHS
