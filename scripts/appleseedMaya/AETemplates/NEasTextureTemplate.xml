@@ -27,10 +27,10 @@
             <label>T Filter Width</label>
         </attribute>
         <attribute name='uvCoord' type='maya.float2'>
-            <label>Uv Coord</label>
+            <label>UV Coord</label>
         </attribute>
         <attribute name='uvFilterSize' type='maya.float2'>
-            <label>Uv Filter Size</label>
+            <label>UV Filter Size</label>
         </attribute>
     </template>
     <view name='NEDefault' template='NEasTexture'>

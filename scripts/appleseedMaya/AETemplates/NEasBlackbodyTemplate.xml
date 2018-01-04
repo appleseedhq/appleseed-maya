@@ -15,7 +15,7 @@
             <label>Incandescence Amount</label>
         </attribute>
         <attribute name='color' type='maya.float3'>
-            <label>Volor</label>
+            <label>Color</label>
         </attribute>
         <attribute name='specularAmount' type='maya.float'>
             <label>Specular Amount</label>
