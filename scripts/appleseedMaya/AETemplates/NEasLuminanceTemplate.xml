@@ -23,14 +23,14 @@
         <attribute name='chromaticityCoordsB' type='maya.float2'>
             <label>Chromaticity Coords B</label>
         </attribute>
+        <attribute name='chromaticityCoordsW' type='maya.float2'>
+            <label>Chromaticity Coords W</label>
+        </attribute>
         <attribute name='inputIlluminants' type='maya.enum'>
             <label>Input Illuminants</label>
         </attribute>
         <attribute name='colorTemperature' type='maya.long'>
             <label>Color Temperature</label>
-        </attribute>
-        <attribute name='chromaticityCoordsW' type='maya.float2'>
-            <label>Chromaticity Coords W</label>
         </attribute>
     </template>
     <view name='NEDefault' template='NEasLuminance'>
@@ -41,8 +41,8 @@
         <property name='chromaticityCoordsR'/>
         <property name='chromaticityCoordsG'/>
         <property name='chromaticityCoordsB'/>
+        <property name='chromaticityCoordsW'/>
         <property name='colorTemperature'/>
         <property name='inputIlluminants'/>
-        <property name='chromaticityCoordsW'/>
     </view>
 </templates>
