@@ -39,7 +39,8 @@ Color Utilities
 Materials
 =========
 
-* :ref:`asGlass <label_as_glass>`
+* :ref:`asBlackbody <label_as_blackbody>`
 * :ref:`asDisneyMaterial <label_as_disney_material>`
+* :ref:`asGlass <label_as_glass>`
 * :ref:`asStandardSurface <label_as_standard_surface>`
 
