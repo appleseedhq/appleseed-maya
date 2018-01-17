@@ -17,6 +17,9 @@
         <attribute name='color' type='maya.float3'>
             <label>Color</label>
         </attribute>
+        <attribute name='temperatureScale' type='maya.float3'>
+            <label>Temperature Scale</label>
+        </attribute>
         <attribute name='specularAmount' type='maya.float'>
             <label>Specular Amount</label>
         </attribute>
@@ -39,6 +42,7 @@
         <property name='outBlackbodyColor'/>
         <property name='incandescenceAmount'/>
         <property name='color'/>
+        <property name='temperatureScale'/>
         <property name='specularAmount'/>
         <property name='specularRoughness'/>
         <property name='normalCamera'/>
