@@ -64,7 +64,7 @@ enum AppleseedMayaTypeIds
     AsPlasticNodeTypeId             = 0x001279d7,   // 1210839
     AsThinFilmNodeTypeId            = 0x001279d8,   // 1210840
     AsIdManifoldNodeTypeId          = 0x001279d9,   // 1210841
-    AsVaryTextureNodeTypeId         = 0x001279da,   // 1210842
+    AsSwitchTextureNodeTypeId       = 0x001279da,   // 1210842
     AsDoubleShadeNodeTypeId         = 0x001279db,   // 1210843
     AsRaySwitchNodeTypeId           = 0x001279dc,   // 1210844
     AsLayerShaderNodeTypeId         = 0x001279dd,   // 1210845
@@ -99,6 +99,7 @@ enum AppleseedMayaTypeIds
     AsTextureNodeTypeId             = 0x001279fa,   // 1210874
     AsCubeTextureNodeTypeId         = 0x001279fb,   // 1210875
     AsTextureInfoNodeTypeId         = 0x001279fc,   // 1210876
+    AsCompositeColorNodeTypeId      = 0x001279fd,   // 1210877
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };

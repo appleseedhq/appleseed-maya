@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasBlendColor'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='weight' type='maya.float'>
+            <label>Weight</label>
+        </attribute>
+        <attribute name='color2' type='maya.float3'>
+            <label>Color 2</label>
+        </attribute>
+        <attribute name='weight2' type='maya.float'>
+            <label>Weight 2</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasBlendColor'>
+        <property name='outColor'/>
+        <property name='color'/>
+        <property name='weight'/>
+        <property name='color2'/>
+        <property name='weight2'/>
+    </view>
+</templates>
