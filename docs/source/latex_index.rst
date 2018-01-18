@@ -29,7 +29,6 @@ Contents
     features/limitations.rst
     features/supported_nodes
     features/nodes_*
-    workflow/workflow.rst
     shaders/shaders.rst
     shaders/material/*
     shaders/texture/*

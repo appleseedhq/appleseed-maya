@@ -1,5 +1,10 @@
 .. _label_as_standard_surface:
-.. image:: /_images/icons/as_standard_surface.png
+
+.. fix_img_align::
+
+|
+ 
+.. image:: /_images/icons/asStandardSurface.png
    :width: 128px
    :align: left
    :height: 128px

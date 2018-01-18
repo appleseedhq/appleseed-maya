@@ -1,6 +1,10 @@
-.. _label_as_voronoi3d:
+.. _label_as_voronoi3D:
 
-.. image:: /_images/icons/as_voronoi3d.png
+.. fix_img_align::
+
+|
+ 
+.. image:: /_images/icons/asVoronoi3D.png
    :width: 128px
    :align: left
    :height: 128px
@@ -21,13 +25,13 @@ Parameters
 Color Parameters
 ^^^^^^^^^^^^^^^^
 
-*Color 1*:
+*Color 1*
     Primary cell color.
 
-*Color 2*:
+*Color 2*
     Secondary cell color.
 
-*Contrast*:
+*Contrast*
     Contrast between primary and secondary cell color.
 
 -----
@@ -35,16 +39,16 @@ Color Parameters
 Recursion Parameters
 ^^^^^^^^^^^^^^^^^^^^
 
-*Amplitude*:
+*Amplitude*
     Controls the amplitute at each octave, including the starting iteration.
 
-*Octaves*:
+*Octaves*
     Number of iterations to perform, higher values lead to increasing detail, but increased computational cost as well.
 
-*Lacunarity*:
+*Lacunarity*
     Defines how large the gaps are in the cell noise with increasing octaves, higher values lead to higher gaps, lower values to small gaps.
 
-*Persistence*:
+*Persistence*
     The persistence of the fractal is a gain factor to apply to the amplitude at each iteration, but it only has an effect when the shader is set to the mode *pebbles*.
 
 -----
@@ -52,13 +56,13 @@ Recursion Parameters
 Cell Parameters
 ^^^^^^^^^^^^^^^
 
-*Density*:
+*Density*
     The density of the cells, with higher values resulting in a higher number of cells in the same area.
 
-*Jittering*:
+*Jittering*
     How random the placement of the cells is, with low values resulting in a ordered grid of cells, and higher values resulting in aleatory placement of cells.
 
-*Metric*:
+*Metric*
     Which metric to choose to calculate the distance from cell to feature points. There are several to choose from, resulting in different types of patterns.
 
 * Euclidian distance
@@ -77,13 +81,13 @@ The Akritean distance if a weighted mix of the Euclidian distance, and the Tcheb
 
 The Karlsruhe metric, also known as Moscow metric, is a radial metric, returns radial sections from a cell at the center.
 
-*Minkowski Parameter*:
+*Minkowski Parameter*
     Controls the metric, with a value of 1 being the Manhattan distance, 2 being the Euclidian distance, and higher values tending to the Tchebychev metric as the parameter approaches infinity.
 
-*Coverage*:
+*Coverage*
     The Akritean distance coverage, or the weighting mix between the Euclidian distance and the Tchebychev distance.
 
-*Features Mode*:
+*Features Mode*
     The features mode to use when computing the output color.
 
 * Feature 1, or nearest feature from the cell
@@ -132,19 +136,19 @@ By default this point is the global primitive variable **P**, but the user can o
 Outputs
 ^^^^^^^
 
-*Output Color*:
+*Output Color*
     The color resulting from ghe *Features Mode* choice.
 
-*Output Alpha*:
+*Output Alpha*
     The alpha resulting from the *Features Mode* choice, usually luminance of the color only.
 
-*Output Features*:
+*Output Features*
     An array of 4 floats, containing the four nearest features to the cell.
 
-*Output Positions*:
+*Output Positions*
     An array of 4 points, containing the center of the four nearest features to the cell.
 
-*Output IDs*:
+*Output IDs*
     An array of 4 colors, containing the color IDs of the four nearest features to the cell.
 
 .. warning:: presently OSL does not allow connections from/to array elements, and appleseed-maya is not enabling the array outputs for now. This will be addressed in a future release.
