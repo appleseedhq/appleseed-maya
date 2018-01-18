@@ -1,6 +1,10 @@
 .. _label_as_glass:
 
-.. image:: /_images/icons/as_glass.png
+.. fix_img_align::
+
+|
+ 
+.. image:: /_images/icons/asGlass.png
    :width: 128px
    :align: left
    :height: 128px

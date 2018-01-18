@@ -1,6 +1,10 @@
-.. _label_as_voronoi3d:
+.. _label_as_voronoi3D:
 
-.. image:: /_images/icons/as_voronoi3d.png
+.. fix_img_align::
+
+|
+ 
+.. image:: /_images/icons/asVoronoi3D.png
    :width: 128px
    :align: left
    :height: 128px

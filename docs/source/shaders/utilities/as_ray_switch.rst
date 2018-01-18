@@ -1,16 +1,16 @@
-.. _label_as_luminance:
+.. _label_as_ray_switch:
 
 .. fix_img_align::
 
 |
  
-.. image:: /_images/icons/asLuminance.png
+.. image:: /_images/icons/asRaySwitch.png
    :width: 128px
    :align: left
    :height: 128px
-   :alt: Luminance Icon
+   :alt: Ray Switch Icon
 
-asLuminance
+asRaySwitch
 ***********
 
 A node that returns the luminance of a color, respecting the color space

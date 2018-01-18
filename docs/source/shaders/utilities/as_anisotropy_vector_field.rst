@@ -1,17 +1,17 @@
-.. _label_as_luminance:
+.. _label_as_anisotropy_vector_field:
 
 .. fix_img_align::
 
 |
  
-.. image:: /_images/icons/asLuminance.png
+.. image:: /_images/icons/asAnisotropyVectorField.png
    :width: 128px
    :align: left
    :height: 128px
-   :alt: Luminance Icon
+   :alt: Anisotropy Vector Field Icon
 
-asLuminance
-***********
+asAnisotropyVectorField
+***********************
 
 A node that returns the luminance of a color, respecting the color space
 definitions (that is, the chromaticity coordinates of the primaries and the

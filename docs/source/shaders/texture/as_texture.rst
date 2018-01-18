@@ -1,17 +1,17 @@
-.. _label_as_voronoi2D:
+.. _label_as_texture:
 
 .. fix_img_align::
 
 |
-
-.. image:: /_images/icons/asVoronoi2D.png
+ 
+.. image:: /_images/icons/asTexture.png
    :width: 128px
    :align: left
    :height: 128px
-   :alt: Voronoi2D Icon
+   :alt: Texture Icon
 
-asVoronoi2D
-***********
+asTexture
+*********
 
 A procedural 2D Worley :cite:`c-Worley:1996:CTB:237170.237267` like noise shader, that outputs not only the resulting color, but the four nearest features to the evaluated point, their respective positions, and their cell color IDs. See also :cite:`c-Ebert:2002:TMP:572337`.
 

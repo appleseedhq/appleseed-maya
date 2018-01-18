@@ -1,17 +1,17 @@
-.. _label_as_blackbody:
+.. _label_as_metal:
 
 .. fix_img_align::
 
 |
  
-.. image:: /_images/icons/asBlackbody.png
+.. image:: /_images/icons/asMetal.png
    :width: 128px
    :align: left
    :height: 128px
-   :alt: Blackbody EDF
+   :alt: Metal BSDF
 
-asBlackbody
-***********
+asMetal
+*******
 
 A blackbody radiator material :cite:`CGF:CGF1986` shader, with an optional glossy specular term on top, which also outputs the black body radiator color besides the output closure.
 

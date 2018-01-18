@@ -1,17 +1,17 @@
-.. _label_as_luminance:
+.. _label_as_switch_texture:
 
 .. fix_img_align::
 
 |
  
-.. image:: /_images/icons/asLuminance.png
+.. image:: /_images/icons/asSwitchTexture.png
    :width: 128px
    :align: left
    :height: 128px
-   :alt: Luminance Icon
+   :alt: Switch Texture Icon
 
-asLuminance
-***********
+asSwitchTexture
+***************
 
 A node that returns the luminance of a color, respecting the color space
 definitions (that is, the chromaticity coordinates of the primaries and the

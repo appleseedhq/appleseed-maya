@@ -1,17 +1,17 @@
-.. _label_as_luminance:
+.. _label_as_create_mask:
 
 .. fix_img_align::
 
 |
  
-.. image:: /_images/icons/asLuminance.png
+.. image:: /_images/icons/asCreateMask.png
    :width: 128px
    :align: left
    :height: 128px
-   :alt: Luminance Icon
+   :alt: Create Mask Icon
 
-asLuminance
-***********
+asCreateMask
+************
 
 A node that returns the luminance of a color, respecting the color space
 definitions (that is, the chromaticity coordinates of the primaries and the

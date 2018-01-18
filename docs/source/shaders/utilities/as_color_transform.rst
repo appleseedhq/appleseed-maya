@@ -1,10 +1,14 @@
 .. _label_as_color_transform:
 
-.. image:: /_images/icons/as_color_transform.png
+.. fix_img_align::
+
+|
+ 
+.. image:: /_images/icons/asColorTransform.png
    :width: 128px
    :align: left
    :height: 128px
-   :alt: CC Icon
+   :alt: Color Transform Icon
 
 asColorTransform
 ****************

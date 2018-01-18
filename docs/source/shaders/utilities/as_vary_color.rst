@@ -1,16 +1,16 @@
-.. _label_as_luminance:
+.. _label_as_vary_color:
 
 .. fix_img_align::
 
 |
  
-.. image:: /_images/icons/asLuminance.png
+.. image:: /_images/icons/asVaryColor.png
    :width: 128px
    :align: left
    :height: 128px
-   :alt: Luminance Icon
+   :alt: Vary Color Icon
 
-asLuminance
+asVaryColor
 ***********
 
 A node that returns the luminance of a color, respecting the color space
