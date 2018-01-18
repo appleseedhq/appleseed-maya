@@ -15,6 +15,8 @@ asAttributes
 
 A node that exposes to the user the general attributes specified in OSL [#]_ and the appleseed renderer specific attributes.
 
+|
+
 Parameters
 ----------
 

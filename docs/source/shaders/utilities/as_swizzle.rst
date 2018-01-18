@@ -15,6 +15,8 @@ asSwizzle
 
 A node that rearranges the elements of an input color+alpha, or vector.
 
+|
+
 Parameters
 ----------
 

@@ -17,6 +17,8 @@ A node that returns the luminance of a color, respecting the color space
 definitions (that is, the chromaticity coordinates of the primaries and the
 white point).
 
+|
+
 Parameters
 ----------
 

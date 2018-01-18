@@ -15,6 +15,8 @@ asGlobals
 
 A node that exposes the OSL [#]_ global variables to the user, **and** the appleseed specific global variables as well.
 
+|
+
 Parameters
 ----------
 
