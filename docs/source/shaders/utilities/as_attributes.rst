@@ -13,9 +13,7 @@
 asAttributes
 ************
 
-A node that returns the luminance of a color, respecting the color space
-definitions (that is, the chromaticity coordinates of the primaries and the
-white point).
+A node that exposes to the user the general attributes specified in OSL [#]_ and the appleseed renderer specific attributes.
 
 Parameters
 ----------
@@ -24,144 +22,90 @@ Parameters
 
 -----
 
-Color Attributes
-^^^^^^^^^^^^^^^^
-
-*Input Color*
-    The color being evaluated
-
------
-
-Color Space
-^^^^^^^^^^^
-
-*Derive From Maya CMS*
-    Uses the render space definitions from Maya's synColor. This will set the chromaticity coordinates of the RGB primaries, and the white point, standardized in the color space chosen in the synColor configuration.
-    When this is not set, the user **must** set the appropriate options matching its choice of rendering/working space.
-
-.. important:: appleseed and appleseed-maya don't yet take `OpenColorIO <http://opencolorio.org/>`_ into account, so this parameter considers the working space definitions from synColor **only**. If you wish to use OCIO you **must** set the appropriate color space and white point settings. The default is (scene-linear) sRGB/Rec.709 primaries, with D65 whitepoint. 
-
-*Input Color Space*
-    The color space chosen as render/working space. It allows the user to choose one of the following
-
-    * ACES 2065-1 AP0 (D60) :cite:`7289895`
-    * ACEScg AP1 (D60) :cite:`Duiker:2015:ACC:2791261.2791273`
-    * Rec.2020 (D65) :cite:`6784055`
-    * DCI-P3 (DCI) :cite:`7290729`
-    * sRGB/Rec.709 (D65)
-    * Chromaticity Coordinates
-
-.. hint::
-   
-   When choosing *Chromaticity Coordinates*, the user **must** enter the xy chromaticity coordinates of the R,G,B primaries, and **must** choose the whitepoint, either in the form of one of the available standard illuminants, in the xy chromacity coordinates of the whitepoint, or via the correlated color temperature.
-
-
-*R xy Coordinates*
-    The xy chromaticity coordinates of the red primary.
-
-*G xy Coordinates*
-    The xy chromaticity coordinates of the green primary.
-
-*B xy Coordinates*
-    The xy chromaticity coordinates of the blue primary.
-
-*White Point*
-    The white point definition, which can be one of the following options:
-
-    * Standard Illuminant D50
-    * Standard Illuminant D55
-    * Standard Illuminant D60
-    * Standard Illuminant D65
-    * Standard Illuminant D75
-    * DCI White Point
-    * White Point E
-    * Correlated Color Temperature
-    * White Point Chromaticity Coordinates
-
-.. _label_color_temperature:
-
-*Color Temperature*
-    The input color temperature value in Kelvin degrees, from 1667K to 25000K.
-
-*W xy Coordinates*
-    The xy chromacity coordinates of the white point.
-
------
-
 Outputs
 ^^^^^^^
 
-*Result*
-    The luminance of the input color.
+*Assembly Instance ID*
+    An integer value containing the ID of an assembly [#]_ instance.
 
------
+*Assembly Instance Name*
+    A string containing the name of the assembly instance.
 
-.. _label_as_luminance_screenshots:
+*Assembly Name*
+    A string containing the name of the assembly.
 
-Screenshots
------------
+*Camera Clip Far*
+    The farthest camera clipping plane.
 
-Some examples of the output luminance of the input color ramp, rendered in (scene linear) Rec.709 space, standard illuminant D65, with different color spaces and whitepoints chosen. The mismatches in color spaces are for illustration purposes. If the settings cannot be derived automatically from your DCC application, then the choice of color space should match your choice or render/working space.
+*Camera Clip Near*
+    The nearest camera clipping plane.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_workingspace_rec709.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
+*Camera FOV*
+    The camera Field Of View [#]_.
 
-   Original color ramp, synColor render/working space set to (scene-linear) sRGB/Rec.709 primaries and D65 white point.
+*Camera Pixel Aspect*
+    The camera pixel aspect.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_workingspace_rec709_from_CMS.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
+*Camera Projection*
+    The camera projection.
 
-   Luminance of input color, with settings automatically retrieved from Maya's synColor CMS preferences.
+*Camera Resolution X*
+    The camera X resolution.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_ACES_AP0.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
+*Camera Resolution Y*
+    The camera Y resolution.
 
-   Original color ramp, with CMS settings disabled, and the input space overriden to ACES 2065-1 AP0, D60 whitepoint.
+*Screen Window X Max*
+    The screen window *x* maximum value.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_ACES_AP1.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
+*Screen Window X Min*
+    The screen window *x* minimum value.
 
-   Original color ramp, with CMS settings disabled, and the input space overriden to ACEScg AP1, D60 whitepoint.
+*Screen Window Y Max*
+    The screen window *y* maximum value.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_Rec2020.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
+*Screen Window Y Min*
+    The screen window *y* minimum value.
 
-   Original color ramp, with CMS settings disabled, and the input space overriden to Rec.2020, D65 whitepoint.
+*Shutter Close Time*
+    The shutter closing time.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_DCIP3.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
+*Shutter Open Time*
+    The shutter opening time.
 
-   Original color ramp, with CMS settings disabled, and the input space overriden to DCI-P3, DCI whitepoint.
+*Object Instance ID*
+    An integer containing an object instance's ID.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_explicit_coords_adobergb.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
+*Object Instance Index*
+    An integer containing an object instance's index.
 
-   Original color ramp, with CMS settings disabled, and the input color space set to *xy chromacitity coordinates*, which were then set to the RGB chromaticity coordinates of the AdobeRGB 1998 color space, with a D65 whitepoint.
+*Object Instance Name*
+    A string containing the object instance's name.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_compared.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
+*Object Name*
+    A string containing an object's name.
 
-   Starting from the bottom, the original (scene-linear Rec.709, D65) color ramp, and above it, its luminance with coefficients for Rec.709, Rec.2020, DCI-P3, ACEScg AP1, ACES 2065-1 AP0, explicit chromaticities set to AdobeRGB 1998, and color ramp again at the top.
+*Ray Differentials*
+    An boolean denoting if the path being traced has ray differentials.
+
+*Ray Depth*
+    A integer denoting the present ray depth.
+
+*Ray IOR*
+    The absolute index of refraction of the medium the present ray is travelling in. This is affected by nested dielectrics :cite:`ND.2002.10487555`.
+
+*Ray Length*
+    The current path's length.
 
 -----
 
 .. rubric:: References
+
+.. [#] `OSL or Open Shading Language <https://github.com/imageworks/OpenShadingLanguage>`_.
+
+.. [#] See appleseed's wiki entry for `assemblies concepts <https://github.com/appleseedhq/appleseed/wiki/Project-File-Format#conventions>`_ and `procedural assemblies <https://github.com/appleseedhq/appleseed/wiki/Procedural-Assemblies-Design-Document>`_.
+
+.. [#] See `field of view wikipedia page <https://en.wikipedia.org/wiki/Field_of_view>` for more details.
 
 .. bibliography:: /bibtex/references.bib
     :filter: docname in docnames

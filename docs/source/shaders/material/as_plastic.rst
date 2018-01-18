@@ -27,7 +27,7 @@ Parameters
 Incandescence
 ^^^^^^^^^^^^^
 
-*Incandescence Type*:
+*Incandescence Type*
     The type of color for the emitance distribution function, it can be
 
     1. Constant
@@ -35,22 +35,22 @@ Incandescence
 
     When in *Blackbody* mode it uses physically based values, that might have extremely high intensities as the temperature increases.
 
-*Color*:
+*Color*
     The color to use when in *Constant* mode, ignored in *Blackbody* mode.
 
-*Incandescence Amount*:
+*Incandescence Amount*
     The overall intensity of the incandescence, it can be over 1.0.
 
-*Temperature Scale*:
+*Temperature Scale*
     A scaling factor for the temperature value used to compute the black body radiation. Unlike *incandescence amount*, this actually affects the output color, with lower values generating warmer colors and lower energy levels, and higher values generating cooler values with higher energy levels.
 
-*Temperature*:
+*Temperature*
     The temperature to which the perfect black body is heated to emit electro-magnetic radiation.
 
-*Normalize Area*:
+*Normalize Area*
     When objects are deformed, their surface area might change. Without this option, the intensities would stay the same regardless of the deformation of the object to which the shader is attached. It this option enabled, the intensities will change taking into account the object surface area, in order to keep the amount of emitted energy constant.
 
-*Tonemap Color*:
+*Tonemap Color*
     As temperature increases, the black body radiator emits color in bluer wavelenghts, but the amount of energy emitted is extreme. In order to avoid extremely hight intensities, this option allows the user to *tonemap* the resulting black body color.
 
 -----
@@ -58,13 +58,13 @@ Incandescence
 Specular
 ^^^^^^^^
 
-*Specular Amount*:
+*Specular Amount*
     The intensity of the specular term.
 
-*Specular Roughness*:
+*Specular Roughness*
     The apparent surface roughness of the specular term.
 
-*Index of Refraction*:
+*Index of Refraction*
     Absolute index of refraction
 
 .. note:: This term is a simple dielectric specular term using the *GGX* :cite:`a-heitz:hal-00996995` microfacet distribution function, with energy compensation for high roughness values.
@@ -74,19 +74,19 @@ Specular
 Bump
 ^^^^
 
-*Bump Normal*:
+*Bump Normal*
     The unit length world space normal of the bumped surface.
 
 Matte Opacity
 ^^^^^^^^^^^^^
 
-*Enable Matte Opacity*:
+*Enable Matte Opacity*
     Parameter that toggles matte holdouts.
 
-*Matte Opacity*:
+*Matte Opacity*
     Matte opacity scaling factor.
 
-*Matte Opacity Color*:
+*Matte Opacity Color*
     Holdout color.
 
 -----
@@ -94,7 +94,7 @@ Matte Opacity
 Advanced Parameters
 ^^^^^^^^^^^^^^^^^^^
 
-*Ray Depth*:
+*Ray Depth*
     The maximum ray depth a ray is allowed to bounce before being terminated.
 
 -----
@@ -102,13 +102,13 @@ Advanced Parameters
 Outputs
 ^^^^^^^
 
-*Output Color*:
+*Output Color*
     The combined EDF+BRDF output color.
 
-*Output Matte Opacity*:
+*Output Matte Opacity*
     The matte holdout.
 
-*Output Blackbody Color*:
+*Output Blackbody Color*
     The black body radiator color.
 
 -----

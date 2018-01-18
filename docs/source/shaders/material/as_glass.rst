@@ -27,10 +27,10 @@ Parameters
 Surface Transmittance
 ^^^^^^^^^^^^^^^^^^^^^
 
-*Transmittance Color*:
+*Transmittance Color*
     The color that is transmitted to the underlying glass medium. A color of 0 will mean no transmittance will take place, a color of one will mean full transmittance. This parameter is weighted by the next parameter, *transmittance amount*.
 
-*Transmittance Amount*:
+*Transmittance Amount*
     Transmittance amount, with a value of 0 meaning no light reaches the glass medium, and a value of 1.0 meaning a full amount reaching the glass medium. This is useful for compositing the glass BSDF with other BxDFs.
 
 -----
@@ -38,37 +38,37 @@ Surface Transmittance
 Specular Parameters
 ^^^^^^^^^^^^^^^^^^^
 
-*Reflection Tint*:
+*Reflection Tint*
     Overall tint for the reflection (BRDF) component of the glass BSDF.
 
-*Refraction Tint*:
+*Refraction Tint*
     Overall tint for the refraction (BTDF) component of the glass BSDF.  
 
-*Index of Refraction*:
+*Index of Refraction*
     Absolute index of refraction
 
-*Distribution*:
+*Distribution*
     Microfacet distribution function, it can be
 
     1. *Beckmann* :cite:`a-Cook:1982:RMC:357290.357293`
     2. *GGX* :cite:`a-heitz:hal-00996995` 
     3. *Student's t-distribution* :cite:`a-10.1111:cgf.13137`
 
-*Roughness*:
+*Roughness*
     The apparent surface roughness, affecting both the reflection and refraction equally.
 
-*Specular Spread*:
+*Specular Spread*
     Specular highlights spread. This controls the *tails* of the specular highlights, with high values producing a softer looking highlights, and lower values producing sharper looking highlights.
     
 .. note:: This parameter is valid only for Student's t-distribution only. Higher values approach the GGX distribution, and lower spread values, therefore sharper highlights, approach the Beckmann distribution.
 
-*Anisotropy Amount*:
+*Anisotropy Amount*
     Overall intensity of the anisotropy effect, with a value of 0.0 representing isotropic specular highlights.
 
-*Anisotropy Angle*:
+*Anisotropy Angle*
     Rotation angle for the anisotropic highlights, with the value in [0,1] range mapping to a rotation from 0 to 360 degrees.
 
-*Anisotropy Vector Map*:
+*Anisotropy Vector Map*
     Also known as tangent field, encodes the anisotropy directions along X and Y in the Red and Green or Red and Blue channels of the image. appleseed expects values encoded in the Red and Green channels.
 
 -----
@@ -76,10 +76,10 @@ Specular Parameters
 Volume Material Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*Volume Transmittance*:
+*Volume Transmittance*
     Color of the volumetric absorption as the refracted ray travels within the medium.
 
-*Transmittance Distance*:
+*Transmittance Distance*
     The distance at which full absorption is supposed to occur. When this distance is set to 0, no absorption takes place. Lower values imply a stronger absorption, and higher values imply a weaker absorption effect as the ray would need to travel a greater distance for full absorption to take place.
 
 -----
@@ -87,7 +87,7 @@ Volume Material Parameters
 Bump Parameters
 ^^^^^^^^^^^^^^^
 
-*Bump Normal*:
+*Bump Normal*
     The unit length world space normal of the bumped surface.
 
 .....
@@ -95,7 +95,7 @@ Bump Parameters
 Advanced Parameters
 ^^^^^^^^^^^^^^^^^^^
 
-*Ray Depth*:
+*Ray Depth*
     The maximum ray depth a ray is allowed to bounce before being terminated.
 
 -----
@@ -103,10 +103,10 @@ Advanced Parameters
 Outputs
 ^^^^^^^
 
-*Output Color*:
+*Output Color*
     The BSDF output color.
 
-*Output Transparency*:
+*Output Transparency*
     The output transparency.
 
 -----

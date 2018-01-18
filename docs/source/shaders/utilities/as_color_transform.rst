@@ -25,10 +25,10 @@ Parameters
 Color Attributes
 ^^^^^^^^^^^^^^^^
 
-*Input Color*:
+*Input Color*
     The color being transformed.
 
-*Input Space*:
+*Input Space*
     The input color space to transform from. It can be one of
 
     * RGB
@@ -41,7 +41,7 @@ Color Attributes
     * CIE 1976 LCh :sub:`ab` [#]_
     * CIE 1976 LCh :sub:`uv` [#]_
 
-*Output Space*:
+*Output Space*
     The output color space to transform to. It can be one of
 
     * RGB
@@ -59,7 +59,7 @@ Color Attributes
 Outputs
 ^^^^^^^
 
-*Result*:
+*Result*
     The transformed color. For usability, the range of some spaces are remapped to the [0,1] range.
     As an example, the hue could be mapped to a greyscale texture, or if the space is set to CIE 1976 L\*a\*\b*, the *a* variable would control the green/magenta oposition, while the *b* variable would control the blue/yellow oposition, with respective neutral/grey values at 0.5.
 
