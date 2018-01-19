@@ -1,76 +1,112 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <templates>
-    <using package='maya'/>
-    <template name='NEasLayerShader'>
-        <attribute name='outColor' type='maya.float3'>
-            <label>Out Color</label>
-        </attribute>
-        <attribute name='color' type='maya.float3'>
-            <label>Color</label>
-        </attribute>
-        <attribute name='weight' type='maya.float'>
-            <label>Weight</label>
-        </attribute>
-        <attribute name='color1' type='maya.float3'>
-            <label>Color 1</label>
-        </attribute>
-        <attribute name='weight1' type='maya.float'>
-            <label>Weight 1</label>
-        </attribute>
-        <attribute name='color2' type='maya.float3'>
-            <label>Color 2</label>
-        </attribute>
-        <attribute name='weight2' type='maya.float'>
-            <label>Weight 2</label>
-        </attribute>
-        <attribute name='color3' type='maya.float3'>
-            <label>Color 3</label>
-        </attribute>
-        <attribute name='weight3' type='maya.float'>
-            <label>Weight 3</label>
-        </attribute>
-        <attribute name='color4' type='maya.float3'>
-            <label>Color 4</label>
-        </attribute>
-        <attribute name='weight4' type='maya.float'>
-            <label>Weight 4</label>
-        </attribute>
-        <attribute name='color5' type='maya.float3'>
-            <label>Color 5</label>
-        </attribute>
-        <attribute name='weight5' type='maya.float'>
-            <label>Weight 5</label>
-        </attribute>
-        <attribute name='color6' type='maya.float3'>
-            <label>Color 6</label>
-        </attribute>
-        <attribute name='weight6' type='maya.float'>
-            <label>Weight 6</label>
-        </attribute>
-        <attribute name='color7' type='maya.float3'>
-            <label>Color 7</label>
-        </attribute>
-        <attribute name='weight7' type='maya.float'>
-            <label>Weight 7</label>
-        </attribute>
-    </template>
-    <view name='NEDefault' template='NEasLayerShader'>
-        <property name='outColor'/>
-        <property name='color'/>
-        <property name='weight'/>
-        <property name='color1'/>
-        <property name='weight1'/>
-        <property name='color2'/>
-        <property name='weight2'/>
-        <property name='color3'/>
-        <property name='weight3'/>
-        <property name='color4'/>
-        <property name='weight4'/>
-        <property name='color5'/>
-        <property name='weight5'/>
-        <property name='color6'/>
-        <property name='weight6'/>
-        <property name='color7'/>
-        <property name='weight7'/>
-    </view>
+	<using package='maya'/>
+	<template name='NEasLayerShader'>
+		<attribute name='outColor' type='maya.float3'>
+			<label>Out Color</label>
+		</attribute>
+		<attribute name='layeredNormal' type='maya.float3'>
+			<label>Layered Normal</label>
+		</attribute>
+		<attribute name='color' type='maya.float3'>
+			<label>Color</label>
+		</attribute>
+		<attribute name='weight' type='maya.float'>
+			<label>Weight</label>
+		</attribute>
+		<attribute name='normalCamera' type='maya.float3'>
+			<label>Normal Camera</label>
+		</attribute>
+		<attribute name='color1' type='maya.float3'>
+			<label>Color 1</label>
+		</attribute>
+		<attribute name='weight1' type='maya.float'>
+			<label>Weight 1</label>
+		</attribute>
+		<attribute name='normalCamera1' type='maya.float3'>
+			<label>Normal Camera 1</label>
+		</attribute>
+		<attribute name='color2' type='maya.float3'>
+			<label>Color 2</label>
+		</attribute>
+		<attribute name='weight2' type='maya.float'>
+			<label>Weight 2</label>
+		</attribute>
+		<attribute name='normalCamera2' type='maya.float3'>
+			<label>Normal Camera 2</label>
+		</attribute>
+		<attribute name='color3' type='maya.float3'>
+			<label>Color 3</label>
+		</attribute>
+		<attribute name='weight3' type='maya.float'>
+			<label>Weight 3</label>
+		</attribute>
+		<attribute name='normalCamera3' type='maya.float3'>
+			<label>Normal Camera 3</label>
+		</attribute>
+		<attribute name='color4' type='maya.float3'>
+			<label>Color 4</label>
+		</attribute>
+		<attribute name='weight4' type='maya.float'>
+			<label>Weight 4</label>
+		</attribute>
+		<attribute name='normalCamera4' type='maya.float3'>
+			<label>Normal Camera 4</label>
+		</attribute>
+		<attribute name='color5' type='maya.float3'>
+			<label>Color 5</label>
+		</attribute>
+		<attribute name='weight5' type='maya.float'>
+			<label>Weight 5</label>
+		</attribute>
+		<attribute name='normalCamera5' type='maya.float3'>
+			<label>Normal Camera 5</label>
+		</attribute>
+		<attribute name='color6' type='maya.float3'>
+			<label>Color 6</label>
+		</attribute>
+		<attribute name='weight6' type='maya.float'>
+			<label>Weight 6</label>
+		</attribute>
+		<attribute name='normalCamera6' type='maya.float3'>
+			<label>Normal Camera 6</label>
+		</attribute>
+		<attribute name='color7' type='maya.float3'>
+			<label>Color 7</label>
+		</attribute>
+		<attribute name='weight7' type='maya.float'>
+			<label>Weight 7</label>
+		</attribute>
+		<attribute name='normalCamera7' type='maya.float3'>
+			<label>Normal Camera 7</label>
+		</attribute>
+	</template>
+	<view name='NEDefault' template='NEasLayerShader'>
+		<property name='outColor'/>
+		<property name='layeredNormal'/>
+		<property name='color'/>
+		<property name='weight'/>
+		<property name='normalCamera'/>
+		<property name='color1'/>
+		<property name='weight1'/>
+		<property name='normalCamera1'/>
+		<property name='color2'/>
+		<property name='weight2'/>
+		<property name='normalCamera2'/>
+		<property name='color3'/>
+		<property name='weight3'/>
+		<property name='normalCamera3'/>
+		<property name='color4'/>
+		<property name='weight4'/>
+		<property name='normalCamera4'/>
+		<property name='color5'/>
+		<property name='weight5'/>
+		<property name='normalCamera5'/>
+		<property name='color6'/>
+		<property name='weight6'/>
+		<property name='normalCamera6'/>
+		<property name='color7'/>
+		<property name='weight7'/>
+		<property name='normalCamera7'/>
+	</view>
 </templates>
