@@ -270,6 +270,9 @@ class AppleseedRenderGlobalsMainTab(object):
         self.__uis["shutterOpen"].setEnable(value)
         self.__uis["shutterClose"].setEnable(value)
 
+    def __prefilterChanged(self, value):
+        self.__uis["spikeThreshold"].setEnable(value)
+
     def __environmentLightSelected(self, envLight):
         logger.debug("Environment light selected: %s" % envLight)
 
@@ -490,6 +493,27 @@ class AppleseedRenderGlobalsMainTab(object):
                                 label="Denoiser",
                                 enumeratedItem=self.__getAttributeMenuItems("denoiser")),
                             attrName="denoiser")
+
+                        enablePrefilter = mc.getAttr(
+                            "appleseedRenderGlobals.prefilterSpikes")
+                        self.__addControl(
+                            ui=pm.checkBoxGrp(
+                                label="Prefilter Spikes",
+                                changeCommand=self.__prefilterChanged),
+                            attrName="prefilterSpikes")
+                        self.__addControl(
+                            ui=pm.floatFieldGrp(
+                                label="Spike Thereshold", numberOfFields=1, enable=enablePrefilter),
+                            attrName="spikeThreshold")
+
+                        self.__addControl(
+                            ui=pm.floatFieldGrp(
+                                label="Patch Distance", numberOfFields=1),
+                            attrName="patchDistance")
+                        self.__addControl(
+                            ui=pm.intFieldGrp(
+                                label="Denoise Scales", numberOfFields=1),
+                            attrName="denoiseScales")
 
                 with pm.frameLayout(label="System", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):

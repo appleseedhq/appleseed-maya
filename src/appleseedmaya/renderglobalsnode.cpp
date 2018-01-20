@@ -41,8 +41,9 @@
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
-#include "foundation/utility/api/specializedapiarrays.h"
 #include "foundation/math/scalar.h"
+#include "foundation/utility/api/specializedapiarrays.h"
+#include "foundation/utility/iostreamop.h"
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
@@ -96,6 +97,11 @@ MObject RenderGlobalsNode::m_maxTextureCacheSize;
 MObject RenderGlobalsNode::m_denoiserMode;
 MStringArray RenderGlobalsNode::m_denoiserModeKeys;
 
+MObject RenderGlobalsNode::m_prefilterSpikes;
+MObject RenderGlobalsNode::m_spikeThreshold;
+MObject RenderGlobalsNode::m_patchDistanceThreshold;
+MObject RenderGlobalsNode::m_denoiseScales;
+
 MObject RenderGlobalsNode::m_imageFormat;
 
 void* RenderGlobalsNode::creator()
@@ -137,7 +143,7 @@ MStatus RenderGlobalsNode::initialize()
 
     // Scene Scale.
     m_sceneScale = numAttrFn.create("sceneScale", "sceneScale", MFnNumericData::kFloat, 1.0f, &status);
-    numAttrFn.setMin(0.0000001f);
+    numAttrFn.setMin(0.0000001);
     CHECKED_ADD_ATTRIBUTE(m_sceneScale, "sceneScale")
 
     // Lighting engine.
@@ -250,10 +256,6 @@ MStatus RenderGlobalsNode::initialize()
     m_envLightNode = msgAttrFn.create("envLight", "env", &status);
     CHECKED_ADD_ATTRIBUTE(m_envLightNode, "envLight")
 
-    // Image Format.
-    m_imageFormat = numAttrFn.create("imageFormat", "imageFormat", MFnNumericData::kInt, 0, &status);
-    CHECKED_ADD_ATTRIBUTE(m_imageFormat, "imageFormat")
-
     // Denoiser.
     m_denoiserModeKeys.append("off");
     m_denoiserModeKeys.append("on");
@@ -266,6 +268,31 @@ MStatus RenderGlobalsNode::initialize()
     enumAttrFn.addField("Write Outputs", 2);
 
     CHECKED_ADD_ATTRIBUTE(m_denoiserMode, "denoiser")
+
+    // Prefilter Spikes.
+    m_prefilterSpikes = numAttrFn.create("prefilterSpikes", "prefilterSpikes", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_prefilterSpikes, "prefilterSpikes")
+
+    // Spike Thereshold.
+    m_spikeThreshold = numAttrFn.create("spikeThreshold", "spikeThreshold", MFnNumericData::kFloat, 2.0f, &status);
+    numAttrFn.setMin(0.1);
+    numAttrFn.setMax(4.0);
+    CHECKED_ADD_ATTRIBUTE(m_spikeThreshold, "spikeThreshold")
+
+    // Patch Distance.
+    m_patchDistanceThreshold = numAttrFn.create("patchDistance", "patchDistance", MFnNumericData::kFloat, 1.0f, &status);
+    numAttrFn.setMin(0.5);
+    numAttrFn.setMax(3.0);
+    CHECKED_ADD_ATTRIBUTE(m_patchDistanceThreshold, "patchDistance")
+
+    // Denoise Scales.
+    m_denoiseScales = numAttrFn.create("denoiseScales", "denoiseScales", MFnNumericData::kInt, 3, &status);
+    numAttrFn.setMin(1);
+    CHECKED_ADD_ATTRIBUTE(m_denoiseScales, "denoiseScales")
+
+    // Image Format
+    m_imageFormat = numAttrFn.create("imageFormat", "imageFormat", MFnNumericData::kInt, 0, &status);
+    CHECKED_ADD_ATTRIBUTE(m_imageFormat, "imageFormat")
 
     return status;
 
@@ -311,6 +338,15 @@ void RenderGlobalsNode::applyGlobalsToProject(
     {
         finalParams.insert_path("generic_frame_renderer.passes", passes);
         finalParams.insert_path("shading_result_framebuffer", passes == 1 ? "ephemeral" : "permanent");
+    }
+
+    asr::Frame* frame = project.get_frame();
+
+    int tileSize;
+    if (AttributeUtils::get(MPlug(globals, m_tileSize), tileSize))
+    {
+        frame->get_parameters().insert(
+            "tile_size", asf::Vector2i(tileSize));
     }
 
     int diagnostic;
@@ -400,9 +436,36 @@ void RenderGlobalsNode::applyGlobalsToProject(
     int denoiserMode;
     if (AttributeUtils::get(MPlug(globals, m_denoiserMode), denoiserMode))
     {
-        asr::Frame* frame = project.get_frame();
         frame->get_parameters().insert(
             "denoiser", m_denoiserModeKeys[denoiserMode].asChar());
+    }
+
+    bool prefilterSpikes;
+    if (AttributeUtils::get(MPlug(globals, m_prefilterSpikes), prefilterSpikes))
+    {
+        frame->get_parameters().insert(
+            "prefilter_spikes", prefilterSpikes);
+    }
+
+    float spikeThreshold;
+    if (AttributeUtils::get(MPlug(globals, m_spikeThreshold), spikeThreshold))
+    {
+        frame->get_parameters().insert(
+            "spike_threshold", spikeThreshold);
+    }
+
+    float patchDistanceThreshold;
+    if (AttributeUtils::get(MPlug(globals, m_patchDistanceThreshold), patchDistanceThreshold))
+    {
+        frame->get_parameters().insert(
+            "patch_distance_threshold", patchDistanceThreshold);
+    }
+
+    int denoiseScales;
+    if (AttributeUtils::get(MPlug(globals, m_denoiseScales), denoiseScales))
+    {
+        frame->get_parameters().insert(
+            "denoise_scales", denoiseScales);
     }
 
     #undef INSERT_PATH_IN_CONFIGS

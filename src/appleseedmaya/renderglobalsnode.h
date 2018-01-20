@@ -103,6 +103,11 @@ class RenderGlobalsNode
     static MObject      m_denoiserMode;
     static MStringArray m_denoiserModeKeys;
 
+    static MObject      m_prefilterSpikes;
+    static MObject      m_spikeThreshold;
+    static MObject      m_patchDistanceThreshold;
+    static MObject      m_denoiseScales;
+
     static MObject      m_imageFormat;
 };
 

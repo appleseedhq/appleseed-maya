@@ -509,11 +509,6 @@ namespace
             // Set the resolution.
             params.insert("resolution", asf::Vector2i(m_options.m_width, m_options.m_height));
 
-            // Set the tile size.
-            int tileSize;
-            if (AttributeUtils::get(fnDepNode, "tileSize", tileSize))
-                params.insert("tile_size", asf::Vector2i(tileSize));
-
             // Replace the frame.
             const asr::AOVContainer& aovs = m_project->get_frame()->aovs();
             m_project->set_frame(asr::FrameFactory().create("beauty", params, aovs));
