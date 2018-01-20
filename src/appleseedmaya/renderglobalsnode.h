@@ -100,6 +100,9 @@ class RenderGlobalsNode
     static MObject      m_renderingThreads;
     static MObject      m_maxTextureCacheSize;
 
+    static MObject      m_denoiserMode;
+    static MStringArray m_denoiserModeKeys;
+
     static MObject      m_imageFormat;
 };
 

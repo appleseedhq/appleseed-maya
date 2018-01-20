@@ -285,6 +285,13 @@ class AppleseedRenderGlobalsMainTab(object):
                 envLight + ".globalsMessage",
                 "appleseedRenderGlobals.envLight")
 
+    def __getAttributeMenuItems(self, attrName):
+        attr = pm.Attribute("appleseedRenderGlobals." + attrName)
+        menuItems = [
+            (i, v) for i, v in enumerate(attr.getEnums().keys())
+        ]
+        return menuItems
+
     def updateEnvLightControl(self):
         if "envLight" in self.__uis:
             logger.debug("Updating env lights menu")
@@ -354,26 +361,18 @@ class AppleseedRenderGlobalsMainTab(object):
 
                 with pm.frameLayout(label="Shading", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
-                        attr = pm.Attribute(
-                            "appleseedRenderGlobals.diagnostics")
-                        menuItems = [
-                            (i, v) for i, v in enumerate(attr.getEnums().keys())
-                        ]
                         self.__addControl(
                             ui=pm.attrEnumOptionMenuGrp(
-                                label="Override Shaders", enumeratedItem=menuItems),
+                                label="Override Shaders",
+                                enumeratedItem=self.__getAttributeMenuItems("diagnostics")),
                             attrName="diagnostics")
 
                 with pm.frameLayout(label="Lighting", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
-                        attr = pm.Attribute(
-                            "appleseedRenderGlobals.lightingEngine")
-                        menuItems = [
-                            (i, v) for i, v in enumerate(attr.getEnums().keys())
-                        ]
                         self.__addControl(
                             ui=pm.attrEnumOptionMenuGrp(
-                                label="Lighting Engine", enumeratedItem=menuItems),
+                                label="Lighting Engine",
+                                enumeratedItem=self.__getAttributeMenuItems("lightingEngine")),
                             attrName="lightingEngine")
 
                         with pm.frameLayout(label="Path Tracing", collapsable=True, collapse=False):
@@ -483,6 +482,14 @@ class AppleseedRenderGlobalsMainTab(object):
                             ui=pm.floatFieldGrp(
                                 label="Shutter Close", numberOfFields=1, enable=enableMotionBlur),
                             attrName="shutterClose")
+
+                with pm.frameLayout(label="Denoiser", collapsable=True, collapse=True):
+                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
+                        self.__addControl(
+                            ui=pm.attrEnumOptionMenuGrp(
+                                label="Denoiser",
+                                enumeratedItem=self.__getAttributeMenuItems("denoiser")),
+                            attrName="denoiser")
 
                 with pm.frameLayout(label="System", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):

@@ -35,9 +35,10 @@
 #include "appleseedmaya/typeids.h"
 
 // appleseed.renderer headers.
+#include "renderer/api/frame.h"
 #include "renderer/api/project.h"
-#include "renderer/api/utility.h"
 #include "renderer/api/surfaceshader.h"
+#include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/api/specializedapiarrays.h"
@@ -66,8 +67,8 @@ MObject RenderGlobalsNode::m_sceneScale;
 
 MObject RenderGlobalsNode::m_lightingEngine;
 
-MStringArray RenderGlobalsNode::m_diagnosticShaderKeys;
 MObject RenderGlobalsNode::m_diagnosticShader;
+MStringArray RenderGlobalsNode::m_diagnosticShaderKeys;
 
 MObject RenderGlobalsNode::m_limitBounces;
 MObject RenderGlobalsNode::m_globalBounces;
@@ -92,6 +93,9 @@ MObject RenderGlobalsNode::m_shutterClose;
 MObject RenderGlobalsNode::m_renderingThreads;
 MObject RenderGlobalsNode::m_maxTextureCacheSize;
 
+MObject RenderGlobalsNode::m_denoiserMode;
+MStringArray RenderGlobalsNode::m_denoiserModeKeys;
+
 MObject RenderGlobalsNode::m_imageFormat;
 
 void* RenderGlobalsNode::creator()
@@ -111,6 +115,7 @@ MStatus RenderGlobalsNode::initialize()
             "appleseedMaya: Failed to add render globals " #name " attribute");
 
     MFnNumericAttribute numAttrFn;
+    MFnEnumAttribute enumAttrFn;
     MFnMessageAttribute msgAttrFn;
 
     MStatus status;
@@ -136,7 +141,6 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_sceneScale, "sceneScale")
 
     // Lighting engine.
-    MFnEnumAttribute enumAttrFn;
     m_lightingEngine = enumAttrFn.create("lightingEngine", "lightingEngine", 0, &status);
     enumAttrFn.addField("Path Tracing", 0);
     CHECKED_ADD_ATTRIBUTE(m_lightingEngine, "lightingEngine")
@@ -246,9 +250,22 @@ MStatus RenderGlobalsNode::initialize()
     m_envLightNode = msgAttrFn.create("envLight", "env", &status);
     CHECKED_ADD_ATTRIBUTE(m_envLightNode, "envLight")
 
-    // Image Format
+    // Image Format.
     m_imageFormat = numAttrFn.create("imageFormat", "imageFormat", MFnNumericData::kInt, 0, &status);
     CHECKED_ADD_ATTRIBUTE(m_imageFormat, "imageFormat")
+
+    // Denoiser.
+    m_denoiserModeKeys.append("off");
+    m_denoiserModeKeys.append("on");
+    m_denoiserModeKeys.append("write_outputs");
+
+    m_denoiserMode = enumAttrFn.create("denoiser", "denoiser");
+
+    enumAttrFn.addField("Off", 0);
+    enumAttrFn.addField("On", 1);
+    enumAttrFn.addField("Write Outputs", 2);
+
+    CHECKED_ADD_ATTRIBUTE(m_denoiserMode, "denoiser")
 
     return status;
 
@@ -378,6 +395,14 @@ void RenderGlobalsNode::applyGlobalsToProject(
         uint64_t texCacheSizeinBytes = maxTexCacheSize;
         texCacheSizeinBytes *= 1024 * 1024;
         INSERT_PATH_IN_CONFIGS("texture_store.max_size", texCacheSizeinBytes);
+    }
+
+    int denoiserMode;
+    if (AttributeUtils::get(MPlug(globals, m_denoiserMode), denoiserMode))
+    {
+        asr::Frame* frame = project.get_frame();
+        frame->get_parameters().insert(
+            "denoiser", m_denoiserModeKeys[denoiserMode].asChar());
     }
 
     #undef INSERT_PATH_IN_CONFIGS
