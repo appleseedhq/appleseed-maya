@@ -64,7 +64,7 @@ Anisotropy
     Rotation angle for the anisotropic highlight in [0,1], mapping a rotation from 0 to 360 degrees.
 
 *Anisotropy Mode*
-    Toggles between accepting a direct texture map in the form of an anisotropy vector map, or between an explicit vector (or a connection to a node that generates such a vector, such as :ref:`label_as_anisotropy_vector_field` ).
+    Toggles between accepting a direct texture map in the form of an anisotropy vector map, or between an explicit vector (or a connection to a node that generates such a vector [#]_ ).
     It can take the values
 
         * Anisotropy Map
@@ -120,84 +120,91 @@ Outputs
 Screenshots
 -----------
 
-.. thumbnail:: /_images/screenshots/metal/as_metal_shot12_copper.png
+.. thumbnail:: /_images/screenshots/metal/as_metal_copper.png
    :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
    Textured copper, with tangent space normal mapping for a slight hammered look.
 
-.. thumbnail:: /_images/screenshots/metal/as_metal_shot13_steel.png
+.. thumbnail:: /_images/screenshots/metal/as_metal_aniso_steel.png
    :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
    Textured steel, moderate roughness, also texture mapped.
 
-.. thumbnail:: /_images/screenshots/metal/as_metal_shot16_silver.png
+.. thumbnail:: /_images/screenshots/metal/as_metal_silver.png
    :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
    Textured silver.
 
-.. thumbnail:: /_images/screenshots/metal/as_metal_shot18_steel_aniso.png
+.. thumbnail:: /_images/screenshots/metal/as_metal_aniso_steel.png
    :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
    Textured steel, with an anisotropy vector field providing the anisotropy directions, and moderate anisotropy weight.
 
-.. thumbnail:: /_images/screenshots/metal/as_metal_shot19_gold.png
+.. thumbnail:: /_images/screenshots/metal/as_metal_gold.png
    :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
    Gold with some scratches in the tangent space normal map.
 
-.. thumbnail:: /_images/screenshots/metal/as_metal_shot9_copper2.png
+.. thumbnail:: /_images/screenshots/metal/as_metal_copper2.png
    :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
    Another textured copper.
 
-.. thumbnail:: /_images/screenshots/metal/as_metal_shot11_copper.png
+.. thumbnail:: /_images/screenshots/metal/as_metal_steel2.png
+   :group: shots_as_metal_group_A
+   :width: 10%
+   :title:
+
+   Another textured steel.
+
+.. thumbnail:: /_images/screenshots/metal/as_metal_copper3.png
    :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
    Textured copper with a different IBL.
 
-.. thumbnail:: /_images/screenshots/metal/as_metal_shot14_steel2.png
+.. thumbnail:: /_images/screenshots/metal/as_metal_steel3.png
    :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
    Steel with a different IBL.
 
-.. thumbnail:: /_images/screenshots/metal/as_metal_shot17_silver.png
+.. thumbnail:: /_images/screenshots/metal/as_metal_silver2.png
    :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
    Textured silver with a different IBL.
 
-.. thumbnail:: /_images/screenshots/metal/as_metal_shot_18_aniso_steel.png
+.. thumbnail:: /_images/screenshots/metal/as_metal_aniso_steel2.png
    :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
    Textured anisotropic steel with another different IBL.
 
-.. thumbnail:: /_images/screenshots/metal/as_metal_shot20_gold.png
+.. thumbnail:: /_images/screenshots/metal/as_metal_gold2.png
    :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
    Gold with another IBL setup.
 
-.. thumbnail:: /_images/screenshots/metal/as_metal_shot10_copper2.png
+.. thumbnail:: /_images/screenshots/metal/as_metal_copper4.png
    :group: shots_as_metal_group_A
    :width: 10%
    :title:
@@ -209,6 +216,8 @@ Screenshots
 .. rubric:: Footnotes
 
 .. [#] From *.nk* files, containing the data for several metals, alloys, semi-conductors in several wavelenght ranges (not exclusively in the visible light range).
+
+.. [#] Such as the :ref:`anisotropy vector field node <label_as_anisotropy_vector_field>`.
 
 -----
 
