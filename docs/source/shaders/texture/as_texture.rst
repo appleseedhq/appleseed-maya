@@ -13,7 +13,7 @@
 asTexture
 *********
 
-A procedural 2D Worley :cite:`c-Worley:1996:CTB:237170.237267` like noise shader, that outputs not only the resulting color, but the four nearest features to the evaluated point, their respective positions, and their cell color IDs. See also :cite:`c-Ebert:2002:TMP:572337`.
+A texture lookup node with full control over OSL's texture() call.
 
 Parameters
 ----------
@@ -22,113 +22,121 @@ Parameters
 
 -----
 
-Color Parameters
-^^^^^^^^^^^^^^^^
-
-*Color 1*
-    Primary cell color.
-
-*Color 2*
-    Secondary cell color.
-
-*Contrast*
-    Contrast between primary and secondary cell color.
-
------
-
-Recursion Parameters
-^^^^^^^^^^^^^^^^^^^^
-
-*Amplitude*
-    Controls the amplitute at each octave, including the starting iteration.
-
-*Octaves*
-    Number of iterations to perform, higher values lead to increasing detail, but increased computational cost as well.
-
-*Lacunarity*
-    Defines how large the gaps are in the cell noise with increasing octaves, higher values lead to higher gaps, lower values to small gaps.
-
-*Persistence*
-    The persistence of the fractal is a gain factor to apply to the amplitude at each iteration, but it only has an effect when the shader is set to the mode *pebbles*.
-
------
-
-Cell Parameters
-^^^^^^^^^^^^^^^
-
-*Density*
-    The density of the cells, with higher values resulting in a higher number of cells in the same area.
-
-*Jittering*
-    How random the placement of the cells is, with low values resulting in a ordered grid of cells, and higher values resulting in aleatory placement of cells.
-
-*Metric*
-    Which metric to choose to calculate the distance from cell to feature points. There are several to choose from, resulting in different types of patterns.
-
-* Euclidian distance
-* Sum of square difference
-* Tchebychev distance
-* Sum of absolute difference
-* Akritean distance
-* Minkowski metric
-* Karlsruhe metric
-
-The sum of the square difference is also known as the Manhattan metric.
-
-The Minkowski metric is a generalized metric whose P parameter allows you to go from the Euclidian distance when P has a value of 2, to the Manhattan distance when P has a value of 1, and as P reaches infinity, it represents the Tchebychev metric.
-
-The Akritean distance if a weighted mix of the Euclidian distance, and the Tchebychev distance.
-
-The Karlsruhe metric, also known as Moscow metric, is a radial metric, returns radial sections from a cell at the center.
-
-*Minkowski Parameter*
-    Controls the metric, with a value of 1 being the Manhattan distance, 2 being the Euclidian distance, and higher values tending to the Tchebychev metric as the parameter approaches infinity.
-
-*Coverage*
-    The Akritean distance coverage, or the weighting mix between the Euclidian distance and the Tchebychev distance.
-
-*Features Mode*
-    The features mode to use when computing the output color.
-
-* Feature 1, or nearest feature from the cell
-* Feature 2, or second nearest feature from the cell
-* Feature 3, or third nearest feature from the cell
-* Feature 4, or fourth nearest feature from the cell
-* F1 + F2, or sum of first and second nearest features
-* F2 - F1, or difference between second and first nearest features
-* F1 * F2, or product of first and second nearest features
-* F1 / F2, or division of first nearest feature by second nearest feature
-* F1 ^ F2, nearest feature raised to the second nearest feature
-* Pebbles, a mode that resembles pebbles
-* Cell ID 1, the ID of the nearest feature to the cell
-* Cell ID 2, the ID of the second nearest feature to the cell
-* Cell ID 3, the ID of the third nearest feature to the cell
-* Cell ID 4, the ID of the fourth nearest feature to the cell
-
-.. note::
-
-   The unmodified features, points and their color IDs are also output from the shader, giving the user greater creative potential. The feature modes above are but a starting point.
-
------
-
-Color Balance
-^^^^^^^^^^^^^
-
-The standard Maya color balance, gain, offset parameters. Please consult Maya's documentation for more information on these controls.
-
------
-
-Effects
+Texture
 ^^^^^^^
 
-The standard Maya effects parameters. Please consult Maya's documentation for more information on these controls.
+*Filename*
+    The texture filename
 
------
+*Atlas Type*
+    The texture atlas type, it can be one of
 
-Coordinates
-^^^^^^^^^^^
+        * None (ordinary texture, the *default*)
+        * ZBrush [#]_
+        * Mudbox
+        * Mari [#]_
 
-The input UV coordinates, typically from an upstream *placement2d* node.
+.. note::
+   Though a full reference of UV tiles is outside the scope of this document, it suffices to say here that the ZBrush UV tiles pattern is in the form *u<N>_v<N>* with the tiles starting at 0, whilst Mudbox shares the same pattern but starts at 1. Mari uses UDIM tiles.
+
+*Color*
+    The default color to use if the texture lookup fails for any reason.
+
+*Alpha*
+    The default alpha value if there is none in the texture file, or if the lookup of the alpha channel fails for any reason.
+
+*Starting Channel*
+    The starting channel for the texture lookup. For an *RGBA* texture, the starting channel is 0, which is also the default.
+
+*S Blur Amount*
+    The amount of blur along the *s* texture coordinate, defaulting to 0.
+
+*T Blur Amount*
+    The amount of blur along the *t* texture coordinate, defauling to 0.
+
+*S Filter Width*
+    A scaling factor for the size of the texture filter as defined by the differentials or implicitly by the differentials of the *s* texture coordinates, with a default value of 1.0. A value of 0.0 turns off texture filtering.
+
+*T Filter Width*
+    A scaling factor for the size of the texture filter as defined by the differentials or implicitly by the differentials of the *t* texture coordinates, with a default value of 1.0. A value of 0.0 turns off texture filtering.
+                                                                      
+*S Wrap*
+    The texture wrapping mode along the *s* direction, which can be one of
+
+        * Default (the texture system default)
+        * Black
+        * Periodic
+        * Clamp
+        * Mirror
+
+*T Wrap*
+    The texture warpping mode along the *t* direction, which can be one of
+
+        * Default (the texture system default)
+        * Black
+        * Periodic
+        * Clamp
+        * Mirror
+
+*Interpolation Method*
+    The texture interpolation method, which can take the following values
+
+        * Smart Cubic (default)
+        * Cubic
+        * Linear
+        * Closest
+
+.. seealso::
+   `This link on texture filtering <https://en.wikipedia.org/wiki/Texture_filtering>`_ for more details.
+
+Color Management
+^^^^^^^^^^^^^^^^
+
+*Enable CMS*
+    Toggles the color management options *on* or *off*.
+
+*Input Transfer Function*
+    Applies an Electro-Optical Transfer Function, or EOTF, to the input texture, linearizing it.
+    It can take the following values
+
+        * None/Raw
+        * sRGB
+        * Rec.709
+        * Gamma 2.2
+        * Gamma 2.4
+        * Gamma 2.6 (DCI)
+        * Rec.1886
+        * Rec.2020
+
+*RGB Primaries*
+    It allows the user to set the RGB primaries that define the color space of the input texture, and can take the following values
+
+        * Raw [#]_
+        * sRGB/Rec.709 [#]_
+        * AdobeRGB
+        * Rec.2020
+        * DCI-P3
+        * ACES
+        * ACEScg
+
+*Rendering RGB Primaries*
+    It allows the user to set the RGB primaries of the rendering or working space, and it should match the choice of rendering/working space of the renderer.
+    It can take the following values
+
+        * sRGB/Rec.709
+        * Rec.2020
+        * DCI-P3
+        * ACES
+        * ACEScg
+
+Texture Coordinates
+^^^^^^^^^^^^^^^^^^^
+
+*UV Coords*
+    The *uv* texture coordinates.
+
+*UV Filter Size*
+    The computed filter size for the *uv* texture coordinates.
 
 -----
 
@@ -141,81 +149,17 @@ Outputs
 *Output Alpha*
     The alpha resulting from the *Features Mode* choice, usually luminance of the color only.
 
-*Output Features*
-    An array of 4 floats, containing the four nearest features to the cell.
-
-*Output Positions*
-    An array of 4 points, containing the center of the four nearest features to the cell.
-
-*Output IDs*
-    An array of 4 colors, containing the color IDs of the four nearest features to the cell.
-
-.. warning:: presently OSL does not allow connections from/to array elements, and appleseed-maya is not enabling the array outputs for now. This will be addressed in a future release.
-
 -----
 
-.. _label_voronoi2d_screenshots:
+.. rubric:: Footnotes
 
-Screenshots
------------
+.. [#] For the ZBrush and Mudbox case, the UV tiles are assumed to be separated by underscores.
 
-Some examples of feature output modes and metrics.
+.. [#] This note assumes however, that the UDIM pattern will always come last before the filename extension. That is, if you are using an animated sequence or frames of an animated sequence, then the padded frame numbers **must** come before the UDIM pattern. I.e, ``<filename>.<padded frame numbers>.<UDIM>.<extension>.``
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f1.png
-   :group: shots_voronoi2d_group_A
-   :width: 10%
-   :title:
+.. [#] Because it makes no sense whatsoever to use colorimetry on non-color information or data, such as normal maps, or Z depth, motion vectors, and so on.
 
-   Euclidian metric, with the first feature nearest to the evaluated cell.
-
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f2.png
-   :group: shots_voronoi2d_group_A
-   :width: 10%
-   :title:
-
-   Euclidian metric, with the second feature nearest to the evaluated cell.
-
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f1_divided_by_f2.png
-   :group: shots_voronoi2d_group_A
-   :width: 10%
-   :title:
-
-   Euclidian metric, with the first nearest featured divided by the second nearest feature.
-
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f1_plus_f2.png
-   :group: shots_voronoi2d_group_A
-   :width: 10%
-   :title:
-
-   Euclidian metric, with the first and second nearest features to the cell added.
-
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_pebbles.png
-   :group: shots_voronoi2d_group_A
-   :width: 10%
-   :title:
-
-   Euclidian metric, set to *pebbles* mode, one of the many possible combinations of expressions involving the four nearest features to the cell.
-
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_minkowski_p_0.5.png
-   :group: shots_voronoi2d_group_A
-   :width: 10%
-   :title:
-
-   Nearest feature to the cell with the Minkowski metric with P parameter set to 0.5.
-
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f2_minus_f1.png
-   :group: shots_voronoi2d_group_A
-   :width: 10%
-   :title:
-
-   Euclidian metric, with the difference between the second nearest feature and the nearest feature.
-
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_cell_id4.png
-   :group: shots_voronoi2d_group_A
-   :width: 10%
-   :title:
-
-   Euclidian metric, with the cell IDs of the fourth nearest feature.
+.. [#] sRGB shares the same CIE xy chromaticity coordinates with ITU-R BT.709/Rec.709, hence referring to the color space defined these coordinates as *sRGB/Rec.709*.
 
 -----
 
