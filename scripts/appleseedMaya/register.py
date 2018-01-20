@@ -119,7 +119,7 @@ def register():
     templatesDir = os.path.join(thisDir, "AETemplates")
     logger.debug("Registering AETemplates in %s" % templatesDir)
     for file in os.listdir(templatesDir):
-        if fnmatch.fnmatch(file, '*template.py'):
+        if fnmatch.fnmatch(file, '*Template.py'):
             templateModule = file.replace(".py", "")
             logger.debug("Registering AE template %s" % templateModule)
             mel.eval('python("import appleseedMaya.AETemplates.%s")' % templateModule)
