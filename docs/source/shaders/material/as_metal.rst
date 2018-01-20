@@ -13,7 +13,7 @@
 asMetal
 *******
 
-A metal shader, with anisotropy, and a user-friendly :cite:`Gulbrandsen2014Fresnel` complex index of refraction Fresnel, with some presets for common metal types derived from real-world measurements [#]_.
+A metal shader, with anisotropy and a user-friendly :cite:`Gulbrandsen2014Fresnel` complex index of refraction Fresnel, with some presets for common metal types derived from real-world measurements [#]_.
 
 |
 
@@ -24,8 +24,8 @@ Parameters
 
 -----
 
-Fresnel
-^^^^^^^
+Fresnel Parameters
+^^^^^^^^^^^^^^^^^^
 
 *Face Reflectance*
     RGB reflectance at normal or facing incidence.
@@ -33,8 +33,10 @@ Fresnel
 *Edge Reflectance*
     RGB reflectance at edge or grazing incidence.
 
-Specular
-^^^^^^^^
+-----
+
+Specular Parameters
+^^^^^^^^^^^^^^^^^^^ 
 
 *Distribution*
     The microfacet distribution function to use, it can be one of
@@ -76,14 +78,18 @@ Anisotropy
 *Anisotropy Direction*
     The explicit vector passed as the anisotropy direction. Valid when the *Anisotropy Mode* is set to *Explicit Vector* only.
 
-Bump
-^^^^
+-----
+
+Bump Parameters
+^^^^^^^^^^^^^^^
 
 *Bump Normal*
     The unit length world space normal of the bumped surface.
 
-Matte Opacity
-^^^^^^^^^^^^^
+-----
+
+Matte Opacity Parameters
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 *Enable Matte Opacity*
     Parameter that toggles matte holdouts.

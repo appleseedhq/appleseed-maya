@@ -35,7 +35,7 @@ Color Attributes
     The color that passes through for *shadow* rays, that compute the visibility between two points.
 
 *Transparency Ray Color*
-    The color that passes through for rays of type *transparency", for matte holdouts, and when the transparency closure is evaluated.
+    The color that passes through for rays of type *transparency*, for matte holdouts, and when the transparency closure is evaluated.
 
 *Diffuse Ray Color*
     The color that passes through for rays of type *diffuse*, typically involved in indirect diffuse lighting.
