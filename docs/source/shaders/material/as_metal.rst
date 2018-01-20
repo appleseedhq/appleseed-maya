@@ -13,7 +13,7 @@
 asMetal
 *******
 
-A blackbody radiator material :cite:`CGF:CGF1986` shader, with an optional glossy specular term on top, which also outputs the black body radiator color besides the output closure.
+A metal shader, with anisotropy, and a user-friendly :cite:`Gulbrandsen2014Fresnel` complex index of refraction Fresnel, with some presets for common metal types derived from real-world measurements [#]_.
 
 |
 
@@ -24,52 +24,57 @@ Parameters
 
 -----
 
-Incandescence
-^^^^^^^^^^^^^
+Fresnel
+^^^^^^^
 
-*Incandescence Type*
-    The type of color for the emitance distribution function, it can be
+*Face Reflectance*
+    RGB reflectance at normal or facing incidence.
 
-    1. Constant
-    2. Blackbody
-
-    When in *Blackbody* mode it uses physically based values, that might have extremely high intensities as the temperature increases.
-
-*Color*
-    The color to use when in *Constant* mode, ignored in *Blackbody* mode.
-
-*Incandescence Amount*
-    The overall intensity of the incandescence, it can be over 1.0.
-
-*Temperature Scale*
-    A scaling factor for the temperature value used to compute the black body radiation. Unlike *incandescence amount*, this actually affects the output color, with lower values generating warmer colors and lower energy levels, and higher values generating cooler values with higher energy levels.
-
-*Temperature*
-    The temperature to which the perfect black body is heated to emit electro-magnetic radiation.
-
-*Normalize Area*
-    When objects are deformed, their surface area might change. Without this option, the intensities would stay the same regardless of the deformation of the object to which the shader is attached. It this option enabled, the intensities will change taking into account the object surface area, in order to keep the amount of emitted energy constant.
-
-*Tonemap Color*
-    As temperature increases, the black body radiator emits color in bluer wavelenghts, but the amount of energy emitted is extreme. In order to avoid extremely hight intensities, this option allows the user to *tonemap* the resulting black body color.
-
------
+*Edge Reflectance*
+    RGB reflectance at edge or grazing incidence.
 
 Specular
 ^^^^^^^^
 
-*Specular Amount*
-    The intensity of the specular term.
+*Distribution*
+    The microfacet distribution function to use, it can be one of
 
-*Specular Roughness*
-    The apparent surface roughness of the specular term.
+        * GGX :cite:`Walter:2007:MMR:2383847.2383874`
+        * Beckmann :cite:`Cook:1982:RMC:357290.357293`
 
-*Index of Refraction*
-    Absolute index of refraction
+*Roughness*
+    The apparent surface roughness.
 
-.. note:: This term is a simple dielectric specular term using the *GGX* :cite:`a-heitz:hal-00996995` microfacet distribution function, with energy compensation for high roughness values.
+*Energy Compensation*
+    Microfacet models typically fail to take into account multiple scattering :cite:`Heitz:2016:MMB:2897824.2925943`, and as such, with high roughness values there is a substancial energy loss. To what extent it depends mostly on the MDF used, with *GGX* exhibiting considerable energy loss, and more so than the *Beckmann* MDF.
 
------
+    In order to negate the impact of this energy loss a separate compensation term is applied. This parameter scales the contribution of this compensation term, with a value of 1.0 trying to compensate for all the energy lost, and a value of 0.0 essentially disabling any compensation.
+
+.. seealso::
+
+   This is covered in SIGGRAPH 2017 physically based shading course `Revisiting Physically Based Shading at Imageworks (Christopher Kulla and Alejandro Conty) <http://blog.selfshadow.com/publications/s2017-shading-course/>`_.
+
+Anisotropy
+^^^^^^^^^^
+
+*Anisotropy Amount*
+    Overall intensity of the anisotropy effect, with a value of 0.0 representing a isotropic specular highlight.
+
+*Anisotropy Angle*
+    Rotation angle for the anisotropic highlight in [0,1], mapping a rotation from 0 to 360 degrees.
+
+*Anisotropy Mode*
+    Toggles between accepting a direct texture map in the form of an anisotropy vector map, or between an explicit vector (or a connection to a node that generates such a vector, such as :ref:`label_as_anisotropy_vector_field` ).
+    It can take the values
+
+        * Anisotropy Map
+        * Explicit Vector
+
+*Anisotropy Map*
+    Also known as tangent field, encodes the anisotropy directions along X and Y in the Red and Green or Red and Blue channels of the image. Appleseed expects values encoded in the Red and Green channels. Valid when the *Anisotropy Mode* is set to *Anisotropy Map* only.
+
+*Anisotropy Direction*
+    The explicit vector passed as the anisotropy direction. Valid when the *Anisotropy Mode* is set to *Explicit Vector* only.
 
 Bump
 ^^^^
@@ -108,78 +113,102 @@ Outputs
 *Output Matte Opacity*
     The matte holdout.
 
-*Output Blackbody Color*
-    The black body radiator color.
-
 -----
 
-.. _label_as_blackbody_screenshots:
+.. _label_as_metal_screenshots:
 
 Screenshots
 -----------
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot2_tv_static.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/metal/as_metal_shot12_copper.png
+   :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
-   Blackbody set to *constant* mode, with a TV static noise textures as the base color, and a relatively smooth specular reflection on top, glass like.
+   Textured copper, with tangent space normal mapping for a slight hammered look.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot4_tv_static.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/metal/as_metal_shot13_steel.png
+   :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
-   Yet another CRT TV. The incandescence intensity drives the overall intensity of the EDF, allowing the user to create stronger illumination effects.
+   Textured steel, moderate roughness, also texture mapped.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot7_blackbody.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/metal/as_metal_shot16_silver.png
+   :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
-   Now with the mode set to *blackbody*, temperature set to 4300K, and appleseed's 2D noise, with a recursive flow noise, applied to the *temperature scale*. Unlike incandescence intensity, a temperature scale will generate varying color from warmer tones (lower temperatures) to bluer tones (higher temperatures). Tonemapping was on to control the energy in the scene.
+   Textured silver.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot8_blackbody.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/metal/as_metal_shot18_steel_aniso.png
+   :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
-   A simple V ramp as the *temperature scale*, showing the change of temperature from warmer to whiter as it approaches a 6500K value. The black body radiation values were tonemapped and the intensity changed with *intensity amount* in order to keep overall intensities under control.
+   Textured steel, with an anisotropy vector field providing the anisotropy directions, and moderate anisotropy weight.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot9_constant.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/metal/as_metal_shot19_gold.png
+   :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
-   A simple constant color with a GGX specular term on top.
+   Gold with some scratches in the tangent space normal map.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot10_constant.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/metal/as_metal_shot9_copper2.png
+   :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
-   Another poorly tuned TV, with a relatively smooth specular term on top using the GGX MDF. The *incandescence amount* drives the overall intensity of the lighting.
+   Another textured copper.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot11_constant.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/metal/as_metal_shot11_copper.png
+   :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
-   Yet another noisy TV, showing the color bands in the ground, as *incandescence amount* is set to a value of 5.0 to increase the overall EDF intensities. The index of refraction of the specular layer is set to 1.47, matching the IOR of a general dense glass.
+   Textured copper with a different IBL.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot13_blackbody.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/metal/as_metal_shot14_steel2.png
+   :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
-   A circular gradient showing the overall effect of using the *temperature scale* when the temperature is set to 11000K. From 0K to 798K there is no visible light emitted. From 798K onwards there is visible light emitted, with warmer tones, increasing in energy and shifting towards neutral then bluer tones as temperature increases.
+   Steel with a different IBL.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot14_blackbody.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/metal/as_metal_shot17_silver.png
+   :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
-   Finally, a facing ratio modulating a noisy fractal texture, which also drives the specular intensity of a rough GGX specular term, creating the appearance of a basaltic like material.
+   Textured silver with a different IBL.
+
+.. thumbnail:: /_images/screenshots/metal/as_metal_shot_18_aniso_steel.png
+   :group: shots_as_metal_group_A
+   :width: 10%
+   :title:
+
+   Textured anisotropic steel with another different IBL.
+
+.. thumbnail:: /_images/screenshots/metal/as_metal_shot20_gold.png
+   :group: shots_as_metal_group_A
+   :width: 10%
+   :title:
+
+   Gold with another IBL setup.
+
+.. thumbnail:: /_images/screenshots/metal/as_metal_shot10_copper2.png
+   :group: shots_as_metal_group_A
+   :width: 10%
+   :title:
+
+   Darker copper with another IBL setup.
+
+-----
+
+.. rubric:: Footnotes
+
+.. [#] From *.nk* files, containing the data for several metals, alloys, semi-conductors in several wavelenght ranges (not exclusively in the visible light range).
 
 -----
 

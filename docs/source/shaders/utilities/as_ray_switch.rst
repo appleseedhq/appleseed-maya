@@ -35,10 +35,7 @@ Color Attributes
     The color that passes through for *shadow* rays, that compute the visibility between two points.
 
 *Transparency Ray Color*
-    The color that passes through for rays of type *transparent*.
-
-*Probe Ray Color*
-    The color that passes through for *probe* rays, but *probe* rays in appleseed are used to compute ambient occlusion and the distance for the *auto-focus sensor* used in the *thin-lens* camera model.
+    The color that passes through for rays of type *transparency", for matte holdouts, and when the transparency closure is evaluated.
 
 *Diffuse Ray Color*
     The color that passes through for rays of type *diffuse*, typically involved in indirect diffuse lighting.
