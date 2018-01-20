@@ -101,13 +101,17 @@ Outputs
 
 -----
 
-.. rubric:: References
+.. rubric:: Footnotes
 
 .. [#] `OSL or Open Shading Language <https://github.com/imageworks/OpenShadingLanguage>`_.
 
 .. [#] See appleseed's wiki entry for `assemblies concepts <https://github.com/appleseedhq/appleseed/wiki/Project-File-Format#conventions>`_ and `procedural assemblies <https://github.com/appleseedhq/appleseed/wiki/Procedural-Assemblies-Design-Document>`_.
 
 .. [#] See `field of view wikipedia page <https://en.wikipedia.org/wiki/Field_of_view>` for more details.
+
+-----
+
+.. rubric:: References
 
 .. bibliography:: /bibtex/references.bib
     :filter: docname in docnames

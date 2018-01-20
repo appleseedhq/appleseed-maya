@@ -88,10 +88,7 @@ Outputs
 
 -----
 
-.. rubric:: References
+.. rubric:: Footnotes
 
 .. [#] `OSL or Open Shading Language <https://github.com/imageworks/OpenShadingLanguage>`_.
-
-.. bibliography:: /bibtex/references.bib
-    :filter: docname in docnames
 

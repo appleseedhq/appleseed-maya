@@ -17,9 +17,6 @@
         <attribute name='colorTransparency' type='maya.float3'>
             <label>Color Transparency</label>
         </attribute>
-        <attribute name='colorProbe' type='maya.float3'>
-            <label>Color Probe</label>
-        </attribute>
         <attribute name='colorDiffuse' type='maya.float3'>
             <label>Color Diffuse</label>
         </attribute>
@@ -39,7 +36,6 @@
         <property name='colorLight'/>
         <property name='colorShadow'/>
         <property name='colorTransparency'/>
-        <property name='colorProbe'/>
         <property name='colorDiffuse'/>
         <property name='colorGlossy'/>
         <property name='colorSpecular'/>

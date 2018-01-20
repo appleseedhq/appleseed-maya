@@ -99,10 +99,3 @@ Outputs
 *Output Vector*
     The rearranged vector.
 
------
-
-.. rubric:: References
-
-.. bibliography:: /bibtex/references.bib
-    :filter: docname in docnames
-
