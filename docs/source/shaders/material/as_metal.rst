@@ -133,13 +133,6 @@ Screenshots
 
    Textured copper, with tangent space normal mapping for a slight hammered look.
 
-.. thumbnail:: /_images/screenshots/metal/as_metal_aniso_steel.png
-   :group: shots_as_metal_group_A
-   :width: 10%
-   :title:
-
-   Textured steel, moderate roughness, also texture mapped.
-
 .. thumbnail:: /_images/screenshots/metal/as_metal_silver.png
    :group: shots_as_metal_group_A
    :width: 10%
@@ -175,19 +168,33 @@ Screenshots
 
    Another textured steel.
 
+.. thumbnail:: /_images/screenshots/metal/as_metal_measured_copper.png
+   :group: shots_as_metal_group_A
+   :width: 10%
+   :title:
+
+   Setup using measured complex ior for copper.
+
+.. thumbnail:: /_images/screenshots/metal/as_metal_measured_brass.png
+   :group: shots_as_metal_group_A
+   :width: 10%
+   :title:
+
+   Setup using measured complex ior for brass.
+
+.. thumbnail:: /_images/screenshots/metal/as_metal_measured_aluminium3.png
+   :group: shots_as_metal_group_A
+   :width: 10%
+   :title:
+
+   Measured aluminium with textured radial anisotropy.
+
 .. thumbnail:: /_images/screenshots/metal/as_metal_copper3.png
    :group: shots_as_metal_group_A
    :width: 10%
    :title:
 
    Textured copper with a different IBL.
-
-.. thumbnail:: /_images/screenshots/metal/as_metal_steel3.png
-   :group: shots_as_metal_group_A
-   :width: 10%
-   :title:
-
-   Steel with a different IBL.
 
 .. thumbnail:: /_images/screenshots/metal/as_metal_silver2.png
    :group: shots_as_metal_group_A
@@ -217,11 +224,39 @@ Screenshots
 
    Darker copper with another IBL setup.
 
+.. thumbnail:: /_images/screenshots/metal/as_metal_steel3.png
+   :group: shots_as_metal_group_A
+   :width: 10%
+   :title:
+
+   Dirty isotropic steel in another IBL setup.
+
+.. thumbnail:: /_images/screenshots/metal/as_metal_measured_copper2.png
+   :group: shots_as_metal_group_A
+   :width: 10%
+   :title:
+
+   Setup using measured complex ior for copper.
+
+.. thumbnail:: /_images/screenshots/metal/as_metal_measured_brass2.png
+   :group: shots_as_metal_group_A
+   :width: 10%
+   :title:
+
+   Setup using measured complex ior for brass.
+
+.. thumbnail:: /_images/screenshots/metal/as_metal_measured_aluminium4.png
+   :group: shots_as_metal_group_A
+   :width: 10%
+   :title:
+
+   Measured aluminium with textured radial anisotropy in a different IBL setup.
+
 -----
 
 .. rubric:: Footnotes
 
-.. [#] From *.nk* files, containing the data for several metals, alloys, semi-conductors in several wavelenght ranges (not exclusively in the visible light range).
+.. [#] From *.nk* files, containing the data for several metals, alloys, semi-conductors in several wavelenght ranges (not exclusively in the visible light range). Maya attribute presets are provided for aluminium, brass, chromium, copper, gold, iron, lead, mercury, nickel, osmium, platinum, aluminium-gold intermetallic (*purple plague*), silver, titanium, titanium nitride, tungsten and zinc. See `the LuxPop database <http://www.luxpop.com/HU_v172.cgi?OpCode=73>`_ and `refractive index database <https://refractiveindex.info/>`_ for more measured complex ior data.
 
 .. [#] Such as the :ref:`anisotropy vector field node <label_as_anisotropy_vector_field>`.
 
