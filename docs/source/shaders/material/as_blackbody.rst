@@ -24,8 +24,8 @@ Parameters
 
 -----
 
-Incandescence
-^^^^^^^^^^^^^
+Incandescence Parameters
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 *Incandescence Type*
     The type of color for the emitance distribution function, it can be
@@ -55,8 +55,8 @@ Incandescence
 
 -----
 
-Specular
-^^^^^^^^
+Specular Parameters
+^^^^^^^^^^^^^^^^^^^
 
 *Specular Amount*
     The intensity of the specular term.
@@ -71,14 +71,16 @@ Specular
 
 -----
 
-Bump
-^^^^
+Bump Parameters
+^^^^^^^^^^^^^^^
 
 *Bump Normal*
     The unit length world space normal of the bumped surface.
 
-Matte Opacity
-^^^^^^^^^^^^^
+-----
+
+Matte Opacity Parameters
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 *Enable Matte Opacity*
     Parameter that toggles matte holdouts.
