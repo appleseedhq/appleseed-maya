@@ -81,7 +81,7 @@ Outputs
 *dP/dy*
     The rate of change or partial derivative of *P* in regard to *y*, or ``Dy(P)``.
 
-*dP/dx*
+*dP/dz*
     The rate of change or partial derivative of *P* in regard to *z*, or ``Dz(P)``.
 
 .. attention:: Some of the global variables exposed are specific to appleseed, hence shaders using these variables will not be entirely portable, unless the target renderers have some measure of equivalency.

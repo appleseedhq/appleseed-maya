@@ -114,7 +114,7 @@ Outputs
 ^^^^^^^
 
 *Output Color*
-    The combined EDF+BRDF output color.
+    The metal BRDF output color.
 
 *Output Matte Opacity*
     The matte holdout.
