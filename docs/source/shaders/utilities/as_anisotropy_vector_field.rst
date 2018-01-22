@@ -84,7 +84,9 @@ Outputs
 
 .. rubric:: Footnotes
 
-.. [#] See `Modo anisotropy help here <http://modo.docs.thefoundry.co.uk/modo/501/help/pages/shaderendering/ShaderItems/AnisotropicDirection.html>`_.
+.. [#] See PRman's `tangent field <https://rmanwiki.pixar.com/display/REN/PxrTangentField>`_ for details on PRman's implementation.
 
-.. [#] See `Softimage anisotropy patterns <http://www.softimageblog.com/archives/197>`_.
+.. [#] See `Modo anisotropy help <http://modo.docs.thefoundry.co.uk/modo/501/help/pages/shaderendering/ShaderItems/AnisotropicDirection.html>`_ for details on the Modo implementation. Unlike PRman's, the XY data is encoded in R and B channels, not R and G.
+
+.. [#] See `Softimage anisotropy patterns <http://www.softimageblog.com/archives/197>`_. Like Modo, the anisotropy data is encoded in the R and B channels.
 
