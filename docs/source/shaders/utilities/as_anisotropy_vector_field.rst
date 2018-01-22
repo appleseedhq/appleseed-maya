@@ -35,7 +35,7 @@ Field Parameters
 
 *Field Mode*
     The input anisotropy vector map can have the anisotropy directions along X and Y, encoded in the Red and Green channels, or in the Red and Blue channels.
-    Typically, RG encoding was used in applications such as PRman [#]_, while RG encoding in applications such as Modo [#]_ or Softimage [#]_.
+    Typically, RG encoding is used in applications such as PRman [#]_, while RB encoding is used in applications such as Modo [#]_ or Softimage [#]_.
     The values allowed are therefore
 
         * Red/Green as XY
