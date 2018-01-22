@@ -49,7 +49,7 @@ Outputs
     The number of subimages in the texture file. In the EXR case, this refers to the number of additional channels.
 
 *Texture Type*
-    Returns the type of the texture file, taking the values of
+    Returns the type of the texture file, with the following strings according to the input type
 
         * *Plain Texture*
         * *Shadow*
@@ -57,7 +57,7 @@ Outputs
         * *Volume Texture*
 
 *Texture Format*
-    The texture format of the input file, differentiating between the format of the fundamental texture types, and it can take the following values
+    The texture format of the input file, differentiating between the format of the fundamental texture types. The return strings can take the following values
 
         * *Plain Texture*
         * *Shadow*
