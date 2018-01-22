@@ -13,9 +13,9 @@
 asCreateMask
 ************
 
-A node that returns the luminance of a color, respecting the color space
-definitions (that is, the chromaticity coordinates of the primaries and the
-white point).
+A node that allows the user to create a greyscale mask of a input color or texture.
+
+|
 
 Parameters
 ----------
@@ -24,67 +24,56 @@ Parameters
 
 -----
 
-Color Attributes
+Color Parameters
 ^^^^^^^^^^^^^^^^
 
 *Input Color*
-    The color being evaluated
+    The color used to create the mask from. It's expected to be *scene-linear*.
 
------
+*Input Alpha*
+    The alpha channel of the color used to create the mask from.
 
-Color Space
-^^^^^^^^^^^
+*Threshold Channel*
+    The channel to use when applying a threshold in order to build a mask.
+    It can be one of
 
-*Derive From Maya CMS*
-    Uses the render space definitions from Maya's synColor. This will set the chromaticity coordinates of the RGB primaries, and the white point, standardized in the color space chosen in the synColor configuration.
-    When this is not set, the user **must** set the appropriate options matching its choice of rendering/working space.
+        * Red
+        * Green
+        * Blue
+        * Alpha
+        * Hue
+        * Saturation
+        * Value
+        * CIELAB L\*
+        * CIELAB a\*
+        * CIELAB b\*
+        * Average
+        * Luminance [#]_
 
-.. important:: appleseed and appleseed-maya don't yet take `OpenColorIO <http://opencolorio.org/>`_ into account, so this parameter considers the working space definitions from synColor **only**. If you wish to use OCIO you **must** set the appropriate color space and white point settings. The default is (scene-linear) sRGB/Rec.709 primaries, with D65 whitepoint. 
+*Threshold Value*
+    The threshold value to apply to the channel chosen.
 
-*Input Color Space*
-    The color space chosen as render/working space. It allows the user to choose one of the following
+*Threshold Function*
+    The function to use for the threshold. It can be one of
 
-    * ACES 2065-1 AP0 (D60) :cite:`7289895`
-    * ACEScg AP1 (D60) :cite:`Duiker:2015:ACC:2791261.2791273`
-    * Rec.2020 (D65) :cite:`6784055`
-    * DCI-P3 (DCI) :cite:`7290729`
-    * sRGB/Rec.709 (D65)
-    * Chromaticity Coordinates
+        * None
+        * Step
+        * Linear Step
+        * Smooth Step
+        * Exponential
+        * Double Circled Seat [#]_
+        * Double Circled Sigmoid [#]_
+        * Smoother Step [#]_
+        * Smoothest Step [#]_
 
-.. hint::
-   
-   When choosing *Chromaticity Coordinates*, the user **must** enter the xy chromaticity coordinates of the R,G,B primaries, and **must** choose the whitepoint, either in the form of one of the available standard illuminants, in the xy chromacity coordinates of the whitepoint, or via the correlated color temperature.
+*Threshold Contrast*
+    The contrast to apply when the function is *Double Circled Seat* (a contrast flattening curve) or *Double Circled Sigmoid* (a contrast increasing curve).
 
+*Threshold Lower Bound*
+    The lower bound for the *smoothstep*, *smootherstep* and *smootheststep* functions.
 
-*R xy Coordinates*
-    The xy chromaticity coordinates of the red primary.
-
-*G xy Coordinates*
-    The xy chromaticity coordinates of the green primary.
-
-*B xy Coordinates*
-    The xy chromaticity coordinates of the blue primary.
-
-*White Point*
-    The white point definition, which can be one of the following options:
-
-    * Standard Illuminant D50
-    * Standard Illuminant D55
-    * Standard Illuminant D60
-    * Standard Illuminant D65
-    * Standard Illuminant D75
-    * DCI White Point
-    * White Point E
-    * Correlated Color Temperature
-    * White Point Chromaticity Coordinates
-
-.. _label_color_temperature:
-
-*Color Temperature*
-    The input color temperature value in Kelvin degrees, from 1667K to 25000K.
-
-*W xy Coordinates*
-    The xy chromacity coordinates of the white point.
+*Threshold Upper Bound*
+    The upper bound for the *smoothstep*, *smootherstep* and *smootheststep* functions.
 
 -----
 
@@ -92,77 +81,91 @@ Outputs
 ^^^^^^^
 
 *Result*
-    The luminance of the input color.
+    The new mask.
 
 -----
 
-.. _label_as_luminance_screenshots:
+.. _label_as_create_mask_screenshots:
 
 Screenshots
 -----------
 
-Some examples of the output luminance of the input color ramp, rendered in (scene linear) Rec.709 space, standard illuminant D65, with different color spaces and whitepoints chosen. The mismatches in color spaces are for illustration purposes. If the settings cannot be derived automatically from your DCC application, then the choice of color space should match your choice or render/working space.
+Some examples showing some of the masks created with the modes outlined above.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_workingspace_rec709.png
-   :group: shots_luminance_group_A
+.. thumbnail:: /_images/screenshots/create_mask/as_createmask_reference.png
+   :group: shots_create_mask_group_A
    :width: 10%
    :title:
 
-   Original color ramp, synColor render/working space set to (scene-linear) sRGB/Rec.709 primaries and D65 white point.
+   A ColorChecker Classic reference shot.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_workingspace_rec709_from_CMS.png
-   :group: shots_luminance_group_A
+.. thumbnail:: /_images/screenshots/create_mask/as_createmask_average.png
+   :group: shots_create_mask_group_A
    :width: 10%
    :title:
 
-   Luminance of input color, with settings automatically retrieved from Maya's synColor CMS preferences.
+   Greyscale mask created from the average of the R,G,B channels.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_ACES_AP0.png
-   :group: shots_luminance_group_A
+.. thumbnail:: /_images/screenshots/create_mask/as_createmask_hicontrast_double_circled_sigmoid.png
+   :group: shots_create_mask_group_A
    :width: 10%
    :title:
 
-   Original color ramp, with CMS settings disabled, and the input space overriden to ACES 2065-1 AP0, D60 whitepoint.
+   A sigmoid curve, increasing contrast on the average of the R,G,B channels.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_ACES_AP1.png
-   :group: shots_luminance_group_A
+.. thumbnail:: /_images/screenshots/create_mask/as_createmask_hue_thresholded_inverted_smoothest_step.png
+   :group: shots_create_mask_group_A
    :width: 10%
    :title:
 
-   Original color ramp, with CMS settings disabled, and the input space overriden to ACEScg AP1, D60 whitepoint.
+   A mask created from the hue of the input color or texture, after which a smoothest step function was applied with swapped lower and upper bounds, inverting the result.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_Rec2020.png
-   :group: shots_luminance_group_A
+.. thumbnail:: /_images/screenshots/create_mask/as_createmask_lowcontrast_double_circled_seat_from_avg.png
+   :group: shots_create_mask_group_A
    :width: 10%
    :title:
 
-   Original color ramp, with CMS settings disabled, and the input space overriden to Rec.2020, D65 whitepoint.
+   The average of the R,G,B channels modified by a *seat function*, the opposite of a sigmoid function, which will flatten the contrast. In image editing applications, the sigmoid is the typical *S* like curve one applies to increase contrast, and the *seat function* is the flattening curve.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_DCIP3.png
-   :group: shots_luminance_group_A
+.. thumbnail:: /_images/screenshots/create_mask/as_createmask_saturation.png
+   :group: shots_create_mask_group_A
    :width: 10%
    :title:
 
-   Original color ramp, with CMS settings disabled, and the input space overriden to DCI-P3, DCI whitepoint.
+   A mask created from the saturation of the image (when converted to *HSV* or *Hue*, *Saturation*, *Value*).
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_explicit_coords_adobergb.png
-   :group: shots_luminance_group_A
+.. thumbnail:: /_images/screenshots/create_mask/as_createmask_thresholded_linearstep_bluechannel.png
+   :group: shots_create_mask_group_A
    :width: 10%
    :title:
 
-   Original color ramp, with CMS settings disabled, and the input color space set to *xy chromacitity coordinates*, which were then set to the RGB chromaticity coordinates of the AdobeRGB 1998 color space, with a D65 whitepoint.
+   The blue channel being thresholded by a *linearstep* function with a moderate lower bound.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_compared.png
-   :group: shots_luminance_group_A
+.. thumbnail:: /_images/screenshots/create_mask/as_createmask_astar.png
+   :group: shots_create_mask_group_A
    :width: 10%
    :title:
 
-   Starting from the bottom, the original (scene-linear Rec.709, D65) color ramp, and above it, its luminance with coefficients for Rec.709, Rec.2020, DCI-P3, ACEScg AP1, ACES 2065-1 AP0, explicit chromaticities set to AdobeRGB 1998, and color ramp again at the top.
+   A mask created from the *a\\** channel of the image when in CIELAB (or CIE 1976 L\\*a\\*b\\*) space.
+
+.. thumbnail:: /_images/screenshots/create_mask/as_createmask_thresholded_smoothstep_red_green_opponency_astar.png
+   :group: shots_create_mask_group_A
+   :width: 10%
+   :title:
+
+   A mask created from the *a\\** channel (opponency of the *Red* and *Green* colors) of the color in *CIELAB* (or CIE 1976 L\*a\*b\*), to which a *smoothstep* function was applied in order to further shape the final output values.
 
 -----
 
-.. rubric:: References
+.. rubric:: Footnotes
 
-.. bibliography:: /bibtex/references.bib
-    :filter: docname in docnames
+.. [#] For this this assumes the input color is using the ITU-R BT.709/Rec.709 RGB primaries. Once support for working or rendering space using other primaries other than Rec.709 is added to appleseed, this will be extended.
+
+.. [#] A contrast flattening function, see `Double Circled Seat function <http://www.flong.com/texts/code/shapers_circ/>`_.
+
+.. [#] A contrast increasing function, see `Double Circled Sigmoid function <http://www.flong.com/texts/code/shapers_circ/>`_.
+
+.. [#] A smoother *smoothstep* function, with 0 first and second derivatives at x=0 and x=1.
+
+.. [#] Like *smootherstep*, but with 0 third derivatives at x=0, and x=1.
 

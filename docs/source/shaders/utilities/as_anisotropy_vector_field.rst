@@ -15,6 +15,8 @@ asAnisotropyVectorField
 
 A node that manipulates anisotropy vector maps and outputs a anisotropy vector for use in BxDFs that support anisotropy.
 
+|
+
 Parameters
 ----------
 

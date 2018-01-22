@@ -13,9 +13,9 @@
 asSpaceTransform
 ****************
 
-A node that returns the luminance of a color, respecting the color space
-definitions (that is, the chromaticity coordinates of the primaries and the
-white point).
+A node meant to transform an input point, normal, or vector, from a coordinate system into another.
+
+|
 
 Parameters
 ----------
@@ -24,145 +24,88 @@ Parameters
 
 -----
 
-Color Attributes
+Input Parameters
 ^^^^^^^^^^^^^^^^
 
-*Input Color*
-    The color being evaluated
+*Point to Transform*
+    An point like variable to transform.
+
+*Normal to Transform*
+    A normal like variable to transform.
+
+*Vector to Transform*
+    A vector like variable to transform.
 
 -----
 
-Color Space
-^^^^^^^^^^^
+Space Parameters
+^^^^^^^^^^^^^^^^
 
-*Derive From Maya CMS*
-    Uses the render space definitions from Maya's synColor. This will set the chromaticity coordinates of the RGB primaries, and the white point, standardized in the color space chosen in the synColor configuration.
-    When this is not set, the user **must** set the appropriate options matching its choice of rendering/working space.
+*From Space*
+    The origin coordinate system. It can be one of
 
-.. important:: appleseed and appleseed-maya don't yet take `OpenColorIO <http://opencolorio.org/>`_ into account, so this parameter considers the working space definitions from synColor **only**. If you wish to use OCIO you **must** set the appropriate color space and white point settings. The default is (scene-linear) sRGB/Rec.709 primaries, with D65 whitepoint. 
+        * *common* [#]_
+        * *object* [#]_
+        * *shader* [#]_
+        * *world* [#]_
+        * *camera* [#]_
+        * *screen* [#]_
+        * *raster* [#]_
+        * *NDC* [#]_
 
-*Input Color Space*
-    The color space chosen as render/working space. It allows the user to choose one of the following
+*To Space*
+    The destination coordinate system. It can be one of
 
-    * ACES 2065-1 AP0 (D60) :cite:`7289895`
-    * ACEScg AP1 (D60) :cite:`Duiker:2015:ACC:2791261.2791273`
-    * Rec.2020 (D65) :cite:`6784055`
-    * DCI-P3 (DCI) :cite:`7290729`
-    * sRGB/Rec.709 (D65)
-    * Chromaticity Coordinates
+        * *common*
+        * *object*
+        * *shader*
+        * *world*
+        * *camera*
+        * *screen*
+        * *raster*
+        * *NDC*
 
-.. hint::
-   
-   When choosing *Chromaticity Coordinates*, the user **must** enter the xy chromaticity coordinates of the R,G,B primaries, and **must** choose the whitepoint, either in the form of one of the available standard illuminants, in the xy chromacity coordinates of the whitepoint, or via the correlated color temperature.
+*Normalize Output Vectors*
+    When the input to transform is either of *vector* type or of *normal* type, this parameter will make sure the resulting transformed *vector* or *normal* are of unit length.
 
+.. seealso::
 
-*R xy Coordinates*
-    The xy chromaticity coordinates of the red primary.
-
-*G xy Coordinates*
-    The xy chromaticity coordinates of the green primary.
-
-*B xy Coordinates*
-    The xy chromaticity coordinates of the blue primary.
-
-*White Point*
-    The white point definition, which can be one of the following options:
-
-    * Standard Illuminant D50
-    * Standard Illuminant D55
-    * Standard Illuminant D60
-    * Standard Illuminant D65
-    * Standard Illuminant D75
-    * DCI White Point
-    * White Point E
-    * Correlated Color Temperature
-    * White Point Chromaticity Coordinates
-
-.. _label_color_temperature:
-
-*Color Temperature*
-    The input color temperature value in Kelvin degrees, from 1667K to 25000K.
-
-*W xy Coordinates*
-    The xy chromacity coordinates of the white point.
+    The `Open Shading Language documentation <https://github.com/imageworks/OpenShadingLanguage/blob/master/src/doc/osl-languagespec.pdf>`_.
 
 -----
 
 Outputs
 ^^^^^^^
 
-*Result*
-    The luminance of the input color.
+*Transformed Point*
+    The transformed input point.
+
+*Transformed Normal*
+    The transformed input normal, optionally normalized.
+
+*Transformed Vector*
+    The transformed input vector, optionally normalized.
+
+*Transform Matrix*
+    The transformation matrix that transforms from *From Space* to *To Space*.
 
 -----
 
-.. _label_as_luminance_screenshots:
+.. rubric:: Footnotes
 
-Screenshots
------------
+.. [#] The *common* coordinate system is the OSL equivalent of `RSL's <https://en.wikipedia.org/wiki/RenderMan_Shading_Language>`_ *current* coordinate system and is the coordinate system in which all values start and the one in which lighting calculations are performed. This is a renderer specific coordinate system. In appleseed this is equivalent to the *world* coordinate system.
 
-Some examples of the output luminance of the input color ramp, rendered in (scene linear) Rec.709 space, standard illuminant D65, with different color spaces and whitepoints chosen. The mismatches in color spaces are for illustration purposes. If the settings cannot be derived automatically from your DCC application, then the choice of color space should match your choice or render/working space.
+.. [#] The *object* coordinate system refers to the local coordinate system of the geometry currently shaded.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_workingspace_rec709.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
+.. [#] The *shader* coordinate system, refers to the coordinate system active by the time of the shader instantiation.
 
-   Original color ramp, synColor render/working space set to (scene-linear) sRGB/Rec.709 primaries and D65 white point.
+.. [#] The *world* coordinate system is the world coordinate system of the scene.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_workingspace_rec709_from_CMS.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
+.. [#] The *camera* coordinate system refers to the coordinate system with its origin at the center of the camera lens, the *x* axis pointing right, the *y* axis pointing up, and the *z* axis pointing into the screen.
 
-   Luminance of input color, with settings automatically retrieved from Maya's synColor CMS preferences.
+.. [#] The *screen* coordinate system refers to the coordinate system of the camera's image plane after the perspective transformation, if any, with the origin looking along the *z* axis of the *camera* coordinate system.
 
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_ACES_AP0.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
+.. [#] The *raster* coordinate system refers to the 2D coordinate system with origin at the upper left corner of the image, and *xy* resolution at the bottom right corner of the image.
 
-   Original color ramp, with CMS settings disabled, and the input space overriden to ACES 2065-1 AP0, D60 whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_ACES_AP1.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to ACEScg AP1, D60 whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_Rec2020.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to Rec.2020, D65 whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_DCIP3.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to DCI-P3, DCI whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_explicit_coords_adobergb.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input color space set to *xy chromacitity coordinates*, which were then set to the RGB chromaticity coordinates of the AdobeRGB 1998 color space, with a D65 whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_compared.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Starting from the bottom, the original (scene-linear Rec.709, D65) color ramp, and above it, its luminance with coefficients for Rec.709, Rec.2020, DCI-P3, ACEScg AP1, ACES 2065-1 AP0, explicit chromaticities set to AdobeRGB 1998, and color ramp again at the top.
-
------
-
-.. rubric:: References
-
-.. bibliography:: /bibtex/references.bib
-    :filter: docname in docnames
+.. [#] The *NDC* coordinate system, or *Normalized Device Coordinates*, refers to the coordinate system with origin at the upper left corner of the image, and [1,1] at the xy coordinates of the bottom right of the image.
 

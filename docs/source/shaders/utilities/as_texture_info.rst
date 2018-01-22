@@ -13,9 +13,7 @@
 asTextureInfo
 *************
 
-A node that returns the luminance of a color, respecting the color space
-definitions (that is, the chromaticity coordinates of the primaries and the
-white point).
+A node providing the user with a number of potentially useful information for the input texture. Notice that the input texture can be any texture, a 2D or 3D texture. The list of information queried might be extended to include appleseed specific metadata.
 
 Parameters
 ----------
@@ -24,145 +22,72 @@ Parameters
 
 -----
 
-Color Attributes
-^^^^^^^^^^^^^^^^
+Texture Parameters
+^^^^^^^^^^^^^^^^^^
 
-*Input Color*
-    The color being evaluated
-
------
-
-Color Space
-^^^^^^^^^^^
-
-*Derive From Maya CMS*
-    Uses the render space definitions from Maya's synColor. This will set the chromaticity coordinates of the RGB primaries, and the white point, standardized in the color space chosen in the synColor configuration.
-    When this is not set, the user **must** set the appropriate options matching its choice of rendering/working space.
-
-.. important:: appleseed and appleseed-maya don't yet take `OpenColorIO <http://opencolorio.org/>`_ into account, so this parameter considers the working space definitions from synColor **only**. If you wish to use OCIO you **must** set the appropriate color space and white point settings. The default is (scene-linear) sRGB/Rec.709 primaries, with D65 whitepoint. 
-
-*Input Color Space*
-    The color space chosen as render/working space. It allows the user to choose one of the following
-
-    * ACES 2065-1 AP0 (D60) :cite:`7289895`
-    * ACEScg AP1 (D60) :cite:`Duiker:2015:ACC:2791261.2791273`
-    * Rec.2020 (D65) :cite:`6784055`
-    * DCI-P3 (DCI) :cite:`7290729`
-    * sRGB/Rec.709 (D65)
-    * Chromaticity Coordinates
-
-.. hint::
-   
-   When choosing *Chromaticity Coordinates*, the user **must** enter the xy chromaticity coordinates of the R,G,B primaries, and **must** choose the whitepoint, either in the form of one of the available standard illuminants, in the xy chromacity coordinates of the whitepoint, or via the correlated color temperature.
-
-
-*R xy Coordinates*
-    The xy chromaticity coordinates of the red primary.
-
-*G xy Coordinates*
-    The xy chromaticity coordinates of the green primary.
-
-*B xy Coordinates*
-    The xy chromaticity coordinates of the blue primary.
-
-*White Point*
-    The white point definition, which can be one of the following options:
-
-    * Standard Illuminant D50
-    * Standard Illuminant D55
-    * Standard Illuminant D60
-    * Standard Illuminant D65
-    * Standard Illuminant D75
-    * DCI White Point
-    * White Point E
-    * Correlated Color Temperature
-    * White Point Chromaticity Coordinates
-
-.. _label_color_temperature:
-
-*Color Temperature*
-    The input color temperature value in Kelvin degrees, from 1667K to 25000K.
-
-*W xy Coordinates*
-    The xy chromacity coordinates of the white point.
+*Texture File*
+    The input texture file.
 
 -----
 
 Outputs
 ^^^^^^^
 
-*Result*
-    The luminance of the input color.
+*Average Color*
+    The average color of the first 3 channels of the texture file.
+
+*Average Alpha*
+    The average value of the channel with the *A* name in the texture file, if it exists.
+
+*Resolution*
+    A vector containing the X and Y resolution in its first two components, or the X, Y and Z resolution in the case of input 3D texture file.
+
+*Channels*
+    The total number of channels in the input texture file.
+
+*Subimages*
+    The number of subimages in the texture file. In the EXR case, this refers to the number of additional channels.
+
+*Texture Type*
+    Returns the type of the texture file, taking the values of
+
+        * *Plain Texture*
+        * *Shadow*
+        * *Environment*
+        * *Volume Texture*
+
+*Texture Format*
+    The texture format of the input file, differentiating between the format of the fundamental texture types, and it can take the following values
+
+        * *Plain Texture*
+        * *Shadow*
+        * *CubeFace Shadow*
+        * *Volume Shadow*
+        * *CubeFace Environment*
+        * *LatLong Environment*
+        * *Volume Texture*
+
+*Data Window Minimum*
+    A vector containing the minimum X and Y values of the pixel data window of the input texture, in the case of a 2D texture file. And the minimum X, Y and Z values of the pixel data window in the case of a 3D texture file.
+
+*Data Window Maximum*
+    A vector containing the maximum X and Y values of the pixel data window of the input texture, in the case of a 2D texture file. And the minimum X, Y and Z values of the pixel data window in the case of a 3D texture file.
+
+*Display Window Minimum*
+    A vector containing the minimum X and Y values of the full window of the image, in the case of a 2D texture file, and the minimum X, Y and Z values in the case of a 3D texture file.
+
+*Display Window Maximum*
+    A vector containing the maximum X and Y values of the full window of the image, in the case of a 2D texture file, and the maximum X, Y and Z values in the case of a 3D texture file.
+
+*World To Camera Matrix*
+    When the input texture is a rendered image, this parameter provides the world to camera transformation matrix used.
+
+*World To Screen Matrix*
+    When the input texture is a rendered image, this parameter provides the matrix that transforms points from *world* space into *screen* space - a 2D coordinate system where the *x* and *y* values are in [-1,1] range.
 
 -----
 
-.. _label_as_luminance_screenshots:
+.. seealso::
 
-Screenshots
------------
-
-Some examples of the output luminance of the input color ramp, rendered in (scene linear) Rec.709 space, standard illuminant D65, with different color spaces and whitepoints chosen. The mismatches in color spaces are for illustration purposes. If the settings cannot be derived automatically from your DCC application, then the choice of color space should match your choice or render/working space.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_workingspace_rec709.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, synColor render/working space set to (scene-linear) sRGB/Rec.709 primaries and D65 white point.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_workingspace_rec709_from_CMS.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Luminance of input color, with settings automatically retrieved from Maya's synColor CMS preferences.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_ACES_AP0.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to ACES 2065-1 AP0, D60 whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_ACES_AP1.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to ACEScg AP1, D60 whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_Rec2020.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to Rec.2020, D65 whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_DCIP3.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to DCI-P3, DCI whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_explicit_coords_adobergb.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input color space set to *xy chromacitity coordinates*, which were then set to the RGB chromaticity coordinates of the AdobeRGB 1998 color space, with a D65 whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_compared.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Starting from the bottom, the original (scene-linear Rec.709, D65) color ramp, and above it, its luminance with coefficients for Rec.709, Rec.2020, DCI-P3, ACEScg AP1, ACES 2065-1 AP0, explicit chromaticities set to AdobeRGB 1998, and color ramp again at the top.
-
------
-
-.. rubric:: References
-
-.. bibliography:: /bibtex/references.bib
-    :filter: docname in docnames
+   The `Open Shading Language documentation <https://github.com/imageworks/OpenShadingLanguage/blob/master/src/doc/osl-languagespec.pdf>`_ at github.
 
