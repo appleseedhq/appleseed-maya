@@ -15,6 +15,8 @@ asDoubleShade
 
 A node that allows the user to set a color for forward facing faces and for back facing faces.
 
+|
+
 Parameters
 ----------
 

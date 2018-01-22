@@ -15,6 +15,8 @@ asSpaceTransform
 
 A node meant to transform an input point, normal, or vector, from a coordinate system into another.
 
+|
+
 Parameters
 ----------
 
@@ -91,7 +93,7 @@ Outputs
 
 .. rubric:: Footnotes
 
-.. [#] The *common* coordinate system is the OSL equivalent of RSL's *current* coordinate system and is the coordinate system in which all values start and the one in which lighting calculations are performed. This is a renderer specific coordinate system. In appleseed this is equivalent to the *world* coordinate system.
+.. [#] The *common* coordinate system is the OSL equivalent of `RSL's <https://en.wikipedia.org/wiki/RenderMan_Shading_Language>`_ *current* coordinate system and is the coordinate system in which all values start and the one in which lighting calculations are performed. This is a renderer specific coordinate system. In appleseed this is equivalent to the *world* coordinate system.
 
 .. [#] The *object* coordinate system refers to the local coordinate system of the geometry currently shaded.
 

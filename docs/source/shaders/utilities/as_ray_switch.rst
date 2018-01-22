@@ -15,6 +15,8 @@ asRaySwitch
 
 A node that returns a specific input color according to the ray type being evaluated by the renderer :cite:`Heckbert:1990:ART:97880.97895`.
 
+|
+
 Parameters
 ----------
 
