@@ -82,77 +82,9 @@ Outputs
 
 -----
 
-.. _label_as_anisotropy_vector_field_screenshots:
-
-Screenshots
------------
-
-Some examples of the output anisotropy_vector_field of the input color ramp, rendered in (scene linear) Rec.709 space, standard illuminant D65, with different color spaces and whitepoints chosen. The mismatches in color spaces are for illustration purposes. If the settings cannot be derived automatically from your DCC application, then the choice of color space should match your choice or render/working space.
-
-.. thumbnail:: /_images/screenshots/anisotropy_vector_field/anisotropy_vector_field_colorramp_workingspace_rec709.png
-   :group: shots_anisotropy_vector_field_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, synColor render/working space set to (scene-linear) sRGB/Rec.709 primaries and D65 white point.
-
-.. thumbnail:: /_images/screenshots/anisotropy_vector_field/anisotropy_vector_field_colorramp_workingspace_rec709_from_CMS.png
-   :group: shots_anisotropy_vector_field_group_A
-   :width: 10%
-   :title:
-
-   anisotropy_vector_field of input color, with settings automatically retrieved from Maya's synColor CMS preferences.
-
-.. thumbnail:: /_images/screenshots/anisotropy_vector_field/anisotropy_vector_field_colorramp_set_ACES_AP0.png
-   :group: shots_anisotropy_vector_field_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to ACES 2065-1 AP0, D60 whitepoint.
-
-.. thumbnail:: /_images/screenshots/anisotropy_vector_field/anisotropy_vector_field_colorramp_set_ACES_AP1.png
-   :group: shots_anisotropy_vector_field_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to ACEScg AP1, D60 whitepoint.
-
-.. thumbnail:: /_images/screenshots/anisotropy_vector_field/anisotropy_vector_field_colorramp_set_Rec2020.png
-   :group: shots_anisotropy_vector_field_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to Rec.2020, D65 whitepoint.
-
-.. thumbnail:: /_images/screenshots/anisotropy_vector_field/anisotropy_vector_field_colorramp_set_DCIP3.png
-   :group: shots_anisotropy_vector_field_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to DCI-P3, DCI whitepoint.
-
-.. thumbnail:: /_images/screenshots/anisotropy_vector_field/anisotropy_vector_field_colorramp_explicit_coords_adobergb.png
-   :group: shots_anisotropy_vector_field_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input color space set to *xy chromacitity coordinates*, which were then set to the RGB chromaticity coordinates of the AdobeRGB 1998 color space, with a D65 whitepoint.
-
-.. thumbnail:: /_images/screenshots/anisotropy_vector_field/anisotropy_vector_field_compared.png
-   :group: shots_anisotropy_vector_field_group_A
-   :width: 10%
-   :title:
-
-   Starting from the bottom, the original (scene-linear Rec.709, D65) color ramp, and above it, its anisotropy_vector_field with coefficients for Rec.709, Rec.2020, DCI-P3, ACEScg AP1, ACES 2065-1 AP0, explicit chromaticities set to AdobeRGB 1998, and color ramp again at the top.
-
------
-
 .. rubric:: Footnotes
 
------
+.. [#] See `Modo anisotropy help here <http://modo.docs.thefoundry.co.uk/modo/501/help/pages/shaderendering/ShaderItems/AnisotropicDirection.html>`_.
 
-.. rubric:: References
-
-.. bibliography:: /bibtex/references.bib
-    :filter: docname in docnames
+.. [#] See `Softimage anisotropy patterns <http://www.softimageblog.com/archives/197>`_.
 
