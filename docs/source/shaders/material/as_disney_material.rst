@@ -118,6 +118,34 @@ Outputs
 Screenshots
 -----------
 
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_velvety.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   A velvety like appearance, with sheen.
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_anisotropy_satin.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Satin like material with anisotropy, sheen, moderate to low roughness.
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_velvety2.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   A velvety like appearance, with sheen.
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_anisotropy_satin2.png
+   :group: shots_voronoi2d_group_A
+   :width: 10%
+   :title:
+
+   Satin like material with anisotropy, sheen, moderate to low roughness.  
+
 .. thumbnail:: /_images/screenshots/disney/asDisney_material_aniso_metal_1.png
    :group: shots_voronoi2d_group_A
    :width: 10%
