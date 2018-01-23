@@ -105,6 +105,8 @@ The Karlsruhe metric, also known as Moscow metric, is a radial metric, returns r
 * Cell ID 3, the ID of the third nearest feature to the cell
 * Cell ID 4, the ID of the fourth nearest feature to the cell
 
+|
+
 .. note::
 
    The unmodified features, points and their color IDs are also output from the shader, giving the user greater creative potential. The feature modes above are but a starting point.
