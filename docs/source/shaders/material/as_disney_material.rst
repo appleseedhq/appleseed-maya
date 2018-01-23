@@ -106,10 +106,10 @@ Outputs
     The final result color.
 
 *Output Transparency*
-    **Unused** presently.
+    The resulting transparency (unused presently).
 
 *Output Matte Opacity*
-    **Unused** presently
+    The resulting matte opacity.
 
 -----
 
@@ -119,39 +119,132 @@ Screenshots
 -----------
 
 .. thumbnail:: /_images/screenshots/disney/as_disneymaterial_velvety.png
-   :group: shots_voronoi2d_group_A
+   :group: shots_disney_material_group_A
    :width: 10%
    :title:
 
    A velvety like appearance, with sheen.
 
 .. thumbnail:: /_images/screenshots/disney/as_disneymaterial_anisotropy_satin.png
-   :group: shots_voronoi2d_group_A
+   :group: shots_disney_material_group_A
    :width: 10%
    :title:
 
    Satin like material with anisotropy, sheen, moderate to low roughness.
 
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_hammered_copper.png
+   :group: shots_disney_material_group_A
+   :width: 10%
+   :title:
+
+   Hammered copper like material, with high metalicness, moderate roughness, and a cellnoise based tangent space normal map.
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_metal.png
+   :group: shots_disney_material_group_A
+   :width: 10%
+   :title:
+
+   Blue metallic alloy, with moderate metalicness, high roughness.
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_carbonfiber.png
+   :group: shots_disney_material_group_A
+   :width: 10%
+   :title:
+
+   Tiled carbon fiber anisotropy vector map showing a use case of anisotropy, no metalicness, moderate roughness, and coating on top.
+
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_metal_scratch.png
+   :group: shots_disney_material_group_A
+   :width: 10%
+   :title:
+
+   Metalic surface with scratches encoded in a anisotropy vector map. No coating, moderate roughness and high metalicness.
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_coated_alloy.png
+   :group: shots_disney_material_group_A
+   :width: 10%
+   :title:
+
+   Coated alloy like surface with high roughness and sharp coating.
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_blue_plastic.png
+   :group: shots_disney_material_group_A
+   :width: 10%
+   :title:
+
+   Plastic like surface with mapped (single scattering) subsurface, specular roughness.
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_painted_metal.png
+   :group: shots_disney_material_group_A
+   :width: 10%
+   :title:
+
+   Painted metal surface, showing transition of *metalicness* values, roughness, bump.
+
 .. thumbnail:: /_images/screenshots/disney/as_disneymaterial_velvety2.png
-   :group: shots_voronoi2d_group_A
+   :group: shots_disney_material_group_A
    :width: 10%
    :title:
 
    A velvety like appearance, with sheen.
 
 .. thumbnail:: /_images/screenshots/disney/as_disneymaterial_anisotropy_satin2.png
-   :group: shots_voronoi2d_group_A
+   :group: shots_disney_material_group_A
    :width: 10%
    :title:
 
    Satin like material with anisotropy, sheen, moderate to low roughness.  
 
-.. thumbnail:: /_images/screenshots/disney/asDisney_material_aniso_metal_1.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_hammered_copper2.png
+   :group: shots_disney_material_group_A
    :width: 10%
    :title:
 
-   Disney material with anisotropy mapped to the rotation angle, a brushed metal look.
+   Hammered copper like material, with high metalicness, moderate roughness, and a cellnoise based tangent space normal map.
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_metal2.png
+   :group: shots_disney_material_group_A
+   :width: 10%
+   :title:
+
+   Blue metallic alloy, with moderate metalicness, high roughness.
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_carbonfiber2.png
+   :group: shots_disney_material_group_A
+   :width: 10%
+   :title:
+
+   Tiled carbon fiber anisotropy vector map showing a use case of anisotropy, no metalicness, moderate roughness, and coating on top.
+
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_metal_scratch2.png
+   :group: shots_disney_material_group_A
+   :width: 10%
+   :title:
+
+   Metalic surface with scratches encoded in a anisotropy vector map. No coating, moderate roughness and high metalicness.
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_coated_alloy2.png
+   :group: shots_disney_material_group_A
+   :width: 10%
+   :title:
+
+   Coated alloy like surface with high roughness and sharp coating.
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_blue_plastic2.png
+   :group: shots_disney_material_group_A
+   :width: 10%
+   :title:
+
+   Plastic like surface with mapped (single scattering) subsurface, specular roughness.
+
+.. thumbnail:: /_images/screenshots/disney/as_disneymaterial_painted_metal2.png
+   :group: shots_disney_material_group_A
+   :width: 10%
+   :title:
+
+   Painted metal surface, showing transition of metalicness values, roughness, bump.
 
 -----
 
