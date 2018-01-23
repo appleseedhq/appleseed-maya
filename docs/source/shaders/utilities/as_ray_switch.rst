@@ -61,20 +61,6 @@ Outputs
 
 -----
 
-.. _label_as_ray_switch_screenshots:
-
-Screenshots
------------
-
-.. thumbnail:: /_images/screenshots/ray_switch/ray_switch_colorramp_workingspace_rec709.png
-   :group: shots_ray_switch_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, synColor render/working space set to (scene-linear) sRGB/Rec.709 primaries and D65 white point.
-
------
-
 .. rubric:: Footnotes
 
 .. [#] BDPT for short, see :cite:`Veach:PhD`
