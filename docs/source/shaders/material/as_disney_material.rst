@@ -250,7 +250,7 @@ Screenshots
 
 .. rubric:: Footnotes
 
-.. [#] https://en.wikipedia.org/wiki/Bidirectional_scattering_distribution_function
+.. [#] In the shader, it's not a `full BSSRDF <https://en.wikipedia.org/wiki/Subsurface_scattering>`_, but an approximation using only single scattering.
 
 -----
 
