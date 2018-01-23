@@ -13,7 +13,7 @@
 asLayerShader
 *************
 
-A shader node allowing the user to layer up to 8 BxDFs. Unlike with physically correct BxDF layering :cite:`Jakob:2014:CFR:2601097.2601139` , this node just layers the inputs according to the input weights. There is no interaction in terms of light transport between the top and bottom layers.
+A shader node allowing the user to layer up to 8 BxDFs [#]_. Unlike with physically correct BxDF layering :cite:`Jakob:2014:CFR:2601097.2601139` , this node just layers the inputs according to the input weights. There is no interaction in terms of light transport between the top and bottom layers.
 
 |
 
@@ -125,6 +125,7 @@ Screenshots
 
 .. rubric:: Footnotes
 
+.. [#] See `BSDF definition <https://en.wikipedia.org/wiki/Bidirectional_scattering_distribution_function>`_.
 
 ----
 
