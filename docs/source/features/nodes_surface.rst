@@ -31,5 +31,6 @@ Use Background
 
 .. rubric:: Footnotes
 
-.. [#] An alternative appleseed node will be provided for layering shaders and textures.
+.. [#] An alternative appleseed node is provided, :ref:`asLayerShader <label_as_layer_shader>` for the layering of shaders, and two shaders are provided to blend, and to composite textures. Namely :ref:`asBlendColor <label_as_blend_color>` and :ref:`asCompositeColor <label_as_composite_color>`. These provide functionality that greatly exceeds this node's capabilities.
+
 
