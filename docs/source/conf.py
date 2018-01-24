@@ -80,7 +80,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'appleseed-maya'
-copyright = '2017, The appleseedhq Organization'
+copyright = '2017-2018, The appleseedhq Organization'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -188,7 +188,7 @@ html_theme_options = {
     # will break.
     #
     # Values: "true" (default) or "false"
-    'globaltoc_includehidden': "true",
+    'globaltoc_includehidden': "false",
 
     # HTML navbar class (Default: "navbar") to attach to <div> element.
     # For black navbar, do "navbar navbar-inverse"

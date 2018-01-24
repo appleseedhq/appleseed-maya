@@ -44,7 +44,7 @@ Color Parameters
         * Hue
         * Saturation
         * Value
-        * CIELAB L\*
+        * CIELAB L\* [#]_
         * CIELAB a\*
         * CIELAB b\*
         * Average
@@ -159,7 +159,9 @@ Some examples showing some of the masks created with the modes outlined above.
 
 .. rubric:: Footnotes
 
-.. [#] For this this assumes the input color is using the ITU-R BT.709/Rec.709 RGB primaries. Once support for working or rendering space using other primaries other than Rec.709 is added to appleseed, this will be extended.
+.. [#] CIELAB or `CIE 1976 L*a*b* color space <https://en.wikipedia.org/wiki/Lab_color_space>`_.
+
+.. [#] For this this assumes the input color is using the `ITU-R BT.709 <https://www.itu.int/rec/R-REC-BT.709/>`_/`Rec.709 RGB <https://en.wikipedia.org/wiki/Rec._709>`_ primaries. Once support for working or rendering space using other primaries other than Rec.709 is added to appleseed, this will be extended.
 
 .. [#] A contrast flattening function, see `Double Circled Seat function <http://www.flong.com/texts/code/shapers_circ/>`_.
 
