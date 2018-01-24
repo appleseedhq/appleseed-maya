@@ -75,7 +75,7 @@ Outputs
 
 .. rubric:: Footnotes
 
-.. [#] The original `paper (PDF file) here <https://keithp.com/~keithp/porterduff/>`_.
+.. [#] The original `Porter-Duff paper (PDF file) can be found here <https://keithp.com/~keithp/porterduff/>`_.
 
 -----
 

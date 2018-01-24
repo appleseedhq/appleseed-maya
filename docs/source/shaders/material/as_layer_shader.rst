@@ -28,13 +28,10 @@ Layers Parameters
 ^^^^^^^^^^^^^^^^^
 
 *Layer 0*
-    The first layer shader.
+    The first layer shader, from bottom to top order, with layer 0 at the bottom, and layer 7 at the top.
 
 *Layer 0 Weight*
     The first layer weight.
-
-*Layer 0 Normal*
-    The first layer world space unit length shading (bump) normal.
 
 *Layer 0 Visibility*
     A flag that toggles the respective layer contribution on or off.
@@ -50,16 +47,17 @@ Layers Parameters
 |
 
 *Layer 7*
-    The last layer shader.
+    The last layer shader, the layer at the top.
 
 *Layer 7 Weight*
     The last layer weight.
 
-*Layer 7 Normal*
-    The last layer world space unit lenght shading (bump) normal.
-
 *Layer 7 Visibility*
     The last layer visibility flag. Toggling the contribution of this layer on or off.
+
+.. attention::
+
+   This node does **not** layer colors, that is, it is meant to layer BxDF, EDF or other *closures*, not ordinary colors. Without a valid connection [#]_ to the input, nothing will be layered in the respective layer.
 
 -----
 
@@ -126,6 +124,8 @@ Screenshots
 .. rubric:: Footnotes
 
 .. [#] See `BSDF definition <https://en.wikipedia.org/wiki/Bidirectional_scattering_distribution_function>`_.
+
+.. [#] A valid connection would be any *closure*, so any material shader, such as Maya's Blinn, or appleseed's asSubsurface, asMetal, just to name a few. Color nodes such as Noise2D, simple selected colors, and so on, are **not** valid choices. To blend or composite colors, use the :ref:`label_as_blend_color` or :ref:`label_as_composite_color` nodes instead.
 
 ----
 
