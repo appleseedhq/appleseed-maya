@@ -5,7 +5,7 @@ Limitations
 
 Presently appleseed has the following limitations:
 
-* Swatch rendering is not supported yet
+* Swatch rendering is limited to material nodes, not texture nodes.
 * IPR is not supported yet
 * XGen support is Work-In-Progress and is disabled in this release
 * Only meshes are exported and rendered right now

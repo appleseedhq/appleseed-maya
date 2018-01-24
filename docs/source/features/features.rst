@@ -11,14 +11,22 @@ Main exporter features
 
 Presently the exporter supports:
 
-* rendering to Maya's RenderView
-* batch Rendering
-* appleseed project export
+* Rendering to Maya's RenderView
+* Batch Rendering
+* Appleseed project export (\*.appleseed files)
 * Image Based Lighting via appleseed Physical Sky, and Dome Light
-* support for most of Maya's hypershade nodes (see :ref:`label_supported_nodes`)
-* a standard (universal) material, besides Disney and glass appleseed materials
-* a universal 2D and 3D Noise, and 2D, 3D Voronoi texturing nodes
-* support for custom OSL shaders as Maya shading nodes
+* Support for most of Maya's hypershade nodes (see :ref:`label_supported_nodes`)
+* Several appleseed specific materials, texture, and utility nodes. See :ref:`label_shaders` for detailed information.
+* Shader overrides with diagnostic modes, ambient occlusion geometric information.
+* Final render denoising :cite:`Boughida:2017:BCD`
+* Support for custom OSL shaders as Maya shading nodes
 
 .. include:: limitations.rst
+
+-----
+
+.. rubric:: References
+
+.. bibliography:: /bibtex/references.bib
+    :filter: docname in docnames
 
