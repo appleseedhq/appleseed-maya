@@ -63,9 +63,6 @@ Outputs
 *Output Color*
     The combined layers output.
 
-*Layered Normal*
-    The layered shading normal.
-
 -----
 
 .. _label_as_layer_shader_screenshots:
