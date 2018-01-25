@@ -141,7 +141,7 @@ Texture Coordinates
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The color resulting from ghe *Features Mode* choice.

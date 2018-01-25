@@ -13,9 +13,7 @@
 asVaryColor
 ***********
 
-A node that returns the luminance of a color, respecting the color space
-definitions (that is, the chromaticity coordinates of the primaries and the
-white point).
+A color variation utility node, meant to automate the coloring and shading of large numbers of objects in a scene based on user-set criteria such as object or instance names or IDs.
 
 Parameters
 ----------
@@ -24,145 +22,125 @@ Parameters
 
 -----
 
-Color Attributes
+Color Parameters
 ^^^^^^^^^^^^^^^^
 
 *Input Color*
-    The color being evaluated
+    The original input color.
+
+*Color Mode*
+    How to apply the manifold color to the input color. The manifold generated value can be added to the input color, it can modulate the input color, or it can bypass it completely, via the parameters
+
+    * Add
+    * Scale
+    * Override
 
 -----
 
-Color Space
-^^^^^^^^^^^
+Manifold Parameters
+^^^^^^^^^^^^^^^^^^^
 
-*Derive From Maya CMS*
-    Uses the render space definitions from Maya's synColor. This will set the chromaticity coordinates of the RGB primaries, and the white point, standardized in the color space chosen in the synColor configuration.
-    When this is not set, the user **must** set the appropriate options matching its choice of rendering/working space.
+*Manifold Type*
+    The manifold type to use for the variation. It can take the following values
 
-.. important:: appleseed and appleseed-maya don't yet take `OpenColorIO <http://opencolorio.org/>`_ into account, so this parameter considers the working space definitions from synColor **only**. If you wish to use OCIO you **must** set the appropriate color space and white point settings. The default is (scene-linear) sRGB/Rec.709 primaries, with D65 whitepoint. 
+        * Object Name
+        * Object Instance Name
+        * Assembly Name
+        * Assembly Instance Name
+        * Face ID
+        * String Prefix
+        * String Suffix
+        * Find String
 
-*Input Color Space*
-    The color space chosen as render/working space. It allows the user to choose one of the following
+String Parameters
+"""""""""""""""""
 
-    * ACES 2065-1 AP0 (D60) :cite:`7289895`
-    * ACEScg AP1 (D60) :cite:`Duiker:2015:ACC:2791261.2791273`
-    * Rec.2020 (D65) :cite:`6784055`
-    * DCI-P3 (DCI) :cite:`7290729`
-    * sRGB/Rec.709 (D65)
-    * Chromaticity Coordinates
+*Expression*
+    When *Manifold Type* is set to *String Prefix*, *String Suffix* or *Find String*, the expression can be a regex [#]_ expression defining the pattern to search in the expression domain.
 
-.. hint::
-   
-   When choosing *Chromaticity Coordinates*, the user **must** enter the xy chromaticity coordinates of the R,G,B primaries, and **must** choose the whitepoint, either in the form of one of the available standard illuminants, in the xy chromacity coordinates of the whitepoint, or via the correlated color temperature.
+*Domain*
+    The domain to search the expression for. The domains can take the values
 
+        * Object Name
+        * Object Instance Name
+        * Assembly Name
+        * Assembly Instance Name
 
-*R xy Coordinates*
-    The xy chromaticity coordinates of the red primary.
+*Seed*
+    An extra seed to provide some measure of determinism in the resulting colors.
 
-*G xy Coordinates*
-    The xy chromaticity coordinates of the green primary.
+-----
 
-*B xy Coordinates*
-    The xy chromaticity coordinates of the blue primary.
+Variation Parameters
+^^^^^^^^^^^^^^^^^^^^
 
-*White Point*
-    The white point definition, which can be one of the following options:
+*Variation Mode*
+    This parameter controls what exactly is going to be *randomized* or vary, according to the user-set options outlined earlier. One can vary the individual (and/or full) components of the input color in HSV [#]_ space, in RGB or in CIELAB [#]_ space. Accordingly this parameter takes the following values
 
-    * Standard Illuminant D50
-    * Standard Illuminant D55
-    * Standard Illuminant D60
-    * Standard Illuminant D65
-    * Standard Illuminant D75
-    * DCI White Point
-    * White Point E
-    * Correlated Color Temperature
-    * White Point Chromaticity Coordinates
+        * HSV
+        * RGB
+        * CIE L\*a\*b\* 1976
 
-.. _label_color_temperature:
+HSV Variation Parameters
+""""""""""""""""""""""""
 
-*Color Temperature*
-    The input color temperature value in Kelvin degrees, from 1667K to 25000K.
+*Vary Hue*
+    The extent or scaling factor of the *hue* variation.
 
-*W xy Coordinates*
-    The xy chromacity coordinates of the white point.
+*Vary Saturation*
+    The extent or scaling factor of the *saturation* variation.
+
+*Vary Value*
+    The extent or scaling factor of the *value* variation.
+
+RGB Variation Parameters
+""""""""""""""""""""""""
+
+*Vary Red*
+    The extent or scaling factor of the variation of the *red* channel.
+
+*Vary Green*
+    The extent or scaling factor of the variation of the *green* channel.
+
+*Vary Blue*
+    The extent or scaling factor of the variation of the *blue* channel.
+
+CIELAB Variation Parameters
+"""""""""""""""""""""""""""
+
+*Vary L\\**
+    The extent or scaling factor of the variation of the *lightness* or *L\\** channel.
+
+*Vary a\\**
+    The extent or scaling factor of the variation of the *a\\** channel.
+
+*Vary b\\**
+    The extent or scaling factor of the variation of the *b\\** channel.
 
 -----
 
 Outputs
-^^^^^^^
+-------
 
-*Result*
-    The luminance of the input color.
+*Output Color*
+    The resulting *randomized* color.
 
------
+*Output Hash*
+    An integer hash ID.
 
-.. _label_as_luminance_screenshots:
+*Output ID*
+    A color ID.
 
-Screenshots
------------
-
-Some examples of the output luminance of the input color ramp, rendered in (scene linear) Rec.709 space, standard illuminant D65, with different color spaces and whitepoints chosen. The mismatches in color spaces are for illustration purposes. If the settings cannot be derived automatically from your DCC application, then the choice of color space should match your choice or render/working space.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_workingspace_rec709.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, synColor render/working space set to (scene-linear) sRGB/Rec.709 primaries and D65 white point.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_workingspace_rec709_from_CMS.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Luminance of input color, with settings automatically retrieved from Maya's synColor CMS preferences.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_ACES_AP0.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to ACES 2065-1 AP0, D60 whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_ACES_AP1.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to ACEScg AP1, D60 whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_Rec2020.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to Rec.2020, D65 whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_set_DCIP3.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input space overriden to DCI-P3, DCI whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_colorramp_explicit_coords_adobergb.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Original color ramp, with CMS settings disabled, and the input color space set to *xy chromacitity coordinates*, which were then set to the RGB chromaticity coordinates of the AdobeRGB 1998 color space, with a D65 whitepoint.
-
-.. thumbnail:: /_images/screenshots/luminance/luminance_compared.png
-   :group: shots_luminance_group_A
-   :width: 10%
-   :title:
-
-   Starting from the bottom, the original (scene-linear Rec.709, D65) color ramp, and above it, its luminance with coefficients for Rec.709, Rec.2020, DCI-P3, ACEScg AP1, ACES 2065-1 AP0, explicit chromaticities set to AdobeRGB 1998, and color ramp again at the top.
+*Output Greyscale*
+    A greyscale ID.
 
 -----
 
-.. rubric:: References
+.. rubric:: Footnotes
 
-.. bibliography:: /bibtex/references.bib
-    :filter: docname in docnames
+.. [#] Regular expressions, `or regex <https://en.wikipedia.org/wiki/Regular_expression>`_. If you're unfamiliar with it, it allows the creation of complex patterns for string and substring matching. You can validate your expressions `here at regex101 <https://regex101.com/>`_.
+
+.. [#] A different color representation based on hue, saturation and value. See `HSV color space <https://en.wikipedia.org/wiki/HSL_and_HSV>`_ for more details.
+
+.. [#] Also known as *Lab* color space, but it's in fact referring to CIE 1976 L\*a\*b\* color space, or CIELAB. See `CIELAB color space <https://en.wikipedia.org/wiki/Lab_color_space>`_ for more details.
 

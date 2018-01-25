@@ -31,7 +31,7 @@ Texture Parameters
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Average Color*
     The average color of the first 3 channels of the texture file.

@@ -74,7 +74,7 @@ Color Parameters
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The blended color result.

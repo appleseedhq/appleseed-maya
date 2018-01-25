@@ -22,10 +22,12 @@ Parameters
 
 .. bogus directive to silence warnings::
 
+This node has no input parameters.
+
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Assembly Instance ID*
     An integer value containing the ID of an assembly [#]_ instance.

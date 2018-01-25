@@ -228,7 +228,7 @@ Advanced Parameters
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The final result color.

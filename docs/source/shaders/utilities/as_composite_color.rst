@@ -63,7 +63,7 @@ Color Parameters
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The composited color.

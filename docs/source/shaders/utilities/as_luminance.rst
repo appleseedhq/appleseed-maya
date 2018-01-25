@@ -91,7 +91,7 @@ Color Space
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Result*
     The luminance of the input color.

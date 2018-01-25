@@ -133,7 +133,7 @@ The input UV coordinates, typically from an upstream *placement2d* node.
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The color resulting from ghe *Features Mode* choice.

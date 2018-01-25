@@ -78,7 +78,7 @@ Color Parameters
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Result*
     The new mask.

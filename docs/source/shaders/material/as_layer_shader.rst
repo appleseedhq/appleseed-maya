@@ -58,13 +58,10 @@ Layers Parameters
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The combined layers output.
-
-*Layered Normal*
-    The layered shading normal.
 
 -----
 

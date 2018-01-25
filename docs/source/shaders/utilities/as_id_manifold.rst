@@ -70,7 +70,7 @@ Output Mode Parameters
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Hash*
     The resulting integer hash.

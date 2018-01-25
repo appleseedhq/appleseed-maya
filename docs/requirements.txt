@@ -10,3 +10,6 @@ sphinxcontrib-images
 # extra CSS3 image options
 sphinxcontrib-css3image
 
+# run console, python code
+sphinx-autorun
+

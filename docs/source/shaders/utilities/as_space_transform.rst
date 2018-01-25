@@ -75,7 +75,7 @@ Space Parameters
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Transformed Point*
     The transformed input point.

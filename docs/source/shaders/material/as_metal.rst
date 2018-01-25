@@ -111,7 +111,7 @@ Advanced Parameters
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The metal BRDF output color.
