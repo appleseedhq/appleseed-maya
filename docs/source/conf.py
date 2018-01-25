@@ -61,7 +61,8 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinxcontrib.bibtex',
     'sphinxcontrib.images',
-    'sphinxcontrib.css3image'
+    'sphinxcontrib.css3image',
+    'sphinx_autorun'
     ]
 
 todo_include_todos = True
@@ -79,8 +80,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'appleseed-maya'
-copyright = '2017-2018 The appleseedhq Organization'
+project = u'appleseed-maya'
+copyright = u'2017-2018 The appleseedhq Organization'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -132,6 +133,9 @@ numfig = True
 
 # Figure depth: 0 = whole document, 1 = section, 2 = subsection, ...
 numfig_secnum_depth = 0
+
+# If true, `todo` and `todoList` produce output, else they produce nothing.
+todo_include_todos = False
 
 # -- Options for HTML output ----------------------------------------------
 

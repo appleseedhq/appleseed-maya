@@ -18,7 +18,7 @@ About
 
 |
 
-appleseed-maya is an `open-source, MIT-licensed <https://opensource.org/licenses/MIT>`_ multi-platform renderer integration plugin for Autodesk® Maya® 2017 and later.
+appleseed-maya is an `open-source, MIT-licensed <https://opensource.org/licenses/MIT>`_ multi-platform [#]_ renderer integration plugin for Autodesk® Maya® 2017 and later.
 
 
 ----

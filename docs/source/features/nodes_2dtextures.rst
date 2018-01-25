@@ -33,7 +33,7 @@ Water               Supported
 
 .. [#] The *Movie* node requires `OIIO <https://github.com/OpenImageIO/oiio>`_ built with `FFMPEG <https://ffmpeg.org/>`_. Reliable access to individual frames of a video file, or *frame-by-frame scrubbing* works as expected with `I-frames <https://en.wikipedia.org/wiki/IFrame_(video_format)>`_ only videos.
 
-.. [#] In order to use `Substance <https://www.allegorithmic.com/>`_ materials, you need to use the Maya's *Substance* node image file output. This will be covered on its own simple :ref:`tutorial <label_tutorial_3>`.
+.. [#] In order to use `Substance <https://www.allegorithmic.com/>`_ materials, you need to use the Maya's *Substance* node image file output. This will be covered on its own tutorial.
 
 .. [#] For now, The *Substance Output* is unsupported. This might change in the future.
 
