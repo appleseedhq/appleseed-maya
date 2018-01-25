@@ -108,19 +108,19 @@ RGB Variation Parameters
 CIELAB Variation Parameters
 """""""""""""""""""""""""""
 
-*Vary L\**
-    The extent or scaling factor of the variation of the *lightness* or *L\** channel.
+*Vary L\\**
+    The extent or scaling factor of the variation of the *lightness* or *L\\** channel.
 
-*Vary a\**
-    The extent or scaling factor of the variation of the *a\** channel.
+*Vary a\\**
+    The extent or scaling factor of the variation of the *a\\** channel.
 
-*Vary b\**
-    The extent or scaling factor of the variation of the *b\** channel.
+*Vary b\\**
+    The extent or scaling factor of the variation of the *b\\** channel.
 
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The resulting *randomized* color.

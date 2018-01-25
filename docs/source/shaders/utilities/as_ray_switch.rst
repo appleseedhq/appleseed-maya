@@ -54,7 +54,7 @@ Color Attributes
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The color that passed passed through for the specific ray type.

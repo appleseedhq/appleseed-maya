@@ -58,7 +58,7 @@ Layers Parameters
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The combined layers output.

@@ -101,7 +101,7 @@ Advanced Parameters
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The BSDF output color.

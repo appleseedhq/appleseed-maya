@@ -88,7 +88,7 @@ Vector
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The rearranged color.

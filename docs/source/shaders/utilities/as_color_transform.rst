@@ -57,7 +57,7 @@ Color Attributes
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Result*
     The transformed color. For usability, the range of some spaces are remapped to the [0,1] range.

@@ -73,7 +73,7 @@ String
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The resulting color.

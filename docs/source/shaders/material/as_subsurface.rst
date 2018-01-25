@@ -13,7 +13,7 @@
 asSubsurface
 ************
 
-A blackbody radiator material :cite:`CGF:CGF1986` shader, with an optional glossy specular term on top, which also outputs the black body radiator color besides the output closure.
+A raytraced, no precomputed required, subsurface-scattering material with a coupled specular term. This node capable of modelling a wide range of appearance thanks to built-in support for several diffusion profiles. 
 
 |
 
@@ -24,50 +24,90 @@ Parameters
 
 -----
 
-Incandescence
-^^^^^^^^^^^^^
+Subsurface Parameters
+^^^^^^^^^^^^^^^^^^^^^
 
-*Incandescence Type*
-    The type of color for the emitance distribution function, it can be
+*Subsurface Profile*
+    The diffusion profiles to use in the BSSDRF [#]_. This parameter can take the following values
 
-    1. Constant
-    2. Blackbody
+    * Better Dipole
+    * Directional Dipole :cite:`Frisvad:2014:DDM:2702692.2682629`
+    * Gaussian :cite:`dEon:2007:ERH:2383847.2383869`
+    * Normalized Diffusion :cite:`Christensen:2015:ARP:2775280.2792555`
+    * Standard Dipole :cite:`Jensen:2001:PMS:383259.383319`, :cite:`Donner:2005:LDM:1186822.1073308`
+    * Random Walk :cite:`Meng:2016:IDS:3071773.3071778`
+    
+*Reflectance*
+    The surface reflectance.
 
-    When in *Blackbody* mode it uses physically based values, that might have extremely high intensities as the temperature increases.
+*SSS Amount*
+    A scaling factor for the overall contribution of the subsurface scattering term.
 
-*Color*
-    The color to use when in *Constant* mode, ignored in *Blackbody* mode.
+*Mean Free Path*
+    Mean free path [#]_ controls how deep light can travel within the volume, scattering internally, until it's fully absorbed or exits the medium. Lower values in the limit would have a response similar to a diffuse term, while high values would allow light to travel almost unhindered, producing a translucent like appearance.
 
-*Incandescence Amount*
-    The overall intensity of the incandescence, it can be over 1.0.
+*MFP Scale*
+    An overall scaling factor for the *Mean Free Path*.
 
-*Temperature Scale*
-    A scaling factor for the temperature value used to compute the black body radiation. Unlike *incandescence amount*, this actually affects the output color, with lower values generating warmer colors and lower energy levels, and higher values generating cooler values with higher energy levels.
+*Zero Scattering Weight*
+    When sthe *Subsurface Profile* is set to *Random Walk*, when the surface is very thin and the *Mean Free Path* very high, it's possible for the light to travel through the object volume without scattering internally. This parameter provides the ability to scale the intensity of such an event, which typically produces a whiter more translucent like appearance on thin edges.
 
-*Temperature*
-    The temperature to which the perfect black body is heated to emit electro-magnetic radiation.
+SSS Advanced Parameters
+"""""""""""""""""""""""
 
-*Normalize Area*
-    When objects are deformed, their surface area might change. Without this option, the intensities would stay the same regardless of the deformation of the object to which the shader is attached. It this option enabled, the intensities will change taking into account the object surface area, in order to keep the amount of emitted energy constant.
-
-*Tonemap Color*
-    As temperature increases, the black body radiator emits color in bluer wavelenghts, but the amount of energy emitted is extreme. In order to avoid extremely hight intensities, this option allows the user to *tonemap* the resulting black body color.
+*SSS Ray Depth*
+    The maximum ray depth allowed for a ray of type *subsurface*.
 
 -----
 
-Specular
-^^^^^^^^
-
-*Specular Amount*
-    The intensity of the specular term.
-
-*Specular Roughness*
-    The apparent surface roughness of the specular term.
+Fresnel Parameters
+^^^^^^^^^^^^^^^^^^
 
 *Index of Refraction*
-    Absolute index of refraction
+    The index of refraction of the material.
 
-.. note:: This term is a simple dielectric specular term using the *GGX* :cite:`a-heitz:hal-00996995` microfacet distribution function, with energy compensation for high roughness values.
+Fresnel Advanced Parameters
+"""""""""""""""""""""""""""
+
+*Fresnel Weight*
+    A value of 1.0, will scale the subsurface contribution by the Fresnel transmittance, while a value of 0.0 will disable any scaling. When using the provided specular BRDF, in order to keep energy conservation, this scaling factor should be set to 1.0. If you're not using the provided specular term and/or want to compose one later in your workflow, you can disable this.
+    You also have the freedom to use intermediary values.
+
+-----
+
+Specular Parameters
+^^^^^^^^^^^^^^^^^^^
+
+*Specular Weight*
+    An overall scaling factor for the specular term. A value of 1.0 provides full intensity, 0.0 disabling it.
+
+.. note::
+   
+   This shader allows the user to texture map the specular weight, to control the specular term intensity, but it does not provide a way to *tint* or color the specular term. That is intentional sually only dielectrics [#]_ have subsurface scattering, and dielectrics have no tinted specular highlights.
+
+*Specular Roughness*
+    The apparent surface roughness of the material. The distribution used is the *GGX* :cite:`Walter:2007:MMR:2383847.2383874`, and energy conservation to take into account multiple scattering :cite:`Heitz:2016:MMB:2897824.2925943` is applied automatically.
+
+Anisotropy Parameters
+"""""""""""""""""""""
+
+*Anisotropy Amount*
+    The overall weight of the anisotropy, with a value of 0.0 producing isotropic specular highlights, and a value of 1.0 producing full anisotropic specular highlights.
+
+*Anisotropy Angle*
+    A rotation angle in [0,1] range, that is mapped internally to a full 360 degrees rotation and applied on top of the anisotropy value provided by the explicit anisotropy vector or anisotropy vector map.
+
+*Anisotropy Mode*
+    The anisotropy mode, which can either be a anisotropy vector map with the XY anisotropy encoded in the *red* and *green* channels of the image, or an explicit anisotropy vector, which can be provided via a :ref:`label_anisotropy_vector_field` node. It can therefore take the values
+
+        * Anisotropy Map
+        * Explicit Vector
+
+*Anisotropy Map*
+    The anisotropy vector map to use when *Anisotropy Mode* is set to *Anisotropy Map*.
+
+*Anisotropy Direction*
+    An explicit anisotropy vector to use when the *Anisotropy Mode* parameter is set to *Explicit Vector*.
 
 -----
 
@@ -76,6 +116,8 @@ Bump
 
 *Bump Normal*
     The unit length world space normal of the bumped surface.
+
+-----
 
 Matte Opacity
 ^^^^^^^^^^^^^
@@ -91,95 +133,140 @@ Matte Opacity
 
 -----
 
-Advanced Parameters
-^^^^^^^^^^^^^^^^^^^
-
-*Ray Depth*
-    The maximum ray depth a ray is allowed to bounce before being terminated.
-
------
-
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
-    The combined EDF+BRDF output color.
+    The BSSRDF output with the optional added specular BRDF.
 
 *Output Matte Opacity*
     The matte holdout.
 
-*Output Blackbody Color*
-    The black body radiator color.
-
 -----
 
-.. _label_as_blackbody_screenshots:
+.. _label_as_subsurface_screenshots:
 
 Screenshots
 -----------
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot2_tv_static.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_crackedrubber.png
+   :group: shots_as_subsurface_group_A
    :width: 10%
    :title:
 
-   Blackbody set to *constant* mode, with a TV static noise textures as the base color, and a relatively smooth specular reflection on top, glass like.
+   A cracked vulcanized rubber like material.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot4_tv_static.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_gaussian.png
+   :group: shots_as_subsurface_group_A
    :width: 10%
    :title:
 
-   Yet another CRT TV. The incandescence intensity drives the overall intensity of the EDF, allowing the user to create stronger illumination effects.
+   A blue marble like material using the *Gaussian* diffusion profile.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot7_blackbody.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_normalizeddifusion.png
+   :group: shots_as_subsurface_group_A
    :width: 10%
    :title:
 
-   Now with the mode set to *blackbody*, temperature set to 4300K, and appleseed's 2D noise, with a recursive flow noise, applied to the *temperature scale*. Unlike incandescence intensity, a temperature scale will generate varying color from warmer tones (lower temperatures) to bluer tones (higher temperatures). Tonemapping was on to control the energy in the scene.
+   The same basic appearance using the *Normalized Diffusion* profile.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot8_blackbody.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_randomwalk.png
+   :group: shots_as_subsurface_group_A
    :width: 10%
    :title:
 
-   A simple V ramp as the *temperature scale*, showing the change of temperature from warmer to whiter as it approaches a 6500K value. The black body radiation values were tonemapped and the intensity changed with *intensity amount* in order to keep overall intensities under control.
+   Now using the *Random Walk* profile.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot9_constant.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_standarddipole.png
+   :group: shots_as_subsurface_group_A
    :width: 10%
    :title:
 
-   A simple constant color with a GGX specular term on top.
+   The same basic appearance using now this *Standard Dipole* diffusion profile.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot10_constant.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_directionaldipole.png
+   :group: shots_as_subsurface_group_A
    :width: 10%
    :title:
 
-   Another poorly tuned TV, with a relatively smooth specular term on top using the GGX MDF. The *incandescence amount* drives the overall intensity of the lighting.
+   Now with the *Directional Dipole* profile.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot11_constant.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_betterdipole.png
+   :group: shots_as_subsurface_group_A
    :width: 10%
    :title:
 
-   Yet another noisy TV, showing the color bands in the ground, as *incandescence amount* is set to a value of 5.0 to increase the overall EDF intensities. The index of refraction of the specular layer is set to 1.47, matching the IOR of a general dense glass.
+   And finally with the *Better Dipole* profile.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot13_blackbody.png
-   :group: shots_as_blackbody_group_A
+
+
+
+
+
+
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_crackedrubber2.png
+   :group: shots_as_subsurface_group_A
    :width: 10%
    :title:
 
-   A circular gradient showing the overall effect of using the *temperature scale* when the temperature is set to 11000K. From 0K to 798K there is no visible light emitted. From 798K onwards there is visible light emitted, with warmer tones, increasing in energy and shifting towards neutral then bluer tones as temperature increases.
+   A cracked vulcanized rubber like material.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot14_blackbody.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_gaussian2.png
+   :group: shots_as_subsurface_group_A
    :width: 10%
    :title:
 
-   Finally, a facing ratio modulating a noisy fractal texture, which also drives the specular intensity of a rough GGX specular term, creating the appearance of a basaltic like material.
+   A blue marble like material using the *Gaussian* diffusion profile.
+
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_normalizeddifusion2.png
+   :group: shots_as_subsurface_group_A
+   :width: 10%
+   :title:
+
+   The same basic appearance using the *Normalized Diffusion* profile.
+
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_randomwalk2.png
+   :group: shots_as_subsurface_group_A
+   :width: 10%
+   :title:
+
+   Now using the *Random Walk* profile.
+
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_standarddipole2.png
+   :group: shots_as_subsurface_group_A
+   :width: 10%
+   :title:
+
+   The same basic appearance using now this *Standard Dipole* diffusion profile.
+
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_directionaldipole2.png
+   :group: shots_as_subsurface_group_A
+   :width: 10%
+   :title:
+
+   Now with the *Directional Dipole* profile.
+
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_betterdipole2.png
+   :group: shots_as_subsurface_group_A
+   :width: 10%
+   :title:
+
+   And finally with the *Better Dipole* profile.
+
+
+
+
+
+
+-----
+
+.. rubric:: Footnotes
+
+.. [#] See also `bidirectional scattering distribution function <https://en.wikipedia.org/wiki/Bidirectional_scattering_distribution_function>`_.
+
+.. [#] See `mean free path wikipedia page <https://en.wikipedia.org/wiki/Mean_free_path>`_ for more details.
+
+.. [#] Dielectric is a material which is an electric insulator, the opposite of *conductors* which as the name says, conducts electricity. See `this page on dielectric materials <https://en.wikipedia.org/wiki/Dielectric>`_ for more details. In terms of look development an accepted simplification is that dielectrics have white or non-tinted specular highlights, while conductors have tinted or coloured specular highlights.
 
 -----
 

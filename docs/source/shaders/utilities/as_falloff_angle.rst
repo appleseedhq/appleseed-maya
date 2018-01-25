@@ -60,7 +60,7 @@ Interpolation Parameters
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Result*
     The smoothly interpolated value.

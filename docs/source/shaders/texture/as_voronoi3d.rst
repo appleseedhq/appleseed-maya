@@ -134,7 +134,7 @@ By default this point is the global primitive variable **P**, but the user can o
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The color resulting from ghe *Features Mode* choice.

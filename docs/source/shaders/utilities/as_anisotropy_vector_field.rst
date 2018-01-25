@@ -75,7 +75,7 @@ Surface Normal
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Anisotropy Vector*
     The final re-oriented, RG or RB encoded anisotropy vector.

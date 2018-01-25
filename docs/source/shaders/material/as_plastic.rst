@@ -100,7 +100,7 @@ Advanced Parameters
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The combined EDF+BRDF output color.

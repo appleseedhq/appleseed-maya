@@ -36,7 +36,7 @@ Color Parameters
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Output Color*
     The resulting color.

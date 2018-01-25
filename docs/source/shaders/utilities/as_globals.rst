@@ -22,10 +22,12 @@ Parameters
 
 .. bogus directive to silence warnings::
 
+This node has no input parameters.
+
 -----
 
 Outputs
-^^^^^^^
+-------
 
 *Surface Position*
     The surface point *P* in world space.
