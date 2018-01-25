@@ -198,12 +198,12 @@ Screenshots
 
    And finally with the *Better Dipole* profile.
 
-.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_ball2_randomwalk.png
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_basketball.png
    :group: shots_as_subsurface_group_A
    :width: 10%
    :title:
 
-   Subsurface with a coloured checkerboard pattern for the reflectance, and *Random Walk* diffusion profile with a medium mean free path.
+   Modelling the appearance of a plastic ball, with bump mapping, medium roughness, small mean free path.
 
 .. thumbnail:: /_images/screenshots/subsurface/as_subsurface_snow.png
    :group: shots_as_subsurface_group_A
@@ -261,12 +261,12 @@ Screenshots
 
    And finally with the *Better Dipole* profile.
 
-.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_ball2_randomwalk2.png
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_basketball2.png
    :group: shots_as_subsurface_group_A
    :width: 10%
    :title:
 
-   Subsurface with a coloured checkerboard pattern for the reflectance, and *Random Walk* diffusion profile with a medium mean free path.
+   Modelling the appearance of a plastic ball, with bump mapping, medium roughness, small mean free path.
 
 .. thumbnail:: /_images/screenshots/subsurface/as_subsurface_snow2.png
    :group: shots_as_subsurface_group_A
