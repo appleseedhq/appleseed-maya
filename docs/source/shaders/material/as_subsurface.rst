@@ -163,7 +163,7 @@ Screenshots
 
    A blue marble like material using the *Gaussian* diffusion profile.
 
-.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_normalizeddifusion.png
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_normalizeddiffusion.png
    :group: shots_as_subsurface_group_A
    :width: 10%
    :title:
@@ -198,11 +198,19 @@ Screenshots
 
    And finally with the *Better Dipole* profile.
 
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_ball2_randomwalk.png
+   :group: shots_as_subsurface_group_A
+   :width: 10%
+   :title:
 
+   Subsurface with a coloured checkerboard pattern for the reflectance, and *Random Walk* diffusion profile with a medium mean free path.
 
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_snow.png
+   :group: shots_as_subsurface_group_A
+   :width: 10%
+   :title:
 
-
-
+   Modelling the appearance of snow, medium roughness, bump, high mean free path.
 
 .. thumbnail:: /_images/screenshots/subsurface/as_subsurface_crackedrubber2.png
    :group: shots_as_subsurface_group_A
@@ -218,7 +226,7 @@ Screenshots
 
    A blue marble like material using the *Gaussian* diffusion profile.
 
-.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_normalizeddifusion2.png
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_normalizeddiffusion2.png
    :group: shots_as_subsurface_group_A
    :width: 10%
    :title:
@@ -253,10 +261,19 @@ Screenshots
 
    And finally with the *Better Dipole* profile.
 
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_ball2_randomwalk2.png
+   :group: shots_as_subsurface_group_A
+   :width: 10%
+   :title:
 
+   Subsurface with a coloured checkerboard pattern for the reflectance, and *Random Walk* diffusion profile with a medium mean free path.
 
+.. thumbnail:: /_images/screenshots/subsurface/as_subsurface_snow2.png
+   :group: shots_as_subsurface_group_A
+   :width: 10%
+   :title:
 
-
+   Modelling the appearance of snow, medium roughness, bump, high mean free path.
 
 -----
 
