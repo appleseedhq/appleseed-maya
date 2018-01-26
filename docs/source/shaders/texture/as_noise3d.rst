@@ -13,7 +13,7 @@
 asNoise3D
 *********
 
-A procedural 2D Worley :cite:`c-Worley:1996:CTB:237170.237267` like noise shader, that outputs not only the resulting color, but the four nearest features to the evaluated point, their respective positions, and their cell color IDs. See also :cite:`c-Ebert:2002:TMP:572337`.
+A procedural 2D Worley :cite:`Worley:1996:CTB:237170.237267` like noise shader, that outputs not only the resulting color, but the four nearest features to the evaluated point, their respective positions, and their cell color IDs. See also :cite:`Ebert:2002:TMP:572337`.
 
 Parameters
 ----------
@@ -224,6 +224,5 @@ Some examples of feature output modes and metrics.
 .. rubric:: References
 
 .. bibliography:: /bibtex/references.bib
-    :labelprefix: C
-    :keyprefix: c-
+    :filter: docname in docnames
 

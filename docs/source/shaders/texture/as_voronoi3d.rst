@@ -13,7 +13,7 @@
 asVoronoi3D
 ***********
 
-A procedural 3D Worley :cite:`d-Worley:1996:CTB:237170.237267` like noise shader, that outputs not only the resulting color, but the four nearest features to the evaluated point, their respective positions, and their cell color IDs. See also :cite:`d-Ebert:2002:TMP:572337`.
+A procedural 3D Worley :cite:`Worley:1996:CTB:237170.237267` like noise shader, that outputs not only the resulting color, but the four nearest features to the evaluated point, their respective positions, and their cell color IDs. See also :cite:`Ebert:2002:TMP:572337`.
 
 Parameters
 ----------
@@ -223,6 +223,5 @@ Some examples of different metrics and feature output combinations used.
 .. rubric:: References
 
 .. bibliography:: /bibtex/references.bib
-    :labelprefix: D
-    :keyprefix: d-
+    :filter: docname in docnames
 
