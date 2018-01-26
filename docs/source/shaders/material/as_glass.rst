@@ -13,7 +13,7 @@
 asGlass
 *******
 
-A Glass BSDF :cite:`a-Walter:2007:MMR:2383847.2383874`, with volumetric absorption.
+A Glass BSDF :cite:`Walter:2007:MMR:2383847.2383874`, with volumetric absorption.
 
 |
 
@@ -50,9 +50,9 @@ Specular Parameters
 *Distribution*
     Microfacet distribution function, it can be
 
-    1. *Beckmann* :cite:`a-Cook:1982:RMC:357290.357293`
-    2. *GGX* :cite:`a-heitz:hal-00996995` 
-    3. *Student's t-distribution* :cite:`a-10.1111:cgf.13137`
+    1. *Beckmann* :cite:`Cook:1982:RMC:357290.357293`
+    2. *GGX* :cite:`heitz:hal-00996995` 
+    3. *Student's t-distribution* :cite:`10.1111:cgf.13137`
 
 *Roughness*
     The apparent surface roughness, affecting both the reflection and refraction equally.
@@ -249,6 +249,5 @@ Screenshots
 .. rubric:: References
 
 .. bibliography:: /bibtex/references.bib
-    :labelprefix: A
-    :keyprefix: a-
+    :filter: docname in docnames
 

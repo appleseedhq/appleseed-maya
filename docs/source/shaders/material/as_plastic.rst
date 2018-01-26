@@ -13,7 +13,7 @@
 asPlastic
 *********
 
-A blackbody radiator material :cite:`CGF:CGF1986` shader, with an optional glossy specular term on top, which also outputs the black body radiator color besides the output closure.
+A physically correct plastic shader, stacking a specular term on top of a diffuse substrate.
 
 |
 
@@ -24,61 +24,60 @@ Parameters
 
 -----
 
-Incandescence
-^^^^^^^^^^^^^
+Diffuse Parameters
+^^^^^^^^^^^^^^^^^^
 
-*Incandescence Type*
-    The type of color for the emitance distribution function, it can be
+*Diffuse Color*
+    The diffuse color.
 
-    1. Constant
-    2. Blackbody
+*Diffuse Weight*
+    A scaling factor for the diffuse BRDF.
 
-    When in *Blackbody* mode it uses physically based values, that might have extremely high intensities as the temperature increases.
+*Scattering*
+    The scattering amount for the diffuse term. Full scattering will take into account all the events in the specular term, while a value of 0 will disable them.
 
-*Color*
-    The color to use when in *Constant* mode, ignored in *Blackbody* mode.
+Specular Parameters
+^^^^^^^^^^^^^^^^^^^
 
-*Incandescence Amount*
-    The overall intensity of the incandescence, it can be over 1.0.
+*Specular Color*
+    The specular color.
 
-*Temperature Scale*
-    A scaling factor for the temperature value used to compute the black body radiation. Unlike *incandescence amount*, this actually affects the output color, with lower values generating warmer colors and lower energy levels, and higher values generating cooler values with higher energy levels.
-
-*Temperature*
-    The temperature to which the perfect black body is heated to emit electro-magnetic radiation.
-
-*Normalize Area*
-    When objects are deformed, their surface area might change. Without this option, the intensities would stay the same regardless of the deformation of the object to which the shader is attached. It this option enabled, the intensities will change taking into account the object surface area, in order to keep the amount of emitted energy constant.
-
-*Tonemap Color*
-    As temperature increases, the black body radiator emits color in bluer wavelenghts, but the amount of energy emitted is extreme. In order to avoid extremely hight intensities, this option allows the user to *tonemap* the resulting black body color.
-
------
-
-Specular
-^^^^^^^^
-
-*Specular Amount*
-    The intensity of the specular term.
-
-*Specular Roughness*
-    The apparent surface roughness of the specular term.
+*Specular Weight*
+    A scaling factor for the specular BRDF.
 
 *Index of Refraction*
-    Absolute index of refraction
+    The index of refraction for the (dielectric [#]_) Fresnel term.
 
-.. note:: This term is a simple dielectric specular term using the *GGX* :cite:`a-heitz:hal-00996995` microfacet distribution function, with energy compensation for high roughness values.
+*Distribution*
+    The microfacet distribution function [#]_ to use on the specular BRDF.
+    The Beckmann :cite:`beckmann1963scattering` :cite:`Cook:1982:RMC:357290.357293` distribution produces the sharpest highlights. The GGX :cite:`Walter:2007:MMR:2383847.2383874` distribution produces a slight veil like effect that softens the specular highlights a bit, and the GTR :cite:`McAuley:2012:PPS:2343483.2343493` distribution accentuates this even further. The Student's t-MDF :cite:`10.1111:cgf.13137` allows the user to control this softening - the *tails* of the specular highlights - via a second parameter *Specular Spread*, which as the name suggests, controls the spreading of the specular highlights.
+    The *Distribution* parameter can then take the following values
+
+        * Beckmann 
+        * GGX
+        * GTR
+        * Student's t-MDF
+
+*Specular Roughness*
+    The apparent surface roughness, with a value near 0 producing sharp highlights, and a value of 1.0 producing soft diffuse like highlights.
+
+.. note::
+
+    As specular roughness values increase, there is energy loss due to the lack of multiple scattering :cite:`Heitz:2016:MMB:2897824.2925943`. Appleseed however does compensate for this energy loss, but only for the *Beckmann* and *GGX* distributions. There is no compensation applied on the *GTR* nor Student's t-MDF.
+
+*Specular Spread*
+    This parameter controls the *tails* of the specular highlights of the Student's t-MDF, softening it, and creating the appearance of a slight veil or *haze*. It has no effect on the other microfacet distribution functions.
 
 -----
 
-Bump
-^^^^
+Bump Parameters
+^^^^^^^^^^^^^^^
 
 *Bump Normal*
     The unit length world space normal of the bumped surface.
 
-Matte Opacity
-^^^^^^^^^^^^^
+Matte Opacity Parameters
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 *Enable Matte Opacity*
     Parameter that toggles matte holdouts.
@@ -103,83 +102,157 @@ Outputs
 -------
 
 *Output Color*
-    The combined EDF+BRDF output color.
+    The plastic BRDF output color.
 
 *Output Matte Opacity*
     The matte holdout.
 
-*Output Blackbody Color*
-    The black body radiator color.
-
 -----
 
-.. _label_as_blackbody_screenshots:
+.. _label_as_plastic_screenshots:
 
 Screenshots
 -----------
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot2_tv_static.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/plastic/as_dirtyplastic.png
+   :group: shots_as_plastic_group_A
    :width: 10%
    :title:
 
-   Blackbody set to *constant* mode, with a TV static noise textures as the base color, and a relatively smooth specular reflection on top, glass like.
+   A dirty plastic material, using Substance maps.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot4_tv_static.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/plastic/as_dirtyplastic3.png
+   :group: shots_as_plastic_group_A
    :width: 10%
    :title:
 
-   Yet another CRT TV. The incandescence intensity drives the overall intensity of the EDF, allowing the user to create stronger illumination effects.
+   Yet another dirty plastic material.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot7_blackbody.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_dirty_rubber.png
+   :group: shots_as_plastic_group_A
    :width: 10%
    :title:
 
-   Now with the mode set to *blackbody*, temperature set to 4300K, and appleseed's 2D noise, with a recursive flow noise, applied to the *temperature scale*. Unlike incandescence intensity, a temperature scale will generate varying color from warmer tones (lower temperatures) to bluer tones (higher temperatures). Tonemapping was on to control the energy in the scene.
+   A dirty black rubber material, with a dust layer, using the Student's t-MDF with a moderate roughness.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot8_blackbody.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_fiberglass.png
+   :group: shots_as_plastic_group_A
    :width: 10%
    :title:
 
-   A simple V ramp as the *temperature scale*, showing the change of temperature from warmer to whiter as it approaches a 6500K value. The black body radiation values were tonemapped and the intensity changed with *intensity amount* in order to keep overall intensities under control.
+   A fiber glass like material, using the Student's t-MDF, moderate specular spread.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot9_constant.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_yellowball1.png
+   :group: shots_as_plastic_group_A
    :width: 10%
    :title:
 
-   A simple constant color with a GGX specular term on top.
+   A painted plastic material.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot10_constant.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_painted_wall.png
+   :group: shots_as_plastic_group_A
    :width: 10%
    :title:
 
-   Another poorly tuned TV, with a relatively smooth specular term on top using the GGX MDF. The *incandescence amount* drives the overall intensity of the lighting.
+   A painted wall like material, with plastic paint.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot11_constant.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_painted_wall3.png
+   :group: shots_as_plastic_group_A
    :width: 10%
    :title:
 
-   Yet another noisy TV, showing the color bands in the ground, as *incandescence amount* is set to a value of 5.0 to increase the overall EDF intensities. The index of refraction of the specular layer is set to 1.47, matching the IOR of a general dense glass.
+   Yet another painted wall material.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot13_blackbody.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_painted_wall5.png
+   :group: shots_as_plastic_group_A
    :width: 10%
    :title:
 
-   A circular gradient showing the overall effect of using the *temperature scale* when the temperature is set to 11000K. From 0K to 798K there is no visible light emitted. From 798K onwards there is visible light emitted, with warmer tones, increasing in energy and shifting towards neutral then bluer tones as temperature increases.
+   Painted concrete, with flaking stucco.
 
-.. thumbnail:: /_images/screenshots/blackbody/as_blackbody_shot14_blackbody.png
-   :group: shots_as_blackbody_group_A
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_ball.png
+   :group: shots_as_plastic_group_A
    :width: 10%
    :title:
 
-   Finally, a facing ratio modulating a noisy fractal texture, which also drives the specular intensity of a rough GGX specular term, creating the appearance of a basaltic like material.
+   A plastic beach ball.
+
+
+
+
+
+
+
+.. thumbnail:: /_images/screenshots/plastic/as_dirtyplastic2.png
+   :group: shots_as_plastic_group_A
+   :width: 10%
+   :title:
+
+   A dirty plastic material, using Substance maps.
+
+.. thumbnail:: /_images/screenshots/plastic/as_dirtyplastic4.png
+   :group: shots_as_plastic_group_A
+   :width: 10%
+   :title:
+
+   Yet another dirty plastic material.
+
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_dirty_rubber2.png
+   :group: shots_as_plastic_group_A
+   :width: 10%
+   :title:
+
+   A dirty black rubber material, with a dust layer, using the Student's t-MDF with a moderate roughness.
+
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_fiberglass2.png
+   :group: shots_as_plastic_group_A
+   :width: 10%
+   :title:
+
+   A fiber glass like material, using the Student's t-MDF, moderate specular spread.
+
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_yellowball3.png
+   :group: shots_as_plastic_group_A
+   :width: 10%
+   :title:
+
+   A painted plastic material.
+
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_painted_wall2.png
+   :group: shots_as_plastic_group_A
+   :width: 10%
+   :title:
+
+   A painted wall like material, with plastic paint.
+
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_painted_wall4.png
+   :group: shots_as_plastic_group_A
+   :width: 10%
+   :title:
+
+   Yet another painted wall material.
+
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_painted_wall6.png
+   :group: shots_as_plastic_group_A
+   :width: 10%
+   :title:
+
+   Painted concrete, with flaking stucco.
+
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_ball2.png
+   :group: shots_as_plastic_group_A
+   :width: 10%
+   :title:
+
+   A plastic beach ball.
+
+-----
+
+.. rubric:: Footnotes
+
+.. [#]  Dielectric is a material which is an electric insulator, the opposite of *conductors* which as the name says, conducts electricity. See `this page on dielectric materials <https://en.wikipedia.org/wiki/Dielectric>`_ for more details. In terms of look development an accepted simplification is that dielectrics have white or non-tinted specular highlights, while conductors have tinted or coloured specular highlights.
+
+.. [#] The microfacet distribution function is a function that describes statistically the microscopic shape of the surface's as a distribution of microfacet orientations. See the `this page on the normal distribution function (NDF) <http://www.reedbeta.com/blog/hows-the-ndf-really-defined/>`_, and this page on `specular highlights <https://en.wikipedia.org/wiki/Specular_highlight>`_ for more details.
 
 -----
 

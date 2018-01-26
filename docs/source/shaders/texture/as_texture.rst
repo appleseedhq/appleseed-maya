@@ -161,11 +161,3 @@ Outputs
 
 .. [#] sRGB shares the same CIE xy chromaticity coordinates with ITU-R BT.709/Rec.709, hence referring to the color space defined these coordinates as *sRGB/Rec.709*.
 
------
-
-.. rubric:: References
-
-.. bibliography:: /bibtex/references.bib
-    :labelprefix: C
-    :keyprefix: c-
-

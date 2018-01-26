@@ -98,7 +98,7 @@ Anisotropy Parameters
     A rotation angle in [0,1] range, that is mapped internally to a full 360 degrees rotation and applied on top of the anisotropy value provided by the explicit anisotropy vector or anisotropy vector map.
 
 *Anisotropy Mode*
-    The anisotropy mode, which can either be a anisotropy vector map with the XY anisotropy encoded in the *red* and *green* channels of the image, or an explicit anisotropy vector, which can be provided via a :ref:`label_anisotropy_vector_field` node. It can therefore take the values
+    The anisotropy mode, which can either be a anisotropy vector map with the XY anisotropy encoded in the *red* and *green* channels of the image, or an explicit anisotropy vector, which can be provided via a :ref:`asAnisotropyVectorField <label_as_anisotropy_vector_field>` node. It can therefore take the values
 
         * Anisotropy Map
         * Explicit Vector

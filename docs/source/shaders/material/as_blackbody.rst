@@ -67,7 +67,7 @@ Specular Parameters
 *Index of Refraction*
     Absolute index of refraction
 
-.. note:: This term is a simple dielectric specular term using the *GGX* :cite:`a-heitz:hal-00996995` microfacet distribution function, with energy compensation for high roughness values.
+.. note:: This term is a simple dielectric specular term using the *GGX* :cite:`heitz:hal-00996995` microfacet distribution function, with energy compensation for high roughness values.
 
 -----
 
