@@ -114,14 +114,14 @@ Outputs
 Screenshots
 -----------
 
-.. thumbnail:: /_images/screenshots/plastic/as_dirtyplastic.png
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_dirtyplastic.png
    :group: shots_as_plastic_group_A
    :width: 10%
    :title:
 
    A dirty plastic material, using Substance maps.
 
-.. thumbnail:: /_images/screenshots/plastic/as_dirtyplastic3.png
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_dirtyplastic3.png
    :group: shots_as_plastic_group_A
    :width: 10%
    :title:
@@ -170,27 +170,21 @@ Screenshots
 
    Painted concrete, with flaking stucco.
 
-.. thumbnail:: /_images/screenshots/plastic/as_plastic_ball.png
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_ball2.png
    :group: shots_as_plastic_group_A
    :width: 10%
    :title:
 
    A plastic beach ball.
 
-
-
-
-
-
-
-.. thumbnail:: /_images/screenshots/plastic/as_dirtyplastic2.png
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_dirtyplastic2.png
    :group: shots_as_plastic_group_A
    :width: 10%
    :title:
 
    A dirty plastic material, using Substance maps.
 
-.. thumbnail:: /_images/screenshots/plastic/as_dirtyplastic4.png
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_dirtyplastic4.png
    :group: shots_as_plastic_group_A
    :width: 10%
    :title:
@@ -211,7 +205,7 @@ Screenshots
 
    A fiber glass like material, using the Student's t-MDF, moderate specular spread.
 
-.. thumbnail:: /_images/screenshots/plastic/as_plastic_yellowball3.png
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_yellowball2.png
    :group: shots_as_plastic_group_A
    :width: 10%
    :title:
