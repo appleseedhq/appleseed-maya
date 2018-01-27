@@ -21,3 +21,16 @@ table.citation {
     display: block !important; /* fix citation misaligned */
 }
 
+/* Remove the colon from the copyright text in the footer */
+
+.footer>.container>p:last-child {
+    visibility: hidden;
+    position: absolute;
+    margin-top: -20px;
+}
+
+.footer>.container>p:last-child:after {
+    content: ' © Copyright 2017-2018 The appleseedhq Organization';
+    visibility: visible;
+}
+
