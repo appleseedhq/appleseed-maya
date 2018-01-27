@@ -198,12 +198,12 @@ MStatus RenderGlobalsNode::initialize()
 
     // Light Samples.
     m_lightSamples = numAttrFn.create("lightSamples", "lightSamples", MFnNumericData::kFloat, 1.0f, &status);
-    numAttrFn.setMin(1.0f);
+    numAttrFn.setMin(1.0);
     CHECKED_ADD_ATTRIBUTE(m_lightSamples, "lightSamples")
 
     // Environment Samples.
     m_envSamples = numAttrFn.create("envSamples", "envSamples", MFnNumericData::kFloat, 1.0f, &status);
-    numAttrFn.setMin(1.0f);
+    numAttrFn.setMin(1.0);
     CHECKED_ADD_ATTRIBUTE(m_envSamples, "envSamples")
 
     // Caustics.
@@ -212,7 +212,7 @@ MStatus RenderGlobalsNode::initialize()
 
     // Max Ray Intensity.
     m_maxRayIntensity = numAttrFn.create("maxRayIntensity", "maxRayIntensity", MFnNumericData::kFloat, 0.0f, &status);
-    numAttrFn.setMin(0.0f);
+    numAttrFn.setMin(0.0);
     CHECKED_ADD_ATTRIBUTE(m_maxRayIntensity, "maxRayIntensity")
 
     // Background emits light.
@@ -270,7 +270,7 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_denoiserMode, "denoiser")
 
     // Prefilter Spikes.
-    m_prefilterSpikes = numAttrFn.create("prefilterSpikes", "prefilterSpikes", MFnNumericData::kBoolean, false, &status);
+    m_prefilterSpikes = numAttrFn.create("prefilterSpikes", "prefilterSpikes", MFnNumericData::kBoolean, true, &status);
     CHECKED_ADD_ATTRIBUTE(m_prefilterSpikes, "prefilterSpikes")
 
     // Spike Thereshold.
