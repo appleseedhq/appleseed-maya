@@ -20,8 +20,17 @@
 Custom appleseed shaders
 ************************
 
++------------------------+------------+----------+----------+
+| Header row, column 1   | Header 2   | Header 3 | Header 4 |
+| (header rows optional) |            |          |          |
++========================+============+==========+==========+
+| body row 1, column 1   | column 2   | column 3 | column 4 |
++------------------------+------------+----------+----------+
+| body row 2             | ...        | ...      |          |
++------------------------+------------+----------+----------+
+
 These shaders are meant to either replace some of Maya's functionality that
-wasn't possible to implement directly in `OSL <http://opensource.imageworks.com/?p=osl>`_, or to provide functionality
+wasn't possible to implement directly in `OSL <https://github.com/imageworks/OpenShadingLanguage>`_, or to provide functionality
 that is inexistent and we feel might be useful to the end user.
 
 Procedural Texture Nodes

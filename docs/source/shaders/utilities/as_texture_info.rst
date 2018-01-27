@@ -71,7 +71,7 @@ Outputs
     A vector containing the minimum X and Y values of the pixel data window of the input texture, in the case of a 2D texture file. And the minimum X, Y and Z values of the pixel data window in the case of a 3D texture file.
 
 *Data Window Maximum*
-    A vector containing the maximum X and Y values of the pixel data window of the input texture, in the case of a 2D texture file. And the minimum X, Y and Z values of the pixel data window in the case of a 3D texture file.
+    A vector containing the maximum X and Y values of the pixel data window of the input texture, in the case of a 2D texture file. And the maximum X, Y and Z values of the pixel data window in the case of a 3D texture file.
 
 *Display Window Minimum*
     A vector containing the minimum X and Y values of the full window of the image, in the case of a 2D texture file, and the minimum X, Y and Z values in the case of a 3D texture file.

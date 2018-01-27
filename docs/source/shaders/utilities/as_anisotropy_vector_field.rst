@@ -35,7 +35,7 @@ Field Parameters
 
 *Field Mode*
     The input anisotropy vector map can have the anisotropy directions along X and Y, encoded in the Red and Green channels, or in the Red and Blue channels.
-    Typically, RG encoding is used in applications such as PRman [#]_, while RB encoding is used in applications such as Modo [#]_ or Softimage [#]_.
+    Typically, RG encoding is used in applications such as RenderMan [#]_, while RB encoding is used in applications such as Modo [#]_ or Softimage [#]_.
     The values allowed are therefore
 
         * Red/Green as XY
@@ -84,7 +84,7 @@ Outputs
 
 .. rubric:: Footnotes
 
-.. [#] See PRman's `tangent field <https://rmanwiki.pixar.com/display/REN/PxrTangentField>`_ for details on PRman's implementation.
+.. [#] See RenderMan's `tangent field <https://rmanwiki.pixar.com/display/REN/PxrTangentField>`_ for details on PRman's implementation.
 
 .. [#] See `Modo anisotropy help <http://modo.docs.thefoundry.co.uk/modo/501/help/pages/shaderendering/ShaderItems/AnisotropicDirection.html>`_ for details on the Modo implementation. Unlike PRman's, the XY data is encoded in R and B channels, not R and G.
 

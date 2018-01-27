@@ -4,7 +4,7 @@
 Features
 ********
 
-Appleseed-maya is an appleseed plugin for Autodesk® Maya®.
+appleseed-maya is an appleseed plugin for Autodesk® Maya®.
 
 Main exporter features
 ======================
@@ -16,8 +16,8 @@ Presently the exporter supports:
 * Appleseed project export (\*.appleseed files)
 * Image Based Lighting via appleseed Physical Sky, and Dome Light
 * Support for most of Maya's hypershade nodes (see :ref:`label_supported_nodes`)
-* Several appleseed specific materials, texture, and utility nodes. See :ref:`Custom appleseed shader <label_shaders>` for detailed information.
-* Shader overrides with diagnostic modes, ambient occlusion geometric information.
+* Several appleseed specific materials, texture, and utility nodes. See :ref:`Custom appleseed shader <label_shaders>` for detailed information
+* Shader overrides with diagnostic modes, ambient occlusion geometric information
 * Final render denoising :cite:`Boughida:2017:BCD`
 * Support for custom OSL shaders as Maya shading nodes
 
