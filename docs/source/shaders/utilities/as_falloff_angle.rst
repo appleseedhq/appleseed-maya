@@ -69,7 +69,7 @@ Outputs
 
 .. seealso::
 
-   The `wikipedia page on smoothstep <https://en.wikipedia.org/wiki/Smoothstep>>`_ for more information.
+   The `wikipedia page on smoothstep <https://en.wikipedia.org/wiki/Smoothstep>`_ for more information.
 
 -----
 

@@ -10,7 +10,7 @@ The plugin is a Maya module.
 
  **1.** Uncompress the zip file.
 
- **2.** Add the path containing the appleseed-maya.mod file to your Maya.env [#]_ file or to the MAYA_MODULE_PATH environment variable.
+ **2.** Add the path containing the :file:`appleseed-maya.mod` file to your :file:`Maya.env` [#]_ file or to the :envvar:`MAYA_MODULE_PATH` environment variable.
 
  **3.** Launch Maya and enable the plugin in the Plug-in Manager.
 

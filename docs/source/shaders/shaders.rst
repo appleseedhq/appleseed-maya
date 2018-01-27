@@ -21,7 +21,7 @@ Custom appleseed shaders
 ************************
 
 These shaders are meant to either replace some of Maya's functionality that
-wasn't possible to implement directly in `OSL <http://opensource.imageworks.com/?p=osl>`_, or to provide functionality
+wasn't possible to implement directly in `OSL <https://github.com/imageworks/OpenShadingLanguage>`_, or to provide functionality
 that is inexistent and we feel might be useful to the end user.
 
 Procedural Texture Nodes
