@@ -15,6 +15,8 @@ asTexture
 
 A texture lookup node with full control over OSL's texture() call.
 
+|
+
 Parameters
 ----------
 

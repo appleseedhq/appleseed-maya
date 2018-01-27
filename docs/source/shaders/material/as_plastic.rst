@@ -76,6 +76,8 @@ Bump Parameters
 *Bump Normal*
     The unit length world space normal of the bumped surface.
 
+-----
+
 Matte Opacity Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -170,7 +172,7 @@ Screenshots
 
    Painted concrete, with flaking stucco.
 
-.. thumbnail:: /_images/screenshots/plastic/as_plastic_ball2.png
+.. thumbnail:: /_images/screenshots/plastic/as_plastic_ball.png
    :group: shots_as_plastic_group_A
    :width: 10%
    :title:
