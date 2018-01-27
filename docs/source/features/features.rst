@@ -12,7 +12,7 @@ Main exporter features
 Presently the exporter supports:
 
   * Rendering to Maya's RenderVie
-  * Batch Renderin
+  * Batch Rendering
   * Appleseed project export (\*.appleseed files)
   * Image Based Lighting via appleseed Physical Sky, and Dome Light
   * Support for most of Maya's hypershade nodes (see :ref:`label_supported_nodes`)
