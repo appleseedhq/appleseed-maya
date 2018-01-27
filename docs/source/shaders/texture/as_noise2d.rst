@@ -42,20 +42,20 @@ Noise Parameters
 *Type*
     The noise primitive used. It can take the following values
 
-        * Perlin
-        * Simplex
+        * Perlin :cite:`Perlin:1985:IS:325165.325247`
+        * Simplex :cite:`Perlin:2002:IN:566654.566636`
         * Value
-        * Voronoise
-        * Gabor
+        * Voronoise [#]_ :cite:`Worley:1996:CTB:237170.237267`
+        * Gabor :cite:`Galerne:2012:GNE:2185520.2185569`, :cite:`Lagae:2009:PNU:1531326.1531360`
 
 *Intensity*
     The global noise intensity.
 
 *X Frequency*
-    The noise frequency along the X direction.
+    The noise frequency along the *x* direction.
 
 *Y Frequency*
-    The noise frequency along the Y direction.
+    The noise frequency along the *y* direction.
 
 *Ridges*
     Toggling this checkbox will enable the *Ridged Noise* mode. A noise mode more suited to modelling the appearance of crests, mountains, when used to drive a displacement or bump map.
@@ -130,7 +130,7 @@ Recursion Parameters
     Initial noise amplitude before recursion.
 
 *Octaves*
-    Maximum number of iterations.
+    The number of interations to perform.
 
 *Cascade*
     The type of iteration to perform. It can be
@@ -141,7 +141,7 @@ Recursion Parameters
     In  the first case, the results of each iteration are accumulated, and in the second case, they are multiplied with the previous product.
 
 *Lacunarity*
-    Control for the gap between successive noise frequencies.
+    Control for the gap between successive noise frequencies (sucessive octaves).
 
 *Offset*
     Controls the multifractality.
@@ -170,70 +170,76 @@ Outputs
 Screenshots
 -----------
 
-Some examples of feature output modes and metrics.
+Some examples of what can be achieved, and is provided as presets.
+
+.. thumbnail:: /_images/screenshots/noise2d/as_noise2d_coral.png
+   :group: shots_noise2d_group_A
+   :width: 10%
+   :title:
+
+   Gabor noise used as the noise *primitive* set to *Hybrid* anisotropy mode, in a recursive manner, with successive frequencies accumulated. That is, with the *Cascade Mode* set to additive. This helps creating the appearance of a coral like structure, specially if used to drive a displacement or bump.
 
 .. thumbnail:: /_images/screenshots/noise2d/as_noise2d_corrosion_soft.png
    :group: shots_noise2d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the first feature nearest to the evaluated cell.
-
-.. thumbnail:: /_images/screenshots/noise2d/as_noise2d_fBm.png
-   :group: shots_noise2d_group_A
-   :width: 10%
-   :title:
-
-   Euclidian metric, with the second feature nearest to the evaluated cell.
+   A texture generated using inflected signed Value noise, with successive noise frequencies accumulated, creating the appearance of a soft corrosion like texture. Using this texture as a mask to :ref:`asLayerShader <label_as_layer_shader>` to blend a metal and a rust like material, or as a mask to blend colors for a :ref:`asMetal <label_as_metal>` node, produces good results.
 
 .. thumbnail:: /_images/screenshots/noise2d/as_noise2d_granitical.png
    :group: shots_noise2d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the first nearest featured divided by the second nearest feature.
+   A signed Perlin noise, with the product of 8 frequencies, that is, with the *Cascade Mode* set to *Multiplicative*. This texture would work well as a mask to map or to ramp colors for granite, specially when used in conjunction with a :ref:`asSubsurface <label_as_subsurface>` node.
 
 .. thumbnail:: /_images/screenshots/noise2d/as_noise2d_metalaging.png
    :group: shots_noise2d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the first and second nearest features to the cell added.
+   Generalized Voronoi, also known as *Voronoise*, with medium jittering in order not to completely break the patterning order, and low smoothness. When sucessive frequencies are accumulated, it helps creating the appearance of galvanized metal. It would work great with :ref:`asMetal <label_as_metal>`.
 
 .. thumbnail:: /_images/screenshots/noise2d/as_noise2d_ridged.png
    :group: shots_noise2d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, set to *pebbles* mode, one of the many possible combinations of expressions involving the four nearest features to the cell.
+   Ridged multifractal, which works great driving displacements or bumps to create the appearance of terrain ridges.
 
 .. thumbnail:: /_images/screenshots/noise2d/as_noise2d_turbulence.png
    :group: shots_noise2d_group_A
    :width: 10%
    :title:
 
-   Nearest feature to the cell with the Minkowski metric with P parameter set to 0.5.
+   Turbulence using inflected signed Perlin noise.
 
 .. thumbnail:: /_images/screenshots/noise2d/as_noise2d_viral.png
    :group: shots_noise2d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the difference between the second nearest feature and the nearest feature.
+   Appearance of virus or bacteria, created using inflected and ridged Gabor noise set to *Hybrid* anisotropy, with successive frequencies accumulated.
 
 .. thumbnail:: /_images/screenshots/noise2d/as_noise2d_weave.png
    :group: shots_noise2d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the cell IDs of the fourth nearest feature.
+   Appearance of weave patterns using inflected and ridged Gabor noise set to *Hybrid* anisotropy, with successive frequencies accumulated. This would work well as a base texture to threshold in order to drive a transparency mask, and as a texture controlling displacement or bump, color mapping.
 
 .. thumbnail:: /_images/screenshots/noise2d/as_noise2d_zebra.png
    :group: shots_noise2d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the cell IDs of the fourth nearest feature.
+   Finally, a texture with the appearance of zebra patterns, created signed Gabor noise set to *Anisotropic* mode, with successive frequencies accumulated.
+
+-----
+
+.. rubric:: Footnotes
+
+.. [#] Also known as generalized Voronoi. See `Inigo Quilez article on voronoise <http://www.iquilezles.org/www/articles/voronoise/voronoise.htm>`_.
 
 -----
 

@@ -1,19 +1,19 @@
-.. _label_as_noise3D:
+.. _label_as_noise3d:
 
 .. fix_img_align::
 
 |
- 
-.. image:: /_images/icons/asNoise3D.png
+
+.. image:: /_images/icons/asnoise3d.png
    :width: 128px
    :align: left
    :height: 128px
-   :alt: Noise3D Icon
+   :alt: noise3d Icon
 
 asNoise3D
 *********
 
-A procedural 2D Worley :cite:`Worley:1996:CTB:237170.237267` like noise shader, that outputs not only the resulting color, but the four nearest features to the evaluated point, their respective positions, and their cell color IDs. See also :cite:`Ebert:2002:TMP:572337`.
+A fractal solid noise node, with recursion, and an ample choice of noise primitives. The 3D counterpart of :ref:`asNoise2D <label_as_noise2d>` using the surface point P and a placement matrix, instead of UV coordinates.
 
 Parameters
 ----------
@@ -26,13 +26,94 @@ Color Parameters
 ^^^^^^^^^^^^^^^^
 
 *Color 1*
-    Primary cell color.
+    Primary color.
 
 *Color 2*
-    Secondary cell color.
+    Secondary color.
 
 *Contrast*
-    Contrast between primary and secondary cell color.
+    Contrast between primary and secondary colors.
+
+-----
+
+Noise Parameters
+^^^^^^^^^^^^^^^^
+
+*Type*
+    The noise primitive used. It can take the following values
+
+        * Perlin :cite:`Perlin:1985:IS:325165.325247`
+        * Simplex :cite:`Perlin:2002:IN:566654.566636`
+        * Value
+        * Voronoise [#]_ :cite:`Worley:1996:CTB:237170.237267`
+        * Gabor :cite:`Galerne:2012:GNE:2185520.2185569`, :cite:`Lagae:2009:PNU:1531326.1531360`
+
+*Intensity*
+    The global noise intensity.
+
+*Frequency*
+    The noise frequency along the *x*, *y* and *z* directions, contained in a vector.
+
+*Ridges*
+    Toggling this checkbox will enable the *Ridged Noise* mode. A noise mode more suited to modelling the appearance of crests, mountains, when used to drive a displacement or bump map.
+
+*Inflection*
+    Enabling this checkbox will force the noise function to return a absolute value (if the noise was in [-1,1] range to begin with, otherwise it won't have any effect).
+
+*Signed Noise*
+    Enabling this checkbox makes the noise function return values in the [-1,1] range, and disabling it will return values in [0,1] range.
+
+Motion Parameters
+^^^^^^^^^^^^^^^^^
+
+*Animated Noise*
+    Enabling this checkbox will animate the noise along time.
+
+*Frame Time*
+    Frame time, typically the frame number.
+
+*Time Scale*
+    Global time scale, affects the frame time.
+
+Periodic Parameters
+^^^^^^^^^^^^^^^^^^^
+
+*Periodic*
+    Enabling this checkbox will enable periodic noise, with a user-set *x*, *y* and *z* period.
+
+*Period*
+    The periodic noise *x*, *y* and *z* frequency, encoded in a vector.
+
+Voronoise Parameters
+^^^^^^^^^^^^^^^^^^^^
+
+*Smoothness*
+    Controls the smoothness of the generalized Voronoi noise, with low values having a sharp cell boundary, and high values having a smooth Perlin noise like appearance.
+
+*Jittering*
+    Controls the jittering of the Voronoi cells, with low values producing a regular cell grid, and high values producing a randomized cell grid.
+
+Gabor Parameters
+^^^^^^^^^^^^^^^^
+
+*Anisotropy*
+    This parameter controls the type of Gabor noise used. It can take the values
+
+        * Isotropic
+        * Anisotropic
+        * Hybrid
+
+*Direction*
+    Anisotropy vector to use when the Gabor noise *Anisotropy* mode is set to *Anisotropic*.
+
+*Bandwidth*
+    The bandwidth for the Gabor noise.
+
+*Impulses*
+    The number of impulses for the Gabor noise.
+
+*Filter Noise*
+    Enabling this checkbox will produce antialiased noise.
 
 -----
 
@@ -40,97 +121,30 @@ Recursion Parameters
 ^^^^^^^^^^^^^^^^^^^^
 
 *Amplitude*
-    Controls the amplitute at each octave, including the starting iteration.
+    Initial noise amplitude before recursion.
 
 *Octaves*
-    Number of iterations to perform, higher values lead to increasing detail, but increased computational cost as well.
+    The number of interations to perform.
+
+*Cascade*
+    The type of iteration to perform. It can be
+
+        * Additive
+        * Multiplicative
+
+    In  the first case, the results of each iteration are accumulated, and in the second case, they are multiplied with the previous product.
 
 *Lacunarity*
-    Defines how large the gaps are in the cell noise with increasing octaves, higher values lead to higher gaps, lower values to small gaps.
+    Control for the gap between successive noise frequencies (sucessive octaves).
 
-*Persistence*
-    The persistence of the fractal is a gain factor to apply to the amplitude at each iteration, but it only has an effect when the shader is set to the mode *pebbles*.
+*Offset*
+    Controls the multifractality.
 
------
+*Gain*
+    Controls the contrast of the fractal.
 
-Cell Parameters
-^^^^^^^^^^^^^^^
-
-*Density*
-    The density of the cells, with higher values resulting in a higher number of cells in the same area.
-
-*Jittering*
-    How random the placement of the cells is, with low values resulting in a ordered grid of cells, and higher values resulting in aleatory placement of cells.
-
-*Metric*
-    Which metric to choose to calculate the distance from cell to feature points. There are several to choose from, resulting in different types of patterns.
-
-* Euclidian distance
-* Sum of square difference
-* Tchebychev distance
-* Sum of absolute difference
-* Akritean distance
-* Minkowski metric
-* Karlsruhe metric
-
-The sum of the square difference is also known as the Manhattan metric.
-
-The Minkowski metric is a generalized metric whose P parameter allows you to go from the Euclidian distance when P has a value of 2, to the Manhattan distance when P has a value of 1, and as P reaches infinity, it represents the Tchebychev metric.
-
-The Akritean distance if a weighted mix of the Euclidian distance, and the Tchebychev distance.
-
-The Karlsruhe metric, also known as Moscow metric, is a radial metric, returns radial sections from a cell at the center.
-
-*Minkowski Parameter*
-    Controls the metric, with a value of 1 being the Manhattan distance, 2 being the Euclidian distance, and higher values tending to the Tchebychev metric as the parameter approaches infinity.
-
-*Coverage*
-    The Akritean distance coverage, or the weighting mix between the Euclidian distance and the Tchebychev distance.
-
-*Features Mode*
-    The features mode to use when computing the output color.
-
-* Feature 1, or nearest feature from the cell
-* Feature 2, or second nearest feature from the cell
-* Feature 3, or third nearest feature from the cell
-* Feature 4, or fourth nearest feature from the cell
-* F1 + F2, or sum of first and second nearest features
-* F2 - F1, or difference between second and first nearest features
-* F1 * F2, or product of first and second nearest features
-* F1 / F2, or division of first nearest feature by second nearest feature
-* F1 ^ F2, nearest feature raised to the second nearest feature
-* Pebbles, a mode that resembles pebbles
-* Cell ID 1, the ID of the nearest feature to the cell
-* Cell ID 2, the ID of the second nearest feature to the cell
-* Cell ID 3, the ID of the third nearest feature to the cell
-* Cell ID 4, the ID of the fourth nearest feature to the cell
-
-|
-
-.. note::
-
-   The unmodified features, points and their color IDs are also output from the shader, giving the user greater creative potential. The feature modes above are but a starting point.
-
------
-
-Color Balance
-^^^^^^^^^^^^^
-
-The standard Maya color balance, gain, offset parameters. Please consult Maya's documentation for more information on these controls.
-
------
-
-Effects
-^^^^^^^
-
-The standard Maya effects parameters. Please consult Maya's documentation for more information on these controls.
-
------
-
-Coordinates
-^^^^^^^^^^^
-
-The input UV coordinates, typically from an upstream *placement2d* node.
+*Distortion*
+    This parameter distorts the domain of the coordinates for each frequency.
 
 -----
 
@@ -143,81 +157,83 @@ Outputs
 *Output Alpha*
     The alpha resulting from the *Features Mode* choice, usually luminance of the color only.
 
-*Output Features*
-    An array of 4 floats, containing the four nearest features to the cell.
-
-*Output Positions*
-    An array of 4 points, containing the center of the four nearest features to the cell.
-
-*Output IDs*
-    An array of 4 colors, containing the color IDs of the four nearest features to the cell.
-
-.. warning:: presently OSL does not allow connections from/to array elements, and appleseed-maya is not enabling the array outputs for now. This will be addressed in a future release.
-
 -----
 
-.. _label_voronoi2d_screenshots:
+.. _label_noise3d_screenshots:
 
 Screenshots
 -----------
 
-Some examples of feature output modes and metrics.
+Some examples of what can be achieved with this node, besides what was illustrated by the :ref:`asNoise2D gallery <label_noise2d_screenshots>`.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f1.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/noise3d/as_noise3d_coral.png
+   :group: shots_noise3d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the first feature nearest to the evaluated cell.
+   Gabor noise used as the noise *primitive* set to *Hybrid* anisotropy mode, in a recursive manner, with successive frequencies accumulated. That is, with the *Cascade Mode* set to additive. This helps creating the appearance of a coral like structure, specially if used to drive a displacement or bump.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f2.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/noise3d/as_noise3d_corrosion.png
+   :group: shots_noise3d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the second feature nearest to the evaluated cell.
+   A texture generated using inflected signed Value noise, with successive noise frequencies accumulated, creating the appearance of a soft corrosion like texture. Using this texture as a mask to :ref:`asLayerShader <label_as_layer_shader>` to blend a metal and a rust like material, or as a mask to blend colors for a :ref:`asMetal <label_as_metal>` node, produces good results.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f1_divided_by_f2.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/noise3d/as_noise3d_granitical.png
+   :group: shots_noise3d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the first nearest featured divided by the second nearest feature.
+   A signed Perlin noise, with the product of 8 frequencies, that is, with the *Cascade Mode* set to *Multiplicative*. This texture would work well as a mask to map or to ramp colors for granite, specially when used in conjunction with a :ref:`asSubsurface <label_as_subsurface>` node.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f1_plus_f2.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/noise3d/as_noise3d_metalaging.png
+   :group: shots_noise3d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the first and second nearest features to the cell added.
+   Generalized Voronoi, also known as *Voronoise*, with medium jittering in order not to completely break the patterning order, and low smoothness. When sucessive frequencies are accumulated, it helps creating the appearance of galvanized metal. It would work great with :ref:`asMetal <label_as_metal>`.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_pebbles.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/noise3d/as_noise3d_fBm.png
+   :group: shots_noise3d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, set to *pebbles* mode, one of the many possible combinations of expressions involving the four nearest features to the cell.
+   Fractional Brownian motion preset.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_minkowski_p_0.5.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/noise3d/as_noise3d_turbulence.png
+   :group: shots_noise3d_group_A
    :width: 10%
    :title:
 
-   Nearest feature to the cell with the Minkowski metric with P parameter set to 0.5.
+   Turbulence using inflected signed Perlin noise.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_f2_minus_f1.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/noise3d/as_noise3d_viral.png
+   :group: shots_noise3d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the difference between the second nearest feature and the nearest feature.
+   Appearance of virus or bacteria, created using inflected and ridged Gabor noise set to *Hybrid* anisotropy, with successive frequencies accumulated.
 
-.. thumbnail:: /_images/screenshots/voronoi2d/voronoi2d_euclidian_cell_id4.png
-   :group: shots_voronoi2d_group_A
+.. thumbnail:: /_images/screenshots/noise3d/as_noise3d_weave.png
+   :group: shots_noise3d_group_A
    :width: 10%
    :title:
 
-   Euclidian metric, with the cell IDs of the fourth nearest feature.
+   Appearance of weave patterns using inflected and ridged Gabor noise set to *Hybrid* anisotropy, with successive frequencies accumulated. This would work well as a base texture to threshold in order to drive a transparency mask, and as a texture controlling displacement or bump, color mapping.
+
+.. thumbnail:: /_images/screenshots/noise3d/as_noise3d_zebra.png
+   :group: shots_noise3d_group_A
+   :width: 10%
+   :title:
+
+   Finally, a texture with the appearance of zebra patterns, created signed Gabor noise set to *Anisotropic* mode, with successive frequencies accumulated.
+
+-----
+
+.. rubric:: Footnotes
+
+.. [#] Also known as generalized Voronoi. See `Inigo Quilez article on voronoise <http://www.iquilezles.org/www/articles/voronoise/voronoise.htm>`_.
 
 -----
 
