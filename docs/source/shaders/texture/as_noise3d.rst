@@ -4,7 +4,7 @@
 
 |
 
-.. image:: /_images/icons/asnoise3d.png
+.. image:: /_images/icons/asNoise3D.png
    :width: 128px
    :align: left
    :height: 128px
@@ -14,6 +14,8 @@ asNoise3D
 *********
 
 A fractal solid noise node, with recursion, and an ample choice of noise primitives. The 3D counterpart of :ref:`asNoise2D <label_as_noise2d>` using the surface point P and a placement matrix, instead of UV coordinates.
+
+|
 
 Parameters
 ----------

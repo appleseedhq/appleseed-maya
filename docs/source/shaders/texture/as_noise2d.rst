@@ -15,6 +15,8 @@ asNoise2D
 
 A fractal noise node, with recursion, and an ample choice of noise primitives.
 
+|
+
 Parameters
 ----------
 

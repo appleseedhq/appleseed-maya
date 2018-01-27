@@ -15,6 +15,8 @@ asVoronoi3D
 
 A procedural 3D Worley :cite:`Worley:1996:CTB:237170.237267` like noise shader, that outputs not only the resulting color, but the four nearest features to the evaluated point, their respective positions, and their cell color IDs. See also :cite:`Ebert:2002:TMP:572337`.
 
+|
+
 Parameters
 ----------
 
@@ -65,15 +67,15 @@ Cell Parameters
 *Metric*
     Which metric to choose to calculate the distance from cell to feature points. There are several to choose from, resulting in different types of patterns.
 
-* Euclidian distance
+* Euclidian distance [#]_
 * Sum of square difference
-* Tchebychev distance
+* Tchebychev distance [#]_
 * Sum of absolute difference
 * Akritean distance
-* Minkowski metric
-* Karlsruhe metric
+* Minkowski metric [#]_
+* Karlsruhe metric [#]_
 
-The sum of the square difference is also known as the Manhattan metric.
+The sum of the square difference is also known as the Manhattan metric [#]_.
 
 The Minkowski metric is a generalized metric whose P parameter allows you to go from the Euclidian distance when P has a value of 2, to the Manhattan distance when P has a value of 1, and as P reaches infinity, it represents the Tchebychev metric.
 
@@ -218,7 +220,22 @@ Some examples of different metrics and feature output combinations used.
 
    Tchebychev metric, with 4 octaves, and the output set to the product of the two nearest features to the cell.
 
------------
+-----
+
+.. rubric:: Footnotes
+
+
+.. [#] The Euclidian distance or Euclidian metric, also known as :math:`L_2` norm, is the straight line distance between two points in Euclidian space.
+
+.. [#] The Chebyshev (or Tchebychev) distance, also known as Chessboard distance or :math:`L_\infty` norm, is a metric on a vector space where the distance between two vectors is the greatest of their differences along any coordinate dimension.
+
+.. [#] The Minkowski distance, also known as :math:`L_P` norm, is a metric which is a generalization of both the Euclidian distance and the Manhattan distance, being equal to the Manhattan distance when its *p* parameter is equal to 1, or equal to the Euclidian distance when its *p* parameter is equal to 2. On the limit as *p* approaches infinity, it is equal to the Chebyshev distance.
+
+.. [#] In metric geometry, the Karlsruhe metric is a measure of distance that assumes travel is only possible along rays through the origin and circular arcs centered at the origin.
+
+.. [#] The Manhattan distance, also known as *taxicab* metric or :math:`L_1` norm, is a metric in which the distance between two points is the sum of the absolute differences of their Cartesian coordinates.
+
+-----
 
 .. rubric:: References
 
