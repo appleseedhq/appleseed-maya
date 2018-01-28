@@ -100,6 +100,7 @@ enum AppleseedMayaTypeIds
     AsCubeTextureNodeTypeId         = 0x001279fb,   // 1210875
     AsTextureInfoNodeTypeId         = 0x001279fc,   // 1210876
     AsCompositeColorNodeTypeId      = 0x001279fd,   // 1210877
+    AsSwitchSurfaceNodeTypeId       = 0x001279fe,   // 1210878
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };
