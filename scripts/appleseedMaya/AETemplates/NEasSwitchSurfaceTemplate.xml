@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasSwitchSurface'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='color1' type='maya.float3'>
+            <label>Color 1</label>
+        </attribute>
+        <attribute name='color2' type='maya.float3'>
+            <label>Color 2</label>
+        </attribute>
+        <attribute name='color3' type='maya.float3'>
+            <label>Color 3</label>
+        </attribute>
+        <attribute name='color4' type='maya.float3'>
+            <label>Color 4</label>
+        </attribute>
+        <attribute name='color5' type='maya.float3'>
+            <label>Color 5</label>
+        </attribute>
+        <attribute name='color6' type='maya.float3'>
+            <label>Color 6</label>
+        </attribute>
+        <attribute name='color7' type='maya.float3'>
+            <label>Color 7</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasSwitchSurface'>
+        <property name='outColor'/>
+        <property name='color'/>
+        <property name='color1'/>
+        <property name='color2'/>
+        <property name='color3'/>
+        <property name='color4'/>
+        <property name='color5'/>
+        <property name='color6'/>
+        <property name='color7'/>
+    </view>
+</templates>

@@ -1,19 +1,19 @@
-.. _label_as_switch_texture:
+.. _label_as_switch_surface:
 
 .. fix_img_align::
 
 |
  
-.. image:: /_images/icons/asSwitchTexture.png
+.. image:: /_images/icons/asSwitchSurface.png
    :width: 128px
    :align: left
    :height: 128px
-   :alt: Switch Texture Icon
+   :alt: Switch Surface Icon
 
-asSwitchTexture
+asSwitchSurface
 ***************
 
-A node that switches the output texture from a list of 8 inputs, based on object or instance IDs, names, or string patterns, facilitating the creation of automatic variation in large scenes.
+A node that switches the output material from a list of 8 inputs, based on object or instance IDs, names, or string patterns, facilitating the creation of automatic variation in large scenes, specially when coupled with other variation nodes such as :ref:`asSwitchTexture <label_as_switch_texture>`, :ref:`asVaryColor <label_as_vary_color>` or :ref:`asIdManifold <label_as_id_manifold>`.
 
 |
 
@@ -28,7 +28,7 @@ Color Parameters
 ^^^^^^^^^^^^^^^^
 
 *Input Color 0*
-    The first color in the list of colors or textures to evaluate.
+    The first material in the list of materials evaluate.
 
 *(...)*
 
@@ -37,10 +37,13 @@ Color Parameters
    The subsequent inputs follow exactly the same structure and parameterization.
 
 *Input Color 7*
-    The last color in the list of colors or textures to evaluate.
+    The last material in the list of materials to evaluate.
 
 *Cycle Mode*
-    When cycling through the list of colors or textures, if the index goes outside the list bounds, then one has the choice to cycle back to the beginning of the list, or if to clamp to the list size.
+    When cycling through the list of materials, if the index goes outside the list bounds, then one has the choice to cycle back to the beginning of the list, or if to clamp to the list size.
+
+*Connected Slots Only*
+    When enabled (the default behaviour), it will *look up* and cycle through t he inputs which are connected to upstream material nodes. When disabled it will cycle through all available inputs, even those that aren't connected to anything at all.
 
 -----
 
@@ -48,7 +51,7 @@ Manifold Parameters
 ^^^^^^^^^^^^^^^^^^^
 
 *Manifold Type*
-    The type of manifold to use in order to determine which lookup to do in the list of colors or textures.
+    The type of manifold to use in order to determine which lookup to do in the list of materials.
     It can be one of the following
 
         * Object Name
@@ -78,7 +81,7 @@ Outputs
 -------
 
 *Output Color*
-    The resulting color.
+    The resulting material color.
 
 -----
 
