@@ -541,7 +541,7 @@ void ShadingNodeExporter::exportValue(
     {
         MVector value;
         if (AttributeUtils::get(plug, value))
-            ss << "vector " << value.z << " " << value.y << " " << value.z;
+            ss << "vector " << value.x << " " << value.y << " " << value.z;
     }
     else
     {
