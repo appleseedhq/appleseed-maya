@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasFresnel'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='outAlpha' type='maya.float'>
+            <label>Out Alpha</label>
+        </attribute>
+        <attribute name='normalCamera' type='maya.float3'>
+            <label>Normal Camera</label>
+        </attribute>
+        <attribute name='viewerVector' type='maya.float3'>
+            <label>Viewer Vector</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasFresnel'>
+        <property name='outColor'/>
+        <property name='outAlpha'/>
+        <property name='normalCamera'/>
+        <property name='viewerVector'/>
+    </view>
+</templates>
