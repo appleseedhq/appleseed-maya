@@ -34,6 +34,8 @@
 
 // appleseed.foundation headers.
 #include "foundation/math/matrix.h"
+#include "foundation/utility/api/specializedapiarrays.h"
+#include "foundation/utility/containers/dictionary.h"
 #include "foundation/utility/string.h"
 
 // appleseed.main headers.
@@ -453,6 +455,21 @@ namespace
         const char* get_model() const override
         {
             return Model;
+        }
+
+        asf::Dictionary get_model_metadata() const override
+        {
+            return
+                asf::Dictionary()
+                    .insert("name", Model)
+                    .insert("label", "XGen Patch Assembly");
+        }
+
+        asf::DictionaryArray get_input_metadata() const override
+        {
+            asf::DictionaryArray metadata;
+
+            return metadata;
         }
 
         asf::auto_release_ptr<asr::Assembly> create(
