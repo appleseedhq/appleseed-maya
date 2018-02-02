@@ -61,7 +61,7 @@ namespace
     const int MaxHighlightSize = 8;
 
     class RenderViewTileCallback
-      : public renderer::ITileCallback
+      : public renderer::TileCallbackBase
     {
       public:
         RenderViewTileCallback(
@@ -88,18 +88,10 @@ namespace
             delete this;
         }
 
-        virtual void on_tiled_frame_begin(const asr::Frame* frame) override
-        {
-        }
-
-        virtual void on_tiled_frame_end(const asr::Frame* frame) override
-        {
-        }
-
         virtual void on_tile_begin(
-            const asr::Frame*    frame,
-            const size_t        tile_x,
-            const size_t        tile_y) override
+            const asr::Frame*       frame,
+            const size_t            tile_x,
+            const size_t            tile_y) override
         {
             const asf::CanvasProperties& props = frame->image().properties();
             pre_render(
@@ -110,26 +102,22 @@ namespace
         }
 
         virtual void on_tile_end(
-            const asr::Frame*   frame,
-            const size_t        tile_x,
-            const size_t        tile_y) override
+            const asr::Frame*       frame,
+            const size_t            tile_x,
+            const size_t            tile_y) override
         {
             write_tile(frame, tile_x, tile_y);
         }
 
-        virtual void on_progressive_frame_begin(const asr::Frame* frame) override
-        {
-            const asf::CanvasProperties& frame_props = frame->image().properties();
-            pre_render(0, 0, frame_props.m_canvas_width, frame_props.m_canvas_height);
-        }
-
-        void on_progressive_frame_end(const asr::Frame* frame) override
+        void on_progressive_frame_update(const asr::Frame* frame) override
         {
             const asf::CanvasProperties& props = frame->image().properties();
 
-            for ( size_t ty = 0; ty < props.m_tile_count_y; ++ty )
-                for ( size_t tx = 0; tx < props.m_tile_count_x; ++tx )
+            for (size_t ty = 0; ty < props.m_tile_count_y; ++ty)
+            {
+                for (size_t tx = 0; tx < props.m_tile_count_x; ++tx)
                     write_tile(frame, tx, ty);
+            }
         }
 
       private:
