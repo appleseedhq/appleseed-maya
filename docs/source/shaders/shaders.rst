@@ -42,6 +42,7 @@ Color Utilities
 * :ref:`asLuminance <label_as_luminance>`
 * :ref:`asSwitchTexture <label_as_switch_texture>`
 * :ref:`asVaryColor <label_as_vary_color>`
+* :ref:`asFresnel <label_as_fresnel>`
 
 General Utilities
 =================
