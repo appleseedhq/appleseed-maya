@@ -8,6 +8,9 @@
         <attribute name='outAlpha' type='maya.float'>
             <label>Out Alpha</label>
         </attribute>
+        <attribute name='outChannel' type='maya.float'>
+            <label>Out Channel</label>
+        </attribute>
         <attribute name='color' type='maya.float3'>
             <label>Color</label>
         </attribute>
@@ -36,6 +39,7 @@
     <view name='NEDefault' template='NEasTexture'>
         <property name='outColor'/>
         <property name='outAlpha'/>
+        <property name='outChannel'/>
         <property name='color'/>
         <property name='alpha'/>
         <property name='sBlurAmount'/>
