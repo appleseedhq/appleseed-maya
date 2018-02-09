@@ -151,6 +151,9 @@ Outputs
 *Output Alpha*
     The alpha resulting from the *Features Mode* choice, usually luminance of the color only.
 
+*Output Single Channel*
+    The output when the texture lookup is made on a greyscale image.
+
 -----
 
 .. rubric:: Footnotes
