@@ -49,9 +49,6 @@ Subsurface Parameters
 *MFP Scale*
     An overall scaling factor for the *Mean Free Path*.
 
-*Zero Scattering Weight*
-    When sthe *Subsurface Profile* is set to *Random Walk*, when the surface is very thin and the *Mean Free Path* very high, it's possible for the light to travel through the object volume without scattering internally. This parameter provides the ability to scale the intensity of such an event, which typically produces a whiter more translucent like appearance on thin edges.
-
 SSS Advanced Parameters
 """""""""""""""""""""""
 
