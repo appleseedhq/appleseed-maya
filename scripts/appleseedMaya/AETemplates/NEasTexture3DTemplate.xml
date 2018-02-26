@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasTexture3D'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='channelFill' type='maya.float'>
+            <label>Channel Fill</label>
+        </attribute>
+        <attribute name='time' type='maya.float'>
+            <label>Time</label>
+        </attribute>
+        <attribute name='surfacePoint' type='maya.float3'>
+            <label>Surface Point</label>
+        </attribute>
+        <attribute name='placementMatrix' type='maya.matrix'>
+            <label>Placement Matrix</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasTexture3D'>
+        <property name='outColor'/>
+        <property name='color'/>
+        <property name='channelFill'/>
+        <property name='time'/>
+        <property name='surfacePoint'/>
+        <property name='placementMatrix'/>
+    </view>
+</templates>
