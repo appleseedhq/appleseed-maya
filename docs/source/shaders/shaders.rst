@@ -59,6 +59,7 @@ General Utilities
 * :ref:`asSpaceTransform <label_as_space_transform>`
 * :ref:`asSwizzle <label_as_swizzle>`
 * :ref:`asTextureInfo <label_as_texture_info>`
+* :ref:`asTriplanar <label_as_triplanar>`
 
 Materials
 =========

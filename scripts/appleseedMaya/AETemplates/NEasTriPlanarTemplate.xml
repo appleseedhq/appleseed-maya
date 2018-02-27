@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasTriPlanar'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='outAlpha' type='maya.float'>
+            <label>Out Alpha</label>
+        </attribute>
+        <attribute name='blendSoftness' type='maya.float'>
+            <label>Blend Softness</label>
+        </attribute>
+        <attribute name='surfacePoint' type='maya.float3'>
+            <label>Surface Point</label>
+        </attribute>
+        <attribute name='normalCamera' type='maya.float3'>
+            <label>Normal Camera</label>
+        </attribute>
+        <attribute name='placementMatrix' type='maya.matrix'>
+            <label>Placement Matrix</label>
+        </attribute>
+        <attribute name='randomization' type='maya.float'>
+            <label>Randomization</label>
+        </attribute>
+        <attribute name='manifold' type='maya.long'>
+            <label>Manifold</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasTriPlanar'>
+        <property name='outColor'/>
+        <property name='outAlpha'/>
+        <property name='blendSoftness'/>
+        <property name='surfacePoint'/>
+        <property name='normalCamera'/>
+        <property name='placementMatrix'/>
+        <property name='randomization'/>
+        <property name='manifold'/>
+    </view>
+</templates>
