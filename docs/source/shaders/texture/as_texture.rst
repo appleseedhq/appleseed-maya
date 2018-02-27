@@ -107,7 +107,7 @@ Color Management
         * Gamma 2.2
         * Gamma 2.4
         * Gamma 2.6 (DCI)
-        * Rec.1886
+        * Rec.1886 [#]_
         * Rec.2020
 
 *RGB Primaries*
@@ -115,11 +115,11 @@ Color Management
 
         * Raw [#]_
         * sRGB/Rec.709 [#]_
-        * AdobeRGB
-        * Rec.2020
-        * DCI-P3
-        * ACES
-        * ACEScg
+        * AdobeRGB [#]_
+        * Rec.2020 :cite:`6784055`
+        * DCI-P3 :cite:`7290729`
+        * ACES :cite:`7289895`
+        * ACEScg :cite:`Duiker:2015:ACC:2791261.2791273`
 
 *Rendering RGB Primaries*
     It allows the user to set the RGB primaries of the rendering or working space, and it should match the choice of rendering/working space of the renderer.
@@ -162,7 +162,18 @@ Outputs
 
 .. [#] This note assumes however, that the UDIM pattern will always come last before the filename extension. That is, if you are using an animated sequence or frames of an animated sequence, then the padded frame numbers **must** come before the UDIM pattern. I.e, ``<filename>.<padded frame numbers>.<UDIM>.<extension>.``
 
+.. [#] See `ITU-R BT.1886 recommendation <https://www.itu.int/rec/R-REC-BT.1886-0-201103-I/en>`_ for details on the electro-optical transfer function.
+
 .. [#] Because it makes no sense whatsoever to use colorimetry on non-color information or data, such as normal maps, or Z depth, motion vectors, and so on.
 
-.. [#] sRGB shares the same CIE xy chromaticity coordinates with ITU-R BT.709/Rec.709, hence referring to the color space defined these coordinates as *sRGB/Rec.709*.
+.. [#] sRGB shares the same CIE xy chromaticity coordinates with `ITU-R BT.709/Rec.709 <https://www.itu.int/rec/R-REC-BT.709/en>`_ , hence this node refers to the RGB primaries shared by these two color spaces as *sRGB/Rec.709*.
+
+.. [#] See `encoding characteristics of AdobeRGB <http://www.color.org/chardata/rgb/adobergb.xalter>`_ specification.
+
+-----
+
+.. rubric:: References
+
+.. bibliography:: /bibtex/references.bib
+    :filter: docname in docnames
 

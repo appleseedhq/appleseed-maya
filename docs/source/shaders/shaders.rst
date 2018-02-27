@@ -30,6 +30,7 @@ Procedural Texture Nodes
 * :ref:`asNoise2D <label_as_noise2D>`
 * :ref:`asNoise3D <label_as_noise3D>`
 * :ref:`asTexture <label_as_texture>`
+* :ref:`asTexture3D <label_as_texture3D>`
 * :ref:`asVoronoi2D <label_as_voronoi2D>`
 * :ref:`asVoronoi3D <label_as_voronoi3D>`
 
