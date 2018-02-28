@@ -13,7 +13,7 @@
 asTriplanar
 ***********
 
-A triplanar projection shader, allowing individual texture(s) to be projected along the object's X, Y and Z axis, and blended.
+A triplanar projection shader, allowing individual texture(s) to be projected along the object's X, Y and Z axis, and blended. It can be used to blend colors or tangent space normal maps.
 
 |
 
@@ -26,6 +26,12 @@ Parameters
 
 Projection
 ^^^^^^^^^^
+
+*Blend Mode*
+    Allowing the user to choose between blending colors, or blending tangent space normal maps [#]_. It can take the values
+
+        * Color
+        * Tangent Normal
 
 *Blend Softness*
     Controls the transition softness between the projections, with higher values having a faded and very wide transition, and lower values having sharper well defined transition areas.
@@ -169,9 +175,14 @@ Outputs
 *Output Alpha*
     The alpha resulting from the *Features Mode* choice, usually luminance of the color only.
 
+*Output Normal*
+    The resulting blended tangent space normal maps as unit length normals in world space when the *Blend Mode* is set to *Tangent Normal*.
+
 -----
 
 .. rubric:: Footnotes
+
+.. [#] See `blending in detail <http://blog.selfshadow.com/publications/blending-in-detail/>`_ for details on blending tangent space normals using several methods. This node uses the *Reoriented Normal Mapping* (or RNM) blend method to blend tangent space normals when *Blend Mode* is set to *Tangent Normal*.
 
 .. [#] See `ITU-R BT.1886 recommendation <https://www.itu.int/rec/R-REC-BT.1886-0-201103-I/en>`_ for details on the electro-optical transfer function.
 
@@ -187,4 +198,5 @@ Outputs
 
 .. bibliography:: /bibtex/references.bib
     :filter: docname in docnames
+
 

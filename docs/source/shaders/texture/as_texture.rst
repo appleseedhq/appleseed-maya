@@ -39,6 +39,7 @@ Texture
         * Mari [#]_
 
 .. note::
+
    Though a full reference of UV tiles is outside the scope of this document, it suffices to say here that the ZBrush UV tiles pattern is in the form *u<N>_v<N>* with the tiles starting at 0, whilst Mudbox shares the same pattern but starts at 1. Mari uses UDIM tiles.
 
 *Color*
@@ -89,7 +90,10 @@ Texture
         * Closest
 
 .. seealso::
+   
    `This link on texture filtering <https://en.wikipedia.org/wiki/Texture_filtering>`_ for more details.
+
+.. _label_as_texture_color_management:
 
 Color Management
 ^^^^^^^^^^^^^^^^
