@@ -146,7 +146,7 @@ Outputs
 -------
 
 *Output Color*
-    The color resulting from ghe *Features Mode* choice.
+    The color resulting from the *Features Mode* choice.
 
 *Output Alpha*
     The alpha resulting from the *Features Mode* choice, usually luminance of the color only.

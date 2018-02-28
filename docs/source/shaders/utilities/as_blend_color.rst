@@ -15,6 +15,8 @@ asBlendColor
 
 A node that allows the user to blend an input color with a second input color according to preset modes, similar to what is commonly found in image editing applications.
 
+|
+
 Parameters
 ----------
 
