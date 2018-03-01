@@ -32,11 +32,17 @@ Outputs
 *Surface Position*
     The surface point *P* in world space.
 
+*Reference Position*
+    The surface point *Pref* of a reference or pose mesh, in world space.
+
 *Light Point Position*
     The position in the light source, *Ps*, in world space.
 
 *Shading Normal*
     The surface normal *N* in world space, not necessarily normalized.
+
+*Reference Normal*
+    The surface normal *Nref* of a reference or pose mesh, in world space.
 
 *Geometric Normal*
     The true geometric normal *Ng* in world space, not necessarily normalized.

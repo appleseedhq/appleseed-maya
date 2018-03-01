@@ -5,12 +5,18 @@
         <attribute name='worldP' type='maya.float3'>
             <label>World P</label>
         </attribute>
+        <attribute name='worldPref' type='maya.float3'>
+            <label>Reference Point</label>
+        </attribute> 
         <attribute name='worldPs' type='maya.float3'>
             <label>World Ps</label>
         </attribute>
         <attribute name='worldN' type='maya.float3'>
             <label>World N</label>
         </attribute>
+        <attribute name='worldNref' type='maya.float3'>
+            <label>Reference Normal</label>
+        </attribute>  
         <attribute name='worldNg' type='maya.float3'>
             <label>World Ng</label>
         </attribute>
@@ -62,8 +68,10 @@
     </template>
     <view name='NEDefault' template='NEasGlobals'>
         <property name='worldP'/>
+        <property name='worldPref'/>        
         <property name='worldPs'/>
         <property name='worldN'/>
+        <property name='worldNref'/>        
         <property name='worldNg'/>
         <property name='worldI'/>
         <property name='worldBn'/>
