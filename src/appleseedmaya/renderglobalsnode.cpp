@@ -173,7 +173,7 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_diagnosticShader, "diagnosticShader")
 
     // Limit bounces.
-    m_limitBounces = numAttrFn.create("limitBounces", "limitBounces", MFnNumericData::kBoolean, false, &status);
+    m_limitBounces = numAttrFn.create("limitBounces", "limitBounces", MFnNumericData::kBoolean, true, &status);
     CHECKED_ADD_ATTRIBUTE(m_limitBounces, "limitBounces")
 
     // Global Bounces.
@@ -192,7 +192,7 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_glossyBounces, "glossyBounces")
 
     // Diffuse Bounces.
-    m_diffuseBounces = numAttrFn.create("diffuseBounces", "diffuseBounces", MFnNumericData::kInt, 8, &status);
+    m_diffuseBounces = numAttrFn.create("diffuseBounces", "diffuseBounces", MFnNumericData::kInt, 3, &status);
     numAttrFn.setMin(0);
     CHECKED_ADD_ATTRIBUTE(m_diffuseBounces, "diffuseBounces")
 
