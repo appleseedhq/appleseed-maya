@@ -67,7 +67,7 @@ Materials
 * :ref:`asBlackbody <label_as_blackbody>`
 * :ref:`asDisneyMaterial <label_as_disney_material>`
 * :ref:`asGlass <label_as_glass>`
-* :ref:`asLayerShader <label_as_layer_shader>`
+* :ref:`asBlendShader <label_as_blend_shader>`
 * :ref:`asMetal <label_as_metal>`
 * :ref:`asPlastic <label_as_plastic>`
 * :ref:`asStandardSurface <label_as_standard_surface>`
