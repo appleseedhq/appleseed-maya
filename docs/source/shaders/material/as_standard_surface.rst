@@ -51,6 +51,17 @@ Subsurface Parameters
     Overall scaling factor for the MFP color, which is expected in [0,1] range.
     Values above 1.0 are possible, resulting in increased translucency appearance.
 
+Advanced
+~~~~~~~~
+
+*Subsurface Profile*
+    The diffusion profiles to use in the BSSDRF [#]_. This parameter can take the following values:
+
+    * Gaussian :cite:`dEon:2007:ERH:2383847.2383869`
+    * Better Dipole
+    * Normalized Diffusion :cite:`Christensen:2015:ARP:2775280.2792555`
+    * Random Walk :cite:`Meng:2016:IDS:3071773.3071778`
+
 -----
 
 Translucency Parameters
@@ -144,8 +155,8 @@ Coating Parameters
 Coating Absorption
 """"""""""""""""""
 
-*Coating Depth*
-    Intensity of coating absorption, with 0 being no absorption, 1 near full absorption.
+*Coating Thickness*
+    Thickness of the coating layer, controlling the intensity of coating absorption, with 0 being no absorption, 1 being full absorption.
 
 *Coating Absorption*
     Absorption color for the coating, white has no effect, black absorbs fully.

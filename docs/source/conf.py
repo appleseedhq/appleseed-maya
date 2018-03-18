@@ -23,7 +23,7 @@ from docutils.parsers.rst.directives.admonitions import BaseAdmonition
 from sphinx.util import compat
 compat.make_admonition = BaseAdmonition
 
-needs_sphinx = '1.6.7'
+needs_sphinx = '1.6.6'
 
 # For automagical GIT versioning (describe, tags)
 #
