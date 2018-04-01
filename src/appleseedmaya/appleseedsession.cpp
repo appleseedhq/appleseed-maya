@@ -408,11 +408,17 @@ namespace
 
             // Set the shutter open and close times in all cameras.
             asr::CameraContainer& cameras = m_project->get_scene()->cameras();
+
+            const float shutterOpenTime = motionBlurSampleTimes.normalizedFrame(motionBlurSampleTimes.m_shutterOpenTime);
+            const float shutterCloseTime = motionBlurSampleTimes.normalizedFrame(motionBlurSampleTimes.m_shutterCloseTime);
+
             for (size_t i = 0, e = cameras.size(); i < e; ++i)
             {
                 cameras.get_by_index(i)->get_parameters()
-                    .insert("shutter_open_time", motionBlurSampleTimes.normalizedFrame(motionBlurSampleTimes.m_shutterOpenTime))
-                    .insert("shutter_close_time", motionBlurSampleTimes.normalizedFrame(motionBlurSampleTimes.m_shutterCloseTime));
+                    .insert("shutter_open_begin_time", shutterOpenTime)
+                    .insert("shutter_open_end_time", shutterOpenTime)
+                    .insert("shutter_close_begin_time", shutterCloseTime);
+                    .insert("shutter_close_end_time", shutterCloseTime);
             }
 
             asr::ParamArray params = m_project->get_frame()->get_parameters();
