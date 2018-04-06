@@ -1,4 +1,4 @@
-## appleseed-maya [![Documentation Status](https://readthedocs.org/projects/appleseed-maya/)](https://appleseed.readthedocs.io/projects/appleseed-maya/en/latest/?badge=latest)
+## appleseed-maya [![Documentation Status](https://readthedocs.org/projects/appleseed-maya/badge/?version=latest)](https://readthedocs.org/projects/appleseed-maya/)
 
 ![appleseed-maya Screenshot](https://raw.githubusercontent.com/appleseedhq/appleseedhq.github.io/master/img/screenshots/appleseed-maya.png)
 
