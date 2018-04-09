@@ -417,7 +417,7 @@ namespace
                 cameras.get_by_index(i)->get_parameters()
                     .insert("shutter_open_begin_time", shutterOpenTime)
                     .insert("shutter_open_end_time", shutterOpenTime)
-                    .insert("shutter_close_begin_time", shutterCloseTime);
+                    .insert("shutter_close_begin_time", shutterCloseTime)
                     .insert("shutter_close_end_time", shutterCloseTime);
             }
 
