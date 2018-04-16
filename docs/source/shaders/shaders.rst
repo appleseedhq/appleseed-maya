@@ -50,6 +50,7 @@ General Utilities
 
 * :ref:`asAnisotropyVectorField <label_as_anisotropy_vector_field>`
 * :ref:`asAttributes <label_as_attributes>`
+* :ref:`asBump <label_as_bump>`
 * :ref:`asCreateMask <label_as_create_mask>`
 * :ref:`asDoubleShade <label_as_double_shade>`
 * :ref:`asFalloffAngle <label_as_falloff_angle>`

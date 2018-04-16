@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasBump'>
+        <attribute name='outNormal' type='maya.float3'>
+            <label>Out Normal</label>
+        </attribute>
+        <attribute name='bumpValue' type='maya.float'>
+            <label>Bump Value</label>
+        </attribute>
+        <attribute name='bumpDepth' type='maya.float'>
+            <label>Bump Depth</label>
+        </attribute>
+        <attribute name='normalMap' type='maya.float3'>
+            <label>Normal Map</label>
+        </attribute>
+        <attribute name='surfacePoint' type='maya.float3'>
+            <label>Surface Point</label>
+        </attribute>
+        <attribute name='surfaceNormal' type='maya.float3'>
+            <label>Surface Normal</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasBump'>
+        <property name='outNormal'/>
+        <property name='bumpValue'/>
+        <property name='bumpDepth'/>
+        <property name='normalMap'/>
+        <property name='surfacePoint'/>
+        <property name='surfaceNormal'/>
+    </view>
+</templates>
