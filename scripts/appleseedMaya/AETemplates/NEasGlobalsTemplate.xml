@@ -44,6 +44,9 @@
         <attribute name='vCoord' type='maya.float'>
             <label>V Coord</label>
         </attribute>
+        <attribute name='uvCoord' type='maya.float2'>
+            <label>UV Coords</label>
+        </attribute>
         <attribute name='worldDNdu' type='maya.float3'>
             <label>World DNdu</label>
         </attribute>
