@@ -71,6 +71,9 @@ Outputs
 *V Coordinate*
     Texture coordinate *v*.
 
+*UV Coordinates*
+    A float array containing both the *u* and *v* coordinates, sometimes required for some applications that expect this specific data type.
+
 *dN/du*
     The global variable *dNdu* is a appleseed specific global variable, and denotes the change of *N* in regard to *u*.
 
