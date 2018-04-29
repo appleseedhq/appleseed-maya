@@ -494,6 +494,16 @@ class AppleseedRenderGlobalsMainTab(object):
                                 enumeratedItem=self.__getAttributeMenuItems("denoiser")),
                             attrName="denoiser")
 
+                        self.__addControl(
+                            ui=pm.checkBoxGrp(
+                                label="Skip Already Denoised"),
+                            attrName="skipDenoised")
+
+                        self.__addControl(
+                            ui=pm.checkBoxGrp(
+                                label="Random Pixel Order"),
+                            attrName="randomPixelOrder")
+
                         enablePrefilter = mc.getAttr(
                             "appleseedRenderGlobals.prefilterSpikes")
                         self.__addControl(
