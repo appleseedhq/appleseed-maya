@@ -271,10 +271,9 @@ namespace
         }
 
       private:
-        static uint8_t linear_rgb_to_srgb(const float c)
+        static uint8_t to_uint8(const float c)
         {
-            const float x = asf::faster_linear_rgb_to_srgb(c);
-            return static_cast<uint8_t>(asf::saturate(x) * 255.0f);
+            return static_cast<uint8_t>(asf::saturate(c) * 255.0f);
         }
 
         void copySwatchImage(MImage& dstImage) const
@@ -304,9 +303,9 @@ namespace
                         for (size_t i = 0, ie = tile.get_width(); i < ie; ++i)
                         {
                             // Maya docs say RGBA, but it is actually BGRA.
-                            *dst++ = linear_rgb_to_srgb(src[2]);
-                            *dst++ = linear_rgb_to_srgb(src[1]);
-                            *dst++ = linear_rgb_to_srgb(src[0]);
+                            *dst++ = to_uint8(src[2]);
+                            *dst++ = to_uint8(src[1]);
+                            *dst++ = to_uint8(src[0]);
                             *dst++ = 255;
                             src += 4;
                         }
