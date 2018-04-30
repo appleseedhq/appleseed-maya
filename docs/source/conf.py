@@ -23,7 +23,7 @@ from docutils.parsers.rst.directives.admonitions import BaseAdmonition
 from sphinx.util import compat
 compat.make_admonition = BaseAdmonition
 
-needs_sphinx = '1.6.7'
+needs_sphinx = '1.6.6'
 
 # For automagical GIT versioning (describe, tags)
 #
@@ -168,7 +168,7 @@ html_theme_options = {
         ("Installation", "installation/installation"),
         ("Reference", "shaders/shaders"),
         ("Tutorials", "tutorials/tutorials"),
-        ("appleseedhq", "http://appleseedhq.net", True),
+        ("appleseedhq", "https://appleseedhq.net", True),
         ("vimeo", "https://vimeo.com/appleseedhq", True)
     ],
 
@@ -406,7 +406,7 @@ epub_language = 'en'
 
 # The scheme of the identifier. Typical schemes are ISBN or URL.
 
-epub_scheme = 'http://appleseedhq.net'
+epub_scheme = 'https://appleseedhq.net'
 
 # The unique identifier of the text. This can be a ISBN number
 # or the project homepage.
@@ -465,5 +465,5 @@ epub_use_index = True
 epub_writing_mode = 'horizontal'
 
 # Example configuration for intersphinx: refer to the Python standard library.
-# intersphinx_mapping = {'http://appleseedhq.net/docs.html': None}
+# intersphinx_mapping = {'https://appleseedhq.net/docs.html': None}
 

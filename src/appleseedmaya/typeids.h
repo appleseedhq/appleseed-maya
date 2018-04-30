@@ -1,11 +1,11 @@
 
 //
 // This source file is part of appleseed.
-// Visit http://appleseedhq.net/ for additional information and resources.
+// Visit https://appleseedhq.net/ for additional information and resources.
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2017 Esteban Tovagliari, The appleseedhq Organization
+// Copyright (c) 2016-2018 Esteban Tovagliari, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -101,6 +101,8 @@ enum AppleseedMayaTypeIds
     AsTextureInfoNodeTypeId         = 0x001279fc,   // 1210876
     AsCompositeColorNodeTypeId      = 0x001279fd,   // 1210877
     AsSwitchSurfaceNodeTypeId       = 0x001279fe,   // 1210878
+    AsTexture3DNodeTypeId           = 0x001279ff,   // 1210879
+    AsBumpNodeTypeId                = 0x00127a00,   // 1210880
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };

@@ -1,11 +1,11 @@
 
 //
 // This source file is part of appleseed.
-// Visit http://appleseedhq.net/ for additional information and resources.
+// Visit https://appleseedhq.net/ for additional information and resources.
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2017 Esteban Tovagliari, The appleseedhq Organization
+// Copyright (c) 2016-2018 Esteban Tovagliari, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -97,6 +97,8 @@ MObject RenderGlobalsNode::m_maxTextureCacheSize;
 MObject RenderGlobalsNode::m_denoiserMode;
 MStringArray RenderGlobalsNode::m_denoiserModeKeys;
 
+MObject RenderGlobalsNode::m_skipDenoisedPixels;
+MObject RenderGlobalsNode::m_randomPixelOrder;
 MObject RenderGlobalsNode::m_prefilterSpikes;
 MObject RenderGlobalsNode::m_spikeThreshold;
 MObject RenderGlobalsNode::m_patchDistanceThreshold;
@@ -269,6 +271,14 @@ MStatus RenderGlobalsNode::initialize()
 
     CHECKED_ADD_ATTRIBUTE(m_denoiserMode, "denoiser")
 
+    // Skip already denoised pixels.
+    m_skipDenoisedPixels = numAttrFn.create("skipDenoised", "skipDenoised", MFnNumericData::kBoolean, true, &status);
+    CHECKED_ADD_ATTRIBUTE(m_skipDenoisedPixels, "skipDenoised")
+
+    // Random pixel order.
+    m_randomPixelOrder = numAttrFn.create("randomPixelOrder", "randomPixelOrder", MFnNumericData::kBoolean, true, &status);
+    CHECKED_ADD_ATTRIBUTE(m_randomPixelOrder, "randomPixelOrder")
+
     // Prefilter Spikes.
     m_prefilterSpikes = numAttrFn.create("prefilterSpikes", "prefilterSpikes", MFnNumericData::kBoolean, true, &status);
     CHECKED_ADD_ATTRIBUTE(m_prefilterSpikes, "prefilterSpikes")
@@ -438,6 +448,20 @@ void RenderGlobalsNode::applyGlobalsToProject(
     {
         frame->get_parameters().insert(
             "denoiser", m_denoiserModeKeys[denoiserMode].asChar());
+    }
+
+    bool skipDenoised;
+    if (AttributeUtils::get(MPlug(globals, m_skipDenoisedPixels), skipDenoised))
+    {
+        frame->get_parameters().insert(
+            "skip_denoised", skipDenoised);
+    }
+
+    bool randomPixelOrder;
+    if (AttributeUtils::get(MPlug(globals, m_randomPixelOrder), randomPixelOrder))
+    {
+        frame->get_parameters().insert(
+            "random_pixel_order", randomPixelOrder);
     }
 
     bool prefilterSpikes;
