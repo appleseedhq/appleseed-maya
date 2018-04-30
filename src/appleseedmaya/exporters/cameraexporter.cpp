@@ -140,7 +140,7 @@ void CameraExporter::createEntities(
             "film_dimensions",
             asf::Vector2d(horizontalFilmAperture, verticalFilmAperture));
 
-        // Maya's aperture is given in mm so we convert it to meters.
+        // Maya's focal_length is given in mm so we convert it to meters.
         cameraParams.insert("focal_length", camera.focalLength() * 0.001);
 
         if (dofEnabled)
