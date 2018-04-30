@@ -93,12 +93,15 @@ namespace
             const size_t            tile_x,
             const size_t            tile_y) override
         {
+            // Temporarily disabled.
+            /*
             const asf::CanvasProperties& props = frame->image().properties();
             pre_render(
                 tile_x * props.m_tile_width,
                 tile_y * props.m_tile_height,
                 props.m_tile_width,
                 props.m_tile_height);
+            */
         }
 
         virtual void on_tile_end(
