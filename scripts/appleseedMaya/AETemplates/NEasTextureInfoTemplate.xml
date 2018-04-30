@@ -2,9 +2,6 @@
 <templates>
     <using package='maya'/>
     <template name='NEasTextureInfo'>
-        <attribute name='textureFile' type='maya.string'>
-            <label>Texture File</label>
-        </attribute>
         <attribute name='averageColor' type='maya.float3'>
             <label>Average Color</label>
         </attribute>
@@ -46,7 +43,6 @@
         </attribute>
     </template>
     <view name='NEDefault' template='NEasTextureInfo'>
-        <property name='textureFile'/>
         <property name='averageColor'/>
         <property name='averageAlpha'/>
         <property name='dataWindowMaximum'/>
