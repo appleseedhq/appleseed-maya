@@ -63,6 +63,9 @@ const MTypeId RenderGlobalsNode::id(RenderGlobalsNodeTypeId);
 MObject RenderGlobalsNode::m_pixelSamples;
 MObject RenderGlobalsNode::m_passes;
 MObject RenderGlobalsNode::m_tileSize;
+MObject RenderGlobalsNode::m_pixelFilter;
+MStringArray RenderGlobalsNode::m_pixelFilterKeys;
+MObject RenderGlobalsNode::m_pixelFilterSize;
 
 MObject RenderGlobalsNode::m_sceneScale;
 
@@ -106,6 +109,24 @@ MObject RenderGlobalsNode::m_denoiseScales;
 
 MObject RenderGlobalsNode::m_imageFormat;
 
+namespace
+{
+
+const asf::Dictionary* findDictionary(const asf::DictionaryArray& dictionaries, const char* name)
+{
+    for (size_t i = 0, e = dictionaries.size(); i < e; ++i)
+    {
+        const asf::Dictionary& dict = dictionaries[i];
+
+        if (strcmp(dict.get("name"), name) == 0)
+            return &dict;
+    }
+
+    return nullptr;
+}
+
+}
+
 void* RenderGlobalsNode::creator()
 {
     return new RenderGlobalsNode();
@@ -143,8 +164,32 @@ MStatus RenderGlobalsNode::initialize()
     numAttrFn.setMin(1);
     CHECKED_ADD_ATTRIBUTE(m_tileSize, "tileSize")
 
+    // Pixel filter.
+    m_pixelFilter = enumAttrFn.create("pixelFilter", "pixelFilter", 0, &status);
+    {
+        asf::DictionaryArray metadata = asr::FrameFactory().get_input_metadata();
+
+        const asf::Dictionary* filter_metadata = findDictionary(metadata, "filter");
+        const asf::Dictionary& items = filter_metadata->dictionary("items");
+
+        short menuIndex = 0;
+
+        for (auto it(items.strings().begin()), e(items.strings().end()); it != e; ++it)
+        {
+            enumAttrFn.addField(it.key(), menuIndex++);
+            m_pixelFilterKeys.append(MString(it.value()));
+        }
+    }
+    CHECKED_ADD_ATTRIBUTE(m_pixelFilter, "pixelFilter")
+
+    // Pixel filter size.
+    m_pixelFilterSize = numAttrFn.create("pixelFilterSize", "pixelFilterSize", MFnNumericData::kFloat, 1.5, &status);
+    numAttrFn.setMin(0.5);
+    numAttrFn.setSoftMax(4.0);
+    CHECKED_ADD_ATTRIBUTE(m_pixelFilterSize, "pixelFilterSize")
+
     // Scene Scale.
-    m_sceneScale = numAttrFn.create("sceneScale", "sceneScale", MFnNumericData::kFloat, 1.0f, &status);
+    m_sceneScale = numAttrFn.create("sceneScale", "sceneScale", MFnNumericData::kFloat, 1.0, &status);
     numAttrFn.setMin(0.0000001);
     CHECKED_ADD_ATTRIBUTE(m_sceneScale, "sceneScale")
 
@@ -199,12 +244,12 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_diffuseBounces, "diffuseBounces")
 
     // Light Samples.
-    m_lightSamples = numAttrFn.create("lightSamples", "lightSamples", MFnNumericData::kFloat, 1.0f, &status);
+    m_lightSamples = numAttrFn.create("lightSamples", "lightSamples", MFnNumericData::kFloat, 1.0, &status);
     numAttrFn.setMin(1.0);
     CHECKED_ADD_ATTRIBUTE(m_lightSamples, "lightSamples")
 
     // Environment Samples.
-    m_envSamples = numAttrFn.create("envSamples", "envSamples", MFnNumericData::kFloat, 1.0f, &status);
+    m_envSamples = numAttrFn.create("envSamples", "envSamples", MFnNumericData::kFloat, 1.0, &status);
     numAttrFn.setMin(1.0);
     CHECKED_ADD_ATTRIBUTE(m_envSamples, "envSamples")
 
@@ -213,7 +258,7 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_caustics, "caustics")
 
     // Max Ray Intensity.
-    m_maxRayIntensity = numAttrFn.create("maxRayIntensity", "maxRayIntensity", MFnNumericData::kFloat, 0.0f, &status);
+    m_maxRayIntensity = numAttrFn.create("maxRayIntensity", "maxRayIntensity", MFnNumericData::kFloat, 0.0, &status);
     numAttrFn.setMin(0.0);
     CHECKED_ADD_ATTRIBUTE(m_maxRayIntensity, "maxRayIntensity")
 
@@ -238,11 +283,11 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_mbDeformSamples, "deformSamples")
 
     // Shutter Open.
-    m_shutterOpen = numAttrFn.create("shutterOpen", "shutterOpen", MFnNumericData::kFloat, -0.25f, &status);
+    m_shutterOpen = numAttrFn.create("shutterOpen", "shutterOpen", MFnNumericData::kFloat, -0.25, &status);
     CHECKED_ADD_ATTRIBUTE(m_shutterOpen, "shutterOpen")
 
     // Shutter Close.
-    m_shutterClose = numAttrFn.create("shutterClose", "shutterClose", MFnNumericData::kFloat, 0.25f, &status);
+    m_shutterClose = numAttrFn.create("shutterClose", "shutterClose", MFnNumericData::kFloat, 0.25, &status);
     CHECKED_ADD_ATTRIBUTE(m_shutterClose, "shutterClose")
 
     // Rendering threads.
@@ -284,13 +329,13 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_prefilterSpikes, "prefilterSpikes")
 
     // Spike Thereshold.
-    m_spikeThreshold = numAttrFn.create("spikeThreshold", "spikeThreshold", MFnNumericData::kFloat, 2.0f, &status);
+    m_spikeThreshold = numAttrFn.create("spikeThreshold", "spikeThreshold", MFnNumericData::kFloat, 2.0, &status);
     numAttrFn.setMin(0.1);
     numAttrFn.setMax(4.0);
     CHECKED_ADD_ATTRIBUTE(m_spikeThreshold, "spikeThreshold")
 
     // Patch Distance.
-    m_patchDistanceThreshold = numAttrFn.create("patchDistance", "patchDistance", MFnNumericData::kFloat, 1.0f, &status);
+    m_patchDistanceThreshold = numAttrFn.create("patchDistance", "patchDistance", MFnNumericData::kFloat, 1.0, &status);
     numAttrFn.setMin(0.5);
     numAttrFn.setMax(3.0);
     CHECKED_ADD_ATTRIBUTE(m_patchDistanceThreshold, "patchDistance")
@@ -358,6 +403,14 @@ void RenderGlobalsNode::applyGlobalsToProject(
         frame->get_parameters().insert(
             "tile_size", asf::Vector2i(tileSize));
     }
+
+    int pixelFilter;
+    if (AttributeUtils::get(MPlug(globals, m_pixelFilter), pixelFilter))
+        frame->get_parameters().insert("filter", m_pixelFilterKeys[pixelFilter].asChar());
+
+    float pixelFilterSize;
+    if (AttributeUtils::get(MPlug(globals, m_pixelFilterSize), pixelFilterSize))
+        frame->get_parameters().insert("filter_size", pixelFilterSize);
 
     int diagnostic;
     if (AttributeUtils::get(MPlug(globals, m_diagnosticShader), diagnostic))

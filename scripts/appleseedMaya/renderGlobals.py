@@ -361,6 +361,15 @@ class AppleseedRenderGlobalsMainTab(object):
                             ui=pm.intFieldGrp(
                                 label="Tile Size", numberOfFields=1),
                             attrName="tileSize")
+                        self.__addControl(
+                            ui=pm.attrEnumOptionMenuGrp(
+                                label="Filter",
+                                enumeratedItem=self.__getAttributeMenuItems("pixelFilter")),
+                            attrName="pixelFilter")
+                        self.__addControl(
+                            ui=pm.floatFieldGrp(
+                                label="Pixel Filter Size", numberOfFields=1),
+                            attrName="pixelFilterSize")
 
                 with pm.frameLayout(label="Shading", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):

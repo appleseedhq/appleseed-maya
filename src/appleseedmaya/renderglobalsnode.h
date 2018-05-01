@@ -69,6 +69,10 @@ class RenderGlobalsNode
     static MObject      m_passes;
     static MObject      m_tileSize;
 
+    static MObject      m_pixelFilter;
+    static MStringArray m_pixelFilterKeys;
+    static MObject      m_pixelFilterSize;
+
     static MObject      m_sceneScale;
 
     static MObject      m_lightingEngine;
