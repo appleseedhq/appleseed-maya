@@ -63,6 +63,8 @@ set (appleseed_maya_sources
     physicalskylightnode.h
     physicalskylightnode.cpp
     pluginmain.cpp
+    pythonbridge.cpp
+    pythonbridge.h
     rendercommands.cpp
     rendercommands.h
     renderercontroller.h
@@ -87,13 +89,6 @@ set (appleseed_maya_sources
     utils.h
     version.h.in
 )
-if (WITH_PYTHON_BRIDGE)
-    set (appleseed_maya_sources
-        ${appleseed_maya_sources}
-        pythonbridge.cpp
-        pythonbridge.h
-    )
-endif ()
 source_group ("" FILES
     ${appleseed_maya_sources}
 )
@@ -169,10 +164,6 @@ add_definitions (-DREQUIRE_IOSTREAM)
 
 if (WITH_XGEN)
     add_definitions (-DAPPLESEED_MAYA_WITH_XGEN)
-endif ()
-
-if (WITH_PYTHON_BRIDGE)
-    add_definitions (-DAPPLESEED_MAYA_WITH_PYTHON_BRIDGE)
 endif ()
 
 if (MSVC)

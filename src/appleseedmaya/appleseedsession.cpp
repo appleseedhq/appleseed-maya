@@ -41,6 +41,7 @@
 #include "appleseedmaya/exporters/shapeexporter.h"
 #include "appleseedmaya/idlejobqueue.h"
 #include "appleseedmaya/logger.h"
+#include "appleseedmaya/pythonbridge.h"
 #include "appleseedmaya/renderercontroller.h"
 #include "appleseedmaya/renderglobalsnode.h"
 #include "appleseedmaya/renderviewtilecallback.h"
@@ -326,6 +327,7 @@ namespace
 
         ~SessionImpl()
         {
+            PythonBridge::clearCurrentProject();
             abortRender();
         }
 
@@ -346,6 +348,9 @@ namespace
 
             m_project = asr::ProjectFactory::create("project");
             m_project->add_default_configurations();
+
+            // Make the project available from Python.
+            PythonBridge::setCurrentProject(m_project.get());
 
             // Insert some config params needed by the interactive renderer.
             asr::Configuration* cfg = m_project->configurations().get_by_name("interactive");

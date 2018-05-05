@@ -36,9 +36,7 @@
 #include "appleseedmaya/hypershaderenderer.h"
 #include "appleseedmaya/idlejobqueue.h"
 #include "appleseedmaya/logger.h"
-#ifdef APPLESEED_MAYA_WITH_PYTHON_BRIDGE
 #include "appleseedmaya/pythonbridge.h"
-#endif
 #include "appleseedmaya/rendercommands.h"
 #include "appleseedmaya/renderglobalsnode.h"
 #include "appleseedmaya/shadingnoderegistry.h"
@@ -258,12 +256,10 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to initialize session");
 
-#ifdef APPLESEED_MAYA_WITH_PYTHON_BRIDGE
     status = PythonBridge::initialize(pluginPath);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG_LOG(
         status,
         "appleseedMaya: failed to initialize Python bridge");
-#endif
 
     IdleJobQueue::initialize();
 
@@ -299,12 +295,10 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus uninitializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to uninitialize session");
 
-#ifdef APPLESEED_MAYA_WITH_PYTHON_BRIDGE
     status = PythonBridge::uninitialize();
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG_LOG(
         status,
         "appleseedMaya: failed to unititialize Python bridge");
-#endif
 
     status = NodeExporterFactory::uninitialize();
     APPLESEED_MAYA_CHECK_MSTATUS_MSG_LOG(

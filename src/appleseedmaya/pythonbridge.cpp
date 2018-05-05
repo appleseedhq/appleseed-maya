@@ -32,10 +32,9 @@
 // appleseed.renderer headers.
 #include "renderer/api/project.h"
 
-// appleseed.foundation headers.
-#include "foundation/platform/python.h"
+// Python headers.
+#include "Python.h"
 
-namespace bpy = boost::python;
 namespace asf = foundation;
 namespace asr = renderer;
 
@@ -57,46 +56,49 @@ namespace
         }
     };
 
-    bpy::object gAppleseedMayaNamespace;
+    PyObject* gAppleseedMayaNamespace = nullptr;
+    PyObject* gCurrentProjectKey = nullptr;
 }
 
 MStatus PythonBridge::initialize(const MString& pluginPath)
 {
     ScopedGilState gilState;
 
-    MStatus status;
+    PyObject* appleseedMayaModule = PyImport_ImportModule("appleseedMaya");
 
-    try
-    {
-        // Fetch appleseedMaya module namespace.
-        bpy::object appleseedMayaModule = bpy::import("appleseedMaya");
-        gAppleseedMayaNamespace = appleseedMayaModule.attr("__dict__");
+    if (appleseedMayaModule == nullptr)
+        return MS::kFailure;
 
-        // Init the current project global (to None).
-        gAppleseedMayaNamespace["currentProject"] = bpy::object();
-    }
-    catch (const bpy::error_already_set&)
-    {
-        PyErr_Print();
-    }
+    // Fetch appleseedMaya module namespace.
+    gAppleseedMayaNamespace = PyModule_GetDict(appleseedMayaModule);
+    PyModule_AddObject(appleseedMayaModule, "currentProject", Py_None);
 
-    return status;
+    gCurrentProjectKey = PyString_FromString("currentProject");
+
+    return MS::kSuccess;
 }
 
 MStatus PythonBridge::uninitialize()
 {
-    MStatus status;
-    return status;
+    Py_DecRef(gCurrentProjectKey);
+
+    return MS::kSuccess;
 }
 
 void PythonBridge::setCurrentProject(renderer::Project* project)
 {
     ScopedGilState gilState;
-    gAppleseedMayaNamespace["currentProject"] = bpy::ptr(project);
+
+    const uintptr_t ptr = asf::binary_cast<uintptr_t>(project);
+    PyObject* py_ptr = PyLong_FromLong(ptr);
+
+    PyDict_SetItem(gAppleseedMayaNamespace, gCurrentProjectKey, py_ptr);
+    Py_DECREF(py_ptr);
 }
 
 void PythonBridge::clearCurrentProject()
 {
     ScopedGilState gilState;
-    gAppleseedMayaNamespace["currentProject"] = bpy::object();
+
+    PyDict_SetItem(gAppleseedMayaNamespace, gCurrentProjectKey, Py_None);
 }

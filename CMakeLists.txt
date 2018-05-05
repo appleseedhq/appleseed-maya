@@ -78,7 +78,6 @@ set (appleseed_maya_version_maturity    beta)
 
 option (USE_STATIC_BOOST    "Use static Boost libraries" ON)
 option (WITH_XGEN           "Build XGen support"         OFF)
-option (WITH_PYTHON_BRIDGE  "Build Python bridge"        OFF)
 
 
 #--------------------------------------------------------------------------------------------------
@@ -111,18 +110,9 @@ endif ()
 
 set (BOOST_NEEDED_LIBS filesystem system)
 
-if (WITH_PYTHON_BRIDGE)
-    set (BOOST_NEEDED_LIBS ${BOOST_NEEDED_LIBS} python)
-endif ()
-
 find_package (Boost 1.55 REQUIRED ${BOOST_NEEDED_LIBS})
 
 add_definitions (-DBOOST_FILESYSTEM_VERSION=3 -DBOOST_FILESYSTEM_NO_DEPRECATED)
-
-if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    # Link statically against Boost.Python on Windows.
-    add_definitions (-DBOOST_PYTHON_STATIC_LIB)
-endif ()
 
 if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     # Workaround for undefined reference to boost::filesystem::detail::copy_file link error
@@ -152,9 +142,8 @@ if (WITH_XGEN)
     find_package (XGen REQUIRED)
 endif ()
 
-if (WITH_PYTHON_BRIDGE)
-    find_package (PythonLibs REQUIRED)
-endif ()
+# Make sure you pick the Python interpreter inside Maya...
+find_package (PythonLibs REQUIRED)
 
 
 #--------------------------------------------------------------------------------------------------
