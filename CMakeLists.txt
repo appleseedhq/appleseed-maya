@@ -140,9 +140,10 @@ link_directories (${Boost_LIBRARY_DIRS})
 
 find_package (Appleseed REQUIRED)
 find_package (OpenGL REQUIRED)
-find_package (Imath REQUIRED)
-find_package (OpenImageIO REQUIRED)
-find_package (OSL REQUIRED)
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    find_package (Imath REQUIRED)
+endif ()
 
 find_package (Maya REQUIRED)
 message ("Maya API version = ${MAYA_API_VERSION}")

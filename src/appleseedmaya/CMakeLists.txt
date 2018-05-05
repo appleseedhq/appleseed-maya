@@ -209,10 +209,6 @@ endif ()
 
 include_directories (
     ${MAYA_INCLUDE_DIRS}
-    ${IMATH_INCLUDE_DIRS}
-    ${IMATH_INCLUDE_DIRS}/OpenEXR/
-    ${OPENIMAGEIO_INCLUDE_DIRS}
-    ${OSL_INCLUDE_DIRS}
     ${PYTHON_INCLUDE_DIRS}
     ${PROJECT_SOURCE_DIR}/src
 )
