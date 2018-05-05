@@ -65,7 +65,7 @@ def createRenderTabsMelProcedures():
         '''
              )
     mel.eval('''
-        global proc appleseedCreateAppleseedTabProcedure()
+        global proc appleseedCreateAppleseedMainTabProcedure()
         {
             python("import appleseedMaya.renderGlobals");
             python("appleseedMaya.renderGlobals.g_appleseedMainTab.create()");
@@ -73,10 +73,26 @@ def createRenderTabsMelProcedures():
         '''
              )
     mel.eval('''
-        global proc appleseedUpdateAppleseedTabProcedure()
+        global proc appleseedUpdateAppleseedMainTabProcedure()
         {
             python("import appleseedMaya.renderGlobals");
             python("appleseedMaya.renderGlobals.g_appleseedMainTab.update()");
+        }
+        '''
+             )
+    mel.eval('''
+        global proc appleseedCreateAppleseedOutputTabProcedure()
+        {
+            python("import appleseedMaya.renderGlobals");
+            python("appleseedMaya.renderGlobals.g_appleseedOutputTab.create()");
+        }
+        '''
+             )
+    mel.eval('''
+        global proc appleseedUpdateAppleseedOutputTabProcedure()
+        {
+            python("import appleseedMaya.renderGlobals");
+            python("appleseedMaya.renderGlobals.g_appleseedOutputTab.update()");
         }
         '''
              )
@@ -98,8 +114,17 @@ def renderSettingsBuiltCallback(renderer):
         edit=True,
         addGlobalsTab=(
             "appleseed",
-            "appleseedCreateAppleseedTabProcedure",
-            "appleseedUpdateAppleseedTabProcedure"
+            "appleseedCreateAppleseedMainTabProcedure",
+            "appleseedUpdateAppleseedMainTabProcedure"
+        )
+    )
+    pm.renderer(
+        "appleseed",
+        edit=True,
+        addGlobalsTab=(
+            "Output",
+            "appleseedCreateAppleseedOutputTabProcedure",
+            "appleseedUpdateAppleseedOutputTabProcedure"
         )
     )
 
@@ -246,32 +271,38 @@ def currentRendererChanged():
 def postUpdateCommonTab():
     imageFormatChanged()
 
-
-class AppleseedRenderGlobalsMainTab(object):
+class AppleseedRenderGlobalsTab(object):
 
     def __init__(self):
-        self.__uis = {}
+        self._uis = {}
 
-    def __addControl(self, ui, attrName, connectIndex=2):
-        self.__uis[attrName] = ui
+    def _addControl(self, ui, attrName, connectIndex=2):
+        self._uis[attrName] = ui
         attr = pm.Attribute("appleseedRenderGlobals." + attrName)
         pm.connectControl(ui, attr, index=connectIndex)
 
+    def _getAttributeMenuItems(self, attrName):
+        attr = pm.Attribute("appleseedRenderGlobals." + attrName)
+        menuItems = [
+            (i, v) for i, v in enumerate(attr.getEnums().keys())
+        ]
+        return menuItems
+
+
+class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
+
     def __limitBouncesChanged(self, value):
-        self.__uis["bounces"].setEnable(value)
-        self.__uis["specularBounces"].setEnable(value)
-        self.__uis["glossyBounces"].setEnable(value)
-        self.__uis["diffuseBounces"].setEnable(value)
+        self._uis["bounces"].setEnable(value)
+        self._uis["specularBounces"].setEnable(value)
+        self._uis["glossyBounces"].setEnable(value)
+        self._uis["diffuseBounces"].setEnable(value)
 
     def __motionBlurChanged(self, value):
-        self.__uis["mbCameraSamples"].setEnable(value)
-        self.__uis["mbTransformSamples"].setEnable(value)
-        self.__uis["mbDeformSamples"].setEnable(value)
-        self.__uis["shutterOpen"].setEnable(value)
-        self.__uis["shutterClose"].setEnable(value)
-
-    def __prefilterChanged(self, value):
-        self.__uis["spikeThreshold"].setEnable(value)
+        self._uis["mbCameraSamples"].setEnable(value)
+        self._uis["mbTransformSamples"].setEnable(value)
+        self._uis["mbDeformSamples"].setEnable(value)
+        self._uis["shutterOpen"].setEnable(value)
+        self._uis["shutterClose"].setEnable(value)
 
     def __environmentLightSelected(self, envLight):
         logger.debug("Environment light selected: %s" % envLight)
@@ -288,18 +319,11 @@ class AppleseedRenderGlobalsMainTab(object):
                 envLight + ".globalsMessage",
                 "appleseedRenderGlobals.envLight")
 
-    def __getAttributeMenuItems(self, attrName):
-        attr = pm.Attribute("appleseedRenderGlobals." + attrName)
-        menuItems = [
-            (i, v) for i, v in enumerate(attr.getEnums().keys())
-        ]
-        return menuItems
-
     def updateEnvLightControl(self):
-        if "envLight" in self.__uis:
+        if "envLight" in self._uis:
             logger.debug("Updating env lights menu")
 
-            uiName = self.__uis["envLight"]
+            uiName = self._uis["envLight"]
 
             # Return if the menu does not exist yet.
             if not pm.optionMenu(uiName, exists=True):
@@ -349,87 +373,85 @@ class AppleseedRenderGlobalsMainTab(object):
             with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
                 with pm.frameLayout(label="Sampling", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
-                        self.__addControl(
+                        self._addControl(
                             ui=pm.intFieldGrp(
                                 label="Pixel Samples", numberOfFields=1),
                             attrName="samples")
-                        self.__addControl(
+                        self._addControl(
                             ui=pm.intFieldGrp(
                                 label="Render Passes", numberOfFields=1),
                             attrName="passes")
-                        self.__addControl(
-                            ui=pm.intFieldGrp(
-                                label="Tile Size", numberOfFields=1),
-                            attrName="tileSize")
-                        self.__addControl(
+                        self._addControl(
                             ui=pm.attrEnumOptionMenuGrp(
                                 label="Filter",
-                                enumeratedItem=self.__getAttributeMenuItems("pixelFilter")),
+                                enumeratedItem=self._getAttributeMenuItems("pixelFilter")),
                             attrName="pixelFilter")
-                        self.__addControl(
+                        self._addControl(
                             ui=pm.floatFieldGrp(
                                 label="Pixel Filter Size", numberOfFields=1),
                             attrName="pixelFilterSize")
-
-                with pm.frameLayout(label="Shading", collapsable=True, collapse=False):
-                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
-                        self.__addControl(
-                            ui=pm.attrEnumOptionMenuGrp(
-                                label="Override Shaders",
-                                enumeratedItem=self.__getAttributeMenuItems("diagnostics")),
-                            attrName="diagnostics")
+                        self._addControl(
+                            ui=pm.intFieldGrp(
+                                label="Tile Size", numberOfFields=1),
+                            attrName="tileSize")
 
                 with pm.frameLayout(label="Lighting", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
-                        self.__addControl(
+                        self._addControl(
                             ui=pm.attrEnumOptionMenuGrp(
                                 label="Lighting Engine",
-                                enumeratedItem=self.__getAttributeMenuItems("lightingEngine")),
+                                enumeratedItem=self._getAttributeMenuItems("lightingEngine")),
                             attrName="lightingEngine")
 
                         with pm.frameLayout(label="Path Tracing", collapsable=True, collapse=False):
                             with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
-                                self.__addControl(
+                                self._addControl(
                                     ui=pm.checkBoxGrp(
                                         label="Limit Bounces", changeCommand=self.__limitBouncesChanged),
                                     attrName="limitBounces")
                                 limitBounces = mc.getAttr(
                                     "appleseedRenderGlobals.limitBounces")
-                                self.__addControl(
+                                self._addControl(
                                     ui=pm.intFieldGrp(
                                         label="Global Bounces", numberOfFields=1, enable=limitBounces),
                                     attrName="bounces")
-                                self.__addControl(
+                                self._addControl(
                                     ui=pm.intFieldGrp(
                                         label="Diffuse Bounces", numberOfFields=1, enable=limitBounces),
                                     attrName="diffuseBounces")
-                                self.__addControl(
+                                self._addControl(
                                     ui=pm.intFieldGrp(
                                         label="Glossy Bounces", numberOfFields=1, enable=limitBounces),
                                     attrName="glossyBounces")
-                                self.__addControl(
+                                self._addControl(
                                     ui=pm.intFieldGrp(
                                         label="Specular Bounces", numberOfFields=1, enable=limitBounces),
                                     attrName="specularBounces")
-                                self.__addControl(
+                                self._addControl(
                                     ui=pm.floatFieldGrp(
                                         label="Light Samples", numberOfFields=1),
                                     attrName="lightSamples")
-                                self.__addControl(
+                                self._addControl(
                                     ui=pm.floatFieldGrp(
                                         label="Environment Samples", numberOfFields=1),
                                     attrName="envSamples")
-                                self.__addControl(
+                                self._addControl(
                                     ui=pm.checkBoxGrp(label="Caustics"),
                                     attrName="caustics")
-                                self.__addControl(
+                                self._addControl(
                                     ui=pm.floatFieldGrp(
                                         label="Max Ray Intensity", numberOfFields=1),
                                     attrName="maxRayIntensity")
 
                 with pm.frameLayout(label="Scene", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
-                        self.__addControl(
+                        self._addControl(
+                            ui=pm.attrEnumOptionMenuGrp(
+                                label="Override Shaders",
+                                enumeratedItem=self._getAttributeMenuItems("diagnostics")),
+                            attrName="diagnostics")
+
+                        self._addControl(
                             ui=pm.floatFieldGrp(
                                 label="Scene Scale", numberOfFields=1),
                             attrName="sceneScale")
@@ -457,90 +479,51 @@ class AppleseedRenderGlobalsMainTab(object):
                             else:
                                 pm.optionMenu(ui, edit=True, value="<none>")
 
-                            self.__uis["envLight"] = ui
+                            self._uis["envLight"] = ui
                             logger.debug(
                                 "Created globals env light menu, name = %s" % ui)
 
-                        self.__addControl(
+                        self._addControl(
                             ui=pm.checkBoxGrp(label="Background Emits Light"),
                             attrName="bgLight")
 
                 with pm.frameLayout(label="Motion Blur", collapsable=True, collapse=True):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
-                        self.__addControl(
+                        self._addControl(
                             ui=pm.checkBoxGrp(
                                 label="Motion Blur", changeCommand=self.__motionBlurChanged),
                             attrName="motionBlur")
 
                         enableMotionBlur = mc.getAttr(
                             "appleseedRenderGlobals.motionBlur")
-                        self.__addControl(
+                        self._addControl(
                             ui=pm.intFieldGrp(
                                 label="Camera Samples", numberOfFields=1, enable=enableMotionBlur),
                             attrName="mbCameraSamples")
-                        self.__addControl(
+                        self._addControl(
                             ui=pm.intFieldGrp(
                                 label="Transformation Samples", numberOfFields=1, enable=enableMotionBlur),
                             attrName="mbTransformSamples")
-                        self.__addControl(
+                        self._addControl(
                             ui=pm.intFieldGrp(
                                 label="Deformation Samples", numberOfFields=1, enable=enableMotionBlur),
                             attrName="mbDeformSamples")
-                        self.__addControl(
+                        self._addControl(
                             ui=pm.floatFieldGrp(
                                 label="Shutter Open", numberOfFields=1, enable=enableMotionBlur),
                             attrName="shutterOpen")
-                        self.__addControl(
+                        self._addControl(
                             ui=pm.floatFieldGrp(
                                 label="Shutter Close", numberOfFields=1, enable=enableMotionBlur),
                             attrName="shutterClose")
 
-                with pm.frameLayout(label="Denoiser", collapsable=True, collapse=True):
-                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
-                        self.__addControl(
-                            ui=pm.attrEnumOptionMenuGrp(
-                                label="Denoiser",
-                                enumeratedItem=self.__getAttributeMenuItems("denoiser")),
-                            attrName="denoiser")
-
-                        self.__addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Skip Already Denoised"),
-                            attrName="skipDenoised")
-
-                        self.__addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Random Pixel Order"),
-                            attrName="randomPixelOrder")
-
-                        enablePrefilter = mc.getAttr(
-                            "appleseedRenderGlobals.prefilterSpikes")
-                        self.__addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Prefilter Spikes",
-                                changeCommand=self.__prefilterChanged),
-                            attrName="prefilterSpikes")
-                        self.__addControl(
-                            ui=pm.floatFieldGrp(
-                                label="Spike Thereshold", numberOfFields=1, enable=enablePrefilter),
-                            attrName="spikeThreshold")
-
-                        self.__addControl(
-                            ui=pm.floatFieldGrp(
-                                label="Patch Distance", numberOfFields=1),
-                            attrName="patchDistance")
-                        self.__addControl(
-                            ui=pm.intFieldGrp(
-                                label="Denoise Scales", numberOfFields=1),
-                            attrName="denoiseScales")
-
                 with pm.frameLayout(label="System", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
-                        self.__addControl(
+                        self._addControl(
                             ui=pm.intFieldGrp(
                                 label="Threads", numberOfFields=1),
                             attrName="threads")
-                        self.__addControl(
+                        self._addControl(
                             ui=pm.intFieldGrp(
                                 label="Texture Cache Size (MB)", numberOfFields=1),
                             attrName="maxTexCacheSize")
@@ -566,3 +549,87 @@ class AppleseedRenderGlobalsMainTab(object):
         # self.updateEnvLightControl()
 
 g_appleseedMainTab = AppleseedRenderGlobalsMainTab()
+
+
+class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
+
+    def __prefilterChanged(self, value):
+        self._uis["spikeThreshold"].setEnable(value)
+
+    def create(self):
+        # Create default render globals node if needed.
+        createGlobalNodes()
+
+        parentForm = pm.setParent(query=True)
+        pm.setUITemplate("renderGlobalsTemplate", pushTemplate=True)
+        pm.setUITemplate("attributeEditorTemplate", pushTemplate=True)
+
+        columnWidth = 400
+
+        with pm.scrollLayout("outputScrollLayout", horizontalScrollBarThickness=0):
+            with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=columnWidth):
+                with pm.frameLayout(label="AOVs", collapsable=True, collapse=False):
+                    pass
+
+                with pm.frameLayout(label="Denoiser", collapsable=True, collapse=True):
+                    with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=columnWidth):
+                        self._addControl(
+                            ui=pm.attrEnumOptionMenuGrp(
+                                label="Denoiser",
+                                enumeratedItem=self._getAttributeMenuItems("denoiser")),
+                            attrName="denoiser")
+
+                        self._addControl(
+                            ui=pm.checkBoxGrp(
+                                label="Skip Already Denoised"),
+                            attrName="skipDenoised")
+
+                        self._addControl(
+                            ui=pm.checkBoxGrp(
+                                label="Random Pixel Order"),
+                            attrName="randomPixelOrder")
+
+                        enablePrefilter = mc.getAttr(
+                            "appleseedRenderGlobals.prefilterSpikes")
+                        self._addControl(
+                            ui=pm.checkBoxGrp(
+                                label="Prefilter Spikes",
+                                changeCommand=self.__prefilterChanged),
+                            attrName="prefilterSpikes")
+                        self._addControl(
+                            ui=pm.floatFieldGrp(
+                                label="Spike Thereshold", numberOfFields=1, enable=enablePrefilter),
+                            attrName="spikeThreshold")
+
+                        self._addControl(
+                            ui=pm.floatFieldGrp(
+                                label="Patch Distance", numberOfFields=1),
+                            attrName="patchDistance")
+                        self._addControl(
+                            ui=pm.intFieldGrp(
+                                label="Denoise Scales", numberOfFields=1),
+                            attrName="denoiseScales")
+
+                with pm.frameLayout(label="Logging", collapsable=True, collapse=True):
+                    pass
+
+        pm.setUITemplate("renderGlobalsTemplate", popTemplate=True)
+        pm.setUITemplate("attributeEditorTemplate", popTemplate=True)
+        pm.formLayout(
+            parentForm,
+            edit=True,
+            attachForm=[
+                ("outputScrollLayout", "top", 0),
+                ("outputScrollLayout", "bottom", 0),
+                ("outputScrollLayout", "left", 0),
+                ("outputScrollLayout", "right", 0)])
+
+        logger.debug("Created appleseed render global output tab")
+
+        # Update the newly created tab.
+        self.update()
+
+    def update(self):
+        assert mc.objExists("appleseedRenderGlobals")
+
+g_appleseedOutputTab = AppleseedRenderGlobalsOutputTab()
