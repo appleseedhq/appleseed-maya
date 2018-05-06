@@ -33,6 +33,7 @@
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/logger.h"
+#include "appleseedmaya/ramputils.h"
 #include "appleseedmaya/shadingnodemetadata.h"
 #include "appleseedmaya/shadingnoderegistry.h"
 
@@ -48,11 +49,14 @@
 #include <maya/MFnDependencyNode.h>
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MFnNumericAttribute.h>
+#include <maya/MRampAttribute.h>
 #include <maya/MStringArray.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
 // Standard headers.
+#include <algorithm>
 #include <sstream>
+#include <vector>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -447,10 +451,25 @@ void ShadingNodeExporter::exportParameterValue(
     const OSLParamInfo&                 paramInfo,
     renderer::ParamArray&               shaderParams) const
 {
-    if (paramInfo.isArray)
-        exportArrayValue(plug, paramInfo, shaderParams);
+    if (paramInfo.asWidget == "ramp")
+        exportRampValue(plug, paramInfo, shaderParams);
+    else if (paramInfo.asWidget == "ramp_positions")
+    {
+        // Ramp positions are saved as part of the ramp.
+        return;
+    }
+    else if (paramInfo.asWidget == "ramp_basis")
+    {
+        // Ramp basis is saved as part of the ramp.
+        return;
+    }
     else
-        exportValue(plug, paramInfo, shaderParams);
+    {
+        if (paramInfo.isArray)
+            exportArrayValue(plug, paramInfo, shaderParams);
+        else
+            exportValue(plug, paramInfo, shaderParams);
+    }
 }
 
 void ShadingNodeExporter::exportValue(
@@ -632,6 +651,72 @@ void ShadingNodeExporter::exportArrayValue(
             paramInfo.mayaAttributeName.asChar(),
             paramInfo.paramType.asChar());
     }
+}
+
+namespace
+{
+    template <typename T>
+    void getRampValues(
+        MRampAttribute&             ramp,
+        std::vector<RampEntry<T>>&  entries)
+    {
+        entries.clear();
+        entries.reserve(ramp.getNumEntries());
+
+        MIntArray indices;
+        MFloatArray positions;
+        MIntArray interps;
+
+        typename RampEntryTraits<T>::ArrayType values;
+
+        ramp.getEntries(indices, positions, values, interps);
+
+        for (size_t i = 0 , e = ramp.getNumEntries() ; i < e ; ++i )
+            entries.push_back(RampEntry<T>(indices[i], positions[i], values[i]));
+    }
+}
+
+void ShadingNodeExporter::exportRampValue(
+    const MPlug&                    plug,
+    const OSLParamInfo&             paramInfo,
+    renderer::ParamArray&           shaderParams) const
+{
+    MRampAttribute ramp(plug);
+    std::string values;
+    std::string positions;
+    // std::string basis;
+
+    if (paramInfo.paramType == "color")
+    {
+        std::vector<RampEntry<MColor>> entries;
+        getRampValues(ramp, entries);
+        getRampValues(ramp, entries);
+        serializeRamp(entries, values, positions);
+    }
+    else if (paramInfo.paramType == "float")
+    {
+        std::vector<RampEntry<float>> entries;
+        getRampValues(ramp, entries);
+        serializeRamp(entries, values, positions);
+    }
+    else
+    {
+        RENDERER_LOG_WARNING(
+            "Skipping shading node attr %s of unknown type %s ramp.",
+            paramInfo.mayaAttributeName.asChar(),
+            paramInfo.paramType.asChar());
+        return;
+    }
+
+    shaderParams.insert(paramInfo.paramName.asChar(), values.c_str());
+
+    std::string positionsParamName = asf::replace(
+        paramInfo.paramName.asChar(),
+        "_values",
+        "_positions");
+    shaderParams.insert(positionsParamName.c_str(), positions.c_str());
+
+    // todo: save basis here...
 }
 
 MObject ShadingNodeExporter::node() const

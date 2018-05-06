@@ -48,6 +48,7 @@
 #include <maya/MFnStringData.h>
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MObjectArray.h>
+#include <maya/MRampAttribute.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
@@ -190,7 +191,41 @@ MStatus ShadingNode::initialize()
         MStatus status;
         MObject attr;
 
-        if (p.paramType == "color")
+        if (p.asWidget == "ramp")
+        {
+            if (p.paramType == "color")
+            {
+                attr = MRampAttribute::createColorRamp(
+                    p.mayaAttributeName,
+                    p.mayaAttributeShortName);
+            }
+            else if (p.paramType == "float")
+            {
+                attr = MRampAttribute::createCurveRamp(
+                    p.mayaAttributeName,
+                    p.mayaAttributeShortName);
+            }
+            else
+            {
+                RENDERER_LOG_WARNING(
+                    "Error while initializing node %s, param %s, error = %s",
+                    shaderInfo->shaderName.asChar(),
+                    p.paramName.asChar(),
+                    status.errorString().asChar());
+                return MS::kFailure;
+            }
+        }
+        else if (p.asWidget == "ramp_positions")
+        {
+            // Ramp positions are part of the RampAttribute.
+            continue;
+        }
+        else if (p.asWidget == "ramp_basis")
+        {
+            // Ramp basis is part of the RampAttribute.
+            continue;
+        }
+        else if (p.paramType == "color")
         {
             MFnNumericAttribute numAttrFn;
             attr = numAttrFn.createColor(

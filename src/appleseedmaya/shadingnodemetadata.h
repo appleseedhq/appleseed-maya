@@ -125,6 +125,9 @@ class OSLParamInfo
     double softMaxValue;
     bool divider;
 
+    // appleseed custom metadata.
+    MString asWidget;
+
     // appleseedMaya custom metadata.
     MString mayaAttributeName;
     MString mayaAttributeShortName;

@@ -32,6 +32,7 @@
 // appleseed-maya headers.
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
+#include "appleseedmaya/ramputils.h"
 #include "appleseedmaya/shadingnodemetadata.h"
 
 // appleseed.renderer headers.
@@ -49,26 +50,6 @@
 
 namespace asf = foundation;
 namespace asr = renderer;
-
-namespace
-{
-    struct RampEntry
-    {
-        RampEntry(float pos, const MColor& col)
-          : m_pos(pos)
-          , m_col(col)
-        {
-        }
-
-        bool operator<(const RampEntry& other) const
-        {
-            return m_pos < other.m_pos;
-        }
-
-        float   m_pos;
-        MColor  m_col;
-    };
-}
 
 void RampExporter::registerExporter()
 {
@@ -103,7 +84,7 @@ void RampExporter::exportParameterValue(
     {
         MPlug plug = depNodeFn.findPlug("colorEntryList", false, &status);
 
-        std::vector<RampEntry> rampColors;
+        std::vector<RampEntry<MColor>> rampColors;
         rampColors.reserve(plug.numElements());
 
         for (unsigned int i = 0, e = plug.numElements(); i < e; ++i)
@@ -118,7 +99,7 @@ void RampExporter::exportParameterValue(
             MColor c;
             AttributeUtils::get(color, c);
 
-            rampColors.push_back(RampEntry(p, c));
+            rampColors.push_back(RampEntry<MColor>(i, p, c));
         }
 
         plug = depNodeFn.findPlug("type", false, &status);
@@ -130,7 +111,7 @@ void RampExporter::exportParameterValue(
         {
             // Fill with black if we have less than 4 elements.
             while (rampColors.size() < 4)
-                rampColors.push_back(RampEntry(1.0f, MColor(0.0f, 0.0f, 0.0f)));
+                rampColors.push_back(RampEntry<MColor>(rampColors.size(), 1.0f, MColor(0.0f, 0.0f, 0.0f)));
         }
         else
         {
@@ -138,19 +119,12 @@ void RampExporter::exportParameterValue(
             std::sort(rampColors.begin(), rampColors.end());
         }
 
-        std::stringstream ssp;
-        ssp << "float[] ";
+        std::string values;
+        std::string positions;
+        serializeRamp(rampColors, values, positions);
 
-        std::stringstream ssc;
-        ssc << "color[] ";
-        for (size_t i = 0, e = rampColors.size(); i < e; ++i)
-        {
-            ssp << rampColors[i].m_pos << " ";
-            ssc << rampColors[i].m_col.r << " " << rampColors[i].m_col.g << " " << rampColors[i].m_col.b << " ";
-        }
-
-        shaderParams.insert("in_position", ssp.str().c_str());
-        shaderParams.insert("in_color"   , ssc.str().c_str());
+        shaderParams.insert("in_position", positions.c_str());
+        shaderParams.insert("in_color"   , values.c_str());
     }
     else if (paramInfo.paramName == "in_color")
     {
