@@ -65,6 +65,7 @@ set (appleseed_maya_sources
     pluginmain.cpp
     pythonbridge.cpp
     pythonbridge.h
+    ramputils.h
     rendercommands.cpp
     rendercommands.h
     renderercontroller.h

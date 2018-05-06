@@ -95,6 +95,11 @@ class ShadingNodeExporter
         const OSLParamInfo&             paramInfo,
         renderer::ParamArray&           shaderParams) const;
 
+    void exportRampValue(
+        const MPlug&                    plug,
+        const OSLParamInfo&             paramInfo,
+        renderer::ParamArray&           shaderParams) const;
+
     virtual bool layerAndParamNameFromPlug(
         const MPlug&                    plug,
         MString&                        layerName,

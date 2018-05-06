@@ -184,6 +184,8 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
         hasSoftMax = metadata.getValue("softmax", softMaxValue);
         metadata.getValue("divider", divider);
 
+        metadata.getValue("as_widget", asWidget);
+
         metadata.getValue("as_maya_attribute_name", mayaAttributeName);
         metadata.getValue("as_maya_attribute_short_name", mayaAttributeShortName);
         metadata.getValue("as_maya_attribute_connectable", mayaAttributeConnectable);
