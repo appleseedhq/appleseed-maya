@@ -30,7 +30,7 @@
 #include "murmurhash.h"
 
 // appleseed.renderer headers.
-#include "renderer/utility/paramarray.h"
+#include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/containers/dictionary.h"

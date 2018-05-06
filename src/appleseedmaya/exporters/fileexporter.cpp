@@ -35,7 +35,7 @@
 #include "appleseedmaya/shadingnodemetadata.h"
 
 // appleseed.renderer headers.
-#include "renderer/utility/paramarray.h"
+#include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/string.h"
