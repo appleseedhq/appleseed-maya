@@ -183,6 +183,16 @@ private:
                 // by attribute name?
                 if (m_paramInfo->mayaAttributeName == "normalCamera")
                     ss << "editorTemplate -callCustom \"AEshaderBumpNew\" \"AEshaderBumpReplace\" \"normalCamera\";\n";
+                else if (m_paramInfo->asWidget == "ramp")
+                    ss << "AEaddRampControl($nodeName + \"." << m_paramInfo->mayaAttributeName << "\");\n";
+                else if (m_paramInfo->asWidget == "ramp_positions")
+                {
+                    // Ignore.
+                }
+                else if (m_paramInfo->asWidget == "ramp_basis")
+                {
+                    // Ignore.
+                }
                 else
                 {
                     ss << "editorTemplate -addControl ";

@@ -193,13 +193,13 @@ MStatus ShadingNode::initialize()
 
         if (p.asWidget == "ramp")
         {
-            if (p.paramType == "color")
+            if (p.paramType == "color[]")
             {
                 attr = MRampAttribute::createColorRamp(
                     p.mayaAttributeName,
                     p.mayaAttributeShortName);
             }
-            else if (p.paramType == "float")
+            else if (p.paramType == "float[]")
             {
                 attr = MRampAttribute::createCurveRamp(
                     p.mayaAttributeName,

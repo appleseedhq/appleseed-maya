@@ -673,6 +673,8 @@ namespace
 
         for (size_t i = 0 , e = ramp.getNumEntries() ; i < e ; ++i )
             entries.push_back(RampEntry<T>(indices[i], positions[i], values[i]));
+
+        std::sort(entries.begin(), entries.end());
     }
 }
 
@@ -686,14 +688,13 @@ void ShadingNodeExporter::exportRampValue(
     std::string positions;
     // std::string basis;
 
-    if (paramInfo.paramType == "color")
+    if (paramInfo.paramType == "color[]")
     {
         std::vector<RampEntry<MColor>> entries;
         getRampValues(ramp, entries);
-        getRampValues(ramp, entries);
         serializeRamp(entries, values, positions);
     }
-    else if (paramInfo.paramType == "float")
+    else if (paramInfo.paramType == "float[]")
     {
         std::vector<RampEntry<float>> entries;
         getRampValues(ramp, entries);
