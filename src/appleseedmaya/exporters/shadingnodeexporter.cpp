@@ -675,6 +675,15 @@ namespace
             entries.push_back(RampEntry<T>(indices[i], positions[i], values[i]));
 
         std::sort(entries.begin(), entries.end());
+
+        // Repeat first and last values if needed.
+        // TODO: this really depends on basis...
+
+        if (entries.size() < 4)
+            entries.insert(entries.begin(), entries.front());
+
+        if (entries.size() < 4)
+            entries.push_back(entries.back());
     }
 }
 
