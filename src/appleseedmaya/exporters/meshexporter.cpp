@@ -363,7 +363,7 @@ void MeshExporter::flushEntities()
                 fileNames.insert(key.asChar(), m_fileNames[i].c_str());
             }
 
-            params.insert("filenames", fileNames);
+            params.insert("filename", fileNames);
         }
 
         m_mesh.reset(asr::MeshObjectFactory().create(m_mesh->get_name(), params));
