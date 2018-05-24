@@ -99,13 +99,13 @@ namespace
         for (size_t j = 0, je = mesh.get_motion_segment_count(); j < je; ++j)
         {
             for (size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
-                mesh.get_vertex_pose(i, j);
+                hash.append(mesh.get_vertex_pose(i, j));
 
             for (size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
-                mesh.get_vertex_normal_pose(i, j);
+                hash.append(mesh.get_vertex_normal_pose(i, j));
 
             for (size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
-                mesh.get_vertex_tangent_pose(i, j);
+                hash.append(mesh.get_vertex_tangent_pose(i, j));
         }
 
         hash.append(mesh.get_parameters());
