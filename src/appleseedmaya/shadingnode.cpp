@@ -505,6 +505,9 @@ void ShadingNode::postConstructor()
 {
     MPxNode::postConstructor();
     setMPSafe(true);
+
+    setExistWithoutInConnections(true);
+    setExistWithoutOutConnections(true);
 }
 
 void ShadingNode::report_error(
