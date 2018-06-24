@@ -86,32 +86,6 @@ namespace
         for (size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
             hash.append(mesh.get_vertex_tangent(i));
     }
-
-    void meshObjectHash(
-        const asr::MeshObject&                      mesh,
-        const asf::StringDictionary&                frontMaterialMappings,
-        const asf::StringDictionary&                backMaterialMappings,
-        MurmurHash&                                 hash)
-    {
-        staticMeshObjectHash(mesh, hash);
-
-        hash.append(mesh.get_motion_segment_count());
-        for (size_t j = 0, je = mesh.get_motion_segment_count(); j < je; ++j)
-        {
-            for (size_t i = 0, e = mesh.get_vertex_count(); i < e; ++i)
-                hash.append(mesh.get_vertex_pose(i, j));
-
-            for (size_t i = 0, e = mesh.get_vertex_normal_count(); i < e; ++i)
-                hash.append(mesh.get_vertex_normal_pose(i, j));
-
-            for (size_t i = 0, e = mesh.get_vertex_tangent_count(); i < e; ++i)
-                hash.append(mesh.get_vertex_tangent_pose(i, j));
-        }
-
-        hash.append(mesh.get_parameters());
-        hash.append(frontMaterialMappings);
-        hash.append(backMaterialMappings);
-    }
 }
 
 void MeshExporter::registerExporter()
@@ -322,6 +296,29 @@ void MeshExporter::exportShapeMotionStep(float time)
         }
 
         m_fileNames.push_back(fileName);
+
+        // Update the mesh hash.
+        if (m_shapeExportStep == 1)
+        {
+            m_hash = meshHash;
+            m_hash.append(m_mesh->get_parameters());
+            m_hash.append(m_frontMaterialMappings);
+            m_hash.append(m_backMaterialMappings);
+        }
+        else
+        {
+            m_hash.append(m_mesh->get_vertex_count());
+            for (size_t i = 0, e = m_mesh->get_vertex_count(); i < e; ++i)
+                m_hash.append(m_mesh->get_vertex(i));
+
+            m_hash.append(m_mesh->get_vertex_normal_count());
+            for (size_t i = 0, e = m_mesh->get_vertex_normal_count(); i < e; ++i)
+                m_hash.append(m_mesh->get_vertex_normal(i));
+
+            m_hash.append(m_mesh->get_vertex_tangent_count());
+            for (size_t i = 0, e = m_mesh->get_vertex_tangent_count(); i < e; ++i)
+                m_hash.append(m_mesh->get_vertex_tangent(i));
+        }
     }
     else
     {
@@ -329,9 +326,32 @@ void MeshExporter::exportShapeMotionStep(float time)
         {
             fillTopology(finalMesh.m_mesh);
             exportGeometry(finalMesh.m_mesh);
+
+            // Update the mesh hash.
+            staticMeshObjectHash(*m_mesh, m_hash);
+            m_hash.append(m_mesh->get_parameters());
+            m_hash.append(m_frontMaterialMappings);
+            m_hash.append(m_backMaterialMappings);
         }
         else
+        {
             exportMeshKey(finalMesh.m_mesh);
+
+            // Update the mesh hash.
+            const size_t pose = m_shapeExportStep - 1;
+
+            m_hash.append(m_mesh->get_vertex_count());
+            for (size_t i = 0, e = m_mesh->get_vertex_count(); i < e; ++i)
+                m_hash.append(m_mesh->get_vertex_pose(i, pose));
+
+            m_hash.append(m_mesh->get_vertex_normal_count());
+            for (size_t i = 0, e = m_mesh->get_vertex_normal_count(); i < e; ++i)
+                m_hash.append(m_mesh->get_vertex_normal_pose(i, pose));
+
+            m_hash.append(m_mesh->get_vertex_tangent_count());
+            for (size_t i = 0, e = m_mesh->get_vertex_tangent_count(); i < e; ++i)
+                m_hash.append(m_mesh->get_vertex_tangent_pose(i, pose));
+        }
     }
 
     m_shapeExportStep++;
@@ -404,13 +424,7 @@ bool MeshExporter::supportsInstancing() const
 
 MurmurHash MeshExporter::hash() const
 {
-    MurmurHash hash;
-    meshObjectHash(
-        *m_mesh,
-        m_frontMaterialMappings,
-        m_backMaterialMappings,
-        hash);
-    return hash;
+    return m_hash;
 }
 
 void MeshExporter::meshAttributesToParams(renderer::ParamArray& params)

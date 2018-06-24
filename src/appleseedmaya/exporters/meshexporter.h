@@ -111,6 +111,7 @@ class MeshExporter
     size_t                                      m_numMeshKeys;
     size_t                                      m_shapeExportStep;
     AlphaMapExporterPtr                         m_alphaMapExporter;
+    MurmurHash                                  m_hash;
 };
 
 #endif  // !APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H
