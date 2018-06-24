@@ -569,7 +569,22 @@ class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
         with pm.scrollLayout("outputScrollLayout", horizontalScrollBarThickness=0):
             with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=columnWidth):
                 with pm.frameLayout(label="AOVs", collapsable=True, collapse=False):
-                    pass
+                    with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=columnWidth):
+                        self._addControl(ui=pm.checkBoxGrp(label="Diffuse"), attrName="diffuseAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="Glossy"), attrName="glossyAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="Emission"), attrName="emissionAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Direct Diffuse"), attrName="directDiffuseAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="Indirect Diffuse"), attrName="indirectDiffuseAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Direct Glossy"), attrName="directGlossyAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="Indirect Glossy"), attrName="indirectGlossyAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Albedo"), attrName="albedoAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="Normal"), attrName="normalAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="UV"), attrName="uvAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="Depth"), attrName="depthAOV")
 
                 with pm.frameLayout(label="Denoiser", collapsable=True, collapse=True):
                     with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=columnWidth):

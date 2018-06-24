@@ -109,6 +109,18 @@ MObject RenderGlobalsNode::m_denoiseScales;
 
 MObject RenderGlobalsNode::m_imageFormat;
 
+MObject RenderGlobalsNode::m_diffuseAOV;
+MObject RenderGlobalsNode::m_glossyAOV;
+MObject RenderGlobalsNode::m_emissionAOV;
+MObject RenderGlobalsNode::m_directDiffuseAOV;
+MObject RenderGlobalsNode::m_indirectDiffuseAOV;
+MObject RenderGlobalsNode::m_directGlossyAOV;
+MObject RenderGlobalsNode::m_indirectGlossyAOV;
+MObject RenderGlobalsNode::m_albedoAOV;
+MObject RenderGlobalsNode::m_normalAOV;
+MObject RenderGlobalsNode::m_uvAOV;
+MObject RenderGlobalsNode::m_depthAOV;
+
 namespace
 {
 
@@ -349,6 +361,41 @@ MStatus RenderGlobalsNode::initialize()
     m_imageFormat = numAttrFn.create("imageFormat", "imageFormat", MFnNumericData::kInt, 0, &status);
     CHECKED_ADD_ATTRIBUTE(m_imageFormat, "imageFormat")
 
+    // AOVs.
+
+    m_diffuseAOV = numAttrFn.create("diffuseAOV", "diffuseAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_diffuseAOV, "diffuseAOV")
+
+    m_glossyAOV = numAttrFn.create("glossyAOV", "glossyAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_glossyAOV, "glossyAOV")
+
+    m_emissionAOV = numAttrFn.create("emissionAOV", "emissionAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_emissionAOV, "emissionAOV")
+
+    m_directDiffuseAOV = numAttrFn.create("directDiffuseAOV", "directDiffuseAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_directDiffuseAOV, "directDiffuseAOV")
+
+    m_indirectDiffuseAOV = numAttrFn.create("indirectDiffuseAOV", "indirectDiffuseAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_indirectDiffuseAOV, "indirectDiffuseAOV")
+
+    m_directGlossyAOV = numAttrFn.create("directGlossyAOV", "directGlossyAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_directGlossyAOV, "directGlossyAOV")
+
+    m_indirectGlossyAOV = numAttrFn.create("indirectGlossyAOV", "indirectGlossyAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_indirectGlossyAOV, "indirectGlossyAOV")
+
+    m_albedoAOV = numAttrFn.create("albedoAOV", "albedoAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_albedoAOV, "albedoAOV")
+
+    m_normalAOV = numAttrFn.create("normalAOV", "normalAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_normalAOV, "normalAOV")
+
+    m_uvAOV = numAttrFn.create("uvAOV", "uvAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_uvAOV, "uvAOV")
+
+    m_depthAOV = numAttrFn.create("depthAOV", "depthAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_depthAOV, "depthAOV")
+
     return status;
 
     #undef CHECKED_ADD_ATTRIBUTE
@@ -362,7 +409,8 @@ MStatus RenderGlobalsNode::compute(const MPlug& plug, MDataBlock& dataBlock)
 void RenderGlobalsNode::applyGlobalsToProject(
     const MObject&                              globals,
     AppleseedSession::SessionMode               sessionMode,
-    asr::Project&                               project)
+    asr::Project&                               project,
+    asr::AOVContainer&                          aovs)
 {
     asr::ParamArray& finalParams = project.configurations().get_by_name("final")->get_parameters();
     asr::ParamArray& iprParams   = project.configurations().get_by_name("interactive")->get_parameters();
@@ -543,6 +591,49 @@ void RenderGlobalsNode::applyGlobalsToProject(
     {
         frame->get_parameters().insert(
             "denoise_scales", denoiseScales);
+    }
+
+    // AOVs.
+
+    if (sessionMode != AppleseedSession::ProgressiveRenderSession)
+    {
+        asr::AOVFactoryRegistrar registrar;
+        asr::ParamArray params;
+
+        bool enabled;
+
+        if (AttributeUtils::get(MPlug(globals, m_diffuseAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("diffuse_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_glossyAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("glossy_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_emissionAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("emission_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_directDiffuseAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("direct_diffuse_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_indirectDiffuseAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("indirect_diffuse_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_directGlossyAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("direct_glossy_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_indirectGlossyAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("indirect_glossy_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_albedoAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("albedo_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_normalAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("normal_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_uvAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("uv_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_depthAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("depth_aov")->create(params));
     }
 
     #undef INSERT_PATH_IN_CONFIGS

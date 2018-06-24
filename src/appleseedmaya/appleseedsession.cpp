@@ -372,8 +372,7 @@ namespace
             asf::auto_release_ptr<asr::Frame> frame(
                 asr::FrameFactory::create(
                     "beauty",
-                    asr::ParamArray()
-                        .insert("resolution", "640 480")));
+                    asr::ParamArray().insert("resolution", "640 480")));
             m_project->set_frame(frame);
 
             // Create the scene
@@ -521,8 +520,7 @@ namespace
             params.insert("resolution", asf::Vector2i(m_options.m_width, m_options.m_height));
 
             // Replace the frame.
-            const asr::AOVContainer& aovs = m_project->get_frame()->aovs();
-            m_project->set_frame(asr::FrameFactory().create("beauty", params, aovs));
+            m_project->set_frame(asr::FrameFactory().create("beauty", params, m_aovs));
 
             // Set the crop window.
             if (m_options.m_renderRegion)
@@ -659,7 +657,8 @@ namespace
                 RenderGlobalsNode::applyGlobalsToProject(
                     appleseedRenderGlobalsNode,
                     m_sessionMode,
-                    *m_project);
+                    *m_project,
+                    m_aovs);
             }
 
             return appleseedRenderGlobalsNode;
@@ -930,10 +929,11 @@ namespace
                   : asr::ProjectFileWriter::OmitHandlingAssetFiles | asr::ProjectFileWriter::OmitWritingGeometryFiles);
         }
 
-        void writeMainImage(const char* filename) const
+        void WriteImages(const char* filename) const
         {
             const asr::Frame* frame = m_project->get_frame();
             frame->write_main_image(filename);
+            frame->write_aov_images(filename);
         }
 
         asr::Assembly* mainAssembly()
@@ -961,6 +961,7 @@ namespace
         MTime                                                   m_savedTime;
 
         asf::auto_release_ptr<renderer::Project>                m_project;
+        asr::AOVContainer                                       m_aovs;
 
         MString                                                 m_fileName;
         bfs::path                                               m_projectPath;
@@ -1156,7 +1157,7 @@ namespace
             beginSession(BatchRenderSession, options, ComputationPtr());
             g_globalSession->exportProject();
             g_globalSession->batchRender();
-            g_globalSession->writeMainImage(outputFilename.asChar());
+            g_globalSession->WriteImages(outputFilename.asChar());
         }
         catch (const AppleseedMayaException&)
         {

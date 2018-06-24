@@ -32,6 +32,9 @@
 // appleseed-maya headers.
 #include "appleseedmaya/appleseedsession.h"
 
+// appleseed.renderer headers.
+#include "renderer/api/aov.h"
+
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MObject.h>
@@ -58,7 +61,8 @@ class RenderGlobalsNode
     static void applyGlobalsToProject(
         const MObject&                              globals,
         AppleseedSession::SessionMode               sessionMode,
-        renderer::Project&                          project);
+        renderer::Project&                          project,
+        renderer::AOVContainer&                     aovs);
 
     static void collectMotionBlurSampleTimes(
         const MObject&                              globals,
@@ -115,6 +119,22 @@ class RenderGlobalsNode
     static MObject      m_denoiseScales;
 
     static MObject      m_imageFormat;
+
+    // AOVs.
+
+    static MObject      m_diffuseAOV;
+    static MObject      m_glossyAOV;
+    static MObject      m_emissionAOV;
+
+    static MObject      m_directDiffuseAOV;
+    static MObject      m_indirectDiffuseAOV;
+    static MObject      m_directGlossyAOV;
+    static MObject      m_indirectGlossyAOV;
+
+    static MObject      m_albedoAOV;
+    static MObject      m_normalAOV;
+    static MObject      m_uvAOV;
+    static MObject      m_depthAOV;
 };
 
 #endif  // !APPLESEED_MAYA_RENDERGLOBALSNODE_H
