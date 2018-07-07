@@ -120,6 +120,9 @@ MObject RenderGlobalsNode::m_albedoAOV;
 MObject RenderGlobalsNode::m_normalAOV;
 MObject RenderGlobalsNode::m_uvAOV;
 MObject RenderGlobalsNode::m_depthAOV;
+MObject RenderGlobalsNode::m_nprShadingAOV;
+MObject RenderGlobalsNode::m_nprContourAOV;
+
 
 namespace
 {
@@ -396,6 +399,12 @@ MStatus RenderGlobalsNode::initialize()
     m_depthAOV = numAttrFn.create("depthAOV", "depthAOV", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_depthAOV, "depthAOV")
 
+    m_nprShadingAOV = numAttrFn.create("nprShadingAOV", "nprShadingAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_nprShadingAOV, "nprShadingAOV")
+
+    m_nprContourAOV = numAttrFn.create("nprContourAOV", "nprContourAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_nprContourAOV, "nprContourAOV")
+
     return status;
 
     #undef CHECKED_ADD_ATTRIBUTE
@@ -634,6 +643,12 @@ void RenderGlobalsNode::applyGlobalsToProject(
 
         if (AttributeUtils::get(MPlug(globals, m_depthAOV), enabled))
             if (enabled) aovs.insert(registrar.lookup("depth_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_nprShadingAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("npr_shading_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_nprContourAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("npr_contour_aov")->create(params));
     }
 
     #undef INSERT_PATH_IN_CONFIGS
