@@ -135,6 +135,9 @@ class RenderGlobalsNode
     static MObject      m_normalAOV;
     static MObject      m_uvAOV;
     static MObject      m_depthAOV;
+
+    static MObject      m_nprShadingAOV;
+    static MObject      m_nprContourAOV;
 };
 
 #endif  // !APPLESEED_MAYA_RENDERGLOBALSNODE_H

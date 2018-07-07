@@ -586,6 +586,9 @@ class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
                         self._addControl(ui=pm.checkBoxGrp(label="UV"), attrName="uvAOV")
                         self._addControl(ui=pm.checkBoxGrp(label="Depth"), attrName="depthAOV")
 
+                        self._addControl(ui=pm.checkBoxGrp(label="NPR Shading"), attrName="nprShadingAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="NPR Contours"), attrName="nprContourAOV")
+
                 with pm.frameLayout(label="Denoiser", collapsable=True, collapse=True):
                     with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=columnWidth):
                         self._addControl(
