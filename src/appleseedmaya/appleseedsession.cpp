@@ -1194,13 +1194,14 @@ MStatus batchRender(Options options)
 
     if (sceneName.length() != 0)
     {
-        // Filename of the scene without the __xxxx file suffix
-        // and without the .ma or .mb extension.
-        const size_t suffix_length = strlen("__xxxx") + strlen(".mx");
-        assert(sceneName.length() > suffix_length);
-        sceneName = MString(
-            sceneName.asChar(),
-            static_cast<int>(sceneName.length() - suffix_length));
+        // When doing batch rendering, Maya saves the scene to a temporary file
+        // /path/to/scene/name__xxxx.mb, where xxxx can be 4 or 5 digits, depending
+        // on the Maya version.
+        // To recover the original scene filename, we strip the __xxxx.mb suffix.
+        const size_t suffixPos = std::string(sceneName.asChar()).find_last_of('_') - 1;
+
+        assert(sceneName.length() > suffixPos);
+        sceneName = MString( sceneName.asChar(), static_cast<int>(suffixPos));
     }
     else
         sceneName.set("untitled");
