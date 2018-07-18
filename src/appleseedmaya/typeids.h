@@ -103,6 +103,8 @@ enum AppleseedMayaTypeIds
     AsSwitchSurfaceNodeTypeId       = 0x001279fe,   // 1210878
     AsTexture3DNodeTypeId           = 0x001279ff,   // 1210879
     AsBumpNodeTypeId                = 0x00127a00,   // 1210880
+    AsToonNodeTypeID                = 0x00127a01,   // 1210881
+    AsXToonNodeTypeID               = 0x00127a02,   // 1210882
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };
