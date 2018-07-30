@@ -448,7 +448,7 @@ void RenderGlobalsNode::applyGlobalsToProject(
     int passes;
     if (AttributeUtils::get(MPlug(globals, m_passes), passes))
     {
-        finalParams.insert_path("generic_frame_renderer.passes", passes);
+        finalParams.insert_path("passes", passes);
         finalParams.insert_path("shading_result_framebuffer", passes == 1 ? "ephemeral" : "permanent");
     }
 
