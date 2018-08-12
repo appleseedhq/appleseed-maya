@@ -127,13 +127,10 @@ namespace
         if (p.mayaAttributeHidden == true)
             attr.setHidden(true);
 
-        if (p.mayaAttributeKeyable == false)
-            attr.setKeyable(false);
-
         if (p.isOutput)
             return AttributeUtils::makeOutput(attr);
         else
-            return AttributeUtils::makeInput(attr);
+            return AttributeUtils::makeInput(attr, p.mayaAttributeKeyable);
     }
 
     MStatus initializeNumericAttribute(MFnNumericAttribute& attr, const OSLParamInfo& p)

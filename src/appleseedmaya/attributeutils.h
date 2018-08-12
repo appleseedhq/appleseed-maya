@@ -84,7 +84,7 @@ bool hasConnections(const MPlug& plug, bool input);
 
 bool anyChildPlugConnected(const MPlug& plug, bool input);
 
-MStatus makeInput(MFnAttribute& attr);
+MStatus makeInput(MFnAttribute& attr, const bool keyable = true);
 MStatus makeOutput(MFnAttribute& attr);
 
 } // AttributeUtils.
