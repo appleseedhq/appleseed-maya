@@ -57,7 +57,7 @@ def showAbout():
         align='center')
 
     mc.text(
-        label='Copyright (c) 2017 The appleseedhq Organization',
+        label='Copyright (c) 2018 The appleseedhq Organization',
         font='boldLabelFont',
         align='center')
 
