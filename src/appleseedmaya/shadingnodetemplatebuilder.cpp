@@ -88,6 +88,7 @@ class LayoutTree
 
         // Import the bump control.
         ss << "source AElambertCommon;\n";
+        ss << "source AEappleseedBumpControl;\n";
 
         // Create the AE procedure.
         ss << "global proc AE" << shaderInfo.mayaName << "Template(string $nodeName)\n";
@@ -106,6 +107,11 @@ class LayoutTree
             if (p.widget == "null")
                 ss << "    editorTemplate -suppress \"" << p.mayaAttributeName << "\";\n";
         }
+
+        // Add help
+        ss << "addAttributeEditorNodeHelp(\"" << shaderInfo.mayaName
+           << "\", " << "\"showHelp -absolute \\\"" << shaderInfo.shaderHelpURL
+           << "\\\"\");\n;";
 
         // Include/call base class/node attributes.
         ss << "    AEdependNodeTemplate $nodeName;\n";
@@ -178,11 +184,9 @@ private:
             {
                 indent(ss, level);
 
-                // Special case for Maya's bump. We want to reuse the bump control.
-                // Maybe this should be specified by some metadata entry instead of
-                // by attribute name?
-                if (m_paramInfo->mayaAttributeName == "normalCamera")
-                    ss << "editorTemplate -callCustom \"AEshaderBumpNew\" \"AEshaderBumpReplace\" \"normalCamera\";\n";
+                if (m_paramInfo->widget == "maya_bump" || m_paramInfo->mayaAttributeName == "normalCamera")
+                    ss << "editorTemplate -callCustom \"AEappleseedShaderBumpNew\" \"AEappleseedShaderBumpReplace\" \""
+                       << m_paramInfo->mayaAttributeName << "\";\n";
                 else if (m_paramInfo->asWidget == "ramp")
                     ss << "AEaddRampControl($nodeName + \"." << m_paramInfo->mayaAttributeName << "\");\n";
                 else if (m_paramInfo->asWidget == "ramp_positions")

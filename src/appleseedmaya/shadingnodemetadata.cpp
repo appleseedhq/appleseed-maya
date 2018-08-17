@@ -199,6 +199,7 @@ std::ostream& operator<<(std::ostream& os, const OSLParamInfo& paramInfo)
     os << "Param : " << paramInfo.paramName << "\n";
     os << "  maya name      : " << paramInfo.mayaAttributeName << "\n";
     os << "  type           : " << paramInfo.paramType << "\n";
+    os << "  widget         : " << paramInfo.widget << "\n";
     os << "  output         : " << paramInfo.isOutput << "\n";
     os << "  valid default  : " << paramInfo.validDefault << "\n";
     os << "  closure        : " << paramInfo.isClosure << "\n";
@@ -231,6 +232,7 @@ OSLShaderInfo::OSLShaderInfo(
     metadata.getValue("as_maya_node_name", mayaName);
     metadata.getValue("as_maya_classification", mayaClassification);
     metadata.getValue<unsigned int>("as_maya_type_id", typeId);
+    metadata.getValue("URL", shaderHelpURL);
 
     paramInfo.reserve(q.get_param_count());
     for (size_t i = 0, e = q.get_param_count(); i < e; ++i)
