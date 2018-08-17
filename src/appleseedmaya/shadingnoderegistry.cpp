@@ -79,6 +79,7 @@ namespace
         std::cout << "  Name = " << p.paramName << " type = " << p.paramType << "\n";
         std::cout << "    Maya Attribute = " << p.mayaAttributeName << "\n";
         std::cout << "    IsOutput = " << p.isOutput << "\n";
+        std::cout << "    Widget = " << p.widget << "\n";
         std::cout << "    IsClosure = " << p.isClosure << "\n";
 
         if (p.isArray)
@@ -98,6 +99,7 @@ namespace
         std::cout << "File Name = " << s.shaderFileName << "\n";
         std::cout << "Maya Name = " << s.mayaName << "\n";
         std::cout << "Maya Classification = " << s.mayaClassification << "\n";
+        std::cout << "Shader help URL = " << s.shaderHelpURL << "\n";
 
         if (s.typeId)
             std::cout << "Maya TypeId = " << s.typeId << "\n";

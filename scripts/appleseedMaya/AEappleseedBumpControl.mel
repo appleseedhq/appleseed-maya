@@ -1,0 +1,30 @@
+
+//
+// Based on the standard MEL included with Lambert, but allowing a specific
+// label - needed if you want to have separate bump controls for diffuse,
+// specular, or coating and substrate for instance.
+//
+
+global proc AEappleseedShaderBumpNew(string $attrName)
+{
+    setUITemplate -pst attributeEditorTemplate;
+
+    string $tokens[];
+    tokenize $attrName "." $tokens;
+
+    $niceName = `attributeQuery -node $tokens[0] -niceName $tokens[1]`;
+    
+    attrNavigationControlGrp
+        -label $niceName
+        -at $attrName
+        bumpControl;
+
+    setUITemplate -ppt;
+}
+
+global proc AEappleseedShaderBumpReplace(string $attrName)
+{
+    attrNavigationControlGrp -edit
+        -at $attrName
+        bumpControl;
+}

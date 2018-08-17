@@ -160,6 +160,7 @@ class OSLShaderInfo
     MString shaderName;
     MString shaderType;
     MString shaderFileName;
+    MString shaderHelpURL;
 
     // Maya related info.
     MString mayaName;
