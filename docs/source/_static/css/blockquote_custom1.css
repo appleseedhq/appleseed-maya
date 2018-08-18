@@ -19,6 +19,7 @@ table.citation {
 
 .label {
     display: block !important; /* fix citation misaligned */
+    min-width: 80px;
 }
 
 /* Remove the colon from the copyright text in the footer */

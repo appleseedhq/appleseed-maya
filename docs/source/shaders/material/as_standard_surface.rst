@@ -128,7 +128,7 @@ Refraction Parameters
     Overall tinting factor, it affects the BTDF equally, unlike volumetric absorption.
 
 Volumetric Absorption
-"""""""""""""""""""""
+~~~~~~~~~~~~~~~~~~~~~
 
 *Absorption Depth*
     Sets the depth at which full absorption takes place. Low values result in dense absorbing materials, high values in transparent appearance ones. [#]_
@@ -153,7 +153,7 @@ Coating Parameters
     Index of refraction of the coating layer, usually a dielectric, with values around 1.5.
 
 Coating Absorption
-""""""""""""""""""
+~~~~~~~~~~~~~~~~~~
 
 *Coating Thickness*
     Thickness of the coating layer, controlling the intensity of coating absorption, with 0 being no absorption, 1 being full absorption.
@@ -179,7 +179,7 @@ Incandescence Parameters
     Temperature in Kelvin degrees, ignored in *constant* mode.
 
 Options
-"""""""
+~~~~~~~
 
 *Area Normalize EDF*
     Normalize by the object area, so that object deformations keep the incandescence energy. If unset, deforming the object will retain the incandescence color.

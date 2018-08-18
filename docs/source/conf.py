@@ -23,7 +23,7 @@ from docutils.parsers.rst.directives.admonitions import BaseAdmonition
 from sphinx.util import compat
 compat.make_admonition = BaseAdmonition
 
-needs_sphinx = '1.6.6'
+needs_sphinx = '1.6'
 
 # For automagical GIT versioning (describe, tags)
 #
@@ -304,39 +304,39 @@ htmlhelp_basename = 'appleseed-mayadoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
-latex_elements = {
+#latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
-'papersize': 'a4paper',
+#'papersize': 'a4paper',
 
 # The font size ('10pt', '11pt' or '12pt').
-'pointsize': '10pt',
+#'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
 #'preamble': '',
-}
+#}
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-  ('latex_index', 'appleseed-maya.tex', 'appleseed-maya Documentation',
-   'The appleseedhq Organization', 'manual'),
-]
+#latex_documents = [
+#  ('latex_index', 'appleseed-maya.tex', 'appleseed-maya Documentation',
+#   'The appleseedhq Organization', 'manual'),
+#]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
 #latex_logo = None
-latex_logo = "_static/appleseed-logo.png"
+#latex_logo = "_static/appleseed-logo.png"
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
-latex_use_parts = False
+#latex_use_parts = False
 
 # If true, show page references after internal links.
-latex_show_pagerefs = False
+#latex_show_pagerefs = False
 
 # If true, show URL addresses after external links.
-latex_show_urls = "True"
+#latex_show_urls = "True"
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []
@@ -351,10 +351,10 @@ latex_show_urls = "True"
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 
-man_pages = [
-    ('index', 'appleseed-maya', 'appleseed-maya Documentation',
-     ['The appleseedhq Organization'], 1)
-]
+#man_pages = [
+#    ('index', 'appleseed-maya', 'appleseed-maya Documentation',
+#     ['The appleseedhq Organization'], 1)
+#]
 
 # If true, show URL addresses after external links.
 #man_show_urls = False
@@ -365,7 +365,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 
-texinfo_documents = []
+#texinfo_documents = []
 
 # Documents to append as an appendix to all manuals.
 #texinfo_appendices = []
@@ -383,35 +383,35 @@ texinfo_documents = []
 
 # Bibliographic Dublin Core info.
 
-epub_title = 'appleseed-maya'
-epub_author = 'The appleseedhq Organization'
-epub_publisher = 'The appleseedhq Organization'
-epub_copyright = '2017, The appleseedhq Organization'
+#epub_title = 'appleseed-maya'
+#epub_author = 'The appleseedhq Organization'
+#epub_publisher = 'The appleseedhq Organization'
+#epub_copyright = '2017, The appleseedhq Organization'
 
 # The basename for the epub file. It defaults to the project name.
 
-epub_basename = 'appleseed-maya'
+#epub_basename = 'appleseed-maya'
 
 # The HTML theme for the epub output. Since the default themes are not optimized
 # for small screen space, using the same theme for HTML and epub output is
 # usually not wise. This defaults to 'epub', a theme designed to save visual
 # space.
 
-epub_theme = 'epub'
+#epub_theme = 'epub'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.
 
-epub_language = 'en'
+#epub_language = 'en'
 
 # The scheme of the identifier. Typical schemes are ISBN or URL.
 
-epub_scheme = 'https://appleseedhq.net'
+#epub_scheme = 'https://appleseedhq.net'
 
 # The unique identifier of the text. This can be a ISBN number
 # or the project homepage.
 
-epub_identifier = 'https://github.com/appleseedhq/appleseed-maya'
+#epub_identifier = 'https://github.com/appleseedhq/appleseed-maya'
 
 # A unique identification for the text.
 #epub_uid = ''
@@ -432,19 +432,19 @@ epub_identifier = 'https://github.com/appleseedhq/appleseed-maya'
 
 # A list of files that should not be packed into the epub file.
 
-epub_exclude_files = ['search.html']
+#epub_exclude_files = ['search.html']
 
 # The depth of the table of contents in toc.ncx.
 
-epub_tocdepth = 4
+#epub_tocdepth = 4
 
 # Allow duplicate toc entries.
 
-epub_tocdup = True
+#epub_tocdup = True
 
 # Choose between 'default' and 'includehidden'.
 
-epub_tocscope = 'default'
+#epub_tocscope = 'default'
 
 # Fix unsupported image types using the PIL.
 #epub_fix_images = True
@@ -454,15 +454,15 @@ epub_tocscope = 'default'
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 
-epub_show_urls = 'inline'
+#epub_show_urls = 'inline'
 
 # If false, no index is generated.
 
-epub_use_index = True
+#epub_use_index = True
 
 # Epub writing mode, can be horizontal(default), vertical
 
-epub_writing_mode = 'horizontal'
+#epub_writing_mode = 'horizontal'
 
 # Example configuration for intersphinx: refer to the Python standard library.
 # intersphinx_mapping = {'https://appleseedhq.net/docs.html': None}
