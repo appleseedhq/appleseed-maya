@@ -59,7 +59,7 @@ Fresnel Parameters
    In order to be physically correct, the Fresnel term would need to provide the amount of light reflected off the surface of the object, but the object's surface might be described (and typically is) by a statistical distribution of normal vectors. Therefore, the correct Fresnel term would depend on this distribution's microfacet normal, and subsequently on the surface roughness.
 
    This node however does **not** provide the Fresnel reflection amount off a microfacet normal, but from the true surface normal, a *viewer Fresnel term*.
-   This is provided for creative freedom (i.e: creative blending of materials with :ref:`asLayerShader <label_as_layer_shader>` node.
+   This is provided for creative freedom (i.e: creative blending of materials with :ref:`asBlendShader <label_as_blend_shader>` node.
 
 -----
 

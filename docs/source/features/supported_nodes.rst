@@ -37,6 +37,10 @@ If the node support status is empty, it means that the node might or might not b
 
 -----
 
+.. include:: nodes_envtextures.rst
+
+-----
+
 .. include:: nodes_othertextures.rst
 
 -----

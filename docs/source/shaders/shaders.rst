@@ -74,4 +74,5 @@ Materials
 * :ref:`asStandardSurface <label_as_standard_surface>`
 * :ref:`asSubsurface <label_as_subsurface>`
 * :ref:`asSwitchSurface <label_as_switch_surface>`
+* :ref:`asToon <label_as_toon>`
 

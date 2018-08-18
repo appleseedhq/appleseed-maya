@@ -29,4 +29,5 @@ Contents
     shaders/shaders
     tutorials/tutorials
     about/about
+    bibliography/bibliography
 
