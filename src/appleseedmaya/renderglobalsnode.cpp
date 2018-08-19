@@ -83,6 +83,7 @@ MObject RenderGlobalsNode::m_lightSamples;
 MObject RenderGlobalsNode::m_envSamples;
 MObject RenderGlobalsNode::m_caustics;
 MObject RenderGlobalsNode::m_maxRayIntensity;
+MObject RenderGlobalsNode::m_clampRoughness;
 
 MObject RenderGlobalsNode::m_backgroundEmitsLight;
 MObject RenderGlobalsNode::m_envLightNode;
@@ -276,6 +277,10 @@ MStatus RenderGlobalsNode::initialize()
     m_maxRayIntensity = numAttrFn.create("maxRayIntensity", "maxRayIntensity", MFnNumericData::kFloat, 0.0, &status);
     numAttrFn.setMin(0.0);
     CHECKED_ADD_ATTRIBUTE(m_maxRayIntensity, "maxRayIntensity")
+
+    // Caustics.
+    m_clampRoughness = numAttrFn.create("clampRoughness", "clampRoughness", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_clampRoughness, "clampRoughness")
 
     // Background emits light.
     m_backgroundEmitsLight = numAttrFn.create("bgLight", "bgLight", MFnNumericData::kBoolean, true, &status);
@@ -522,6 +527,10 @@ void RenderGlobalsNode::applyGlobalsToProject(
         else
             INSERT_PATH_IN_CONFIGS("pt.max_ray_intensity", maxRayIntensity)
     }
+
+    bool clampRoughness;
+    if (AttributeUtils::get(MPlug(globals, m_clampRoughness), clampRoughness))
+        INSERT_PATH_IN_CONFIGS("pt.clamp_roughness", clampRoughness)
 
     float lightSamples;
     if (AttributeUtils::get(MPlug(globals, m_lightSamples), lightSamples))

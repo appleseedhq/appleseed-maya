@@ -436,6 +436,9 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                                         label="Environment Samples", numberOfFields=1),
                                     attrName="envSamples")
                                 self._addControl(
+                                    ui=pm.checkBoxGrp(label="Clamp Roughness"),
+                                    attrName="clampRoughness")
+                                self._addControl(
                                     ui=pm.checkBoxGrp(label="Caustics"),
                                     attrName="caustics")
                                 self._addControl(
