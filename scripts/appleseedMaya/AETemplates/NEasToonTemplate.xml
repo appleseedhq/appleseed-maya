@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasToon'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='outTransparency' type='maya.float3'>
+            <label>Out Transparency</label>
+        </attribute>
+        <attribute name='incandescenceWeight' type='maya.float'>
+            <label>Incandescence Weight</label>
+        </attribute>
+        <attribute name='incandescenceAttenuation' type='maya.float'>
+            <label>Incandescence Attenuation</label>
+        </attribute>
+        <attribute name='incandescenceTint' type='maya.float3'>
+            <label>Incandescence Tint</label>
+        </attribute>
+        <attribute name='edfDarkColor' type='maya.float3'>
+            <label>Edf Dark Color</label>
+        </attribute>
+        <attribute name='edfDarkLevel' type='maya.float'>
+            <label>Edf Dark Level</label>
+        </attribute>
+        <attribute name='edfMidtoneColor' type='maya.float3'>
+            <label>Edf Midtone Color</label>
+        </attribute>
+        <attribute name='edfMidtoneLevel' type='maya.float'>
+            <label>Edf Midtone Level</label>
+        </attribute>
+        <attribute name='edfBrightColor' type='maya.float3'>
+            <label>Edf Bright Color</label>
+        </attribute>
+        <attribute name='edfSoftness' type='maya.float'>
+            <label>Edf Softness</label>
+        </attribute>
+        <attribute name='diffuseWeight' type='maya.float'>
+            <label>Diffuse Weight</label>
+        </attribute>
+        <attribute name='diffuseTint' type='maya.float3'>
+            <label>Diffuse Tint</label>
+        </attribute>
+        <attribute name='shadowColor' type='maya.float3'>
+            <label>Shadow Color</label>
+        </attribute>
+        <attribute name='shadowLevel' type='maya.float'>
+            <label>Shadow Level</label>
+        </attribute>
+        <attribute name='midtoneColor' type='maya.float3'>
+            <label>Midtone Color</label>
+        </attribute>
+        <attribute name='midtoneLevel' type='maya.float'>
+            <label>Midtone Level</label>
+        </attribute>
+        <attribute name='highlightColor' type='maya.float3'>
+            <label>Highlight Color</label>
+        </attribute>
+        <attribute name='diffuseSoftness' type='maya.float'>
+            <label>Diffuse Softness</label>
+        </attribute>
+        <attribute name='specularWeight' type='maya.float'>
+            <label>Specular Weight</label>
+        </attribute>
+        <attribute name='specularRoughness' type='maya.float'>
+            <label>Specular Roughness</label>
+        </attribute>
+        <attribute name='anisotropyAmount' type='maya.float'>
+            <label>Anisotropy Amount</label>
+        </attribute>
+        <attribute name='anisotropyAngle' type='maya.float'>
+            <label>Anisotropy Angle</label>
+        </attribute>
+        <attribute name='anisotropyMap' type='maya.float3'>
+            <label>Anisotropy Map</label>
+        </attribute>
+        <attribute name='anisotropyDirection' type='maya.float3'>
+            <label>Anisotropy Direction</label>
+        </attribute>
+        <attribute name='specularTint' type='maya.float3'>
+            <label>Specular Tint</label>
+        </attribute>
+        <attribute name='glossyColor' type='maya.float3'>
+            <label>Glossy Color</label>
+        </attribute>
+        <attribute name='glossyLevel' type='maya.float'>
+            <label>Glossy Level</label>
+        </attribute>
+        <attribute name='glossySoftness' type='maya.float'>
+            <label>Glossy Softness</label>
+        </attribute>
+        <attribute name='facingAttenuation' type='maya.float'>
+            <label>Facing Attenuation</label>
+        </attribute>
+        <attribute name='rimWeight' type='maya.float'>
+            <label>Rim Weight</label>
+        </attribute>
+        <attribute name='rimTint' type='maya.float3'>
+            <label>Rim Tint</label>
+        </attribute>
+        <attribute name='rimSoftness' type='maya.float'>
+            <label>Rim Softness</label>
+        </attribute>
+        <attribute name='normalCamera' type='maya.float3'>
+            <label>Normal Camera</label>
+        </attribute>
+        <attribute name='specularNormal' type='maya.float3'>
+            <label>Specular Normal</label>
+        </attribute>
+        <attribute name='transparency' type='maya.float3'>
+            <label>Transparency</label>
+        </attribute>
+        <attribute name='contourColor' type='maya.float3'>
+            <label>Contour Color</label>
+        </attribute>
+        <attribute name='contourOpacity' type='maya.float'>
+            <label>Contour Opacity</label>
+        </attribute>
+        <attribute name='contourWidth' type='maya.float'>
+            <label>Contour Width</label>
+        </attribute>
+        <attribute name='matteOpacity' type='maya.float'>
+            <label>Matte Opacity</label>
+        </attribute>
+        <attribute name='matteOpacityColor' type='maya.float3'>
+            <label>Matte Opacity Color</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasToon'>
+        <property name='outColor'/>
+        <property name='outTransparency'/>
+        <property name='incandescenceWeight'/>
+        <property name='incandescenceAttenuation'/>
+        <property name='incandescenceTint'/>
+        <property name='edfDarkColor'/>
+        <property name='edfDarkLevel'/>
+        <property name='edfMidtoneColor'/>
+        <property name='edfMidtoneLevel'/>
+        <property name='edfBrightColor'/>
+        <property name='edfSoftness'/>
+        <property name='diffuseWeight'/>
+        <property name='diffuseTint'/>
+        <property name='shadowColor'/>
+        <property name='shadowLevel'/>
+        <property name='midtoneColor'/>
+        <property name='midtoneLevel'/>
+        <property name='highlightColor'/>
+        <property name='diffuseSoftness'/>
+        <property name='specularWeight'/>
+        <property name='specularRoughness'/>
+        <property name='anisotropyAmount'/>
+        <property name='anisotropyAngle'/>
+        <property name='anisotropyMap'/>
+        <property name='anisotropyDirection'/>
+        <property name='specularTint'/>
+        <property name='glossyColor'/>
+        <property name='glossyLevel'/>
+        <property name='glossySoftness'/>
+        <property name='facingAttenuation'/>
+        <property name='rimWeight'/>
+        <property name='rimTint'/>
+        <property name='rimSoftness'/>
+        <property name='normalCamera'/>
+        <property name='specularNormal'/>
+        <property name='transparency'/>
+        <property name='contourColor'/>
+        <property name='contourOpacity'/>
+        <property name='contourWidth'/>
+        <property name='matteOpacity'/>
+        <property name='matteOpacityColor'/>
+    </view>
+</templates>

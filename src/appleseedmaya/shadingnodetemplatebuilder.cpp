@@ -185,17 +185,15 @@ private:
                 indent(ss, level);
 
                 if (m_paramInfo->widget == "maya_bump" || m_paramInfo->mayaAttributeName == "normalCamera")
+                {
                     ss << "editorTemplate -callCustom \"AEappleseedShaderBumpNew\" \"AEappleseedShaderBumpReplace\" \""
                        << m_paramInfo->mayaAttributeName << "\";\n";
+                }
                 else if (m_paramInfo->asWidget == "ramp")
                     ss << "AEaddRampControl($nodeName + \"." << m_paramInfo->mayaAttributeName << "\");\n";
-                else if (m_paramInfo->asWidget == "ramp_positions")
+                else if (m_paramInfo->asWidget == "ramp_positions" || m_paramInfo->asWidget == "ramp_basis")
                 {
-                    // Ignore.
-                }
-                else if (m_paramInfo->asWidget == "ramp_basis")
-                {
-                    // Ignore.
+                    // Ramp positions and basis params are included in the ramp control above.
                 }
                 else
                 {
