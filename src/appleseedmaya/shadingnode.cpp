@@ -121,16 +121,15 @@ namespace
         if (p.label.length() != 0)
             attr.setNiceNameOverride(p.label);
 
-        if (p.mayaAttributeConnectable == false)
+        if (!p.mayaAttributeConnectable)
             attr.setConnectable(false);
 
-        if (p.mayaAttributeHidden == true)
+        if (p.mayaAttributeHidden)
             attr.setHidden(true);
 
-        if (p.isOutput)
-            return AttributeUtils::makeOutput(attr);
-        else
-            return AttributeUtils::makeInput(attr, p.mayaAttributeKeyable);
+        return p.isOutput ?
+            AttributeUtils::makeOutput(attr) :
+            AttributeUtils::makeInput(attr, p.mayaAttributeKeyable);
     }
 
     MStatus initializeNumericAttribute(MFnNumericAttribute& attr, const OSLParamInfo& p)
@@ -435,6 +434,7 @@ MStatus ShadingNode::initialize()
         {
             MFnNumericAttribute numAttrFn;
 
+            // Special UV cases
             if (p.mayaAttributeName == "uvCoord")
             {
                 MObject child1 = numAttrFn.create("uCoord", "u", MFnNumericData::kFloat);
@@ -447,18 +447,31 @@ MStatus ShadingNode::initialize()
                 MObject child2 = numAttrFn.create("uvFilterSizeY", "fsy", MFnNumericData::kFloat);
                 attr = numAttrFn.create("uvFilterSize", "fs", child1, child2);
             }
+            else if (p.mayaAttributeName == "outUV")
+            {
+                MObject child1 = numAttrFn.create("outU", "ou", MFnNumericData::kFloat);
+                MObject child2 = numAttrFn.create("outV", "ov", MFnNumericData::kFloat);
+                attr = numAttrFn.create("outUV", "o", child1, child2);
+            }
             else
             {
-                MObject child1 = numAttrFn.create(p.mayaAttributeName + "X", p.mayaAttributeShortName + "x", MFnNumericData::kFloat);
-                MObject child2 = numAttrFn.create(p.mayaAttributeName + "Y", p.mayaAttributeShortName + "y", MFnNumericData::kFloat);
+                MObject child1 = numAttrFn.create(
+                    p.mayaAttributeName + "X",
+                    p.mayaAttributeShortName + "x",
+                    MFnNumericData::kFloat,
+                    p.defaultValue[0]);
+
+                MObject child2 = numAttrFn.create(
+                    p.mayaAttributeName + "Y",
+                    p.mayaAttributeShortName + "y",
+                    MFnNumericData::kFloat,
+                    p.defaultValue[1]);
 
                 attr = numAttrFn.create(p.mayaAttributeName, p.mayaAttributeShortName, child1, child2);
             }
-            if (!attr.isNull())
-            {
-                status = AttributeUtils::makeInput(numAttrFn);
-                CHECK_STATUS_AND_HANDLE_ERROR
-            }
+
+            status = initializeAttribute(numAttrFn, p);
+            CHECK_STATUS_AND_HANDLE_ERROR
         }
         else
         {

@@ -387,7 +387,7 @@ Screenshots
 
 .. rubric:: Footnotes
 
-.. [#] The diffuse BRDF used is the Oren-Nayar BRDF
+.. [#] The diffuse BRDF used is the Oren-Nayar BRDF :cite:`Oren:1994:GLR:192161.192213`
 
 .. [#] The specular (microfacet) BRDF is using Student's t-distribution :cite:`10.1111:cgf.13137`. This includes the Beckmann :cite:`beckmann1963scattering`, :cite:`Cook:1982:RMC:357290.357293` and GGX :cite:`Walter:2007:MMR:2383847.2383874` distributions.
 

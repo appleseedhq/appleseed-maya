@@ -7,7 +7,8 @@ Bibliography
 |
 
 .. bibliography:: /bibtex/references.bib
-   :list: enumerated
+   :list: citation
+   :style: plain
    :all:
 
 |

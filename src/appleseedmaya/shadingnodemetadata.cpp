@@ -29,6 +29,9 @@
 // Interface header.
 #include "shadingnodemetadata.h"
 
+// appleseed.maya headers.
+#include "appleseedmaya/logger.h"
+
 // appleseed.renderer headers.
 #include "renderer/api/shadergroup.h"
 
@@ -123,6 +126,14 @@ OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
             else if (paramType == "float")
             {
                 defaultValue.push_back(paramInfo.get<float>("default"));
+                hasDefault = true;
+            }
+            else if (paramType == "float[2]")
+            {
+                const asf::Vector2f v = paramInfo.get<asf::Vector2f>("default");
+                defaultValue.push_back(v[0]);
+                defaultValue.push_back(v[1]);
+
                 hasDefault = true;
             }
             else if (paramType == "int")

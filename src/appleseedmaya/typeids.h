@@ -107,6 +107,8 @@ enum AppleseedMayaTypeIds
     AsXToonNodeTypeID               = 0x00127a02,   // 1210882
     AsFabricNodeTypeID              = 0x00127a03,   // 1210883
     AsSbsPbrMaterialNodeTypeID      = 0x00127a04,   // 1210884
+    AsManifold2DNodeTypeID          = 0x00127a05,   // 1210885
+    AsManifold3DNodeTypeID          = 0x00127a06,   // 1210886
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };

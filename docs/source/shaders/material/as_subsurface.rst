@@ -32,7 +32,7 @@ Subsurface Parameters
 
     * Better Dipole
     * Directional Dipole :cite:`Frisvad:2014:DDM:2702692.2682629`
-    * Gaussian :cite:`dEon:2007:ERH:2383847.2383869`
+    * Gaussian :cite:`dEon:2007:ERH:2383847.2383869` :cite:`dEon:2011:QMR:1964921.1964951`
     * Normalized Diffusion :cite:`Christensen:2015:ARP:2775280.2792555`
     * Standard Dipole :cite:`Jensen:2001:PMS:383259.383319`, :cite:`Donner:2005:LDM:1186822.1073308`
     * Random Walk :cite:`Meng:2016:IDS:3071773.3071778`
