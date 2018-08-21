@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasSbsPbrMaterial'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='outTransparency' type='maya.float3'>
+            <label>Out Transparency</label>
+        </attribute>
+        <attribute name='outMatteOpacity' type='maya.float3'>
+            <label>Out Matte Opacity</label>
+        </attribute>
+        <attribute name='ambientOcclusion' type='maya.float'>
+            <label>Ambient Occlusion</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='emissiveColor' type='maya.float3'>
+            <label>Emissive Color</label>
+        </attribute>
+        <attribute name='emissiveIntensity' type='maya.float'>
+            <label>Emissive Intensity</label>
+        </attribute>
+        <attribute name='height' type='maya.float'>
+            <label>Height</label>
+        </attribute>
+        <attribute name='metallic' type='maya.float'>
+            <label>Metallic</label>
+        </attribute>
+        <attribute name='normalCamera' type='maya.float3'>
+            <label>Normal Camera</label>
+        </attribute>
+        <attribute name='roughness' type='maya.float'>
+            <label>Roughness</label>
+        </attribute>
+        <attribute name='opacity' type='maya.float'>
+            <label>Opacity</label>
+        </attribute>
+        <attribute name='specularLevel' type='maya.float'>
+            <label>Specular Level</label>
+        </attribute>
+        <attribute name='anisotropyLevel' type='maya.float'>
+            <label>Anisotropy Level</label>
+        </attribute>
+        <attribute name='anisotropyAngle' type='maya.float'>
+            <label>Anisotropy Angle</label>
+        </attribute>
+        <attribute name='refraction' type='maya.float'>
+            <label>Refraction</label>
+        </attribute>
+        <attribute name='scattering' type='maya.float'>
+            <label>Scattering</label>
+        </attribute>
+        <attribute name='absorption' type='maya.float'>
+            <label>Absorption</label>
+        </attribute>
+        <attribute name='absorptionColor' type='maya.float3'>
+            <label>Absorption Color</label>
+        </attribute>
+        <attribute name='matteOpacity' type='maya.float'>
+            <label>Matte Opacity</label>
+        </attribute>
+        <attribute name='matteOpacityColor' type='maya.float3'>
+            <label>Matte Opacity Color</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasSbsPbrMaterial'>
+        <property name='outColor'/>
+        <property name='outTransparency'/>
+        <property name='outMatteOpacity'/>
+        <property name='ambientOcclusion'/>
+        <property name='color'/>
+        <property name='emissiveColor'/>        
+        <property name='emissiveIntensity'/>
+        <property name='height'/>
+        <property name='metallic'/>
+        <property name='normalCamera'/>
+        <property name='roughness'/>
+        <property name='opacity'/>
+        <property name='specularLevel'/>
+        <property name='anisotropyLevel'/>
+        <property name='anisotropyAngle'/>
+        <property name='refraction'/>
+        <property name='scattering'/>
+        <property name='absorption'/>
+        <property name='absorptionColor'/>
+        <property name='matteOpacity'/>
+        <property name='matteOpacityColor'/>
+    </view>
+</templates>
