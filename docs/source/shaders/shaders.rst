@@ -72,6 +72,7 @@ Materials
 * :ref:`asBlendShader <label_as_blend_shader>`
 * :ref:`asMetal <label_as_metal>`
 * :ref:`asPlastic <label_as_plastic>`
+* :ref:`asSbsPBRMaterial <label_as_sbs_pbrmaterial>`
 * :ref:`asStandardSurface <label_as_standard_surface>`
 * :ref:`asSubsurface <label_as_subsurface>`
 * :ref:`asSwitchSurface <label_as_switch_surface>`
