@@ -531,6 +531,12 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                                 label="Texture Cache Size (MB)", numberOfFields=1),
                             attrName="maxTexCacheSize")
 
+                with pm.frameLayout(label="Experimental", collapsable=True, collapse=False):
+                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
+                        self._addControl(
+                            ui=pm.checkBoxGrp(label="Use Embree"),
+                            attrName="useEmbree")
+
         pm.setUITemplate("renderGlobalsTemplate", popTemplate=True)
         pm.setUITemplate("attributeEditorTemplate", popTemplate=True)
         pm.formLayout(

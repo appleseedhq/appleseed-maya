@@ -98,6 +98,8 @@ MObject RenderGlobalsNode::m_shutterClose;
 MObject RenderGlobalsNode::m_renderingThreads;
 MObject RenderGlobalsNode::m_maxTextureCacheSize;
 
+MObject RenderGlobalsNode::m_useEmbree;
+
 MObject RenderGlobalsNode::m_denoiserMode;
 MStringArray RenderGlobalsNode::m_denoiserModeKeys;
 
@@ -318,6 +320,10 @@ MStatus RenderGlobalsNode::initialize()
     m_maxTextureCacheSize = numAttrFn.create("maxTexCacheSize", "maxTexCacheSize", MFnNumericData::kInt, 1024, &status);
     numAttrFn.setMin(16);
     CHECKED_ADD_ATTRIBUTE(m_maxTextureCacheSize, "maxTexCacheSize")
+
+    // Embree.
+    m_useEmbree = numAttrFn.create("useEmbree", "useEmbree", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_useEmbree, "useEmbree")
 
     // Environment light connection.
     m_envLightNode = msgAttrFn.create("envLight", "env", &status);
@@ -561,6 +567,10 @@ void RenderGlobalsNode::applyGlobalsToProject(
         texCacheSizeinBytes *= 1024 * 1024;
         INSERT_PATH_IN_CONFIGS("texture_store.max_size", texCacheSizeinBytes);
     }
+
+    bool useEmbree;
+    if (AttributeUtils::get(MPlug(globals, m_useEmbree), useEmbree))
+        INSERT_PATH_IN_CONFIGS("use_embree", useEmbree)
 
     int denoiserMode;
     if (AttributeUtils::get(MPlug(globals, m_denoiserMode), denoiserMode))
