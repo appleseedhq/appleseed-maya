@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasManifold2D'>
+        <attribute name='outUV' type='maya.float2'>
+            <label>Out UV</label>
+        </attribute>
+        <attribute name='outUVFilter' type='maya.float2'>
+            <label>Out UVFilter</label>
+        </attribute>
+        <attribute name='uvCoord' type='maya.float2'>
+            <label>UV Coord</label>
+        </attribute>
+        <attribute name='uvFilterSize' type='maya.float2'>
+            <label>UV Filter Size</label>
+        </attribute>
+        <attribute name='scaleFrame' type='maya.float2'>
+            <label>Scale Frame</label>
+        </attribute>
+        <attribute name='translateFrame' type='maya.float2'>
+            <label>Translate Frame</label>
+        </attribute>
+        <attribute name='rotateFrame' type='maya.float'>
+            <label>Rotate Frame</label>
+        </attribute>
+        <attribute name='frameCenter' type='maya.float2'>
+            <label>Frame Center</label>
+        </attribute>
+        <attribute name='uvTiles' type='maya.float2'>
+            <label>UV Tiles</label>
+        </attribute>
+        <attribute name='offsetTiles' type='maya.float2'>
+            <label>Offset Tiles</label>
+        </attribute>
+        <attribute name='rotateTiles' type='maya.float'>
+            <label>Rotate Tiles</label>
+        </attribute>
+        <attribute name='tilesCenter' type='maya.float2'>
+            <label>Tiles Center</label>
+        </attribute>
+        <attribute name='tilesCoverage' type='maya.float2'>
+            <label>Tiles Coverage</label>
+        </attribute>
+        <attribute name='noiseUV' type='maya.float2'>
+            <label>Noise UV</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasManifold2D'>
+        <property name='outUV'/>
+        <property name='outUVFilter'/>
+        <property name='uvCoord'/>
+        <property name='uvFilterSize'/>
+        <property name='scaleFrame'/>
+        <property name='translateFrame'/>
+        <property name='rotateFrame'/>
+        <property name='frameCenter'/>
+        <property name='uvTiles'/>
+        <property name='offsetTiles'/>
+        <property name='rotateTiles'/>
+        <property name='tilesCenter'/>
+        <property name='tilesCoverage'/>
+        <property name='noiseUV'/>
+    </view>
+</templates>

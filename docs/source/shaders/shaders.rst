@@ -56,6 +56,7 @@ General Utilities
 * :ref:`asFalloffAngle <label_as_falloff_angle>`
 * :ref:`asGlobals <label_as_globals>`
 * :ref:`asIdManifold <label_as_id_manifold>`
+* :ref:`asManifold2D <label_as_manifold2d>`
 * :ref:`asRaySwitch <label_as_ray_switch>`
 * :ref:`asSpaceTransform <label_as_space_transform>`
 * :ref:`asSwizzle <label_as_swizzle>`

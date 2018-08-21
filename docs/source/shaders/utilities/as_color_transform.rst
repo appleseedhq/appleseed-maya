@@ -54,6 +54,10 @@ Color Attributes
     * CIE 1976 LCh :sub:`ab`
     * CIE 1976 LCh :sub:`uv`
 
+.. seealso::
+
+   The `Colour Python colour science package <https://www.colour-science.org/>`_ for extensive information on the topic :cite:` :cite:`mansencal_thomas_2018_1175177`
+   
 -----
 
 Outputs

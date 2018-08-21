@@ -177,7 +177,6 @@ MStatus makeOutput(MFnAttribute& attr)
     attr.setReadable(true);
     attr.setWritable(false);
     attr.setKeyable(false);
-    //attr.setHidden(true);
     return MS::kSuccess;
 }
 

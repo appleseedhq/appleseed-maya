@@ -315,7 +315,7 @@ Bump Parameters
     The unit length world space normal of the bumped surface.
 
 *Specular Normal*
-    When using separate bump controls for the diffuse and specular terms, this is the unit lenght world space normal for the specular term.
+    When using separate bump controls for the diffuse and specular terms, this is the unit length world space normal for the specular term.
 
 *Bump Control*
     This allows the user to choose a single bump effect for both the diffuse and specular terms, or a separate bump effect for these terms. When using both, the *Bump Normal* parameter affects both terms.
@@ -350,19 +350,19 @@ Contour Parameters
     Generate the contours based on the object ID.
 
 *Contour Material*
-    Generate contours based on the material ID. Objects with the same material ID would share contours.
+    Generate contours based on the material ID. Objects with the same material ID will share contours.
 
 *Contour Occlusion*
-    Generate contours based on ambient occlusion.
+    Generate contours based on depth differences between nearby points.
 
 *Contour Creases*
-    Generate contours based on the creases the object [#]_, outlining sudden changes of the surface.
+    Generate contours based on the creases of the object [#]_, outlining sudden changes of the surface.
 
 *Occlusion Threshold*
-    The threshold value for the ambient occlusion based outlining. Low values generate outlines in shorter ray hit distances.
+    The threshold value for the depth difference comparison between nearby points
 
 *Crease Threshold*
-    The threshold value for the creases based outlining, where low values resultin outlines for smaller changes in the surface of the object.
+    The threshold value for the creases based outlining, where low values result in outlines for smaller changes in the surface of the object.
 
 -----
 
@@ -411,7 +411,7 @@ Screenshots
    :width: 10%
    :title:
 
-   Toon shader with IBL and a point light. The pointlight makes the tonal progression much more noticeable.
+   Toon shader with IBL and a point light. The point light makes the tonal progression much more noticeable.
    A viewer Fresnel term is attenuating the specular highlights.
 
 .. thumbnail:: /_images/screenshots/toon/as_toon_docs_render3.png
@@ -419,7 +419,7 @@ Screenshots
    :width: 10%
    :title:
 
-   Toon shader with an emissive background, a pointlight, and rim lighting to accentuate the emissive background effect.
+   Toon shader with an emissive background, a point light, and rim lighting to accentuate the emissive background effect.
    A viewer Fresnel term is attenuating the specular highlights.
 
 .. thumbnail:: /_images/screenshots/toon/as_toon_docs_render4_aniso.png
@@ -427,7 +427,7 @@ Screenshots
    :width: 10%
    :title:
 
-   Toon shader with emissive background, pointlight, and slightly anisotropic specular highlights.
+   Toon shader with emissive background, point light, and slightly anisotropic specular highlights.
 
 .. thumbnail:: /_images/screenshots/toon/as_toon_docs_render5_outline.png
    :group: shots_as_toon_group_A
