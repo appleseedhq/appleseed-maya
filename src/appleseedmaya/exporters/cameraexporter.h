@@ -64,6 +64,8 @@ class CameraExporter
 
     static bool isRenderable(const MDagPath& path);
 
+    static double inchesToMeters(const double x);
+
     AppleseedEntityPtr<renderer::Camera> m_camera;
 };
 

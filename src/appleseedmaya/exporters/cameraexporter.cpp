@@ -85,7 +85,7 @@ void CameraExporter::createEntities(
     const AppleseedSession::Options&                options,
     const AppleseedSession::MotionBlurSampleTimes&  motionBlurSampleTimes)
 {
-    MFnCamera camera(dagPath());
+    MFnCamera cameraFn(dagPath());
 
     const asr::CameraFactoryRegistrar& cameraFactories =
         project().get_factory_registrar<asr::Camera>();
@@ -93,7 +93,7 @@ void CameraExporter::createEntities(
     const asr::ICameraFactory* cameraFactory = nullptr;
     asr::ParamArray cameraParams;
 
-    if (camera.isOrtho())
+    if (cameraFn.isOrtho())
     {
         cameraFactory = cameraFactories.lookup("orthographic_camera");
         // TODO: fetch ortho camera params here.
@@ -107,15 +107,14 @@ void CameraExporter::createEntities(
         else
             cameraFactory = cameraFactories.lookup("pinhole_camera");
 
-        // Maya's aperture is given in inches so convert to cm and then to meters.
-        double horizontalFilmAperture = camera.horizontalFilmAperture() * 2.54 * 0.01;
-        double verticalFilmAperture = camera.verticalFilmAperture() * 2.54 * 0.01;
+        double horizontalFilmAperture = inchesToMeters(cameraFn.horizontalFilmAperture());
+        double verticalFilmAperture = inchesToMeters(cameraFn.verticalFilmAperture());
 
         const double imageAspect = static_cast<double>(options.m_width) / options.m_height;
 
         // Handle film fits.
         // Reference: http://around-the-corner.typepad.com/adn/2012/11/maya-stereoscopic.html
-        MFnCamera::FilmFit filmFit = camera.filmFit();
+        MFnCamera::FilmFit filmFit = cameraFn.filmFit();
         const double filmAspect = horizontalFilmAperture / verticalFilmAperture;
 
         if (filmFit == MFnCamera::kFillFilmFit)
@@ -140,8 +139,21 @@ void CameraExporter::createEntities(
             "film_dimensions",
             asf::Vector2d(horizontalFilmAperture, verticalFilmAperture));
 
+        // Shift and camera shake.
+        double shift_x = inchesToMeters(cameraFn.horizontalFilmOffset());
+        double shift_y = inchesToMeters(cameraFn.verticalFilmOffset());
+
+        if (cameraFn.shakeEnabled())
+        {
+            shift_x += cameraFn.horizontalShake();
+            shift_y += cameraFn.verticalShake();
+        }
+
+        cameraParams.insert("shift_x", shift_x);
+        cameraParams.insert("shift_y", shift_y);
+
         // Maya's focal_length is given in mm so we convert it to meters.
-        cameraParams.insert("focal_length", camera.focalLength() * 0.001);
+        cameraParams.insert("focal_length", cameraFn.focalLength() * 0.001);
 
         if (dofEnabled)
         {
@@ -171,4 +183,9 @@ bool CameraExporter::isRenderable(const MDagPath& path)
     bool isRenderable = false;
     AttributeUtils::get(path.node(), "renderable", isRenderable);
     return isRenderable;
+}
+
+double CameraExporter::inchesToMeters(const double x)
+{
+    return x * 2.54 * 0.01;
 }
