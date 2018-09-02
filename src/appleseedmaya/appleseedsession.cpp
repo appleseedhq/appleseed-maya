@@ -802,10 +802,39 @@ namespace
             }
         }
 
+        void initFileLogging(MObject& globals, ScopedLogTarget& logTarget) const
+        {
+            const MString logFilename = RenderGlobalsNode::logFilename(globals);
+
+            if (logFilename.length() != 0)
+            {
+                // Create the file log target and make sure it's open.
+                asf::auto_release_ptr<asf::FileLogTarget> l(asf::create_file_log_target());
+                l->open(logFilename.asChar());
+
+                if(!l->is_open())
+                {
+                    RENDERER_LOG_ERROR("Could not open log file %s", logFilename.asChar());
+                    return;
+                }
+
+                logTarget.setLogTarget( asf::auto_release_ptr<asf::ILogTarget>(l.release()));
+            }
+        }
+
         void finalRender()
         {
             assert(MGlobal::mayaState() == MGlobal::kInteractive);
             assert(m_computation);
+
+            // Get the appleseed globals node.
+            MObject appleseedRenderGlobalsNode;
+            getDependencyNodeByName("appleseedRenderGlobals", appleseedRenderGlobalsNode);
+            MFnDependencyNode depNodeFn(appleseedRenderGlobalsNode);
+
+            // Init logging.
+            asr::global_logger().set_verbosity_level(
+                RenderGlobalsNode::logLevel(appleseedRenderGlobalsNode));
 
             // Start the idle job queue for render view updates.
             IdleJobQueue::start();
@@ -836,6 +865,17 @@ namespace
 
         void batchRender()
         {
+            // Get the appleseed globals node.
+            MObject appleseedRenderGlobalsNode;
+            getDependencyNodeByName("appleseedRenderGlobals", appleseedRenderGlobalsNode);
+            MFnDependencyNode depNodeFn(appleseedRenderGlobalsNode);
+
+            // Init logging.
+            ScopedSetLoggerVerbosity logLevel(RenderGlobalsNode::logLevel(appleseedRenderGlobalsNode));
+
+            ScopedLogTarget logTarget;
+            initFileLogging(appleseedRenderGlobalsNode, logTarget);
+
             // Reset the renderer controller.
             m_rendererController.set_status(asr::IRendererController::ContinueRendering);
 
@@ -981,6 +1021,7 @@ namespace
     // Globals.
     bfs::path                       g_pluginPath;    // Plugin path.
     MTime                           g_savedTime;     // Saved time.
+    asf::LogMessage::Category       g_savedLogLevel; // Saved log level.
     std::unique_ptr<SessionImpl>    g_globalSession; // Global session.
 }
 
@@ -1018,9 +1059,7 @@ namespace
     }
 }
 
-MStatus projectExport(
-    const MString& fileName,
-    Options        options)
+MStatus projectExport(const MString& fileName, const Options& options)
 {
     // In case we were doing IPR.
     endSession();
@@ -1028,8 +1067,8 @@ MStatus projectExport(
     ScopedEndSession session;
     ComputationPtr computation = Computation::create();
 
-    // Save the current Maya time.
     g_savedTime = MAnimControl::currentTime();
+    g_savedLogLevel = asr::global_logger().get_verbosity_level();
 
     if (options.m_sequence)
     {
@@ -1090,13 +1129,15 @@ MStatus projectExport(
     return MS::kSuccess;
 }
 
-MStatus render(Options options)
+MStatus render(const Options& options)
 {
     // In case we were doing IPR.
     endSession();
 
     ComputationPtr computation = Computation::create();
+
     g_savedTime = MAnimControl::currentTime();
+    g_savedLogLevel = asr::global_logger().get_verbosity_level();
 
     try
     {
@@ -1146,9 +1187,7 @@ namespace
             status);
     }
 
-    MStatus batchRenderFrame(
-        Options        options,
-        const MString& outputFilename)
+    MStatus batchRenderFrame(const Options& options, const MString& outputFilename)
     {
         ScopedEndSession session;
 
@@ -1158,14 +1197,6 @@ namespace
             g_globalSession->exportProject();
             g_globalSession->batchRender();
             g_globalSession->WriteImages(outputFilename.asChar());
-        }
-        catch (const AppleseedMayaException&)
-        {
-            return MS::kFailure;
-        }
-        catch (const std::exception&)
-        {
-            return MS::kFailure;
         }
         catch (...)
         {
@@ -1365,6 +1396,8 @@ void endSession()
 
         if (g_savedTime != MAnimControl::currentTime())
             MGlobal::viewFrame(g_savedTime);
+
+        asr::global_logger().set_verbosity_level(g_savedLogLevel);
 
         IdleJobQueue::stop();
     }

@@ -32,6 +32,10 @@
 // appleseed.renderer headers.
 #include "renderer/api/log.h"
 
+// appleseed.foundation headers.
+#include "foundation/core/concepts/noncopyable.h"
+#include "foundation/utility/autoreleaseptr.h"
+
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MStatus.h>
@@ -45,8 +49,12 @@ MStatus uninitialize();
 
 } // namespace Logger
 
+//
 // RAII class to set / restore the logger verbosity.
+//
+
 class ScopedSetLoggerVerbosity
+  : public foundation::NonCopyable
 {
   public:
     explicit ScopedSetLoggerVerbosity(foundation::LogMessage::Category newLevel);
@@ -54,6 +62,23 @@ class ScopedSetLoggerVerbosity
 
   private:
     foundation::LogMessage::Category m_prevLevel;
+};
+
+//
+// Helper class to manage appleseed log targets in an exception safe way.
+//
+
+class ScopedLogTarget
+  : public foundation::NonCopyable
+{
+  public :
+    ScopedLogTarget();
+    ~ScopedLogTarget();
+
+    void setLogTarget(foundation::auto_release_ptr<foundation::ILogTarget> logTarget);
+
+  private :
+    foundation::auto_release_ptr<foundation::ILogTarget> m_logTarget;
 };
 
 #endif  // !APPLESEED_MAYA_LOGGER_H

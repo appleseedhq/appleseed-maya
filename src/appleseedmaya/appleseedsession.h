@@ -148,10 +148,10 @@ class IExporterFactory
 };
 
 // Export the current scene.
-MStatus projectExport(const MString& fileName, Options options);
+MStatus projectExport(const MString& fileName, const Options& options);
 
 // Export and render the current scene to Maya's render view.
-MStatus render(Options options);
+MStatus render(const Options& options);
 
 // Export and batch render the current scene.
 MStatus batchRender(Options options);

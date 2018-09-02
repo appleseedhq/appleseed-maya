@@ -214,10 +214,13 @@ def imageFormatChanged():
 
 
 def currentRendererChanged():
-    if mel.eval("currentRenderer()") != "appleseed":
-        return
 
-    logger.debug("currentRendererChanged called")
+    newRenderer = mel.eval("currentRenderer()")
+
+    logger.debug("currentRendererChanged called, new renderer = %s", newRenderer)
+
+    if newRenderer != "appleseed":
+        return
 
     # Make sure our render globals node exists.
     createGlobalNodes()
@@ -468,8 +471,7 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                             for envLight in g_environmentLightsList:
                                 pm.menuItem(parent=ui, label=envLight)
 
-                            # Set the currently selected environment light in
-                            # the menu.
+                            # Set the currently selected environment light in the menu.
                             connections = mc.listConnections(
                                 "appleseedRenderGlobals.envLight")
                             if connections:
@@ -487,7 +489,7 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                                 "Created globals env light menu, name = %s" % ui)
 
                         self._addControl(
-                            ui=pm.checkBoxGrp(label="Background Emits Light"),
+                            ui=pm.checkBoxGrp(label="Environment Visible"),
                             attrName="bgLight")
 
                 with pm.frameLayout(label="Motion Blur", collapsable=True, collapse=True):
@@ -565,6 +567,13 @@ class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
     def __prefilterChanged(self, value):
         self._uis["spikeThreshold"].setEnable(value)
 
+    def __chooseLogFilename(self):
+        logger.debug("choose log filename called!")
+        path = pm.fileDialog2(fileMode=0)
+
+        if path:
+            mc.setAttr("appleseedRenderGlobals.logFilename", path, type="string")
+
     def create(self):
         # Create default render globals node if needed.
         createGlobalNodes()
@@ -638,7 +647,19 @@ class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
                             attrName="denoiseScales")
 
                 with pm.frameLayout(label="Logging", collapsable=True, collapse=True):
-                    pass
+                    with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=columnWidth):
+                        self._addControl(
+                            ui=pm.attrEnumOptionMenuGrp(
+                                label="Log Level",
+                                enumeratedItem=self._getAttributeMenuItems("logLevel")),
+                            attrName="logLevel")
+
+                        self._addControl(
+                            ui=pm.textFieldButtonGrp(
+                                label='Log Filename',
+                                buttonLabel='...',
+                                buttonCommand=self.__chooseLogFilename),
+                            attrName="logFilename")
 
         pm.setUITemplate("renderGlobalsTemplate", popTemplate=True)
         pm.setUITemplate("attributeEditorTemplate", popTemplate=True)

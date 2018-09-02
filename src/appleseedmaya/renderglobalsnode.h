@@ -34,6 +34,7 @@
 
 // appleseed.renderer headers.
 #include "renderer/api/aov.h"
+#include "renderer/api/log.h"
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
@@ -67,6 +68,9 @@ class RenderGlobalsNode
     static void collectMotionBlurSampleTimes(
         const MObject&                              globals,
         AppleseedSession::MotionBlurSampleTimes&    motionBlurSampleTimes);
+
+    static foundation::LogMessage::Category logLevel(const MObject& globals);
+    static MString logFilename(const MObject& globals);
 
   private:
     static MObject      m_pixelSamples;
@@ -141,6 +145,11 @@ class RenderGlobalsNode
 
     static MObject      m_nprShadingAOV;
     static MObject      m_nprContourAOV;
+
+    // Logging.
+
+    static MObject      m_logLevel;
+    static MObject      m_logFilename;
 };
 
 #endif  // !APPLESEED_MAYA_RENDERGLOBALSNODE_H

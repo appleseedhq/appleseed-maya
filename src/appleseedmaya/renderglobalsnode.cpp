@@ -52,6 +52,8 @@
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MFnMessageAttribute.h>
 #include <maya/MFnNumericAttribute.h>
+#include <maya/MFnTypedAttribute.h>
+#include <maya/MFnStringData.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
@@ -126,6 +128,8 @@ MObject RenderGlobalsNode::m_depthAOV;
 MObject RenderGlobalsNode::m_nprShadingAOV;
 MObject RenderGlobalsNode::m_nprContourAOV;
 
+MObject RenderGlobalsNode::m_logLevel;
+MObject RenderGlobalsNode::m_logFilename;
 
 namespace
 {
@@ -164,6 +168,7 @@ MStatus RenderGlobalsNode::initialize()
     MFnNumericAttribute numAttrFn;
     MFnEnumAttribute enumAttrFn;
     MFnMessageAttribute msgAttrFn;
+    MFnTypedAttribute typedAttrFn;
 
     MStatus status;
 
@@ -416,9 +421,24 @@ MStatus RenderGlobalsNode::initialize()
     m_nprContourAOV = numAttrFn.create("nprContourAOV", "nprContourAOV", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_nprContourAOV, "nprContourAOV")
 
-    return status;
+    // Log level.
+    const short defaultLogLevel = static_cast<short>(asf::LogMessage::Info);
+    m_logLevel = enumAttrFn.create("logLevel", "logLevel", defaultLogLevel, &status);
+    enumAttrFn.addField("Debug", 0);
+    enumAttrFn.addField("Info", 1);
+    enumAttrFn.addField("Warning", 2);
+    enumAttrFn.addField("Error", 3);
+    enumAttrFn.addField("Fatal", 4);
+    CHECKED_ADD_ATTRIBUTE(m_logLevel, "logLevel")
+
+    // Log filename.
+    m_logFilename = typedAttrFn.create("logFilename", "logFilename", MFnData::kString, &status);
+    typedAttrFn.setUsedAsFilename(true);
+    CHECKED_ADD_ATTRIBUTE(m_logFilename, "logFilename")
 
     #undef CHECKED_ADD_ATTRIBUTE
+
+    return status;
 }
 
 MStatus RenderGlobalsNode::compute(const MPlug& plug, MDataBlock& dataBlock)
@@ -702,7 +722,7 @@ void RenderGlobalsNode::collectMotionBlurSampleTimes(
         if (AttributeUtils::get(MPlug(globals, m_mbCameraSamples), cameraSamples))
         {
             motionBlurSampleTimes.initializeFrameSet(
-                cameraSamples,
+                static_cast<size_t>(cameraSamples),
                 motionBlurSampleTimes.m_shutterOpenTime,
                 motionBlurSampleTimes.m_shutterCloseTime,
                 motionBlurSampleTimes.m_cameraTimes);
@@ -712,7 +732,7 @@ void RenderGlobalsNode::collectMotionBlurSampleTimes(
         if (AttributeUtils::get(MPlug(globals, m_mbTransformSamples), xformSamples))
         {
             motionBlurSampleTimes.initializeFrameSet(
-                xformSamples,
+                static_cast<size_t>(xformSamples),
                 motionBlurSampleTimes.m_shutterOpenTime,
                 motionBlurSampleTimes.m_shutterCloseTime,
                 motionBlurSampleTimes.m_transformTimes);
@@ -725,7 +745,7 @@ void RenderGlobalsNode::collectMotionBlurSampleTimes(
                 deformSamples = asf::next_pow2(deformSamples);
 
             motionBlurSampleTimes.initializeFrameSet(
-                deformSamples,
+                static_cast<size_t>(deformSamples),
                 motionBlurSampleTimes.m_shutterOpenTime,
                 motionBlurSampleTimes.m_shutterCloseTime,
                 motionBlurSampleTimes.m_deformTimes);
@@ -735,4 +755,18 @@ void RenderGlobalsNode::collectMotionBlurSampleTimes(
     }
     else
         motionBlurSampleTimes.initializeToCurrentFrame();
+}
+
+asf::LogMessage::Category RenderGlobalsNode::logLevel(const MObject& globals)
+{
+    short level = static_cast<short>(asf::LogMessage::Warning);
+    AttributeUtils::get(MPlug(globals, m_logLevel), level);
+    return static_cast<asf::LogMessage::Category>(level);
+}
+
+MString RenderGlobalsNode::logFilename(const MObject& globals)
+{
+    MString filename;
+    AttributeUtils::get(MPlug(globals, m_logFilename), filename);
+    return filename;
 }

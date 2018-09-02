@@ -134,3 +134,22 @@ ScopedSetLoggerVerbosity::~ScopedSetLoggerVerbosity()
 {
     asr::global_logger().set_verbosity_level(m_prevLevel);
 }
+
+ScopedLogTarget::ScopedLogTarget()
+{
+}
+
+ScopedLogTarget::~ScopedLogTarget()
+{
+    if (m_logTarget.get() != nullptr)
+        asr::global_logger().remove_target(m_logTarget.get());
+}
+
+void ScopedLogTarget::setLogTarget(asf::auto_release_ptr<asf::ILogTarget> logTarget)
+{
+    assert(m_logTarget.get() == nullptr);
+    assert(logTarget.get() != nullptr);
+
+    asr::global_logger().add_target(logTarget.get());
+    m_logTarget = logTarget;
+}
