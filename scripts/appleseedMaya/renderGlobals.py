@@ -214,7 +214,6 @@ def imageFormatChanged():
 
 
 def currentRendererChanged():
-
     newRenderer = mel.eval("currentRenderer()")
 
     logger.debug("currentRendererChanged called, new renderer = %s", newRenderer)
@@ -293,6 +292,11 @@ class AppleseedRenderGlobalsTab(object):
 
 
 class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
+
+    def __adaptiveSamplerChanged(self, value):
+        self._uis["minPixelSamples"].setEnable(value)
+        self._uis["batchSampleSize"].setEnable(value)
+        self._uis["sampleNoiseThreshold"].setEnable(value)
 
     def __limitBouncesChanged(self, value):
         self._uis["bounces"].setEnable(value)
@@ -378,15 +382,36 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
                         self._addControl(
                             ui=pm.intFieldGrp(
-                                label="Pixel Samples", numberOfFields=1),
+                                label="Render Passes", numberOfFields=1),
+                            attrName="passes")
+
+                        self._addControl(
+                            ui=pm.checkBoxGrp(
+                                label="Adaptive Sampling", changeCommand=self.__adaptiveSamplerChanged),
+                            attrName="adaptiveSampling")
+
+                        adaptiveSampling = mc.getAttr("appleseedRenderGlobals.adaptiveSampling")
+
+                        self._addControl(
+                            ui=pm.intFieldGrp(
+                                label="Min Samples", numberOfFields=1, enable=adaptiveSampling),
+                            attrName="minPixelSamples")
+                        self._addControl(
+                            ui=pm.intFieldGrp(
+                                label="Max Samples", numberOfFields=1),
                             attrName="samples")
                         self._addControl(
                             ui=pm.intFieldGrp(
-                                label="Render Passes", numberOfFields=1),
-                            attrName="passes")
+                                label="Batch Sample Size", numberOfFields=1, enable=adaptiveSampling),
+                            attrName="batchSampleSize")
+                        self._addControl(
+                            ui=pm.floatFieldGrp(
+                                label="Noise Threshold", numberOfFields=1, enable=adaptiveSampling),
+                            attrName="sampleNoiseThreshold")
+
                         self._addControl(
                             ui=pm.attrEnumOptionMenuGrp(
-                                label="Filter",
+                                label="Pixel Filter",
                                 enumeratedItem=self._getAttributeMenuItems("pixelFilter")),
                             attrName="pixelFilter")
                         self._addControl(

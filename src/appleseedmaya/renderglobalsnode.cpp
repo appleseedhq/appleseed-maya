@@ -62,8 +62,14 @@ namespace asr = renderer;
 const MString RenderGlobalsNode::nodeName("appleseedRenderGlobals");
 const MTypeId RenderGlobalsNode::id(RenderGlobalsNodeTypeId);
 
-MObject RenderGlobalsNode::m_pixelSamples;
 MObject RenderGlobalsNode::m_passes;
+
+MObject RenderGlobalsNode::m_adaptiveSampling;
+MObject RenderGlobalsNode::m_pixelSamples;
+MObject RenderGlobalsNode::m_minPixelSamples;
+MObject RenderGlobalsNode::m_batchSampleSize;
+MObject RenderGlobalsNode::m_sampleNoiseThreshold;
+
 MObject RenderGlobalsNode::m_tileSize;
 MObject RenderGlobalsNode::m_pixelFilter;
 MStringArray RenderGlobalsNode::m_pixelFilterKeys;
@@ -172,15 +178,35 @@ MStatus RenderGlobalsNode::initialize()
 
     MStatus status;
 
+    // Render Passes.
+    m_passes = numAttrFn.create("passes", "passes", MFnNumericData::kInt, 1, &status);
+    numAttrFn.setMin(1);
+    CHECKED_ADD_ATTRIBUTE(m_passes, "passes")
+
+    // Adaptive Sampling.
+    m_adaptiveSampling = numAttrFn.create("adaptiveSampling", "adaptiveSampling", MFnNumericData::kBoolean, true, &status);
+    CHECKED_ADD_ATTRIBUTE(m_adaptiveSampling, "adaptiveSampling")
+
     // Pixel Samples.
     m_pixelSamples = numAttrFn.create("samples", "samples", MFnNumericData::kInt, 16, &status);
     numAttrFn.setMin(1);
     CHECKED_ADD_ATTRIBUTE(m_pixelSamples, "samples")
 
-    // Render Passes.
-    m_passes = numAttrFn.create("passes", "passes", MFnNumericData::kInt, 1, &status);
+    // Min Pixel Samples.
+    m_minPixelSamples = numAttrFn.create("minPixelSamples", "minPixelSamples", MFnNumericData::kInt, 0, &status);
+    numAttrFn.setMin(0);
+    CHECKED_ADD_ATTRIBUTE(m_minPixelSamples, "minPixelSamples")
+
+    // Batch Sample Size.
+    m_batchSampleSize = numAttrFn.create("batchSampleSize", "batchSampleSize", MFnNumericData::kInt, 8, &status);
     numAttrFn.setMin(1);
-    CHECKED_ADD_ATTRIBUTE(m_passes, "passes")
+    CHECKED_ADD_ATTRIBUTE(m_batchSampleSize, "batchSampleSize")
+
+    // Sample Noise Threshold.
+    m_sampleNoiseThreshold = numAttrFn.create("sampleNoiseThreshold", "sampleNoiseThreshold", MFnNumericData::kFloat, 1.0, &status);
+    numAttrFn.setMin(0.0);
+    numAttrFn.setSoftMax(1.0);
+    CHECKED_ADD_ATTRIBUTE(m_sampleNoiseThreshold, "sampleNoiseThreshold")
 
     // Tile Size.
     m_tileSize = numAttrFn.create("tileSize", "tileSize", MFnNumericData::kInt, 64, &status);
@@ -467,21 +493,42 @@ void RenderGlobalsNode::applyGlobalsToProject(
             iprParams.remove_path(path);    \
         }
 
-    int samples;
-    if (AttributeUtils::get(MPlug(globals, m_pixelSamples), samples))
-    {
-        finalParams.insert_path("uniform_pixel_renderer.samples", samples);
-
-        if (samples == 1)
-            finalParams.insert_path("uniform_pixel_renderer.force_antialiasing", true);
-    }
-
     int passes;
     if (AttributeUtils::get(MPlug(globals, m_passes), passes))
     {
         finalParams.insert_path("passes", passes);
         finalParams.insert_path("shading_result_framebuffer", passes == 1 ? "ephemeral" : "permanent");
     }
+
+    bool adaptiveSampling;
+    if (AttributeUtils::get(MPlug(globals, m_adaptiveSampling), adaptiveSampling))
+    {
+        finalParams.insert_path(
+            "tile_renderer",
+            adaptiveSampling ? "adaptive" : "generic");
+    }
+
+    int samples;
+    if (AttributeUtils::get(MPlug(globals, m_pixelSamples), samples))
+    {
+        finalParams.insert_path("uniform_pixel_renderer.samples", samples);
+        finalParams.insert_path("adaptive_tile_renderer.max_samples", samples);
+
+        if (samples == 1)
+            finalParams.insert_path("uniform_pixel_renderer.force_antialiasing", true);
+    }
+
+    int minSamples;
+    if (AttributeUtils::get(MPlug(globals, m_minPixelSamples), minSamples))
+        finalParams.insert_path("adaptive_tile_renderer.min_samples", minSamples);
+
+    int batchSampleSize;
+    if (AttributeUtils::get(MPlug(globals, m_batchSampleSize), batchSampleSize))
+        finalParams.insert_path("adaptive_tile_renderer.batch_size", batchSampleSize);
+
+    float sampleNoiseThreshold;
+    if (AttributeUtils::get(MPlug(globals, m_sampleNoiseThreshold), sampleNoiseThreshold))
+        finalParams.insert_path("adaptive_tile_renderer.noise_threshold", sampleNoiseThreshold);
 
     asr::Frame* frame = project.get_frame();
 

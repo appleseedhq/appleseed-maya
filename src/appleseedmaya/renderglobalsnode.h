@@ -73,8 +73,14 @@ class RenderGlobalsNode
     static MString logFilename(const MObject& globals);
 
   private:
-    static MObject      m_pixelSamples;
     static MObject      m_passes;
+
+    static MObject      m_adaptiveSampling;
+    static MObject      m_pixelSamples;
+    static MObject      m_minPixelSamples;
+    static MObject      m_batchSampleSize;
+    static MObject      m_sampleNoiseThreshold;
+
     static MObject      m_tileSize;
 
     static MObject      m_pixelFilter;
