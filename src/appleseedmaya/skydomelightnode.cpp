@@ -272,6 +272,11 @@ MHWRender::DrawAPI SkyDomeLightDrawOverride::supportedDrawAPIs() const
     return MHWRender::kOpenGL | MHWRender::kOpenGLCoreProfile;
 }
 
+bool SkyDomeLightDrawOverride::isBounded(const MDagPath& objPath, const MDagPath& cameraPath) const
+{
+    return true;
+}
+
 MBoundingBox SkyDomeLightDrawOverride::boundingBox(
     const MDagPath&                 objPath,
     const MDagPath&                 cameraPath) const

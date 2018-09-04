@@ -323,6 +323,11 @@ MHWRender::DrawAPI PhysicalSkyLightDrawOverride::supportedDrawAPIs() const
     return MHWRender::kOpenGL | MHWRender::kOpenGLCoreProfile;
 }
 
+bool PhysicalSkyLightDrawOverride::isBounded(const MDagPath& objPath, const MDagPath& cameraPath) const
+{
+    return true;
+}
+
 MBoundingBox PhysicalSkyLightDrawOverride::boundingBox(
     const MDagPath&                 objPath,
     const MDagPath&                 cameraPath) const

@@ -106,6 +106,8 @@ class SkyDomeLightDrawOverride
 
     MHWRender::DrawAPI supportedDrawAPIs() const override;
 
+    bool isBounded(const MDagPath& objPath, const MDagPath& cameraPath) const override;
+
     MBoundingBox boundingBox(
         const MDagPath&                 objPath,
         const MDagPath&                 cameraPath) const override;
