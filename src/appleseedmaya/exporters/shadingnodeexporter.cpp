@@ -671,7 +671,7 @@ namespace
 
         ramp.getEntries(indices, positions, values, interps);
 
-        for (size_t i = 0 , e = ramp.getNumEntries() ; i < e ; ++i )
+        for (unsigned int i = 0, e = ramp.getNumEntries(); i < e ; ++i)
             entries.push_back(RampEntry<T>(indices[i], positions[i], values[i]));
 
         std::sort(entries.begin(), entries.end());

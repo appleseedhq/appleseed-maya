@@ -111,7 +111,13 @@ void RampExporter::exportParameterValue(
         {
             // Fill with black if we have less than 4 elements.
             while (rampColors.size() < 4)
-                rampColors.push_back(RampEntry<MColor>(rampColors.size(), 1.0f, MColor(0.0f, 0.0f, 0.0f)));
+            {
+                rampColors.push_back(
+                    RampEntry<MColor>(
+                        static_cast<int>(rampColors.size()),
+                        1.0f,
+                        MColor(0.0f, 0.0f, 0.0f)));
+            }
         }
         else
         {
