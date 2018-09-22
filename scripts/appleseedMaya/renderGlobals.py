@@ -671,6 +671,14 @@ class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
                                 label="Denoise Scales", numberOfFields=1),
                             attrName="denoiseScales")
 
+                with pm.frameLayout(label="Render Stamp", collapsable=True, collapse=True):
+                    with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=columnWidth):
+                        self._addControl(ui=pm.checkBoxGrp(label="Enable"), attrName="renderStamp")
+                        self._addControl(
+                            ui=pm.textFieldGrp(
+                                label='Render Stamp'),
+                            attrName="renderStampString")
+
                 with pm.frameLayout(label="Logging", collapsable=True, collapse=True):
                     with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=columnWidth):
                         self._addControl(

@@ -36,6 +36,7 @@
 
 // appleseed.renderer headers.
 #include "renderer/api/frame.h"
+#include "renderer/api/postprocessing.h"
 #include "renderer/api/project.h"
 #include "renderer/api/surfaceshader.h"
 #include "renderer/api/utility.h"
@@ -134,6 +135,9 @@ MObject RenderGlobalsNode::m_depthAOV;
 MObject RenderGlobalsNode::m_nprShadingAOV;
 MObject RenderGlobalsNode::m_nprContourAOV;
 
+MObject RenderGlobalsNode::m_renderStamp;
+MObject RenderGlobalsNode::m_renderStampString;
+
 MObject RenderGlobalsNode::m_logLevel;
 MObject RenderGlobalsNode::m_logFilename;
 
@@ -175,6 +179,7 @@ MStatus RenderGlobalsNode::initialize()
     MFnEnumAttribute enumAttrFn;
     MFnMessageAttribute msgAttrFn;
     MFnTypedAttribute typedAttrFn;
+    MFnStringData stringDataFn;
 
     MStatus status;
 
@@ -446,6 +451,15 @@ MStatus RenderGlobalsNode::initialize()
 
     m_nprContourAOV = numAttrFn.create("nprContourAOV", "nprContourAOV", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_nprContourAOV, "nprContourAOV")
+
+    // Render Stamp Enable.
+    m_renderStamp = numAttrFn.create("renderStamp", "renderStamp", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_renderStamp, "renderStamp")
+
+    // Render Stamp Message.
+    MObject defaultString = stringDataFn.create("appleseed {lib-version} | Time: {render-time}");
+    m_renderStampString = typedAttrFn.create("renderStampString", "renderStampString", MFnData::kString, defaultString, &status);
+    CHECKED_ADD_ATTRIBUTE(m_renderStampString, "m_renderStampString")
 
     // Log level.
     const short defaultLogLevel = static_cast<short>(asf::LogMessage::Info);
@@ -738,7 +752,30 @@ void RenderGlobalsNode::applyGlobalsToProject(
     }
 
     #undef INSERT_PATH_IN_CONFIGS
-    #undef REMOVE_PATH_IN_CONFIGS
+#undef REMOVE_PATH_IN_CONFIGS
+}
+
+void RenderGlobalsNode::applyPostProcessStagesToFrame(const MObject& globals, asr::Project& project)
+{
+    bool enabled;
+    if (AttributeUtils::get(MPlug(globals, m_renderStamp), enabled))
+    {
+        if (enabled)
+        {
+            MString string;
+            if (AttributeUtils::get(MPlug(globals, m_renderStampString), string))
+            {
+                asr::Frame* frame = project.get_frame();
+
+                frame->post_processing_stages().insert(
+                    asr::RenderStampPostProcessingStageFactory().create(
+                        "render_stamp",
+                        asr::ParamArray()
+                            .insert("order", 0)
+                            .insert("format_string", string.asChar())));
+            }
+        }
+    }
 }
 
 void RenderGlobalsNode::collectMotionBlurSampleTimes(

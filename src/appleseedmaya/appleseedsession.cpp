@@ -519,8 +519,9 @@ namespace
             // Set the resolution.
             params.insert("resolution", asf::Vector2i(m_options.m_width, m_options.m_height));
 
-            // Replace the frame.
+            // Replace the frame and apply post processing stages.
             m_project->set_frame(asr::FrameFactory().create("beauty", params, m_aovs));
+            RenderGlobalsNode::applyPostProcessStagesToFrame(globalsNode, *m_project);
 
             // Set the crop window.
             if (m_options.m_renderRegion)

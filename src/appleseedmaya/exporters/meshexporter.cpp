@@ -556,7 +556,6 @@ void MeshExporter::fillTopology(MObject mesh)
                     triangleVertexOffset[2] = j;
             }
 
-
             asr::Triangle triangle(
                 faceVertexIndices[triangleVertexOffset[0]],
                 faceVertexIndices[triangleVertexOffset[1]],

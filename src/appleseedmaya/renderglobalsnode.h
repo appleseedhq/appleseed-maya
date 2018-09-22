@@ -65,6 +65,10 @@ class RenderGlobalsNode
         renderer::Project&                          project,
         renderer::AOVContainer&                     aovs);
 
+    static void applyPostProcessStagesToFrame(
+        const MObject&                              globals,
+        renderer::Project&                          project);
+
     static void collectMotionBlurSampleTimes(
         const MObject&                              globals,
         AppleseedSession::MotionBlurSampleTimes&    motionBlurSampleTimes);
@@ -134,7 +138,6 @@ class RenderGlobalsNode
     static MObject      m_imageFormat;
 
     // AOVs.
-
     static MObject      m_diffuseAOV;
     static MObject      m_glossyAOV;
     static MObject      m_emissionAOV;
@@ -152,8 +155,11 @@ class RenderGlobalsNode
     static MObject      m_nprShadingAOV;
     static MObject      m_nprContourAOV;
 
-    // Logging.
+    // Render Stamp.
+    static MObject      m_renderStamp;
+    static MObject      m_renderStampString;
 
+    // Logging.
     static MObject      m_logLevel;
     static MObject      m_logFilename;
 };
