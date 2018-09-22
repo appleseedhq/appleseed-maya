@@ -90,7 +90,11 @@ void PythonBridge::setCurrentProject(renderer::Project* project)
     ScopedGilState gilState;
 
     const uintptr_t ptr = asf::binary_cast<uintptr_t>(project);
-    PyObject* py_ptr = PyLong_FromLong(ptr);
+#ifdef _WIN32
+    PyObject* py_ptr = PyLong_FromUnsignedLongLong(ptr);
+#else
+    PyObject* py_ptr = PyLong_FromUnsignedLong(ptr);
+#endif
 
     PyDict_SetItem(gAppleseedMayaNamespace, gCurrentProjectKey, py_ptr);
     Py_DECREF(py_ptr);

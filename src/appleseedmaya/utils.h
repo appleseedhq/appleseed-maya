@@ -139,18 +139,19 @@ class AppleseedEntityPtr
         return foundation::auto_release_ptr<U>(m_ptr);
     }
 
-    T& operator*() const noexcept
+    T& operator*() const
     {
         assert(m_ptr);
         return *m_ptr;
     }
-    T* operator->() const noexcept
+
+    T* operator->() const
     {
         assert(m_ptr);
         return m_ptr;
     }
 
-    T* get() const noexcept
+    T* get() const
     {
         return m_ptr;
     }
