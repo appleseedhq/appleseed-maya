@@ -81,7 +81,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'appleseed-maya'
-copyright = u'2017-2018 The appleseedhq Organization'
+copyright = u'2010-2018 The appleseedhq Organization'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -386,7 +386,7 @@ htmlhelp_basename = 'appleseed-mayadoc'
 #epub_title = 'appleseed-maya'
 #epub_author = 'The appleseedhq Organization'
 #epub_publisher = 'The appleseedhq Organization'
-#epub_copyright = '2017, The appleseedhq Organization'
+#epub_copyright = '2010-2018, The appleseedhq Organization'
 
 # The basename for the epub file. It defaults to the project name.
 
