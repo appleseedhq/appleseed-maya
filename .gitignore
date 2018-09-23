@@ -1,7 +1,7 @@
 build/
-deploy/appleseed-maya.package.configuration.xml
-deploy/*.zip
-package/
+package/appleseed-maya.package.configuration.xml
+package/*.zip
+sandbox/
 src/appleseedmaya/version.h
 *~
 *.bak
