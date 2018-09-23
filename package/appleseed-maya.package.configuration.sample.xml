@@ -31,6 +31,6 @@
     <!-- The path to the maketx binary. -->
     <maketx_path>$APPLESEED/bin/maketx</maketx_path>
 
-    <!-- The directory inside which the final archive file will be created. -->
-    <package_output_path>/path/to/appleseed-maya/package</package_output_path>
+    <!-- The directory inside which the final archive file will be created (appleseed-maya's sandbox, typically). -->
+    <package_output_path>/path/to/appleseed-maya/sandbox</package_output_path>
 </configuration>
