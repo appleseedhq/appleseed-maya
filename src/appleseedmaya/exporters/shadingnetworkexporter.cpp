@@ -126,7 +126,7 @@ void ShadingNetworkExporter::flushEntities()
             // Create the shader to surface adaptor.
             m_shaderGroup->add_shader(
                 "surface",
-                "as_maya_closure2Surface",
+                "as_closure2surface",
                 "closureToSurface",
                 asr::ParamArray());
 
@@ -158,7 +158,7 @@ void ShadingNetworkExporter::flushEntities()
             // Create the texture to surface adaptor.
             m_shaderGroup->add_shader(
                 "surface",
-                "as_maya_texture2Surface",
+                "as_texture2surface",
                 "texture2Surface",
                 asr::ParamArray());
 
