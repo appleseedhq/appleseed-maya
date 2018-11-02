@@ -1,6 +1,4 @@
 build/
-package/appleseed-maya.package.configuration.xml
-package/*.zip
 sandbox/
 src/appleseedmaya/version.h
 *~
