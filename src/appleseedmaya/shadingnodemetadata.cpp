@@ -240,7 +240,7 @@ OSLShaderInfo::OSLShaderInfo(
     shaderFileName = filename;
     OSLMetadataExtractor metadata(q.get_metadata());
 
-    metadata.getValue("as_maya_node_name", mayaName);
+    metadata.getValue("as_node_name", mayaName);
     metadata.getValue("as_maya_classification", mayaClassification);
     metadata.getValue<unsigned int>("as_maya_type_id", typeId);
     metadata.getValue("URL", shaderHelpURL);
