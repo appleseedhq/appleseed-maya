@@ -80,8 +80,8 @@ class RenderGlobalsNode
     static MObject      m_passes;
 
     static MObject      m_adaptiveSampling;
-    static MObject      m_pixelSamples;
     static MObject      m_minPixelSamples;
+    static MObject      m_maxPixelSamples;
     static MObject      m_batchSampleSize;
     static MObject      m_sampleNoiseThreshold;
 

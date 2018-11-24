@@ -66,8 +66,8 @@ const MTypeId RenderGlobalsNode::id(RenderGlobalsNodeTypeId);
 MObject RenderGlobalsNode::m_passes;
 
 MObject RenderGlobalsNode::m_adaptiveSampling;
-MObject RenderGlobalsNode::m_pixelSamples;
 MObject RenderGlobalsNode::m_minPixelSamples;
+MObject RenderGlobalsNode::m_maxPixelSamples;
 MObject RenderGlobalsNode::m_batchSampleSize;
 MObject RenderGlobalsNode::m_sampleNoiseThreshold;
 
@@ -192,18 +192,19 @@ MStatus RenderGlobalsNode::initialize()
     m_adaptiveSampling = numAttrFn.create("adaptiveSampling", "adaptiveSampling", MFnNumericData::kBoolean, true, &status);
     CHECKED_ADD_ATTRIBUTE(m_adaptiveSampling, "adaptiveSampling")
 
-    // Pixel Samples.
-    m_pixelSamples = numAttrFn.create("samples", "samples", MFnNumericData::kInt, 16, &status);
-    numAttrFn.setMin(1);
-    CHECKED_ADD_ATTRIBUTE(m_pixelSamples, "samples")
 
     // Min Pixel Samples.
     m_minPixelSamples = numAttrFn.create("minPixelSamples", "minPixelSamples", MFnNumericData::kInt, 0, &status);
     numAttrFn.setMin(0);
     CHECKED_ADD_ATTRIBUTE(m_minPixelSamples, "minPixelSamples")
 
+    // Max Pixel Samples.
+    m_maxPixelSamples = numAttrFn.create("samples", "samples", MFnNumericData::kInt, 32, &status);
+    numAttrFn.setMin(1);
+    CHECKED_ADD_ATTRIBUTE(m_maxPixelSamples, "samples")
+
     // Batch Sample Size.
-    m_batchSampleSize = numAttrFn.create("batchSampleSize", "batchSampleSize", MFnNumericData::kInt, 8, &status);
+    m_batchSampleSize = numAttrFn.create("batchSampleSize", "batchSampleSize", MFnNumericData::kInt, 16, &status);
     numAttrFn.setMin(1);
     CHECKED_ADD_ATTRIBUTE(m_batchSampleSize, "batchSampleSize")
 
@@ -522,19 +523,19 @@ void RenderGlobalsNode::applyGlobalsToProject(
             adaptiveSampling ? "adaptive" : "generic");
     }
 
-    int samples;
-    if (AttributeUtils::get(MPlug(globals, m_pixelSamples), samples))
-    {
-        finalParams.insert_path("uniform_pixel_renderer.samples", samples);
-        finalParams.insert_path("adaptive_tile_renderer.max_samples", samples);
-
-        if (samples == 1)
-            finalParams.insert_path("uniform_pixel_renderer.force_antialiasing", true);
-    }
-
     int minSamples;
     if (AttributeUtils::get(MPlug(globals, m_minPixelSamples), minSamples))
         finalParams.insert_path("adaptive_tile_renderer.min_samples", minSamples);
+
+    int maxSamples;
+    if (AttributeUtils::get(MPlug(globals, m_maxPixelSamples), maxSamples))
+    {
+        finalParams.insert_path("uniform_pixel_renderer.samples", maxSamples);
+        finalParams.insert_path("adaptive_tile_renderer.max_samples", maxSamples);
+
+        if (maxSamples == 1)
+            finalParams.insert_path("uniform_pixel_renderer.force_antialiasing", true);
+    }
 
     int batchSampleSize;
     if (AttributeUtils::get(MPlug(globals, m_batchSampleSize), batchSampleSize))

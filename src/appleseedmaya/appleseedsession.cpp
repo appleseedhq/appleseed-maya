@@ -364,7 +364,11 @@ namespace
             configParams = &cfg->get_parameters();
             initializeConfiguration(*configParams);
             configParams->insert("frame_renderer", "generic");
-            configParams->insert_path("uniform_pixel_renderer.samples", "16");
+            configParams->insert_path("uniform_pixel_renderer.samples", "32");
+            configParams->insert_path("adaptive_tile_renderer.min_samples", "0");
+            configParams->insert_path("adaptive_tile_renderer.max_samples", "32");
+            configParams->insert_path("adaptive_tile_renderer.batch_size", "16");
+            configParams->insert_path("adaptive_tile_renderer.noise_threshold", "1.0");
 
             // Create some basic project entities.
 
