@@ -103,12 +103,13 @@ enum AppleseedMayaTypeIds
     AsSwitchSurfaceNodeTypeId       = 0x001279fe,   // 1210878
     AsTexture3DNodeTypeId           = 0x001279ff,   // 1210879
     AsBumpNodeTypeId                = 0x00127a00,   // 1210880
-    AsToonNodeTypeID                = 0x00127a01,   // 1210881
-    AsXToonNodeTypeID               = 0x00127a02,   // 1210882
-    AsFabricNodeTypeID              = 0x00127a03,   // 1210883
-    AsSbsPbrMaterialNodeTypeID      = 0x00127a04,   // 1210884
-    AsManifold2DNodeTypeID          = 0x00127a05,   // 1210885
-    AsManifold3DNodeTypeID          = 0x00127a06,   // 1210886
+    AsToonNodeTypeId                = 0x00127a01,   // 1210881
+    AsXToonNodeTypeId               = 0x00127a02,   // 1210882
+    AsFabricNodeTypeId              = 0x00127a03,   // 1210883
+    AsSbsPbrMaterialNodeTypeId      = 0x00127a04,   // 1210884
+    AsManifold2DNodeTypeId          = 0x00127a05,   // 1210885
+    AsManifold3DNodeTypeId          = 0x00127a06,   // 1210886
+    AsAscCdlNodeTypeId              = 0x00127a07,   // 1210887
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };
