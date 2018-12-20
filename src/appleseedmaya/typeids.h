@@ -110,6 +110,7 @@ enum AppleseedMayaTypeIds
     AsManifold2DNodeTypeId          = 0x00127a05,   // 1210885
     AsManifold3DNodeTypeId          = 0x00127a06,   // 1210886
     AsAscCdlNodeTypeId              = 0x00127a07,   // 1210887
+    AsInvColorNodeTypeId            = 0x00127a08,   // 1210888
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };
