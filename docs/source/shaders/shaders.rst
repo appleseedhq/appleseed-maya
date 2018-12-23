@@ -24,8 +24,8 @@ These shaders are meant to either replace some of Maya's functionality that
 wasn't possible to implement directly in `OSL <https://github.com/imageworks/OpenShadingLanguage>`_, or to provide functionality
 that is inexistent and we feel might be useful to the end user.
 
-Procedural Texture Nodes
-========================
+Texture Nodes
+=============
 
 * :ref:`asNoise2D <label_as_noise2D>`
 * :ref:`asNoise3D <label_as_noise3D>`

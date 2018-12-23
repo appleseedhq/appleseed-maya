@@ -3,12 +3,14 @@
 .. fix_img_align::
 
 |
- 
+
+
 .. image:: /_images/icons/asTexture.png
    :width: 128px
    :align: left
    :height: 128px
    :alt: Texture Icon
+
 
 asTexture
 *********
@@ -25,6 +27,7 @@ Parameters
 -----
 
 Texture
+
 ^^^^^^^
 
 *Filename*
@@ -40,7 +43,7 @@ Texture
 
 .. note::
 
-   Though a full reference of UV tiles is outside the scope of this document, it suffices to say here that the ZBrush UV tiles pattern is in the form *u<N>_v<N>* with the tiles starting at 0, whilst Mudbox shares the same pattern but starts at 1. Mari uses UDIM tiles.
+   Though a full reference of UV tiles is outside the scope of this document, it suffices to say here that the ZBrush UV tiles pattern is in the form *u<N>_v<N>* with the tiles starting at 0, whilst Mudbox shares the same pattern but starts at 1. Mari uses the form *<UDIM>*. All a user needs to do is to point at the filename and choose the respective texture atlas type, and this node should take care of doing the appropriate string substitutions.    See also the `Maya documentation on UV tiles <https://knowledge.autodesk.com/support/maya/learn-explore/caas/CloudHelp/cloudhelp/2016/ENU/Maya/files/GUID-132520C0-F1DF-4C74-B8C1-D89154ADFBDB-htm.html>`_. 
 
 *Color*
     The default color to use if the texture lookup fails for any reason.
@@ -145,6 +148,7 @@ Texture Coordinates
     The computed filter size for the *uv* texture coordinates.
 
 -----
+
 
 Outputs
 -------
