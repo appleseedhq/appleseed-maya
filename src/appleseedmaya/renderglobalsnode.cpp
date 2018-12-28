@@ -121,19 +121,24 @@ MObject RenderGlobalsNode::m_denoiseScales;
 
 MObject RenderGlobalsNode::m_imageFormat;
 
-MObject RenderGlobalsNode::m_diffuseAOV;
-MObject RenderGlobalsNode::m_glossyAOV;
-MObject RenderGlobalsNode::m_emissionAOV;
-MObject RenderGlobalsNode::m_directDiffuseAOV;
-MObject RenderGlobalsNode::m_indirectDiffuseAOV;
-MObject RenderGlobalsNode::m_directGlossyAOV;
-MObject RenderGlobalsNode::m_indirectGlossyAOV;
 MObject RenderGlobalsNode::m_albedoAOV;
-MObject RenderGlobalsNode::m_normalAOV;
-MObject RenderGlobalsNode::m_uvAOV;
 MObject RenderGlobalsNode::m_depthAOV;
-MObject RenderGlobalsNode::m_nprShadingAOV;
+MObject RenderGlobalsNode::m_diffuseAOV;
+MObject RenderGlobalsNode::m_directDiffuseAOV;
+MObject RenderGlobalsNode::m_directGlossyAOV;
+MObject RenderGlobalsNode::m_emissionAOV;
+MObject RenderGlobalsNode::m_glossyAOV;
+MObject RenderGlobalsNode::m_indirectDiffuseAOV;
+MObject RenderGlobalsNode::m_indirectGlossyAOV;
+MObject RenderGlobalsNode::m_invalidSamplesAOV;
+MObject RenderGlobalsNode::m_normalAOV;
 MObject RenderGlobalsNode::m_nprContourAOV;
+MObject RenderGlobalsNode::m_nprShadingAOV;
+MObject RenderGlobalsNode::m_pixelSampleCountAOV;
+MObject RenderGlobalsNode::m_pixelTimeAOV;
+MObject RenderGlobalsNode::m_pixelVariationAOV;
+MObject RenderGlobalsNode::m_positionAOV;
+MObject RenderGlobalsNode::m_uvAOV;
 
 MObject RenderGlobalsNode::m_renderStamp;
 MObject RenderGlobalsNode::m_renderStampString;
@@ -453,6 +458,21 @@ MStatus RenderGlobalsNode::initialize()
     m_nprContourAOV = numAttrFn.create("nprContourAOV", "nprContourAOV", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_nprContourAOV, "nprContourAOV")
 
+    m_invalidSamplesAOV = numAttrFn.create("invalidSamplesAOV", "invalidSamplesAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_invalidSamplesAOV, "invalidSamplesAOV")
+
+    m_pixelSampleCountAOV = numAttrFn.create("pixelSampleCountAOV", "pixelSampleCountAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_pixelSampleCountAOV, "pixelSampleCountAOV")
+
+    m_pixelTimeAOV = numAttrFn.create("pixelTimeAOV", "pixelTimeAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_pixelTimeAOV, "pixelTimeAOV")
+
+    m_pixelVariationAOV = numAttrFn.create("pixelVariationAOV", "pixelVariationAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_pixelVariationAOV, "pixelVariationAOV")
+
+    m_positionAOV = numAttrFn.create("positionAOV", "positionAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_positionAOV, "positionAOV")
+
     // Render Stamp Enable.
     m_renderStamp = numAttrFn.create("renderStamp", "renderStamp", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_renderStamp, "renderStamp")
@@ -712,44 +732,60 @@ void RenderGlobalsNode::applyGlobalsToProject(
 
         bool enabled;
 
-        if (AttributeUtils::get(MPlug(globals, m_diffuseAOV), enabled))
-            if (enabled) aovs.insert(registrar.lookup("diffuse_aov")->create(params));
-
-        if (AttributeUtils::get(MPlug(globals, m_glossyAOV), enabled))
-            if (enabled) aovs.insert(registrar.lookup("glossy_aov")->create(params));
-
-        if (AttributeUtils::get(MPlug(globals, m_emissionAOV), enabled))
-            if (enabled) aovs.insert(registrar.lookup("emission_aov")->create(params));
-
-        if (AttributeUtils::get(MPlug(globals, m_directDiffuseAOV), enabled))
-            if (enabled) aovs.insert(registrar.lookup("direct_diffuse_aov")->create(params));
-
-        if (AttributeUtils::get(MPlug(globals, m_indirectDiffuseAOV), enabled))
-            if (enabled) aovs.insert(registrar.lookup("indirect_diffuse_aov")->create(params));
-
-        if (AttributeUtils::get(MPlug(globals, m_directGlossyAOV), enabled))
-            if (enabled) aovs.insert(registrar.lookup("direct_glossy_aov")->create(params));
-
-        if (AttributeUtils::get(MPlug(globals, m_indirectGlossyAOV), enabled))
-            if (enabled) aovs.insert(registrar.lookup("indirect_glossy_aov")->create(params));
-
         if (AttributeUtils::get(MPlug(globals, m_albedoAOV), enabled))
             if (enabled) aovs.insert(registrar.lookup("albedo_aov")->create(params));
-
-        if (AttributeUtils::get(MPlug(globals, m_normalAOV), enabled))
-            if (enabled) aovs.insert(registrar.lookup("normal_aov")->create(params));
-
-        if (AttributeUtils::get(MPlug(globals, m_uvAOV), enabled))
-            if (enabled) aovs.insert(registrar.lookup("uv_aov")->create(params));
 
         if (AttributeUtils::get(MPlug(globals, m_depthAOV), enabled))
             if (enabled) aovs.insert(registrar.lookup("depth_aov")->create(params));
 
-        if (AttributeUtils::get(MPlug(globals, m_nprShadingAOV), enabled))
-            if (enabled) aovs.insert(registrar.lookup("npr_shading_aov")->create(params));
+        if (AttributeUtils::get(MPlug(globals, m_diffuseAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("diffuse_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_directDiffuseAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("direct_diffuse_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_directGlossyAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("direct_glossy_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_emissionAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("emission_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_glossyAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("glossy_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_indirectDiffuseAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("indirect_diffuse_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_indirectGlossyAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("indirect_glossy_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_invalidSamplesAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("invalid_samples_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_normalAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("normal_aov")->create(params));
 
         if (AttributeUtils::get(MPlug(globals, m_nprContourAOV), enabled))
             if (enabled) aovs.insert(registrar.lookup("npr_contour_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_nprShadingAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("npr_shading_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_pixelSampleCountAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("pixel_sample_count_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_pixelTimeAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("pixel_time_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_pixelVariationAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("pixel_variation_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_positionAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("position_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_uvAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("uv_aov")->create(params));
+
     }
 
     #undef INSERT_PATH_IN_CONFIGS
