@@ -626,8 +626,14 @@ class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
                         self._addControl(ui=pm.checkBoxGrp(label="Albedo"), attrName="albedoAOV")
                         self._addControl(ui=pm.checkBoxGrp(label="Normal"), attrName="normalAOV")
 
+                        self._addControl(ui=pm.checkBoxGrp(label="Invalid Samples"), attrName="invalidSamplesAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="Pixel Sample Count"), attrName="pixelSampleCountAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="Pixel Time"), attrName="pixelTimeAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="Pixel Variation"), attrName="pixelVariationAOV")
+
                         self._addControl(ui=pm.checkBoxGrp(label="UV"), attrName="uvAOV")
                         self._addControl(ui=pm.checkBoxGrp(label="Depth"), attrName="depthAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="Position"), attrName="positionAOV")
 
                         self._addControl(ui=pm.checkBoxGrp(label="NPR Shading"), attrName="nprShadingAOV")
                         self._addControl(ui=pm.checkBoxGrp(label="NPR Contours"), attrName="nprContourAOV")

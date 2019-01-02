@@ -138,22 +138,24 @@ class RenderGlobalsNode
     static MObject      m_imageFormat;
 
     // AOVs.
-    static MObject      m_diffuseAOV;
-    static MObject      m_glossyAOV;
-    static MObject      m_emissionAOV;
-
-    static MObject      m_directDiffuseAOV;
-    static MObject      m_indirectDiffuseAOV;
-    static MObject      m_directGlossyAOV;
-    static MObject      m_indirectGlossyAOV;
-
     static MObject      m_albedoAOV;
-    static MObject      m_normalAOV;
-    static MObject      m_uvAOV;
     static MObject      m_depthAOV;
-
-    static MObject      m_nprShadingAOV;
+    static MObject      m_diffuseAOV;
+    static MObject      m_directDiffuseAOV;
+    static MObject      m_directGlossyAOV;
+    static MObject      m_emissionAOV;
+    static MObject      m_glossyAOV;
+    static MObject      m_indirectDiffuseAOV;
+    static MObject      m_indirectGlossyAOV;
+    static MObject      m_invalidSamplesAOV;
+    static MObject      m_normalAOV;
     static MObject      m_nprContourAOV;
+    static MObject      m_nprShadingAOV;
+    static MObject      m_pixelSampleCountAOV;
+    static MObject      m_pixelTimeAOV;
+    static MObject      m_pixelVariationAOV;
+    static MObject      m_positionAOV;
+    static MObject      m_uvAOV;
 
     // Render Stamp.
     static MObject      m_renderStamp;
