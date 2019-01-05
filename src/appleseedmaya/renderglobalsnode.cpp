@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2018 Esteban Tovagliari, The appleseedhq Organization
+// Copyright (c) 2016-2019 Esteban Tovagliari, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -93,6 +93,24 @@ MObject RenderGlobalsNode::m_envSamples;
 MObject RenderGlobalsNode::m_caustics;
 MObject RenderGlobalsNode::m_maxRayIntensity;
 MObject RenderGlobalsNode::m_clampRoughness;
+
+MObject RenderGlobalsNode::m_sppm_photon_type;
+MObject RenderGlobalsNode::m_sppm_direct_lighting_mode;
+MObject RenderGlobalsNode::m_sppm_enable_caustics;
+MObject RenderGlobalsNode::m_sppm_enable_ibl;
+MObject RenderGlobalsNode::m_sppm_photon_tracing_enable_bounce_limit;
+MObject RenderGlobalsNode::m_sppm_photon_tracing_max_bounces;
+MObject RenderGlobalsNode::m_sppm_photon_tracing_rr_min_path_length;
+MObject RenderGlobalsNode::m_sppm_photon_tracing_light_photons;
+MObject RenderGlobalsNode::m_sppm_photon_tracing_environment_photons;
+MObject RenderGlobalsNode::m_sppm_radiance_estimation_enable_bounce_limit;
+MObject RenderGlobalsNode::m_sppm_radiance_estimation_max_bounces;
+MObject RenderGlobalsNode::m_sppm_radiance_estimation_rr_min_path_length;
+MObject RenderGlobalsNode::m_sppm_radiance_estimation_initial_radius;
+MObject RenderGlobalsNode::m_sppm_radiance_estimation_max_photons;
+MObject RenderGlobalsNode::m_sppm_radiance_estimation_alpha;
+MObject RenderGlobalsNode::m_sppm_max_ray_intensity_set;
+MObject RenderGlobalsNode::m_sppm_max_ray_intensity;
 
 MObject RenderGlobalsNode::m_backgroundEmitsLight;
 MObject RenderGlobalsNode::m_envLightNode;
@@ -188,38 +206,38 @@ MStatus RenderGlobalsNode::initialize()
 
     MStatus status;
 
-    // Render Passes.
+    // Render passes.
     m_passes = numAttrFn.create("passes", "passes", MFnNumericData::kInt, 1, &status);
     numAttrFn.setMin(1);
     CHECKED_ADD_ATTRIBUTE(m_passes, "passes")
 
-    // Adaptive Sampling.
+    // Adaptive sampling.
     m_adaptiveSampling = numAttrFn.create("adaptiveSampling", "adaptiveSampling", MFnNumericData::kBoolean, true, &status);
     CHECKED_ADD_ATTRIBUTE(m_adaptiveSampling, "adaptiveSampling")
 
 
-    // Min Pixel Samples.
+    // Min pixel samples.
     m_minPixelSamples = numAttrFn.create("minPixelSamples", "minPixelSamples", MFnNumericData::kInt, 0, &status);
     numAttrFn.setMin(0);
     CHECKED_ADD_ATTRIBUTE(m_minPixelSamples, "minPixelSamples")
 
-    // Max Pixel Samples.
+    // Max pixel samples.
     m_maxPixelSamples = numAttrFn.create("samples", "samples", MFnNumericData::kInt, 32, &status);
     numAttrFn.setMin(1);
     CHECKED_ADD_ATTRIBUTE(m_maxPixelSamples, "samples")
 
-    // Batch Sample Size.
+    // Batch sample size.
     m_batchSampleSize = numAttrFn.create("batchSampleSize", "batchSampleSize", MFnNumericData::kInt, 16, &status);
     numAttrFn.setMin(1);
     CHECKED_ADD_ATTRIBUTE(m_batchSampleSize, "batchSampleSize")
 
-    // Sample Noise Threshold.
+    // Sample noise threshold.
     m_sampleNoiseThreshold = numAttrFn.create("sampleNoiseThreshold", "sampleNoiseThreshold", MFnNumericData::kFloat, 1.0, &status);
     numAttrFn.setMin(0.0);
     numAttrFn.setSoftMax(1.0);
     CHECKED_ADD_ATTRIBUTE(m_sampleNoiseThreshold, "sampleNoiseThreshold")
 
-    // Tile Size.
+    // Tile size.
     m_tileSize = numAttrFn.create("tileSize", "tileSize", MFnNumericData::kInt, 64, &status);
     numAttrFn.setMin(1);
     CHECKED_ADD_ATTRIBUTE(m_tileSize, "tileSize")
@@ -248,7 +266,7 @@ MStatus RenderGlobalsNode::initialize()
     numAttrFn.setSoftMax(4.0);
     CHECKED_ADD_ATTRIBUTE(m_pixelFilterSize, "pixelFilterSize")
 
-    // Scene Scale.
+    // Scene scale.
     m_sceneScale = numAttrFn.create("sceneScale", "sceneScale", MFnNumericData::kFloat, 1.0, &status);
     numAttrFn.setMin(0.0000001);
     CHECKED_ADD_ATTRIBUTE(m_sceneScale, "sceneScale")
@@ -256,6 +274,7 @@ MStatus RenderGlobalsNode::initialize()
     // Lighting engine.
     m_lightingEngine = enumAttrFn.create("lightingEngine", "lightingEngine", 0, &status);
     enumAttrFn.addField("Path Tracing", 0);
+    enumAttrFn.addField("Stochastic Progressive Photon Mapping", 1);
     CHECKED_ADD_ATTRIBUTE(m_lightingEngine, "lightingEngine")
 
     // Diagnostic shader override.
@@ -279,36 +298,40 @@ MStatus RenderGlobalsNode::initialize()
     }
     CHECKED_ADD_ATTRIBUTE(m_diagnosticShader, "diagnosticShader")
 
+    //
+    // Path Tracing
+    //
+
     // Limit bounces.
     m_limitBounces = numAttrFn.create("limitBounces", "limitBounces", MFnNumericData::kBoolean, true, &status);
     CHECKED_ADD_ATTRIBUTE(m_limitBounces, "limitBounces")
 
-    // Global Bounces.
+    // Global bounces.
     m_globalBounces = numAttrFn.create("bounces", "bounces", MFnNumericData::kInt, 8, &status);
     numAttrFn.setMin(0);
     CHECKED_ADD_ATTRIBUTE(m_globalBounces, "bounces")
 
-    // Specular Bounces.
+    // Specular bounces.
     m_specularBounces = numAttrFn.create("specularBounces", "specularBounces", MFnNumericData::kInt, 8, &status);
     numAttrFn.setMin(0);
     CHECKED_ADD_ATTRIBUTE(m_specularBounces, "specularBounces")
 
-    // Glossy Bounces.
+    // Glossy bounces.
     m_glossyBounces = numAttrFn.create("glossyBounces", "glossyBounces", MFnNumericData::kInt, 8, &status);
     numAttrFn.setMin(0);
     CHECKED_ADD_ATTRIBUTE(m_glossyBounces, "glossyBounces")
 
-    // Diffuse Bounces.
+    // Diffuse bounces.
     m_diffuseBounces = numAttrFn.create("diffuseBounces", "diffuseBounces", MFnNumericData::kInt, 3, &status);
     numAttrFn.setMin(0);
     CHECKED_ADD_ATTRIBUTE(m_diffuseBounces, "diffuseBounces")
 
-    // Light Samples.
+    // Light samples.
     m_lightSamples = numAttrFn.create("lightSamples", "lightSamples", MFnNumericData::kFloat, 1.0, &status);
     numAttrFn.setMin(1.0);
     CHECKED_ADD_ATTRIBUTE(m_lightSamples, "lightSamples")
 
-    // Environment Samples.
+    // Environment samples.
     m_envSamples = numAttrFn.create("envSamples", "envSamples", MFnNumericData::kFloat, 1.0, &status);
     numAttrFn.setMin(1.0);
     CHECKED_ADD_ATTRIBUTE(m_envSamples, "envSamples")
@@ -317,18 +340,108 @@ MStatus RenderGlobalsNode::initialize()
     m_caustics = numAttrFn.create("caustics", "caustics", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_caustics, "caustics")
 
-    // Max Ray Intensity.
+    // Max ray intensity.
     m_maxRayIntensity = numAttrFn.create("maxRayIntensity", "maxRayIntensity", MFnNumericData::kFloat, 0.0, &status);
     numAttrFn.setMin(0.0);
     CHECKED_ADD_ATTRIBUTE(m_maxRayIntensity, "maxRayIntensity")
 
-    // Caustics.
+    // Roughness clamping. 
     m_clampRoughness = numAttrFn.create("clampRoughness", "clampRoughness", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_clampRoughness, "clampRoughness")
 
-    // Background emits light.
+    // Background visibility.
     m_backgroundEmitsLight = numAttrFn.create("bgLight", "bgLight", MFnNumericData::kBoolean, true, &status);
     CHECKED_ADD_ATTRIBUTE(m_backgroundEmitsLight, "bgLight")
+
+    //
+    // Stochastic Progressive Photon Mapping
+    //
+
+    // Photon type.
+    m_sppm_photon_type = enumAttrFn.create("photonType", "photonType", 0, &status);
+    enumAttrFn.addField("Polychromatic", 0);
+    enumAttrFn.addField("Monochromatic", 1);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_photon_type, "photonType")
+
+    // Direct lighting mode.
+    m_sppm_direct_lighting_mode = enumAttrFn.create("SPPMLightingMode", "SPPMLightingMode", 0, &status);
+    enumAttrFn.addField("Ray Traced", 0);
+    enumAttrFn.addField("SPPM", 1);
+    enumAttrFn.addField("No Direct Lighting", 2);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_direct_lighting_mode, "SPPMLightingMode")
+
+    // SPPM Caustics.
+    m_sppm_enable_caustics = numAttrFn.create("SPPMCaustics", "SPPMCaustics", MFnNumericData::kBoolean, true, &status);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_enable_caustics, "SPPMCaustics")
+
+    // SPPM IBL.
+    m_sppm_enable_ibl = numAttrFn.create("SPPMEnableIBL", "SPPMEnableIBL", MFnNumericData::kBoolean, true, &status);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_enable_ibl, "SPPMEnableIBL")
+
+    // Limit photon tracing bounces.
+    m_sppm_photon_tracing_enable_bounce_limit = numAttrFn.create("limitPhotonTracingBounces", "limitPhotonTracingBounces", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_photon_tracing_enable_bounce_limit, "limitPhotonTracingBounces")
+
+    // Photon tracing bounces.
+    m_sppm_photon_tracing_max_bounces = numAttrFn.create("photonTracingBounces", "photonTracingBounces", MFnNumericData::kInt, 8, &status);
+    numAttrFn.setMin(0);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_photon_tracing_max_bounces, "photonTracingBounces")
+
+    // Photon tracing russian roulette start bounce.
+    m_sppm_photon_tracing_rr_min_path_length = numAttrFn.create("photonTracingRRMinPathLength", "photonTracingRRMinPathLength", MFnNumericData::kInt, 6, &status);
+    numAttrFn.setMin(1);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_photon_tracing_rr_min_path_length, "photonTracingRRMinPathLength")
+
+    // Photon tracing light photons.
+    m_sppm_photon_tracing_light_photons = numAttrFn.create("photonTracingLightPhotons", "photonTracingLightPhotons", MFnNumericData::kInt, 1000000, &status);
+    numAttrFn.setMin(0);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_photon_tracing_light_photons, "photonTracingLightPhotons")
+
+    // Photon tracing environment photons.
+    m_sppm_photon_tracing_environment_photons = numAttrFn.create("photonTracingEnvPhotons", "photonTracingEnvPhotons", MFnNumericData::kInt, 1000000, &status);
+    numAttrFn.setMin(0);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_photon_tracing_environment_photons, "photonTracingEnvPhotons")
+
+    // Limit radiance estimation bounces.
+    m_sppm_radiance_estimation_enable_bounce_limit = numAttrFn.create("limitRadianceEstimationBounces", "limitRadianceEstimationBounces", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_radiance_estimation_enable_bounce_limit, "limitRadianceEstimationBounces")
+
+    // Radiance estimation bounces.
+    m_sppm_radiance_estimation_max_bounces = numAttrFn.create("radianceEstimationBounces", "radianceEstimationBounces", MFnNumericData::kInt, 8, &status);
+    numAttrFn.setMin(0);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_radiance_estimation_max_bounces, "radianceEstimationBounces")
+
+    // Radiance estimation russian roulette start bounce.
+    m_sppm_radiance_estimation_rr_min_path_length = numAttrFn.create("radianceEstimationRRMinPathLength", "radianceEstimationRRMinPathLength", MFnNumericData::kInt, 6, &status);
+    numAttrFn.setMin(1);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_radiance_estimation_rr_min_path_length, "radianceEstimationRRMinPathLength")
+
+    // Radiance estimation initial search radius.
+    m_sppm_radiance_estimation_initial_radius = numAttrFn.create("radianceEstimationInitialRadius", "radianceEstimationInitialRadius", MFnNumericData::kFloat, 0.1, &status);
+    numAttrFn.setMin(0.001);
+    numAttrFn.setMax(100.0);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_radiance_estimation_initial_radius, "radianceEstimationInitialRadius")
+
+    // Radiance estimation max photons.
+    m_sppm_radiance_estimation_max_photons = numAttrFn.create("radianceEstimationMaxPhotons", "radianceEstimationMaxPhotons", MFnNumericData::kInt, 100, &status);
+    numAttrFn.setMin(8);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_radiance_estimation_max_photons, "radianceEstimationMaxPhotons")
+
+    // Radiance estimation search radius reduction factor.
+    m_sppm_radiance_estimation_alpha = numAttrFn.create("radianceEstimationAlpha", "radianceEstimationAlpha", MFnNumericData::kFloat, 0.7, &status);
+    numAttrFn.setMin(0.0);
+    numAttrFn.setMax(1.0);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_radiance_estimation_alpha, "radianceEstimationAlpha")
+
+    // Enable ray intensity clamping SPPM.
+    m_sppm_max_ray_intensity_set = numAttrFn.create("enableMaxRayIntensitySPPM", "enableMaxRayIntensitySPPM", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_max_ray_intensity_set, "enableMaxRayIntensitySPPM")
+
+    // Max ray intensity SPPM.
+    m_sppm_max_ray_intensity = numAttrFn.create("maxRayIntensitySPPM", "maxRayIntensitySPPM", MFnNumericData::kFloat, 1.0, &status);
+    numAttrFn.setMin(0.0);
+    numAttrFn.setMax(1000.0);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_max_ray_intensity, "maxRayIntensitySPPM")
 
     // Motion blur enable.
     m_motionBlur = numAttrFn.create("motionBlur", "motionBlur", MFnNumericData::kBoolean, false, &status);
@@ -346,11 +459,11 @@ MStatus RenderGlobalsNode::initialize()
     numAttrFn.setMin(1);
     CHECKED_ADD_ATTRIBUTE(m_mbDeformSamples, "deformSamples")
 
-    // Shutter Open.
+    // Shutter open.
     m_shutterOpen = numAttrFn.create("shutterOpen", "shutterOpen", MFnNumericData::kFloat, -0.25, &status);
     CHECKED_ADD_ATTRIBUTE(m_shutterOpen, "shutterOpen")
 
-    // Shutter Close.
+    // Shutter close.
     m_shutterClose = numAttrFn.create("shutterClose", "shutterClose", MFnNumericData::kFloat, 0.25, &status);
     CHECKED_ADD_ATTRIBUTE(m_shutterClose, "shutterClose")
 
@@ -392,33 +505,32 @@ MStatus RenderGlobalsNode::initialize()
     m_randomPixelOrder = numAttrFn.create("randomPixelOrder", "randomPixelOrder", MFnNumericData::kBoolean, true, &status);
     CHECKED_ADD_ATTRIBUTE(m_randomPixelOrder, "randomPixelOrder")
 
-    // Prefilter Spikes.
+    // Prefilter spikes.
     m_prefilterSpikes = numAttrFn.create("prefilterSpikes", "prefilterSpikes", MFnNumericData::kBoolean, true, &status);
     CHECKED_ADD_ATTRIBUTE(m_prefilterSpikes, "prefilterSpikes")
 
-    // Spike Thereshold.
+    // Spike thereshold.
     m_spikeThreshold = numAttrFn.create("spikeThreshold", "spikeThreshold", MFnNumericData::kFloat, 2.0, &status);
     numAttrFn.setMin(0.1);
     numAttrFn.setMax(4.0);
     CHECKED_ADD_ATTRIBUTE(m_spikeThreshold, "spikeThreshold")
 
-    // Patch Distance.
+    // Patch distance.
     m_patchDistanceThreshold = numAttrFn.create("patchDistance", "patchDistance", MFnNumericData::kFloat, 1.0, &status);
     numAttrFn.setMin(0.5);
     numAttrFn.setMax(3.0);
     CHECKED_ADD_ATTRIBUTE(m_patchDistanceThreshold, "patchDistance")
 
-    // Denoise Scales.
+    // Denoise scales.
     m_denoiseScales = numAttrFn.create("denoiseScales", "denoiseScales", MFnNumericData::kInt, 3, &status);
     numAttrFn.setMin(1);
     CHECKED_ADD_ATTRIBUTE(m_denoiseScales, "denoiseScales")
 
-    // Image Format
+    // Image format
     m_imageFormat = numAttrFn.create("imageFormat", "imageFormat", MFnNumericData::kInt, 0, &status);
     CHECKED_ADD_ATTRIBUTE(m_imageFormat, "imageFormat")
 
     // AOVs.
-
     m_diffuseAOV = numAttrFn.create("diffuseAOV", "diffuseAOV", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_diffuseAOV, "diffuseAOV")
 
@@ -473,11 +585,11 @@ MStatus RenderGlobalsNode::initialize()
     m_positionAOV = numAttrFn.create("positionAOV", "positionAOV", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_positionAOV, "positionAOV")
 
-    // Render Stamp Enable.
+    // Render stamp enable.
     m_renderStamp = numAttrFn.create("renderStamp", "renderStamp", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_renderStamp, "renderStamp")
 
-    // Render Stamp Message.
+    // Render stamp message.
     MObject defaultString = stringDataFn.create("appleseed {lib-version} | Time: {render-time}");
     m_renderStampString = typedAttrFn.create("renderStampString", "renderStampString", MFnData::kString, defaultString, &status);
     CHECKED_ADD_ATTRIBUTE(m_renderStampString, "m_renderStampString")
@@ -535,6 +647,7 @@ void RenderGlobalsNode::applyGlobalsToProject(
         finalParams.insert_path("shading_result_framebuffer", passes == 1 ? "ephemeral" : "permanent");
     }
 
+    // Adaptive tile sampler params.
     bool adaptiveSampling;
     if (AttributeUtils::get(MPlug(globals, m_adaptiveSampling), adaptiveSampling))
     {
@@ -574,6 +687,7 @@ void RenderGlobalsNode::applyGlobalsToProject(
             "tile_size", asf::Vector2i(tileSize));
     }
 
+    // Pixel filter params.
     int pixelFilter;
     if (AttributeUtils::get(MPlug(globals, m_pixelFilter), pixelFilter))
         frame->get_parameters().insert("filter", m_pixelFilterKeys[pixelFilter].asChar());
@@ -582,6 +696,7 @@ void RenderGlobalsNode::applyGlobalsToProject(
     if (AttributeUtils::get(MPlug(globals, m_pixelFilterSize), pixelFilterSize))
         frame->get_parameters().insert("filter_size", pixelFilterSize);
 
+    // Shading overrides params.
     int diagnostic;
     if (AttributeUtils::get(MPlug(globals, m_diagnosticShader), diagnostic))
     {
@@ -593,11 +708,15 @@ void RenderGlobalsNode::applyGlobalsToProject(
         }
     }
 
+    // Lighting params.
     int lightingEngine;
     if (AttributeUtils::get(MPlug(globals, m_lightingEngine), lightingEngine))
     {
         if (lightingEngine == 0)
             finalParams.insert_path("lighting_engine", "pt");
+
+        if (lightingEngine == 1)
+            finalParams.insert_path("lighting_engine", "sppm");
     }
 
     // Path tracing params.
@@ -648,6 +767,97 @@ void RenderGlobalsNode::applyGlobalsToProject(
     if (AttributeUtils::get(MPlug(globals, m_envSamples), envSamples))
         INSERT_PATH_IN_CONFIGS("pt.ibl_env_samples", envSamples)
 
+    // Stochastic progressive photon mapping params.
+    int sppmPhotonType;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_photon_type), sppmPhotonType))
+    {
+        if (sppmPhotonType == 0)
+            INSERT_PATH_IN_CONFIGS("sppm.photon_type", "poly");
+
+        if (sppmPhotonType == 1)
+            INSERT_PATH_IN_CONFIGS("sppm.photon_type", "mono");
+    }
+
+    int sppmDirectLightingMode;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_direct_lighting_mode), sppmDirectLightingMode))
+    {
+        if (sppmDirectLightingMode == 0)
+            INSERT_PATH_IN_CONFIGS("sppm.dl_mode", "rt");
+
+        if (sppmDirectLightingMode == 1)
+            INSERT_PATH_IN_CONFIGS("sppm.dl_mode", "sppm");
+
+        if (sppmDirectLightingMode == 2)
+            INSERT_PATH_IN_CONFIGS("sppm.dl_mode", "off");
+    }
+
+    bool SPPMCaustics;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_enable_caustics), SPPMCaustics))
+        INSERT_PATH_IN_CONFIGS("sppm.enable_caustics", SPPMCaustics)
+
+    bool SPPMEnableIBL;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_enable_ibl), SPPMEnableIBL))
+        INSERT_PATH_IN_CONFIGS("sppm.enable_ibl", SPPMEnableIBL)
+
+    bool limitPhotonTracingBounces = false;
+    AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_enable_bounce_limit), limitPhotonTracingBounces);
+
+    if (limitPhotonTracingBounces)
+    {
+        int phot_bounces = -1;
+        if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_max_bounces), phot_bounces))
+            INSERT_PATH_IN_CONFIGS("sppm.photon_tracing_max_bounces", phot_bounces)
+    }
+
+    int phot_rr_start_bounce;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_rr_min_path_length), phot_rr_start_bounce))
+        INSERT_PATH_IN_CONFIGS("sppm.photon_tracing_rr_min_path_length", phot_rr_start_bounce)
+
+    int phot_light_photons;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_light_photons), phot_light_photons))
+        INSERT_PATH_IN_CONFIGS("sppm.light_photons_per_pass", phot_light_photons)
+
+    int phot_env_photons;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_environment_photons), phot_env_photons))
+        INSERT_PATH_IN_CONFIGS("sppm.env_photons_per_pass", phot_env_photons)
+
+    bool limitRadianceEstimationBounces = false;
+    AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_enable_bounce_limit), limitRadianceEstimationBounces);
+
+    if (limitRadianceEstimationBounces)
+    {
+        int re_bounces = -1;
+        if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_max_bounces), re_bounces))
+            INSERT_PATH_IN_CONFIGS("sppm.path_tracing_max_bounces", re_bounces)
+    }
+
+    int re_rr_start_bounce;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_rr_min_path_length), re_rr_start_bounce))
+        INSERT_PATH_IN_CONFIGS("sppm.path_tracing_rr_min_path_length", re_rr_start_bounce)
+
+    float re_initial_radius;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_initial_radius), re_initial_radius))
+        INSERT_PATH_IN_CONFIGS("sppm.initial_radius", re_initial_radius)
+
+    int re_max_photons;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_max_photons), re_max_photons))
+        INSERT_PATH_IN_CONFIGS("sppm.max_photons_per_estimate", re_max_photons)
+
+    float re_alpha;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_alpha), re_alpha))
+        INSERT_PATH_IN_CONFIGS("sppm.alpha", re_alpha)
+
+    bool enableMaxRayIntensitySPPM = false;
+    AttributeUtils::get(MPlug(globals, m_sppm_max_ray_intensity_set), enableMaxRayIntensitySPPM);
+
+    if (enableMaxRayIntensitySPPM)
+    {
+        float sppm_max_ray_int;
+        if (AttributeUtils::get(MPlug(globals, m_sppm_max_ray_intensity), sppm_max_ray_int))
+            INSERT_PATH_IN_CONFIGS("sppm.path_tracing_max_ray_intensity", sppm_max_ray_int)
+    }
+
+    // Sytem params.
     // Only save rendering threads for interactive renders.
     if (sessionMode == AppleseedSession::FinalRenderSession ||
         sessionMode == AppleseedSession::ProgressiveRenderSession)
@@ -674,6 +884,7 @@ void RenderGlobalsNode::applyGlobalsToProject(
     if (AttributeUtils::get(MPlug(globals, m_useEmbree), useEmbree))
         INSERT_PATH_IN_CONFIGS("use_embree", useEmbree)
 
+    // Denoiser params.
     int denoiserMode;
     if (AttributeUtils::get(MPlug(globals, m_denoiserMode), denoiserMode))
     {
@@ -724,7 +935,6 @@ void RenderGlobalsNode::applyGlobalsToProject(
     }
 
     // AOVs.
-
     if (sessionMode != AppleseedSession::ProgressiveRenderSession)
     {
         asr::AOVFactoryRegistrar registrar;
@@ -792,6 +1002,7 @@ void RenderGlobalsNode::applyGlobalsToProject(
 #undef REMOVE_PATH_IN_CONFIGS
 }
 
+// Post processing.
 void RenderGlobalsNode::applyPostProcessStagesToFrame(const MObject& globals, asr::Project& project)
 {
     bool enabled;
@@ -815,6 +1026,7 @@ void RenderGlobalsNode::applyPostProcessStagesToFrame(const MObject& globals, as
     }
 }
 
+// Motion blur.
 void RenderGlobalsNode::collectMotionBlurSampleTimes(
     const MObject&                              globals,
     AppleseedSession::MotionBlurSampleTimes&    motionBlurSampleTimes)
@@ -878,6 +1090,7 @@ void RenderGlobalsNode::collectMotionBlurSampleTimes(
         motionBlurSampleTimes.initializeToCurrentFrame();
 }
 
+// Render log.
 asf::LogMessage::Category RenderGlobalsNode::logLevel(const MObject& globals)
 {
     short level = static_cast<short>(asf::LogMessage::Warning);
