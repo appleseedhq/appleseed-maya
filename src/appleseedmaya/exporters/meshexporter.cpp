@@ -432,6 +432,10 @@ void MeshExporter::meshAttributesToParams(renderer::ParamArray& params)
     int mediumPriority = 0;
     if (AttributeUtils::get(node(), "asMediumPriority", mediumPriority))
         params.insert("medium_priority", mediumPriority);
+
+    bool isPhotonTarget = false;
+    if (AttributeUtils::get(node(), "asIsPhotonTarget", isPhotonTarget))
+        params.insert("photon_target", isPhotonTarget);
 }
 
 int MeshExporter::getSmoothLevel(MStatus* ReturnStatus) const

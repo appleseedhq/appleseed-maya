@@ -106,6 +106,7 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
             self.callCustom(
                 self.meshAlphaMapNew, self.meshAlphaMapUpdate, 'asAlphaMap')
             self.addControl('asMediumPriority', label='Medium Priority')
+            self.addControl('asIsPhotonTarget', label='Photon Target')
             self.addControl('asSubsurfaceSet', label='SSS Set')
 
             self.beginLayout('Export', collapse=1)
