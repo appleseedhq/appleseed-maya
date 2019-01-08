@@ -95,13 +95,18 @@ class RenderGlobalsNode
 
     static MObject      m_sceneScale;
 
+    // Lighting.
     static MObject      m_lightingEngine;
+    static MObject      m_lightSamplingAlgorithm;
+    static MObject      m_enableLightImportanceSampling;
 
     // Shading overrides.
     static MObject      m_diagnosticShader;
     static MStringArray m_diagnosticShaderKeys;
 
     // Path tracer.
+    static MObject      m_enableDirectLighting;
+    static MObject      m_enableIBL;
     static MObject      m_limitBounces;
     static MObject      m_globalBounces;
     static MObject      m_specularBounces;
@@ -111,8 +116,10 @@ class RenderGlobalsNode
     static MObject      m_lightSamples;
     static MObject      m_envSamples;
     static MObject      m_caustics;
+    static MObject      m_enableMaxRayIntensity;
     static MObject      m_maxRayIntensity;
     static MObject      m_clampRoughness;
+    static MObject      m_lowLightThreshold;
 
     // Environment and image-based lighting.
     static MObject      m_envLightNode;

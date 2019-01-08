@@ -79,10 +79,14 @@ MObject RenderGlobalsNode::m_pixelFilterSize;
 MObject RenderGlobalsNode::m_sceneScale;
 
 MObject RenderGlobalsNode::m_lightingEngine;
+MObject RenderGlobalsNode::m_lightSamplingAlgorithm;
+MObject RenderGlobalsNode::m_enableLightImportanceSampling;
 
 MObject RenderGlobalsNode::m_diagnosticShader;
 MStringArray RenderGlobalsNode::m_diagnosticShaderKeys;
 
+MObject RenderGlobalsNode::m_enableDirectLighting;
+MObject RenderGlobalsNode::m_enableIBL;
 MObject RenderGlobalsNode::m_limitBounces;
 MObject RenderGlobalsNode::m_globalBounces;
 MObject RenderGlobalsNode::m_specularBounces;
@@ -91,8 +95,10 @@ MObject RenderGlobalsNode::m_diffuseBounces;
 MObject RenderGlobalsNode::m_lightSamples;
 MObject RenderGlobalsNode::m_envSamples;
 MObject RenderGlobalsNode::m_caustics;
+MObject RenderGlobalsNode::m_enableMaxRayIntensity;
 MObject RenderGlobalsNode::m_maxRayIntensity;
 MObject RenderGlobalsNode::m_clampRoughness;
+MObject RenderGlobalsNode::m_lowLightThreshold;
 
 MObject RenderGlobalsNode::m_sppm_photon_type;
 MObject RenderGlobalsNode::m_sppm_direct_lighting_mode;
@@ -277,6 +283,16 @@ MStatus RenderGlobalsNode::initialize()
     enumAttrFn.addField("Stochastic Progressive Photon Mapping", 1);
     CHECKED_ADD_ATTRIBUTE(m_lightingEngine, "lightingEngine")
 
+    // Light sampling algorithm.
+    m_lightSamplingAlgorithm = enumAttrFn.create("lightSamplingAlgorithm", "lightSamplingAlgorithm", 0, &status);
+    enumAttrFn.addField("CDF", 0);
+    enumAttrFn.addField("Light Tree", 1);
+    CHECKED_ADD_ATTRIBUTE(m_lightSamplingAlgorithm, "lightSamplingAlgorithm")
+
+    // Light importance sampling.
+    m_enableLightImportanceSampling = numAttrFn.create("lightImportanceSampling", "lightImportanceSampling", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_enableLightImportanceSampling, "lightImportanceSampling")
+
     // Diagnostic shader override.
     m_diagnosticShader = enumAttrFn.create("diagnostics", "diagnostics", 0, &status);
     {
@@ -301,6 +317,14 @@ MStatus RenderGlobalsNode::initialize()
     //
     // Path Tracing
     //
+
+    // Direct lighting.
+    m_enableDirectLighting = numAttrFn.create("enableDirectLighting", "enableDirectLighting", MFnNumericData::kBoolean, true, &status);
+    CHECKED_ADD_ATTRIBUTE(m_enableDirectLighting, "enableDirectLighting")
+
+    // Image based lighting.
+    m_enableIBL = numAttrFn.create("enableIBL", "enableIBL", MFnNumericData::kBoolean, true, &status);
+    CHECKED_ADD_ATTRIBUTE(m_enableIBL, "enableIBL")
 
     // Limit bounces.
     m_limitBounces = numAttrFn.create("limitBounces", "limitBounces", MFnNumericData::kBoolean, true, &status);
@@ -340,8 +364,12 @@ MStatus RenderGlobalsNode::initialize()
     m_caustics = numAttrFn.create("caustics", "caustics", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_caustics, "caustics")
 
+    // Enable max ray intensity.
+    m_enableMaxRayIntensity = numAttrFn.create("enableMaxRayIntensity", "enableMaxRayIntensity", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_enableMaxRayIntensity, "enableMaxRayIntensity")
+
     // Max ray intensity.
-    m_maxRayIntensity = numAttrFn.create("maxRayIntensity", "maxRayIntensity", MFnNumericData::kFloat, 0.0, &status);
+    m_maxRayIntensity = numAttrFn.create("maxRayIntensity", "maxRayIntensity", MFnNumericData::kFloat, 1.0, &status);
     numAttrFn.setMin(0.0);
     CHECKED_ADD_ATTRIBUTE(m_maxRayIntensity, "maxRayIntensity")
 
@@ -352,6 +380,12 @@ MStatus RenderGlobalsNode::initialize()
     // Background visibility.
     m_backgroundEmitsLight = numAttrFn.create("bgLight", "bgLight", MFnNumericData::kBoolean, true, &status);
     CHECKED_ADD_ATTRIBUTE(m_backgroundEmitsLight, "bgLight")
+
+    // Low light threshold.
+    m_lowLightThreshold = numAttrFn.create("lowLightThreshold", "lowLightThreshold", MFnNumericData::kFloat, 0.0, &status);
+    numAttrFn.setMin(0.0);
+    numAttrFn.setMax(1000.0);
+    CHECKED_ADD_ATTRIBUTE(m_lowLightThreshold, "lowLightThreshold")
 
     //
     // Stochastic Progressive Photon Mapping
@@ -719,7 +753,37 @@ void RenderGlobalsNode::applyGlobalsToProject(
             finalParams.insert_path("lighting_engine", "sppm");
     }
 
-    // Path tracing params.
+    // Light sampling algorithm params.
+    int lightSamplingAlgorithm;
+    if (AttributeUtils::get(MPlug(globals, m_lightSamplingAlgorithm), lightSamplingAlgorithm))
+    {
+        if (lightSamplingAlgorithm == 0)
+            INSERT_PATH_IN_CONFIGS("light_sampler.algorithm", "cdf");
+
+        if (lightSamplingAlgorithm == 1)
+            INSERT_PATH_IN_CONFIGS("light_sampler.algorithm", "lighttree");
+    }
+
+    // Light importance sampling params.
+    bool enableLightImportanceSampling = false;
+    if (AttributeUtils::get(MPlug(globals, m_enableLightImportanceSampling), enableLightImportanceSampling))
+        INSERT_PATH_IN_CONFIGS("light_sampler.enable_importance_sampling", enableLightImportanceSampling);
+
+    //
+    // Path Tracing
+    //
+
+    // Direct lighting parameters.
+    bool enableDL = true;
+    if (AttributeUtils::get(MPlug(globals, m_enableDirectLighting), enableDL))
+        INSERT_PATH_IN_CONFIGS("pt.enable_dl", enableDL);
+
+    // Image-based lighting parameters.
+    bool enableIBL = true;
+    if (AttributeUtils::get(MPlug(globals, m_enableIBL), enableIBL))
+        INSERT_PATH_IN_CONFIGS("pt.enable_ibl", enableIBL);
+
+    // Bounce limits parameters.
     bool limitBounces = false;
     AttributeUtils::get(MPlug(globals, m_limitBounces), limitBounces);
 
@@ -744,30 +808,39 @@ void RenderGlobalsNode::applyGlobalsToProject(
 
     bool caustics;
     if (AttributeUtils::get(MPlug(globals, m_caustics), caustics))
-        INSERT_PATH_IN_CONFIGS("pt.enable_caustics", caustics)
+        INSERT_PATH_IN_CONFIGS("pt.enable_caustics", caustics);
 
-    float maxRayIntensity;
-    if (AttributeUtils::get(MPlug(globals, m_maxRayIntensity), maxRayIntensity))
+    bool enableMaxRayIntensity = false;
+    AttributeUtils::get(MPlug(globals, m_enableMaxRayIntensity), enableMaxRayIntensity);
+
+    if (enableMaxRayIntensity)
     {
-        if (maxRayIntensity == 0.0f)
-            REMOVE_PATH_IN_CONFIGS("pt.max_ray_intensity")
-        else
-            INSERT_PATH_IN_CONFIGS("pt.max_ray_intensity", maxRayIntensity)
+       float maxRayIntensity;
+       if (AttributeUtils::get(MPlug(globals, m_maxRayIntensity), maxRayIntensity))
+            INSERT_PATH_IN_CONFIGS("pt.max_ray_intensity", maxRayIntensity);
     }
 
     bool clampRoughness;
     if (AttributeUtils::get(MPlug(globals, m_clampRoughness), clampRoughness))
-        INSERT_PATH_IN_CONFIGS("pt.clamp_roughness", clampRoughness)
+        INSERT_PATH_IN_CONFIGS("pt.clamp_roughness", clampRoughness);
 
     float lightSamples;
     if (AttributeUtils::get(MPlug(globals, m_lightSamples), lightSamples))
-        INSERT_PATH_IN_CONFIGS("pt.dl_light_samples", lightSamples)
+        INSERT_PATH_IN_CONFIGS("pt.dl_light_samples", lightSamples);
 
     float envSamples;
     if (AttributeUtils::get(MPlug(globals, m_envSamples), envSamples))
-        INSERT_PATH_IN_CONFIGS("pt.ibl_env_samples", envSamples)
+        INSERT_PATH_IN_CONFIGS("pt.ibl_env_samples", envSamples);
 
-    // Stochastic progressive photon mapping params.
+    float lowLightThreshold = 0.0f;
+    if (AttributeUtils::get(MPlug(globals, m_lowLightThreshold), lowLightThreshold))
+        INSERT_PATH_IN_CONFIGS("pt.dl_low_light_threshold", lowLightThreshold);
+
+    //
+    // Stochastic Progressive Photon Mapping
+    //
+
+    // Photon type params.
     int sppmPhotonType;
     if (AttributeUtils::get(MPlug(globals, m_sppm_photon_type), sppmPhotonType))
     {
@@ -793,11 +866,11 @@ void RenderGlobalsNode::applyGlobalsToProject(
 
     bool SPPMCaustics;
     if (AttributeUtils::get(MPlug(globals, m_sppm_enable_caustics), SPPMCaustics))
-        INSERT_PATH_IN_CONFIGS("sppm.enable_caustics", SPPMCaustics)
+        INSERT_PATH_IN_CONFIGS("sppm.enable_caustics", SPPMCaustics);
 
     bool SPPMEnableIBL;
     if (AttributeUtils::get(MPlug(globals, m_sppm_enable_ibl), SPPMEnableIBL))
-        INSERT_PATH_IN_CONFIGS("sppm.enable_ibl", SPPMEnableIBL)
+        INSERT_PATH_IN_CONFIGS("sppm.enable_ibl", SPPMEnableIBL);
 
     bool limitPhotonTracingBounces = false;
     AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_enable_bounce_limit), limitPhotonTracingBounces);
@@ -806,20 +879,20 @@ void RenderGlobalsNode::applyGlobalsToProject(
     {
         int phot_bounces = -1;
         if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_max_bounces), phot_bounces))
-            INSERT_PATH_IN_CONFIGS("sppm.photon_tracing_max_bounces", phot_bounces)
+            INSERT_PATH_IN_CONFIGS("sppm.photon_tracing_max_bounces", phot_bounces);
     }
 
     int phot_rr_start_bounce;
     if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_rr_min_path_length), phot_rr_start_bounce))
-        INSERT_PATH_IN_CONFIGS("sppm.photon_tracing_rr_min_path_length", phot_rr_start_bounce)
+        INSERT_PATH_IN_CONFIGS("sppm.photon_tracing_rr_min_path_length", phot_rr_start_bounce);
 
     int phot_light_photons;
     if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_light_photons), phot_light_photons))
-        INSERT_PATH_IN_CONFIGS("sppm.light_photons_per_pass", phot_light_photons)
+        INSERT_PATH_IN_CONFIGS("sppm.light_photons_per_pass", phot_light_photons);
 
     int phot_env_photons;
     if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_environment_photons), phot_env_photons))
-        INSERT_PATH_IN_CONFIGS("sppm.env_photons_per_pass", phot_env_photons)
+        INSERT_PATH_IN_CONFIGS("sppm.env_photons_per_pass", phot_env_photons);
 
     bool limitRadianceEstimationBounces = false;
     AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_enable_bounce_limit), limitRadianceEstimationBounces);
@@ -828,24 +901,24 @@ void RenderGlobalsNode::applyGlobalsToProject(
     {
         int re_bounces = -1;
         if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_max_bounces), re_bounces))
-            INSERT_PATH_IN_CONFIGS("sppm.path_tracing_max_bounces", re_bounces)
+            INSERT_PATH_IN_CONFIGS("sppm.path_tracing_max_bounces", re_bounces);
     }
 
     int re_rr_start_bounce;
     if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_rr_min_path_length), re_rr_start_bounce))
-        INSERT_PATH_IN_CONFIGS("sppm.path_tracing_rr_min_path_length", re_rr_start_bounce)
+        INSERT_PATH_IN_CONFIGS("sppm.path_tracing_rr_min_path_length", re_rr_start_bounce);
 
     float re_initial_radius;
     if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_initial_radius), re_initial_radius))
-        INSERT_PATH_IN_CONFIGS("sppm.initial_radius", re_initial_radius)
+        INSERT_PATH_IN_CONFIGS("sppm.initial_radius", re_initial_radius);
 
     int re_max_photons;
     if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_max_photons), re_max_photons))
-        INSERT_PATH_IN_CONFIGS("sppm.max_photons_per_estimate", re_max_photons)
+        INSERT_PATH_IN_CONFIGS("sppm.max_photons_per_estimate", re_max_photons);
 
     float re_alpha;
     if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_alpha), re_alpha))
-        INSERT_PATH_IN_CONFIGS("sppm.alpha", re_alpha)
+        INSERT_PATH_IN_CONFIGS("sppm.alpha", re_alpha);
 
     bool enableMaxRayIntensitySPPM = false;
     AttributeUtils::get(MPlug(globals, m_sppm_max_ray_intensity_set), enableMaxRayIntensitySPPM);
@@ -854,7 +927,7 @@ void RenderGlobalsNode::applyGlobalsToProject(
     {
         float sppm_max_ray_int;
         if (AttributeUtils::get(MPlug(globals, m_sppm_max_ray_intensity), sppm_max_ray_int))
-            INSERT_PATH_IN_CONFIGS("sppm.path_tracing_max_ray_intensity", sppm_max_ray_int)
+            INSERT_PATH_IN_CONFIGS("sppm.path_tracing_max_ray_intensity", sppm_max_ray_int);
     }
 
     // Sytem params.

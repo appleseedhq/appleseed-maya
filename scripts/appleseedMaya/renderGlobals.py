@@ -304,6 +304,9 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
         self._uis["glossyBounces"].setEnable(value)
         self._uis["diffuseBounces"].setEnable(value)
 
+    def __enableMaxRayIntensityChanged(self, value):
+        self._uis["maxRayIntensity"].setEnable(value)
+
     def __limitPhotonTracingBouncesChanged(self, value):
         self._uis["photonTracingBounces"].setEnable(value)
 
@@ -439,9 +442,29 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                                 label="Lighting Engine",
                                 enumeratedItem=self._getAttributeMenuItems("lightingEngine")),
                             attrName="lightingEngine")
+                        self._addControl(
+                            ui=pm.attrEnumOptionMenuGrp(
+                                label="Light Sampler",
+                                enumeratedItem=self._getAttributeMenuItems("lightSamplingAlgorithm")),
+                            attrName="lightSamplingAlgorithm")
+                        self._addControl(
+                            ui=pm.checkBoxGrp(
+                                label="Importance Sampling"),
+                            attrName="lightImportanceSampling")
 
                 with pm.frameLayout(label="Path Tracing", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
+                        self._addControl(
+                            ui=pm.checkBoxGrp(label="Caustics"),
+                            attrName="caustics")
+                        self._addControl(
+                            ui=pm.checkBoxGrp(
+                                label="Direct Lighting"),
+                            attrName="enableDirectLighting")
+                        self._addControl(
+                            ui=pm.checkBoxGrp(
+                                label="Image-Based Lighting"),
+                            attrName="enableIBL")
                         self._addControl(
                             ui=pm.checkBoxGrp(
                                 label="Limit Bounces", changeCommand=self.__limitBouncesChanged),
@@ -473,14 +496,21 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                                 label="Environment Samples", numberOfFields=1),
                             attrName="envSamples")
                         self._addControl(
+                            ui=pm.floatFieldGrp(
+                                label="Low Light Threshold", numberOfFields=1),
+                            attrName="lowLightThreshold")
+                        self._addControl(
                             ui=pm.checkBoxGrp(label="Clamp Roughness"),
                             attrName="clampRoughness")
                         self._addControl(
-                            ui=pm.checkBoxGrp(label="Caustics"),
-                            attrName="caustics")
+                            ui=pm.checkBoxGrp(
+                                label="Clamp Ray Intensity", changeCommand=self.__enableMaxRayIntensityChanged),
+                            attrName="enableMaxRayIntensity")
+                        enableMaxRayIntensity = mc.getAttr(
+                                "appleseedRenderGlobals.enableMaxRayIntensity")
                         self._addControl(
                             ui=pm.floatFieldGrp(
-                                label="Max Ray Intensity", numberOfFields=1),
+                                label="Max Ray Intensity", numberOfFields=1, enable=enableMaxRayIntensity),
                             attrName="maxRayIntensity")
 
                 with pm.frameLayout(label="Stochastic Progressive Photon Mapping", collapsable=True, collapse=False):
