@@ -96,7 +96,15 @@ void CameraExporter::createEntities(
     if (cameraFn.isOrtho())
     {
         cameraFactory = cameraFactories.lookup("orthographic_camera");
-        // TODO: fetch ortho camera params here.
+        const double viewDefaultWidth = cameraFn.orthoWidth();
+        const double imageAspect = static_cast<double>(options.m_width) / options.m_height;
+        const double horizontalFilmAperture = viewDefaultWidth * cameraFn.cameraScale();
+        const double verticalFilmAperture = horizontalFilmAperture / imageAspect;
+
+        cameraParams.insert("aspect_ratio", imageAspect);
+        cameraParams.insert(
+            "film_dimensions",
+            asf::Vector2d(horizontalFilmAperture, verticalFilmAperture));
     }
     else
     {
