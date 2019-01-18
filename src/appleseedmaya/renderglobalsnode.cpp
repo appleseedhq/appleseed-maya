@@ -229,7 +229,7 @@ MStatus RenderGlobalsNode::initialize()
 
     // Max pixel samples.
     m_maxPixelSamples = numAttrFn.create("samples", "samples", MFnNumericData::kInt, 256, &status);
-    numAttrFn.setMin(1);
+    numAttrFn.setMin(0);
     CHECKED_ADD_ATTRIBUTE(m_maxPixelSamples, "samples")
 
     // Batch sample size.
@@ -240,7 +240,7 @@ MStatus RenderGlobalsNode::initialize()
     // Sample noise threshold.
     m_sampleNoiseThreshold = numAttrFn.create("sampleNoiseThreshold", "sampleNoiseThreshold", MFnNumericData::kFloat, 0.1, &status);
     numAttrFn.setMin(0.0);
-    numAttrFn.setMax(25.0);
+    numAttrFn.setMax(10000.0);
     CHECKED_ADD_ATTRIBUTE(m_sampleNoiseThreshold, "sampleNoiseThreshold")
 
     // Tile size.

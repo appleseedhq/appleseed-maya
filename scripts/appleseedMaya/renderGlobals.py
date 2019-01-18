@@ -395,7 +395,7 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                         self._addControl(
                             ui=pm.intSliderGrp(
                                 label="Render Passes", field=True, value=1, cw=(3,160), minValue=1, 
-                                fieldMinValue=1, maxValue=100, fieldMaxValue=1000000000),
+                                fieldMinValue=1, maxValue=100, fieldMaxValue=1000000),
                             attrName="passes")
 
                         self._addControl(
@@ -417,13 +417,13 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                             attrName="samples")
                         self._addControl(
                             ui=pm.intSliderGrp(
-                                label="Batch Sample Size", field=True, value=8, cw=(3,160), minValue=1, 
+                                label="Batch Sample Size", field=True, value=16, cw=(3,160), minValue=1, 
                                 fieldMinValue=1, maxValue=128, fieldMaxValue=1000000, enable=adaptiveSampling),
                             attrName="batchSampleSize")
                         self._addControl(
                             ui=pm.floatSliderGrp(
-                                label="Noise Threshold", field=True, value=0.1, step=0.01, precision=3, cw=(3,160), minValue=0.0001, 
-                                fieldMinValue=0.0, maxValue=2.0, fieldMaxValue=25.0, enable=adaptiveSampling),
+                                label="Noise Threshold", field=True, value=0.1, step=0.02, precision=4, cw=(3,160), minValue=0.0001, 
+                                fieldMinValue=0.0, maxValue=2.0, fieldMaxValue=10000.0, enable=adaptiveSampling),
                             attrName="sampleNoiseThreshold")
 
                         self._addControl(
@@ -434,12 +434,12 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                         self._addControl(
                             ui=pm.floatSliderGrp(
                                 label="Pixel Filter Size", field=True, value=1.5, sliderStep=0.5, precision=1, cw=(3,160), minValue=0.5, 
-                                fieldMinValue=0.5, maxValue=6.0, fieldMaxValue=20.0),
+                                fieldMinValue=0.5, maxValue=4.0, fieldMaxValue=20.0),
                             attrName="pixelFilterSize")
                         self._addControl(
                             ui=pm.intSliderGrp(
                                 label="Tile Size", field=True, value=64, cw=(3,160), minValue=8, 
-                                fieldMinValue=1, maxValue=512, fieldMaxValue=4096),
+                                fieldMinValue=1, maxValue=1024, fieldMaxValue=65536),
                             attrName="tileSize")
 
                 with pm.frameLayout(label="Lighting", collapsable=True, collapse=False):
@@ -554,7 +554,7 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                                 "appleseedRenderGlobals.limitPhotonTracingBounces")
                         self._addControl(
                             ui=pm.intFieldGrp(
-                                label="Max Bounces", columnWidth=(3, 120), columnAlign = (3, 'left'), 
+                                label="Max Bounces", columnWidth=(3,120), columnAlign=(3,'left'), 
                                 extraLabel ='Photon Tracing', numberOfFields=1, enable=limitPhotonTracingBounces),
                             attrName="photonTracingBounces")
                         self._addControl(
@@ -580,7 +580,7 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                                 "appleseedRenderGlobals.limitRadianceEstimationBounces")
                         self._addControl(
                             ui=pm.intFieldGrp(
-                                label="Max Bounces",  columnWidth=(3, 120), columnAlign = (3, 'left'), 
+                                label="Max Bounces",  columnWidth=(3,120), columnAlign=(3,'left'), 
                                 extraLabel ='Radiance Estimation', numberOfFields=1, enable=limitRadianceEstimationBounces),
                             attrName="radianceEstimationBounces")
                         self._addControl(
