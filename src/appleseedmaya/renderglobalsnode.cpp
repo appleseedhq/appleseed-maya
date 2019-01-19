@@ -746,22 +746,30 @@ void RenderGlobalsNode::applyGlobalsToProject(
     int lightingEngine;
     if (AttributeUtils::get(MPlug(globals, m_lightingEngine), lightingEngine))
     {
-        if (lightingEngine == 0)
+        switch (lightingEngine)
+        {
+          case 0:     
             finalParams.insert_path("lighting_engine", "pt");
-
-        if (lightingEngine == 1)
+            break;
+          case 1:
             finalParams.insert_path("lighting_engine", "sppm");
+            break;
+        }
     }
 
     // Light sampling algorithm params.
     int lightSamplingAlgorithm;
     if (AttributeUtils::get(MPlug(globals, m_lightSamplingAlgorithm), lightSamplingAlgorithm))
     {
-        if (lightSamplingAlgorithm == 0)
+        switch (lightSamplingAlgorithm)
+        {
+          case 0:
             INSERT_PATH_IN_CONFIGS("light_sampler.algorithm", "cdf");
-
-        if (lightSamplingAlgorithm == 1)
+            break;
+          case 1:
             INSERT_PATH_IN_CONFIGS("light_sampler.algorithm", "lighttree");
+            break;
+        }
     }
 
     // Light importance sampling params.
@@ -844,24 +852,32 @@ void RenderGlobalsNode::applyGlobalsToProject(
     int sppmPhotonType;
     if (AttributeUtils::get(MPlug(globals, m_sppm_photon_type), sppmPhotonType))
     {
-        if (sppmPhotonType == 0)
+        switch (sppmPhotonType)
+        {
+          case 0:
             INSERT_PATH_IN_CONFIGS("sppm.photon_type", "poly");
-
-        if (sppmPhotonType == 1)
+            break;
+          case 1:
             INSERT_PATH_IN_CONFIGS("sppm.photon_type", "mono");
+            break;
+        }
     }
 
     int sppmDirectLightingMode;
     if (AttributeUtils::get(MPlug(globals, m_sppm_direct_lighting_mode), sppmDirectLightingMode))
     {
-        if (sppmDirectLightingMode == 0)
+        switch (sppmDirectLightingMode)
+        {
+          case 0:
             INSERT_PATH_IN_CONFIGS("sppm.dl_mode", "rt");
-
-        if (sppmDirectLightingMode == 1)
+            break;
+          case 1:
             INSERT_PATH_IN_CONFIGS("sppm.dl_mode", "sppm");
-
-        if (sppmDirectLightingMode == 2)
+            break;
+          case 2:
             INSERT_PATH_IN_CONFIGS("sppm.dl_mode", "off");
+            break;
+        }
     }
 
     bool SPPMCaustics;
@@ -877,48 +893,48 @@ void RenderGlobalsNode::applyGlobalsToProject(
 
     if (limitPhotonTracingBounces)
     {
-        int phot_bounces = -1;
-        if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_max_bounces), phot_bounces))
-            INSERT_PATH_IN_CONFIGS("sppm.photon_tracing_max_bounces", phot_bounces);
+        int photon_bounces = -1;
+        if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_max_bounces), photon_bounces))
+            INSERT_PATH_IN_CONFIGS("sppm.photon_tracing_max_bounces", photon_bounces);
     }
 
-    int phot_rr_start_bounce;
-    if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_rr_min_path_length), phot_rr_start_bounce))
-        INSERT_PATH_IN_CONFIGS("sppm.photon_tracing_rr_min_path_length", phot_rr_start_bounce);
+    int photon_tracing_rr_start_bounce;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_rr_min_path_length), photon_tracing_rr_start_bounce))
+        INSERT_PATH_IN_CONFIGS("sppm.photon_tracing_rr_min_path_length", photon_tracing_rr_start_bounce);
 
-    int phot_light_photons;
-    if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_light_photons), phot_light_photons))
-        INSERT_PATH_IN_CONFIGS("sppm.light_photons_per_pass", phot_light_photons);
+    int photon_tracing_light_photons;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_light_photons), photon_tracing_light_photons))
+        INSERT_PATH_IN_CONFIGS("sppm.light_photons_per_pass", photon_tracing_light_photons);
 
-    int phot_env_photons;
-    if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_environment_photons), phot_env_photons))
-        INSERT_PATH_IN_CONFIGS("sppm.env_photons_per_pass", phot_env_photons);
+    int photon_tracing_environment_photons;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_photon_tracing_environment_photons), photon_tracing_environment_photons))
+        INSERT_PATH_IN_CONFIGS("sppm.env_photons_per_pass", photon_tracing_environment_photons);
 
     bool limitRadianceEstimationBounces = false;
     AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_enable_bounce_limit), limitRadianceEstimationBounces);
 
     if (limitRadianceEstimationBounces)
     {
-        int re_bounces = -1;
-        if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_max_bounces), re_bounces))
-            INSERT_PATH_IN_CONFIGS("sppm.path_tracing_max_bounces", re_bounces);
+        int radiance_estimation_max_bounces = -1;
+        if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_max_bounces), radiance_estimation_max_bounces))
+            INSERT_PATH_IN_CONFIGS("sppm.path_tracing_max_bounces", radiance_estimation_max_bounces);
     }
 
-    int re_rr_start_bounce;
-    if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_rr_min_path_length), re_rr_start_bounce))
-        INSERT_PATH_IN_CONFIGS("sppm.path_tracing_rr_min_path_length", re_rr_start_bounce);
+    int radiance_estimation_rr_start_bounce;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_rr_min_path_length), radiance_estimation_rr_start_bounce))
+        INSERT_PATH_IN_CONFIGS("sppm.path_tracing_rr_min_path_length", radiance_estimation_rr_start_bounce);
 
-    float re_initial_radius;
-    if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_initial_radius), re_initial_radius))
-        INSERT_PATH_IN_CONFIGS("sppm.initial_radius", re_initial_radius);
+    float radiance_estimation_initial_radius;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_initial_radius), radiance_estimation_initial_radius))
+        INSERT_PATH_IN_CONFIGS("sppm.initial_radius", radiance_estimation_initial_radius);
 
-    int re_max_photons;
-    if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_max_photons), re_max_photons))
-        INSERT_PATH_IN_CONFIGS("sppm.max_photons_per_estimate", re_max_photons);
+    int radiance_estimation_max_photons;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_max_photons), radiance_estimation_max_photons))
+        INSERT_PATH_IN_CONFIGS("sppm.max_photons_per_estimate", radiance_estimation_max_photons);
 
-    float re_alpha;
-    if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_alpha), re_alpha))
-        INSERT_PATH_IN_CONFIGS("sppm.alpha", re_alpha);
+    float radiance_estimation_alpha;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_radiance_estimation_alpha), radiance_estimation_alpha))
+        INSERT_PATH_IN_CONFIGS("sppm.alpha", radiance_estimation_alpha);
 
     bool enableMaxRayIntensitySPPM = false;
     AttributeUtils::get(MPlug(globals, m_sppm_max_ray_intensity_set), enableMaxRayIntensitySPPM);
@@ -1075,7 +1091,7 @@ void RenderGlobalsNode::applyGlobalsToProject(
 #undef REMOVE_PATH_IN_CONFIGS
 }
 
-// Post processing.
+// Post-processing.
 void RenderGlobalsNode::applyPostProcessStagesToFrame(const MObject& globals, asr::Project& project)
 {
     bool enabled;
