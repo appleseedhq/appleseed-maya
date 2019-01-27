@@ -99,8 +99,8 @@ namespace
 
 OSLParamInfo::OSLParamInfo(const asf::Dictionary& paramInfo)
   : arrayLen(-1)
-  , hasDefault(false)
   , lockGeom(true)
+  , hasDefault(false)
   , divider(false)
 {
     paramName = paramInfo.get("name");

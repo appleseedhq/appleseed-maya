@@ -513,7 +513,7 @@ void ShadingNodeExporter::exportValue(
         {
             bool boolValue;
             if (AttributeUtils::get(plug, boolValue))
-                ss << "int " << boolValue ? "1" : "0";
+                ss << "int " << (boolValue ? "1" : "0"); // ?: has lower precedence than <<
         }
     }
     else if (paramInfo.paramType == "matrix")
@@ -545,8 +545,8 @@ void ShadingNodeExporter::exportValue(
         {
             MObject attr = plug.attribute();
             MFnEnumAttribute fnEnumAttr(attr);
-            int intValue = plug.asInt();
-            MString value = fnEnumAttr.fieldName(intValue);
+            short shortValue = plug.asShort();
+            MString value = fnEnumAttr.fieldName(shortValue);
             ss << "string " << value;
         }
         else

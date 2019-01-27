@@ -47,6 +47,16 @@
 namespace asf = foundation;
 namespace asr = renderer;
 
+namespace
+{
+    void addIndirectLightControls(const MObject& node, asr::ParamArray& lightParams)
+    {
+        bool castIndirectLight = true;
+        AttributeUtils::get(node, "asCastIndirectLight", castIndirectLight);
+        lightParams.insert_path("cast_indirect_light", castIndirectLight);
+    }
+};
+
 void LightExporter::registerExporter()
 {
     NodeExporterFactory::registerDagNodeExporter("directionalLight", &LightExporter::create);
@@ -133,12 +143,16 @@ void LightExporter::createEntities(
         lightFactory = lightFactories.lookup("directional_light");
         lightParams.insert("irradiance", colorName.asChar());
         lightParams.insert("irradiance_multiplier", intensity);
+
+        addIndirectLightControls(node(), lightParams);
     }
     else if (depNodeFn.typeName() == "pointLight")
     {
         lightFactory = lightFactories.lookup("point_light");
         lightParams.insert("intensity", colorName.asChar());
         lightParams.insert("intensity_multiplier", intensity);
+
+        addIndirectLightControls(node(), lightParams);
     }
     else if (depNodeFn.typeName() == "spotLight")
     {
@@ -154,6 +168,8 @@ void LightExporter::createEntities(
         AttributeUtils::get(node(), "penumbraAngle", penumbraAngle);
         const double outerAngle = coneAngle.asDegrees() + 2.0 * penumbraAngle.asDegrees();
         lightParams.insert("outer_angle", outerAngle);
+
+        addIndirectLightControls(node(), lightParams);
     }
     else
     {
