@@ -81,9 +81,9 @@ namespace
         {
         }
 
-        void initialize()
+        void initialize(const asf::SearchPaths& resourceSearchPaths)
         {
-            assert(m_project.get() == 0);
+            assert(m_project.get() == nullptr);
 
             // Create an appleseed project.
             m_project = asr::ProjectFactory::create("project");
@@ -175,6 +175,7 @@ namespace
                 new asr::MasterRenderer(
                     m_project.ref(),
                     m_project->configurations().get_by_name("final")->get_inherited_parameters(),
+                    resourceSearchPaths,
                     &m_rendererController);
         }
 
@@ -253,7 +254,6 @@ namespace
             m_mainAssembly->object_instances().insert(objInstance);
         }
 
-
         void render(const size_t resolution, MImage& dstImage)
         {
             // Disable logging while rendering the swatch.
@@ -321,23 +321,24 @@ namespace
         asr::DefaultRendererController      m_rendererController;
     };
 
-    SwatchProject g_materialSwatchProject;
-    SwatchProject g_textureSwatchProject;
+    SwatchProject       g_materialSwatchProject;
+    SwatchProject       g_textureSwatchProject;
+    asf::SearchPaths    g_resourceSearchPaths;
 }
 
 const MString SwatchRenderer::name("AppleseedRenderSwatch");
 const MString SwatchRenderer::fullName("swatch/AppleseedRenderSwatch");
 
-void SwatchRenderer::initialize()
+void SwatchRenderer::initialize(const MString& /*pluginPath*/)
 {
     {
         // Disable logging from appleseed.
         ScopedSetLoggerVerbosity logLevel(asf::LogMessage::Error);
 
-        g_materialSwatchProject.initialize();
+        g_materialSwatchProject.initialize(g_resourceSearchPaths);
         g_materialSwatchProject.createMaterialSceneGeometry();
 
-        g_textureSwatchProject.initialize();
+        g_textureSwatchProject.initialize(g_resourceSearchPaths);
         g_textureSwatchProject.createTextureSceneGeometry();
     }
 

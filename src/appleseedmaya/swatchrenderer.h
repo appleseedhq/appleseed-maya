@@ -41,7 +41,7 @@ class SwatchRenderer
     static const MString name;
     static const MString fullName;
 
-    static void initialize();
+    static void initialize(const MString& pluginPath);
     static void uninitialize();
 
     static MSwatchRenderBase* creator(

@@ -72,6 +72,11 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
         status,
         "appleseedMaya: failed to initialize MFnPlugin");
 
+    const MString pluginPath = fnPlugin.loadPath(&status);
+    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG_LOG(
+        status,
+        "appleseedMaya: failed to get plugin path");
+
     status = Logger::initialize();
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(
         status,
@@ -200,13 +205,17 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
 
     if (MGlobal::mayaState() == MGlobal::kInteractive)
     {
-        SwatchRenderer::initialize();
-        status = MSwatchRenderRegister::registerSwatchRender(SwatchRenderer::name, SwatchRenderer::creator);
+        SwatchRenderer::initialize(pluginPath);
+        status = MSwatchRenderRegister::registerSwatchRender(
+            SwatchRenderer::name,
+            SwatchRenderer::creator);
         APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG_LOG(
             status,
             "appleseedMaya: failed to register swatch renderer");
 
-        status = fnPlugin.registerRenderer(HypershadeRenderer::name, HypershadeRenderer::creator);
+        status = fnPlugin.registerRenderer(
+            HypershadeRenderer::name,
+            HypershadeRenderer::creator);
 
         APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG_LOG(
             status,
@@ -240,11 +249,6 @@ APPLESEED_MAYA_PLUGIN_EXPORT MStatus initializePlugin(MObject plugin)
 
     /***************************/
     // Internal.
-
-    MString pluginPath = fnPlugin.loadPath(&status);
-    APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG_LOG(
-        status,
-        "appleseedMaya: failed to get plugin path");
 
     status = NodeExporterFactory::initialize(pluginPath);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG_LOG(

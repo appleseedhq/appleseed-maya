@@ -193,6 +193,15 @@ IExporterFactory::~IExporterFactory()
 
 namespace
 {
+    struct SessionImpl;
+
+    // Globals.
+    bfs::path                       g_pluginPath;             // Plugin path.
+    asf::SearchPaths                g_resourceSearchPaths;    // Paths to resources.
+    MTime                           g_savedTime;              // Saved time.
+    asf::LogMessage::Category       g_savedLogLevel;          // Saved log level.
+    std::unique_ptr<SessionImpl>    g_globalSession;          // Global session.
+
     // RAII class to end active the session in an exception safe way.
     struct ScopedEndSession
     {
@@ -860,6 +869,7 @@ namespace
                 new asr::MasterRenderer(
                     *m_project,
                     params,
+                    g_resourceSearchPaths,
                     &m_rendererController,
                     static_cast<asr::ITileCallbackFactory*>(m_tileCallbackFactory.get())));
 
@@ -892,8 +902,9 @@ namespace
                 new asr::MasterRenderer(
                     *m_project,
                     params,
+                    g_resourceSearchPaths,
                     &m_rendererController,
-                    static_cast<asr::ITileCallbackFactory*>(0)));
+                    static_cast<asr::ITileCallbackFactory*>(nullptr)));
 
             // Render in the main thread (blocking).
             m_renderer->render();
@@ -1022,12 +1033,6 @@ namespace
 
         std::thread                                             m_renderThread;
     };
-
-    // Globals.
-    bfs::path                       g_pluginPath;    // Plugin path.
-    MTime                           g_savedTime;     // Saved time.
-    asf::LogMessage::Category       g_savedLogLevel; // Saved log level.
-    std::unique_ptr<SessionImpl>    g_globalSession; // Global session.
 }
 
 namespace AppleseedSession
