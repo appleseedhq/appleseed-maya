@@ -173,9 +173,8 @@ void CameraExporter::createEntities(
         if (dofEnabled)
         {
             bool autofocusEnabled = false;
-            if (AttributeUtils::get(node(), "asAutofocus", autofocusEnabled))
+            if (AttributeUtils::get(node(), "asAutofocus", autofocusEnabled) && autofocusEnabled)
             {
-                bool useAutofocus = autofocusEnabled;
                 asf::Vector2d autofocusTarget(0.5f);
 
                 double horizontal_target;
@@ -186,10 +185,10 @@ void CameraExporter::createEntities(
                 if (AttributeUtils::get(node(), "asVerticalTarget", vertical_target))
                     autofocusTarget[1] = vertical_target;
 
-                cameraParams.insert("autofocus_enabled", useAutofocus);
                 cameraParams.insert("autofocus_target", autofocusTarget);
             }
 
+            cameraParams.insert("autofocus_enabled", autofocusEnabled);
             cameraParams.insert("f_stop", cameraFn.fStop());
             cameraParams.insert("focal_distance", cameraFn.focusDistance() / cameraFn.cameraScale());
         }
