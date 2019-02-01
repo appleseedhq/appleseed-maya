@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2016-2018 Esteban Tovagliari, The appleseedhq Organization
+// Copyright (c) 2016-2019 Esteban Tovagliari, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -93,9 +93,11 @@ void CameraExporter::createEntities(
     const asr::ICameraFactory* cameraFactory = nullptr;
     asr::ParamArray cameraParams;
 
+    // Orthographic camera.
     if (cameraFn.isOrtho())
     {
         cameraFactory = cameraFactories.lookup("orthographic_camera");
+
         const double viewDefaultWidth = cameraFn.orthoWidth();
         const double imageAspect = static_cast<double>(options.m_width) / options.m_height;
         const double horizontalFilmAperture = viewDefaultWidth * cameraFn.cameraScale();
@@ -106,12 +108,12 @@ void CameraExporter::createEntities(
             "film_dimensions",
             asf::Vector2d(horizontalFilmAperture, verticalFilmAperture));
     }
-    else
+    else // Perspective camera.
     {
-        const bool dofEnabled = false;
+        const bool dofEnabled = cameraFn.isDepthOfField();
 
         if (dofEnabled)
-            cameraFactory = cameraFactories.lookup("thin_lens_camera");
+            cameraFactory = cameraFactories.lookup("thinlens_camera");
         else
             cameraFactory = cameraFactories.lookup("pinhole_camera");
 
@@ -119,38 +121,41 @@ void CameraExporter::createEntities(
         double verticalFilmAperture = inchesToMeters(cameraFn.verticalFilmAperture());
 
         const double imageAspect = static_cast<double>(options.m_width) / options.m_height;
+        const double filmAspect = horizontalFilmAperture / verticalFilmAperture;
 
         // Handle film fits.
         // Reference: http://around-the-corner.typepad.com/adn/2012/11/maya-stereoscopic.html
         MFnCamera::FilmFit filmFit = cameraFn.filmFit();
-        const double filmAspect = horizontalFilmAperture / verticalFilmAperture;
 
-        if (filmFit == MFnCamera::kFillFilmFit)
+        switch (filmFit)
         {
+          case MFnCamera::kFillFilmFit:
             filmFit = filmAspect < imageAspect
                 ? MFnCamera::kHorizontalFilmFit
                 : MFnCamera::kVerticalFilmFit;
-        }
-        else if (filmFit == MFnCamera::kOverscanFilmFit)
-        {
+            break;
+          case MFnCamera::kOverscanFilmFit:
             filmFit = filmAspect < imageAspect
-                ? MFnCamera::kVerticalFilmFit
-                : MFnCamera::kHorizontalFilmFit;
-        }
-
-        if (filmFit == MFnCamera::kHorizontalFilmFit)
+                ? MFnCamera::kHorizontalFilmFit
+                : MFnCamera::kVerticalFilmFit;
+            break;
+          case MFnCamera::kHorizontalFilmFit:
             verticalFilmAperture = horizontalFilmAperture / imageAspect;
-        else // if (filmFit == MFnCamera::kVerticalFilmFit)
+            break;
+          case MFnCamera::kVerticalFilmFit:
             horizontalFilmAperture = verticalFilmAperture * imageAspect;
+            break;
+        }
 
         cameraParams.insert(
             "film_dimensions",
             asf::Vector2d(horizontalFilmAperture, verticalFilmAperture));
 
-        // Shift and camera shake.
+        // Film shift.
         double shift_x = inchesToMeters(cameraFn.horizontalFilmOffset());
         double shift_y = inchesToMeters(cameraFn.verticalFilmOffset());
 
+        // Camera shake.
         if (cameraFn.shakeEnabled())
         {
             shift_x += cameraFn.horizontalShake();
@@ -161,11 +166,31 @@ void CameraExporter::createEntities(
         cameraParams.insert("shift_y", shift_y);
 
         // Maya's focal_length is given in mm so we convert it to meters.
-        cameraParams.insert("focal_length", cameraFn.focalLength() * 0.001);
+        cameraParams.insert("focal_length", cameraFn.focalLength() / cameraFn.cameraScale() * 0.001);
+        cameraParams.insert("horizontal_fov", asf::rad_to_deg(cameraFn.horizontalFieldOfView() * cameraFn.cameraScale()));
 
+        // Physical camera (thin-lens camera) parameter.
         if (dofEnabled)
         {
-            // TODO: extract dof params here...
+            bool autofocusEnabled = false;
+            if (AttributeUtils::get(node(), "asAutofocus", autofocusEnabled) && autofocusEnabled)
+            {
+                asf::Vector2d autofocusTarget(0.5f);
+
+                double horizontal_target;
+                if (AttributeUtils::get(node(), "asHorizontalTarget", horizontal_target))
+                    autofocusTarget[0] = horizontal_target;
+
+                double vertical_target;
+                if (AttributeUtils::get(node(), "asVerticalTarget", vertical_target))
+                    autofocusTarget[1] = vertical_target;
+
+                cameraParams.insert("autofocus_target", autofocusTarget);
+            }
+
+            cameraParams.insert("autofocus_enabled", autofocusEnabled);
+            cameraParams.insert("f_stop", cameraFn.fStop());
+            cameraParams.insert("focal_distance", cameraFn.focusDistance() / cameraFn.cameraScale());
         }
     }
 

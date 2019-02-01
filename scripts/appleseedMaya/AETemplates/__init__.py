@@ -98,6 +98,9 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
 
         elif self.thisNode.type() == 'camera':
             self.beginLayout('appleseed', collapse=1)
+            self.addControl('asAutofocus', label='Enable Autofocus')
+            self.addControl('asHorizontalTarget', label='Horizontal Target')
+            self.addControl('asVerticalTarget', label='Vertical Target')
             self.endLayout()
 
         elif self.thisNode.type() == 'mesh':

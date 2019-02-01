@@ -231,7 +231,7 @@ namespace
         attr = createNumericAttribute<float>(
             numAttrFn,
             "asExposure",
-            "asexposure",
+            "asExposure",
             MFnNumericData::kFloat,
             0.0f,
             status);
@@ -336,6 +336,52 @@ namespace
 
         modifier.doIt();
     }
+
+    void addCameraExtensionAttrs()
+    {
+        MNodeClass nodeClass("camera");
+        MDGModifier modifier;
+
+        MStatus status;
+
+        MFnNumericAttribute numAttrFn;
+
+        MObject attr = createNumericAttribute<bool>(
+            numAttrFn,
+            "asAutofocus",
+            "asAutofocus",
+            MFnNumericData::kBoolean,
+            false,
+            status);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<float>(
+            numAttrFn,
+            "asHorizontalTarget",
+            "asHorizontalTarget",
+            MFnNumericData::kFloat,
+            0.5f,
+            status);
+        numAttrFn.setMin(0.0f);
+        numAttrFn.setMax(1.0f);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<float>(
+            numAttrFn,
+            "asVerticalTarget",
+            "asVerticalTarget",
+            MFnNumericData::kFloat,
+            0.5f,
+            status);
+        numAttrFn.setMin(0.0f);
+        numAttrFn.setMax(1.0f);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        modifier.doIt();
+    }
 }
 
 MStatus addExtensionAttributes()
@@ -344,5 +390,6 @@ MStatus addExtensionAttributes()
     addAreaLightExtensionAttributes();
     addBump2dExtensionAttributes();
     addShadingEngineExtensionAttrs();
+    addCameraExtensionAttrs();
     return MS::kSuccess;
 }
