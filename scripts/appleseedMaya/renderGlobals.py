@@ -659,6 +659,16 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                             ui=pm.checkBoxGrp(label="Environment Visible"),
                             attrName="bgLight")
 
+                        self._addControl(
+                            ui=pm.checkBoxGrp(
+                                label="Vary Noise Per Frame"),
+                            attrName="enableVaryNoiseSeed")
+                        self._addControl(
+                            ui=pm.intSliderGrp(
+                                label="Noise Seed", field=True, value=0, cw=(3,160), minValue=-65536,
+                                fieldMinValue=-2147483648, maxValue=65535, fieldMaxValue=2147483647),
+                            attrName="noiseSeed")
+
                 with pm.frameLayout(label="Motion Blur", collapsable=True, collapse=True):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=False, width=columnWidth):
                         self._addControl(

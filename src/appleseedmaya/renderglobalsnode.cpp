@@ -78,6 +78,9 @@ MObject RenderGlobalsNode::m_pixelFilterSize;
 
 MObject RenderGlobalsNode::m_sceneScale;
 
+MObject RenderGlobalsNode::m_enableVaryNoiseSeed;
+MObject RenderGlobalsNode::m_noiseSeed;
+
 MObject RenderGlobalsNode::m_lightingEngine;
 MObject RenderGlobalsNode::m_lightSamplingAlgorithm;
 MObject RenderGlobalsNode::m_enableLightImportanceSampling;
@@ -313,6 +316,16 @@ MStatus RenderGlobalsNode::initialize()
         }
     }
     CHECKED_ADD_ATTRIBUTE(m_diagnosticShader, "diagnosticShader")
+
+    // Enable noise seed variation per frame.
+    m_enableVaryNoiseSeed = numAttrFn.create("enableVaryNoiseSeed", "enableVaryNoiseSeed", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_enableVaryNoiseSeed, "enableVaryNoiseSeed")
+
+    // Noise seed value.
+    m_noiseSeed = numAttrFn.create("noiseSeed", "noiseSeed", MFnNumericData::kInt, 0, &status);
+    numAttrFn.setMin(std::numeric_limits<int>::min());
+    numAttrFn.setMax(std::numeric_limits<int>::max());
+    CHECKED_ADD_ATTRIBUTE(m_noiseSeed, "noiseSeed")
 
     //
     // Path Tracing
@@ -729,6 +742,21 @@ void RenderGlobalsNode::applyGlobalsToProject(
     float pixelFilterSize;
     if (AttributeUtils::get(MPlug(globals, m_pixelFilterSize), pixelFilterSize))
         frame->get_parameters().insert("filter_size", pixelFilterSize);
+
+    // Noise seed.
+    int noiseSeed;
+    if (AttributeUtils::get(MPlug(globals, m_noiseSeed), noiseSeed))
+    {
+        // Enable noise seed variation per frame.
+        bool enableVaryNoiseSeed;
+        if (AttributeUtils::get(MPlug(globals, m_enableVaryNoiseSeed), enableVaryNoiseSeed) && enableVaryNoiseSeed)
+        {
+            // currentTime().value() returns the current animation frame as double.
+            const int frameNumber = static_cast<int>(MAnimControl::currentTime().value());
+            noiseSeed += frameNumber;
+        }
+        frame->get_parameters().insert("noise_seed", noiseSeed);
+    }
 
     // Shading overrides params.
     int diagnostic;
