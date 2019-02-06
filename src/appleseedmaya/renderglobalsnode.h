@@ -105,8 +105,7 @@ class RenderGlobalsNode
     static MStringArray m_diagnosticShaderKeys;
 
     // Noise seed.
-    static MObject      m_enableVaryNoiseSeed;
-    static MObject      m_noiseSeed;
+    static MObject      m_lockSamplingPattern;
 
     // Path tracer.
     static MObject      m_enableDirectLighting;
