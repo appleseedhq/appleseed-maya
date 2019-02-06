@@ -318,7 +318,7 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_diagnosticShader, "diagnosticShader")
 
     // Enable noise seed variation per frame.
-    m_enableVaryNoiseSeed = numAttrFn.create("enableVaryNoiseSeed", "enableVaryNoiseSeed", MFnNumericData::kBoolean, false, &status);
+    m_enableVaryNoiseSeed = numAttrFn.create("enableVaryNoiseSeed", "enableVaryNoiseSeed", MFnNumericData::kBoolean, true, &status);
     CHECKED_ADD_ATTRIBUTE(m_enableVaryNoiseSeed, "enableVaryNoiseSeed")
 
     // Noise seed value.
