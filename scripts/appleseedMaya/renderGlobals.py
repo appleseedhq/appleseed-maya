@@ -442,6 +442,11 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                                 fieldMinValue=1, maxValue=1024, fieldMaxValue=65536),
                             attrName="tileSize")
 
+                        self._addControl(
+                            ui=pm.checkBoxGrp(
+                                label="Lock Sampling Pattern"),
+                            attrName="lockSamplingPattern")
+
                 with pm.frameLayout(label="Lighting", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
                         self._addControl(
@@ -658,16 +663,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                         self._addControl(
                             ui=pm.checkBoxGrp(label="Environment Visible"),
                             attrName="bgLight")
-
-                        self._addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Vary Noise Per Frame"),
-                            attrName="enableVaryNoiseSeed")
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Noise Seed", field=True, value=0, cw=(3,160), minValue=-65536,
-                                fieldMinValue=-2147483648, maxValue=65535, fieldMaxValue=2147483647),
-                            attrName="noiseSeed")
 
                 with pm.frameLayout(label="Motion Blur", collapsable=True, collapse=True):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=False, width=columnWidth):
