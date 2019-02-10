@@ -67,6 +67,7 @@
 
 // Standard headers.
 #include <cstring>
+#include <memory>
 
 namespace asf = foundation;
 namespace asr = renderer;
@@ -171,18 +172,18 @@ namespace
             m_project->get_scene()->assembly_instances().insert(assemblyInstance);
 
             // Create the master renderer.
-            m_renderer =
+            m_renderer.reset(
                 new asr::MasterRenderer(
                     m_project.ref(),
                     m_project->configurations().get_by_name("final")->get_inherited_parameters(),
                     resourceSearchPaths,
-                    &m_rendererController);
+                    &m_rendererController));
         }
 
         void uninitialize()
         {
+            m_renderer.reset();
             m_project.reset();
-            delete m_renderer;
         }
 
         asr::Project& getProject()
@@ -314,11 +315,11 @@ namespace
             }
         }
 
-        asf::auto_release_ptr<asr::Project> m_project;
-        asr::Assembly*                      m_mainAssembly;
-        asr::Material*                      m_material;
-        asr::MasterRenderer*                m_renderer;
-        asr::DefaultRendererController      m_rendererController;
+        asf::auto_release_ptr<asr::Project>  m_project;
+        asr::Assembly*                       m_mainAssembly;
+        asr::Material*                       m_material;
+        std::unique_ptr<asr::MasterRenderer> m_renderer;
+        asr::DefaultRendererController       m_rendererController;
     };
 
     SwatchProject       g_materialSwatchProject;
