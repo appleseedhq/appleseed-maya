@@ -446,6 +446,11 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                             ui=pm.checkBoxGrp(
                                 label="Lock Sampling Pattern"),
                             attrName="lockSamplingPattern")
+                        self._addControl(
+                            ui=pm.intSliderGrp(
+                                label="Sampling Pattern Seed", field=True, value=0, cw=(3,160), minValue=-65536,
+                                fieldMinValue=-2147483648, maxValue=65535, fieldMaxValue=2147483647),
+                            attrName="noiseSeed")
 
                 with pm.frameLayout(label="Lighting", collapsable=True, collapse=False):
                     with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):

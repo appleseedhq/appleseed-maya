@@ -106,6 +106,7 @@ class RenderGlobalsNode
 
     // Noise seed.
     static MObject      m_lockSamplingPattern;
+    static MObject      m_noiseSeed;
 
     // Path tracer.
     static MObject      m_enableDirectLighting;
