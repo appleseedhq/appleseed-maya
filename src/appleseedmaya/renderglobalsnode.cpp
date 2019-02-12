@@ -77,6 +77,7 @@ MStringArray RenderGlobalsNode::m_pixelFilterKeys;
 MObject RenderGlobalsNode::m_pixelFilterSize;
 
 MObject RenderGlobalsNode::m_lockSamplingPattern;
+MObject RenderGlobalsNode::m_noiseSeed;
 
 MObject RenderGlobalsNode::m_sceneScale;
 
@@ -319,6 +320,12 @@ MStatus RenderGlobalsNode::initialize()
     // Disables noise seed variation per frame.
     m_lockSamplingPattern = numAttrFn.create("lockSamplingPattern", "lockSamplingPattern", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_lockSamplingPattern, "lockSamplingPattern")
+
+    // Noise seed value.
+    m_noiseSeed = numAttrFn.create("noiseSeed", "noiseSeed", MFnNumericData::kInt, 0, &status);
+    numAttrFn.setMin(std::numeric_limits<int>::min());
+    numAttrFn.setMax(std::numeric_limits<int>::max());
+    CHECKED_ADD_ATTRIBUTE(m_noiseSeed, "noiseSeed")
 
     //
     // Path Tracing
@@ -736,17 +743,23 @@ void RenderGlobalsNode::applyGlobalsToProject(
     if (AttributeUtils::get(MPlug(globals, m_pixelFilterSize), pixelFilterSize))
         frame->get_parameters().insert("filter_size", pixelFilterSize);
 
-    // currentTime().value() returns the current animation frame as double.
-    const int frameNumber = static_cast<int>(MAnimControl::currentTime().value());
-    int noiseSeed = frameNumber;
-
-    // Keeps noise seed constant for each frame.
-    bool disableVaryNoiseSeed;
-    if (AttributeUtils::get(MPlug(globals, m_lockSamplingPattern), disableVaryNoiseSeed) && disableVaryNoiseSeed)
-        noiseSeed = 0;
-
-    frame->get_parameters().insert("noise_seed", noiseSeed);
-
+    // Noise seed.
+    int noiseSeed;
+    if (AttributeUtils::get(MPlug(globals, m_noiseSeed), noiseSeed))
+    {
+        // Keeps noise seed constant for each frame.
+        bool disableVaryNoiseSeed;
+        if (AttributeUtils::get(MPlug(globals, m_lockSamplingPattern), disableVaryNoiseSeed) && disableVaryNoiseSeed)
+        {
+            frame->get_parameters().insert("noise_seed", noiseSeed);
+        }
+        else
+        {
+            // currentTime().value() returns the current animation frame as double.
+            const int frameNumber = static_cast<int>(MAnimControl::currentTime().value());
+            frame->get_parameters().insert("noise_seed", noiseSeed + frameNumber);
+        }
+    }
 
     // Shading overrides params.
     int diagnostic;
