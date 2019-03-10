@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasSurfaceLuminance'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasSurfaceLuminance'>
+        <property name='outColor'/>
+        <property name='color'/>
+    </view>
+</templates>

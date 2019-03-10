@@ -165,7 +165,7 @@ bool anyChildPlugConnected(const MPlug& plug, bool input)
 MStatus makeInput(MFnAttribute& attr, const bool keyable)
 {
     attr.setStorable(true);
-    attr.setReadable(false);
+    attr.setReadable(true); // if it's false, it won't appear on the attr spreadsheet
     attr.setWritable(true);
     attr.setKeyable(keyable);
     return MS::kSuccess;

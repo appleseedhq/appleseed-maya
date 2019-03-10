@@ -44,7 +44,11 @@
 #include <maya/MFnStringData.h>
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MNodeClass.h>
+#include <maya/MString.h>
 #include "appleseedmaya/_endmayaheaders.h"
+
+// Standard headers.
+#include <array>
 
 namespace
 {
@@ -157,6 +161,8 @@ namespace
             MFnNumericData::kInt,
             0,
             status);
+        numAttrFn.setMin(0);
+        numAttrFn.setSoftMax(10);
         AttributeUtils::makeInput(numAttrFn);
         modifier.addExtensionAttribute(nodeClass, attr);
 
@@ -205,6 +211,32 @@ namespace
         AttributeUtils::makeInput(numAttrFn);
         modifier.addExtensionAttribute(nodeClass, attr);
 
+        MFnEnumAttribute enumAttrFn;
+        attr = enumAttrFn.create(
+            "asRayBiasMethod",
+            "asRayBiasMethod",
+            0);
+        enumAttrFn.addField("None", 0);
+        enumAttrFn.addField("Normal", 1);
+        enumAttrFn.addField("Incoming Direction", 2);
+        enumAttrFn.addField("Outgoing Direction", 3);
+        enumAttrFn.setKeyable(false);
+        AttributeUtils::makeInput(enumAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
+        attr = createNumericAttribute<double>(
+            numAttrFn,
+            "asRayBiasDistance",
+            "asRayBiasDistance",
+            MFnNumericData::kDouble,
+            0.0,
+            status);
+        numAttrFn.setSoftMin(0.0);
+        numAttrFn.setSoftMax(1.0);
+        numAttrFn.setKeyable(true);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
         addVisibilityExtensionAttributes(nodeClass, modifier);
         modifier.doIt();
     }
@@ -225,6 +257,8 @@ namespace
             MFnNumericData::kFloat,
             1.0f,
             status);
+        numAttrFn.setSoftMin(0.0f);
+        numAttrFn.setSoftMax(10.0f);
         AttributeUtils::makeInput(numAttrFn);
         modifier.addExtensionAttribute(nodeClass, attr);
 
@@ -235,6 +269,8 @@ namespace
             MFnNumericData::kFloat,
             0.0f,
             status);
+        numAttrFn.setSoftMin(-8.0);
+        numAttrFn.setSoftMax(8.0f);
         AttributeUtils::makeInput(numAttrFn);
         modifier.addExtensionAttribute(nodeClass, attr);
 
@@ -245,11 +281,41 @@ namespace
             MFnNumericData::kBoolean,
             false,
             status);
+        numAttrFn.setKeyable(false);
         AttributeUtils::makeInput(numAttrFn);
         modifier.addExtensionAttribute(nodeClass, attr);
 
         addVisibilityExtensionAttributes(nodeClass, modifier);
         modifier.doIt();
+    }
+
+    void addDiracLightExtensionAttributes()
+    {
+        const std::array<MString, 3> lights = {"pointlight", "spotLight", "directionalLight"};
+
+        for (const MString& light : lights)
+        {
+            MNodeClass nodeClass(light);
+            MDGModifier modifier;
+
+            MStatus status;
+
+            MFnNumericAttribute numAttrFn;
+
+            MObject attr = createNumericAttribute<bool>(
+                numAttrFn,
+                "asCastIndirectLight",
+                "asCastIndirectLight",
+                MFnNumericData::kBoolean,
+                true,
+                status);
+            numAttrFn.setKeyable(false);
+            AttributeUtils::makeInput(numAttrFn);
+            modifier.addExtensionAttribute(nodeClass, attr);
+
+            addVisibilityExtensionAttributes(nodeClass, modifier);
+            modifier.doIt();
+        }
     }
 
     void addBump2dExtensionAttributes()
@@ -388,6 +454,7 @@ MStatus addExtensionAttributes()
 {
     addMeshExtensionAttributes();
     addAreaLightExtensionAttributes();
+    addDiracLightExtensionAttributes();
     addBump2dExtensionAttributes();
     addShadingEngineExtensionAttrs();
     addCameraExtensionAttrs();

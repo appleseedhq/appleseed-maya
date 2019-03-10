@@ -75,7 +75,7 @@ class AppleseedEntityPtr
 {
   public:
     AppleseedEntityPtr()
-      : m_ptr(0)
+      : m_ptr(nullptr)
       , m_releaseObj(false)
     {
     }
@@ -169,7 +169,7 @@ void insertEntityWithUniqueName(
 {
     std::string name = entity->get_name();
 
-    if (container.get_by_name(name.c_str()) == 0)
+    if (container.get_by_name(name.c_str()) == nullptr)
     {
         container.insert(entity.release());
         return;
@@ -182,7 +182,7 @@ void insertEntityWithUniqueName(
     {
         std::string new_name = foundation::get_numbered_string(pattern, i++);
 
-        if (container.get_by_name(new_name.c_str()) == 0)
+        if (container.get_by_name(new_name.c_str()) == nullptr)
         {
             entity->set_name(new_name.c_str());
             container.insert(entity.release());

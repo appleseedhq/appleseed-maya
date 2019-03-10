@@ -5,7 +5,7 @@
 #
 # This software is released under the MIT license.
 #
-# Copyright (c) 2016-2018 Esteban Tovagliari, The appleseedhq Organization
+# Copyright (c) 2016-2019 Esteban Tovagliari, The appleseedhq Organization
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -71,6 +71,7 @@ def showAbout():
 
     mc.setParent('..')
     mc.showWindow(window)
+
 
 __g_appleseedMenu = None
 

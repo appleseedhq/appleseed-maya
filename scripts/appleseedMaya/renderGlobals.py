@@ -27,10 +27,10 @@
 #
 
 # Maya imports.
+import maya.OpenMaya as om
 import maya.cmds as mc
 import maya.mel as mel
 import pymel.core as pm
-import maya.OpenMaya as om
 
 # appleseedMaya imports.
 from logger import logger
@@ -81,6 +81,22 @@ def createRenderTabsMelProcedures():
         '''
              )
     mel.eval('''
+        global proc appleseedCreateAppleseedLightingTabProcedure()
+        {
+            python("import appleseedMaya.renderGlobals");
+            python("appleseedMaya.renderGlobals.g_appleseedLightingTab.create()");
+        }
+        '''
+             )
+    mel.eval('''
+        global proc appleseedUpdateAppleseedLightingTabProcedure()
+        {
+            python("import appleseedMaya.renderGlobals");
+            python("appleseedMaya.renderGlobals.g_appleseedLightingTab.update()");
+        }
+        '''
+             )
+    mel.eval('''
         global proc appleseedCreateAppleseedOutputTabProcedure()
         {
             python("import appleseedMaya.renderGlobals");
@@ -93,6 +109,22 @@ def createRenderTabsMelProcedures():
         {
             python("import appleseedMaya.renderGlobals");
             python("appleseedMaya.renderGlobals.g_appleseedOutputTab.update()");
+        }
+        '''
+             )
+    mel.eval('''
+        global proc appleseedCreateAppleseedSystemTabProcedure()
+        {
+            python("import appleseedMaya.renderGlobals");
+            python("appleseedMaya.renderGlobals.g_appleseedSystemTab.create()");
+        }
+        '''
+             )
+    mel.eval('''
+        global proc appleseedUpdateAppleseedSystemTabProcedure()
+        {
+            python("import appleseedMaya.renderGlobals");
+            python("appleseedMaya.renderGlobals.g_appleseedSystemTab.update()");
         }
         '''
              )
@@ -122,19 +154,44 @@ def renderSettingsBuiltCallback(renderer):
         "appleseed",
         edit=True,
         addGlobalsTab=(
+            "Lighting",
+            "appleseedCreateAppleseedLightingTabProcedure",
+            "appleseedUpdateAppleseedLightingTabProcedure"
+        )
+    )
+    pm.renderer(
+        "appleseed",
+        edit=True,
+        addGlobalsTab=(
             "Output",
             "appleseedCreateAppleseedOutputTabProcedure",
             "appleseedUpdateAppleseedOutputTabProcedure"
         )
     )
+    pm.renderer(
+        "appleseed",
+        edit=True,
+        addGlobalsTab=(
+            "System",
+            "appleseedCreateAppleseedSystemTabProcedure",
+            "appleseedUpdateAppleseedSystemTabProcedure"
+        )
+    )
+
 
 g_nodeAddedCallbackID = None
 g_nodeRemovedCallbackID = None
 g_environmentLightsList = []
 
+
 APPLESEED_ENVIRONMENT_LIGHTS = [
     "appleseedSkyDomeLight",
-    "appleseedPhysicalSkyLight"]
+    "appleseedPhysicalSkyLight"
+]
+
+g_columnWidth = 400
+g_subColumnWidth = g_columnWidth - 20
+g_margin = 2
 
 
 def __nodeAdded(node, data):
@@ -165,11 +222,11 @@ def addRenderGlobalsScriptJobs():
     logger.debug("Adding render globals script jobs")
 
     global g_nodeAddedCallbackID
-    assert g_nodeAddedCallbackID == None
+    assert g_nodeAddedCallbackID is None
     g_nodeAddedCallbackID = om.MDGMessage.addNodeAddedCallback(__nodeAdded)
 
     global g_nodeRemovedCallbackID
-    assert g_nodeRemovedCallbackID == None
+    assert g_nodeRemovedCallbackID is None
     g_nodeRemovedCallbackID = om.MDGMessage.addNodeRemovedCallback(
         __nodeRemoved)
 
@@ -183,12 +240,12 @@ def addRenderGlobalsScriptJobs():
 
 def removeRenderGlobalsScriptJobs():
     global g_nodeAddedCallbackID
-    assert g_nodeAddedCallbackID != None
+    assert g_nodeAddedCallbackID is not None
     om.MMessage.removeCallback(g_nodeAddedCallbackID)
     g_nodeAddedCallbackID = None
 
     global g_nodeRemovedCallbackID
-    assert g_nodeRemovedCallbackID != None
+    assert g_nodeRemovedCallbackID is not None
     om.MMessage.removeCallback(g_nodeRemovedCallbackID)
     g_nodeRemovedCallbackID = None
 
@@ -273,6 +330,7 @@ def currentRendererChanged():
 def postUpdateCommonTab():
     imageFormatChanged()
 
+
 class AppleseedRenderGlobalsTab(object):
 
     def __init__(self):
@@ -297,24 +355,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
         self._uis["minPixelSamples"].setEnable(value)
         self._uis["batchSampleSize"].setEnable(value)
         self._uis["sampleNoiseThreshold"].setEnable(value)
-
-    def __limitBouncesChanged(self, value):
-        self._uis["bounces"].setEnable(value)
-        self._uis["specularBounces"].setEnable(value)
-        self._uis["glossyBounces"].setEnable(value)
-        self._uis["diffuseBounces"].setEnable(value)
-
-    def __enableMaxRayIntensityChanged(self, value):
-        self._uis["maxRayIntensity"].setEnable(value)
-
-    def __limitPhotonTracingBouncesChanged(self, value):
-        self._uis["photonTracingBounces"].setEnable(value)
-
-    def __limitRadianceEstimationBouncesChanged(self, value):
-        self._uis["radianceEstimationBounces"].setEnable(value)
-
-    def __enableMaxRayIntensitySPPMChanged(self, value):
-        self._uis["maxRayIntensitySPPM"].setEnable(value)
 
     def __motionBlurChanged(self, value):
         self._uis["mbCameraSamples"].setEnable(value)
@@ -378,6 +418,9 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
             pm.optionMenu(
                 uiName, edit=True, changeCommand=self.__environmentLightSelected)
 
+    def __lockSamplingPatternChanged(self, value):
+        self._uis["noiseSeed"].setEnable(value)
+
     def create(self):
         # Create default render globals node if needed.
         createGlobalNodes()
@@ -386,260 +429,285 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
         pm.setUITemplate("renderGlobalsTemplate", pushTemplate=True)
         pm.setUITemplate("attributeEditorTemplate", pushTemplate=True)
 
-        columnWidth = 400
-
         with pm.scrollLayout("appleseedScrollLayout", horizontalScrollBarThickness=0):
-            with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
-                with pm.frameLayout(label="Sampling", collapsable=True, collapse=False):
-                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=False, width=columnWidth):
+            with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=g_columnWidth):
+
+                with pm.frameLayout("samplingFrameLayout", label="Sampling", collapsable=True, collapse=False):
+                    with pm.columnLayout("samplingColumnLayout", adjustableColumn=True, width=g_subColumnWidth,
+                                         rowSpacing=2):
+
+                        pm.separator(height=2)
+
                         self._addControl(
                             ui=pm.intSliderGrp(
-                                label="Render Passes", field=True, value=1, cw=(3,160), minValue=1, 
-                                fieldMinValue=1, maxValue=100, fieldMaxValue=1000000),
+                                label="Render Passes",
+                                field=True,
+                                value=1,
+                                columnWidth=(3, 160),
+                                columnAttach=(1, "right", 4),
+                                minValue=1,
+                                fieldMinValue=1,
+                                maxValue=100,
+                                fieldMaxValue=1000000),
                             attrName="passes")
+
+                        pm.separator(height=2)
 
                         self._addControl(
                             ui=pm.checkBoxGrp(
-                                label="Adaptive Sampling", changeCommand=self.__adaptiveSamplerChanged),
+                                label="Adaptive Sampling",
+                                height=18,
+                                columnAttach=(1, "right", 4),
+                                changeCommand=self.__adaptiveSamplerChanged),
                             attrName="adaptiveSampling")
+
+                        pm.separator(height=2)
 
                         adaptiveSampling = mc.getAttr("appleseedRenderGlobals.adaptiveSampling")
 
                         self._addControl(
                             ui=pm.intSliderGrp(
-                                label="Min Samples", field=True, value=16, cw=(3,160), minValue=0, 
-                                fieldMinValue=0, maxValue=256, fieldMaxValue=1000000, enable=adaptiveSampling),
+                                label="Min Samples",
+                                field=True,
+                                value=16,
+                                columnWidth=(3, 160),
+                                columnAttach=(1, "right", 4),
+                                minValue=0,
+                                fieldMinValue=0,
+                                maxValue=256,
+                                fieldMaxValue=1000000,
+                                enable=adaptiveSampling),
                             attrName="minPixelSamples")
+
                         self._addControl(
                             ui=pm.intSliderGrp(
-                                label="Max Samples", field=True, value=256, cw=(3,160), minValue=16, 
-                                fieldMinValue=0, maxValue=1024, fieldMaxValue=1000000),
+                                label="Max Samples",
+                                field=True,
+                                value=256,
+                                columnWidth=(3, 160),
+                                columnAttach=(1, "right", 4),
+                                minValue=16,
+                                fieldMinValue=0,
+                                maxValue=1024,
+                                fieldMaxValue=1000000),
                             attrName="samples")
+
                         self._addControl(
                             ui=pm.intSliderGrp(
-                                label="Batch Sample Size", field=True, value=16, cw=(3,160), minValue=1, 
-                                fieldMinValue=1, maxValue=128, fieldMaxValue=1000000, enable=adaptiveSampling),
+                                label="Batch Sample Size",
+                                field=True,
+                                value=16,
+                                columnWidth=(3, 160),
+                                columnAttach=(1, "right", 4),
+                                minValue=1,
+                                fieldMinValue=1,
+                                maxValue=128,
+                                fieldMaxValue=1000000,
+                                enable=adaptiveSampling),
                             attrName="batchSampleSize")
+
                         self._addControl(
                             ui=pm.floatSliderGrp(
-                                label="Noise Threshold", field=True, value=0.1, step=0.02, precision=4, cw=(3,160), minValue=0.0001, 
-                                fieldMinValue=0.0, maxValue=2.0, fieldMaxValue=10000.0, enable=adaptiveSampling),
+                                label="Noise Threshold",
+                                field=True,
+                                value=0.1,
+                                step=0.02,
+                                precision=4,
+                                columnWidth=(3, 160),
+                                columnAttach=(1, "right", 4),
+                                minValue=0.0001,
+                                fieldMinValue=0.0,
+                                maxValue=2.0,
+                                fieldMaxValue=10000.0,
+                                enable=adaptiveSampling),
                             attrName="sampleNoiseThreshold")
+
+                        pm.separator(height=2)
 
                         self._addControl(
                             ui=pm.attrEnumOptionMenuGrp(
                                 label="Pixel Filter",
+                                columnAttach=(1, "right", 4),
                                 enumeratedItem=self._getAttributeMenuItems("pixelFilter")),
                             attrName="pixelFilter")
+
                         self._addControl(
                             ui=pm.floatSliderGrp(
-                                label="Pixel Filter Size", field=True, value=1.5, sliderStep=0.5, precision=1, cw=(3,160), minValue=0.5, 
-                                fieldMinValue=0.5, maxValue=4.0, fieldMaxValue=20.0),
+                                label="Pixel Filter Size",
+                                field=True,
+                                value=1.5,
+                                sliderStep=0.5,
+                                precision=1,
+                                columnWidth=(3, 160),
+                                columnAttach=(1, "right", 4),
+                                minValue=0.5,
+                                fieldMinValue=0.5,
+                                maxValue=4.0,
+                                fieldMaxValue=20.0),
                             attrName="pixelFilterSize")
+
                         self._addControl(
                             ui=pm.intSliderGrp(
-                                label="Tile Size", field=True, value=64, cw=(3,160), minValue=8, 
-                                fieldMinValue=1, maxValue=1024, fieldMaxValue=65536),
+                                label="Tile Size",
+                                field=True,
+                                value=64,
+                                columnWidth=(3, 160),
+                                columnAttach=(1, "right", 4),
+                                minValue=8,
+                                fieldMinValue=1,
+                                maxValue=1024,
+                                fieldMaxValue=65536),
                             attrName="tileSize")
 
+                        pm.separator(height=2)
+
                         self._addControl(
                             ui=pm.checkBoxGrp(
-                                label="Lock Sampling Pattern"),
+                                label="Lock Sampling Pattern",
+                                height=18,
+                                columnAttach=(1, "right", 4),
+                                changeCommand=self.__lockSamplingPatternChanged),
                             attrName="lockSamplingPattern")
+
+                        lockSamplingPattern = mc.getAttr("appleseedRenderGlobals.lockSamplingPattern")
+
+                        pm.separator(height=2)
+
                         self._addControl(
                             ui=pm.intSliderGrp(
-                                label="Sampling Pattern Seed", field=True, value=0, cw=(3,160), minValue=-65536,
-                                fieldMinValue=-2147483648, maxValue=65535, fieldMaxValue=2147483647),
+                                label="Sampling Pattern Seed",
+                                field=True,
+                                value=0,
+                                columnWidth=(3, 160),
+                                minValue=-65536,
+                                fieldMinValue=-2147483648,
+                                maxValue=65535,
+                                enable=lockSamplingPattern,
+                                fieldMaxValue=2147483647),
                             attrName="noiseSeed")
 
-                with pm.frameLayout(label="Lighting", collapsable=True, collapse=False):
-                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
-                        self._addControl(
-                            ui=pm.attrEnumOptionMenuGrp(
-                                label="Lighting Engine",
-                                enumeratedItem=self._getAttributeMenuItems("lightingEngine")),
-                            attrName="lightingEngine")
-                        self._addControl(
-                            ui=pm.attrEnumOptionMenuGrp(
-                                label="Light Sampler",
-                                enumeratedItem=self._getAttributeMenuItems("lightSamplingAlgorithm")),
-                            attrName="lightSamplingAlgorithm")
-                        self._addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Importance Sampling"),
-                            attrName="lightImportanceSampling")
+                        pm.separator(height=2)
 
-                with pm.frameLayout(label="Path Tracing", collapsable=True, collapse=False):
-                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=False, width=columnWidth):
-                        self._addControl(
-                            ui=pm.checkBoxGrp(label="Caustics"),
-                            attrName="caustics")
-                        self._addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Direct Lighting"),
-                            attrName="enableDirectLighting")
-                        self._addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Image-Based Lighting"),
-                            attrName="enableIBL")
-                        self._addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Limit Bounces", changeCommand=self.__limitBouncesChanged),
-                            attrName="limitBounces")
-                        limitBounces = mc.getAttr(
-                            "appleseedRenderGlobals.limitBounces")
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Global Bounces", field=True, value=8, cw=(3,160), minValue=0, 
-                                fieldMinValue=0, maxValue=30, fieldMaxValue=100, enable=limitBounces),
-                            attrName="bounces")
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Diffuse Bounces", field=True, value=3, cw=(3,160), minValue=0, 
-                                fieldMinValue=0, maxValue=30, fieldMaxValue=100, enable=limitBounces),
-                            attrName="diffuseBounces")
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Glossy Bounces", field=True, value=8, cw=(3,160), minValue=0, 
-                                fieldMinValue=0, maxValue=30, fieldMaxValue=100, enable=limitBounces),
-                            attrName="glossyBounces")
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Specular Bounces", field=True, value=8, cw=(3,160), minValue=0, 
-                                fieldMinValue=0, maxValue=30, fieldMaxValue=100, enable=limitBounces),
-                            attrName="specularBounces")
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Light Samples", field=True, value=1.0, step=1.0, precision=0, cw=(3,160), minValue=0.0, 
-                                fieldMinValue=0.0, maxValue=20.0, fieldMaxValue=1000000.0),
-                            attrName="lightSamples")
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Environment Samples", field=True, value=1.0, step=1.0, precision=0, cw=(3,160), minValue=0.0, 
-                                fieldMinValue=0.0, maxValue=20.0, fieldMaxValue=1000000.0),
-                            attrName="envSamples")
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Low Light Threshold",field=True, value=0.0, step=0.01, precision=2, cw=(3,160), minValue=0.0, 
-                                fieldMinValue=0.0, maxValue=1.0, fieldMaxValue=1000.0),
-                            attrName="lowLightThreshold")
-                        self._addControl(
-                            ui=pm.checkBoxGrp(label="Clamp Roughness"),
-                            attrName="clampRoughness")
-                        self._addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Clamp Ray Intensity", changeCommand=self.__enableMaxRayIntensityChanged),
-                            attrName="enableMaxRayIntensity")
-                        enableMaxRayIntensity = mc.getAttr(
-                                "appleseedRenderGlobals.enableMaxRayIntensity")
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Max Ray Intensity", field=True, value=1.0, step=0.1, precision=1, cw=(3,160), minValue=0.0, 
-                                fieldMinValue=0.0, maxValue=2.0, fieldMaxValue=100.0, enable=enableMaxRayIntensity),
-                            attrName="maxRayIntensity")
+                with pm.frameLayout("motionBlurFrameLayout", label="Motion Blur", collapsable=True, collapse=True):
+                    with pm.columnLayout("motionBlurColumnLayout", adjustableColumn=True, width=g_subColumnWidth,
+                                         rowSpacing=2):
 
-                with pm.frameLayout(label="Stochastic Progressive Photon Mapping", collapsable=True, collapse=False):
-                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=False, width=columnWidth):
-                        self._addControl(
-                            ui=pm.attrEnumOptionMenuGrp(
-                                label="Photon Type",
-                                enumeratedItem=self._getAttributeMenuItems("photonType")),
-                            attrName="photonType")
-                        self._addControl(
-                            ui=pm.attrEnumOptionMenuGrp(
-                                label="Direct Lighting",
-                                enumeratedItem=self._getAttributeMenuItems("SPPMLightingMode")),
-                            attrName="SPPMLightingMode")
-                        self._addControl(
-                            ui=pm.checkBoxGrp(label="Caustics"),
-                            attrName="SPPMCaustics")
-                        self._addControl(
-                            ui=pm.checkBoxGrp(label="Image Based Lighting"),
-                            attrName="SPPMEnableIBL")
-                        self._addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Limit PT Bounces", changeCommand=self.__limitPhotonTracingBouncesChanged),
-                            attrName="limitPhotonTracingBounces")
-                        limitPhotonTracingBounces = mc.getAttr(
-                                "appleseedRenderGlobals.limitPhotonTracingBounces")
-                        self._addControl(
-                            ui=pm.intFieldGrp(
-                                label="Max Bounces", columnWidth=(3,120), columnAlign=(3,'left'), 
-                                extraLabel ='Photon Tracing', numberOfFields=1, enable=limitPhotonTracingBounces),
-                            attrName="photonTracingBounces")
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="RR Start Bounce", field=True, value=6, cw=(3,160), minValue=1, 
-                                fieldMinValue=0, maxValue=30, fieldMaxValue=100),
-                            attrName="photonTracingRRMinPathLength")
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Light Photons", field=True, value=1000000, cw=(3,160), minValue=100000, 
-                                fieldMinValue=0, maxValue=10000000, fieldMaxValue=100000000),
-                            attrName="photonTracingLightPhotons")
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Environment Photons", field=True, value=1000000, cw=(3,160), minValue=100000, 
-                                fieldMinValue=0, maxValue=10000000, fieldMaxValue=100000000),
-                            attrName="photonTracingEnvPhotons")
-                        self._addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Limit RE Bounces", changeCommand=self.__limitRadianceEstimationBouncesChanged),
-                            attrName="limitRadianceEstimationBounces")
-                        limitRadianceEstimationBounces = mc.getAttr(
-                                "appleseedRenderGlobals.limitRadianceEstimationBounces")
-                        self._addControl(
-                            ui=pm.intFieldGrp(
-                                label="Max Bounces",  columnWidth=(3,120), columnAlign=(3,'left'), 
-                                extraLabel ='Radiance Estimation', numberOfFields=1, enable=limitRadianceEstimationBounces),
-                            attrName="radianceEstimationBounces")
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="RR Start Bounce", field=True, value=6, cw=(3,160), minValue=1, 
-                                fieldMinValue=0, maxValue=30, fieldMaxValue=100),
-                            attrName="radianceEstimationRRMinPathLength")
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Initial Search Radius", field=True, value=0.1, step=0.05, precision=2, cw=(3,160), minValue=0.01, 
-                                fieldMinValue=0.001, maxValue=0.5, fieldMaxValue=100.0),
-                            attrName="radianceEstimationInitialRadius")
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Max Photons", field=True, value=100, cw=(3,160), minValue=8, 
-                                fieldMinValue=8, maxValue=500, fieldMaxValue=1000000000),
-                            attrName="radianceEstimationMaxPhotons")
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Alpha", field=True, value=0.7, step=0.05, precision=2, cw=(3,160), minValue=0.0, 
-                                fieldMinValue=0.0, maxValue=1.0, fieldMaxValue=1.0),
-                            attrName="radianceEstimationAlpha")
-                        self._addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Clamp Ray Intensity", changeCommand=self.__enableMaxRayIntensitySPPMChanged),
-                            attrName="enableMaxRayIntensitySPPM")
-                        enableMaxRayIntensitySPPM = mc.getAttr(
-                                "appleseedRenderGlobals.enableMaxRayIntensitySPPM")
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Max Ray Intensity", field=True, value=1.0, step=0.1, precision=1, cw=(3,160), minValue=0.0, 
-                                fieldMinValue=0.0, maxValue=2.0, fieldMaxValue=10000.0, enable=enableMaxRayIntensitySPPM),
-                            attrName="maxRayIntensitySPPM")
+                        pm.separator(height=2)
 
-                with pm.frameLayout(label="Scene", collapsable=True, collapse=False):
-                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=False, width=columnWidth):
                         self._addControl(
-                            ui=pm.attrEnumOptionMenuGrp(
-                                label="Override Shaders",
-                                enumeratedItem=self._getAttributeMenuItems("diagnostics")),
-                            attrName="diagnostics")
+                            ui=pm.checkBoxGrp(
+                                label="Motion Blur",
+                                height=18,
+                                columnAttach=(1, "right", 4),
+                                changeCommand=self.__motionBlurChanged),
+                            attrName="motionBlur")
+
+                        pm.separator(height=2)
+
+                        enableMotionBlur = mc.getAttr(
+                            "appleseedRenderGlobals.motionBlur")
+
+                        self._addControl(
+                            ui=pm.intSliderGrp(
+                                label="Camera Samples",
+                                field=True,
+                                value=2,
+                                columnWidth=(3, 160),
+                                columnAttach=(1, "right", 4),
+                                minValue=2,
+                                fieldMinValue=2,
+                                maxValue=30,
+                                fieldMaxValue=1000,
+                                enable=enableMotionBlur),
+                            attrName="mbCameraSamples")
+
+                        self._addControl(
+                            ui=pm.intSliderGrp(
+                                label="Transformation Samples",
+                                field=True,
+                                value=2,
+                                columnWidth=(3, 160),
+                                columnAttach=(1, "right", 4),
+                                minValue=2,
+                                fieldMinValue=2,
+                                maxValue=30,
+                                fieldMaxValue=1000,
+                                enable=enableMotionBlur),
+                            attrName="mbTransformSamples")
+
+                        self._addControl(
+                            ui=pm.intSliderGrp(
+                                label="Deformation Samples",
+                                field=True,
+                                value=2,
+                                columnWidth=(3, 160),
+                                columnAttach=(1, "right", 4),
+                                minValue=2,
+                                fieldMinValue=2,
+                                maxValue=30,
+                                fieldMaxValue=1000,
+                                enable=enableMotionBlur),
+                            attrName="mbDeformSamples")
+
+                        pm.separator(height=2)
 
                         self._addControl(
                             ui=pm.floatSliderGrp(
-                                label="Scene Scale", field=True, value=1.0, sliderStep=0.1, precision=2, cw=(3,160), minValue=0.01, 
-                                fieldMinValue=1.0e-6, maxValue=100, fieldMaxValue=1.0e+6),
+                                label="Shutter Open",
+                                field=True, value=-0.25,
+                                sliderStep=0.05,
+                                precision=2,
+                                columnWidth=(3, 160),
+                                columnAttach=(1, "right", 4),
+                                minValue=-1.0,
+                                fieldMinValue=-1.0,
+                                maxValue=0.0,
+                                fieldMaxValue=0.0,
+                                enable=enableMotionBlur),
+                            attrName="shutterOpen")
+
+                        self._addControl(
+                            ui=pm.floatSliderGrp(
+                                label="Shutter Close",
+                                field=True,
+                                value=0.25,
+                                sliderStep=0.05,
+                                precision=2,
+                                columnWidth=(3, 160),
+                                columnAttach=(1, "right", 4),
+                                minValue=0.0,
+                                fieldMinValue=0.0,
+                                maxValue=1.0,
+                                fieldMaxValue=1.0,
+                                enable=enableMotionBlur),
+                            attrName="shutterClose")
+
+                        pm.separator(height=2)
+
+                with pm.frameLayout("sceneFrameLayout", label="Scene", collapsable=True, collapse=False):
+                    with pm.columnLayout("sceneColumnLayout", adjustableColumn=True, width=g_subColumnWidth,
+                                         rowSpacing=2):
+
+                        pm.separator(height=2)
+
+                        self._addControl(
+                            ui=pm.floatSliderGrp(
+                                label="Scene Scale",
+                                field=True,
+                                value=1.0,
+                                sliderStep=0.1,
+                                precision=2,
+                                columnWidth=(3, 160),
+                                columnAttach=(1, "right", 4),
+                                minValue=0.01,
+                                fieldMinValue=1.0e-6,
+                                maxValue=100,
+                                fieldMaxValue=1.0e+6),
                             attrName="sceneScale")
 
-                        with pm.rowLayout("appleseedRowLayout", nc=3):
+                        pm.separator(height=2)
+
+                        with pm.rowLayout("appleseedRowLayout", numberOfColumns=3, columnAttach=(1, "right", 4)):
                             pm.text("Environment Light")
                             ui = pm.optionMenu(
                                 changeCommand=self.__environmentLightSelected)
@@ -651,6 +719,7 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                             # Set the currently selected environment light in the menu.
                             connections = mc.listConnections(
                                 "appleseedRenderGlobals.envLight")
+
                             if connections:
                                 node = connections[0]
                                 if mc.nodeType(node) == "transform":
@@ -665,61 +734,16 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                             logger.debug(
                                 "Created globals env light menu, name = %s" % ui)
 
-                        self._addControl(
-                            ui=pm.checkBoxGrp(label="Environment Visible"),
-                            attrName="bgLight")
+                        pm.separator(height=2)
 
-                with pm.frameLayout(label="Motion Blur", collapsable=True, collapse=True):
-                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=False, width=columnWidth):
                         self._addControl(
                             ui=pm.checkBoxGrp(
-                                label="Motion Blur", changeCommand=self.__motionBlurChanged),
-                            attrName="motionBlur")
+                                label="Environment Visible",
+                                columnAttach=(1, "right", 4),
+                                height=18),
+                            attrName="bgLight")
 
-                        enableMotionBlur = mc.getAttr(
-                            "appleseedRenderGlobals.motionBlur")
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Camera Samples", field=True, value=2, cw=(3,160), minValue=2, 
-                                fieldMinValue=2, maxValue=30, fieldMaxValue=1000, enable=enableMotionBlur),
-                            attrName="mbCameraSamples")
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Transformation Samples",  field=True, value=2, cw=(3,160), minValue=2, 
-                                fieldMinValue=2, maxValue=30, fieldMaxValue=1000, enable=enableMotionBlur),
-                            attrName="mbTransformSamples")
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Deformation Samples", field=True, value=2, cw=(3,160), minValue=2, 
-                                fieldMinValue=2, maxValue=30, fieldMaxValue=1000, enable=enableMotionBlur),
-                            attrName="mbDeformSamples")
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Shutter Open", field=True, value=-0.25, sliderStep=0.05, precision=2, cw=(3,160), minValue=-1.0, 
-                                fieldMinValue=-1.0, maxValue=0.0, fieldMaxValue=0.0, enable=enableMotionBlur),
-                            attrName="shutterOpen")
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Shutter Close", field=True, value=0.25, sliderStep=0.05, precision=2, cw=(3,160), minValue=0.0, 
-                                fieldMinValue=0.0, maxValue=1.0, fieldMaxValue=1.0, enable=enableMotionBlur),
-                            attrName="shutterClose")
-
-                with pm.frameLayout(label="System", collapsable=True, collapse=False):
-                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
-                        self._addControl(
-                            ui=pm.intFieldGrp(
-                                label="Threads", numberOfFields=1),
-                            attrName="threads")
-                        self._addControl(
-                            ui=pm.intFieldGrp(
-                                label="Texture Cache Size (MB)", numberOfFields=1),
-                            attrName="maxTexCacheSize")
-
-                with pm.frameLayout(label="Experimental", collapsable=True, collapse=False):
-                    with pm.columnLayout("appleseedColumnLayout", adjustableColumn=True, width=columnWidth):
-                        self._addControl(
-                            ui=pm.checkBoxGrp(label="Use Embree"),
-                            attrName="useEmbree")
+                        pm.separator(height=2)
 
         pm.setUITemplate("renderGlobalsTemplate", popTemplate=True)
         pm.setUITemplate("attributeEditorTemplate", popTemplate=True)
@@ -741,20 +765,38 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
         assert mc.objExists("appleseedRenderGlobals")
         # self.updateEnvLightControl()
 
+
 g_appleseedMainTab = AppleseedRenderGlobalsMainTab()
 
 
-class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
+class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
-    def __prefilterChanged(self, value):
-        self._uis["spikeThreshold"].setEnable(value)
+    def __limitBouncesChanged(self, value):
+        self._uis["bounces"].setEnable(value)
+        self._uis["specularBounces"].setEnable(value)
+        self._uis["glossyBounces"].setEnable(value)
+        self._uis["diffuseBounces"].setEnable(value)
 
-    def __chooseLogFilename(self):
-        logger.debug("choose log filename called!")
-        path = pm.fileDialog2(fileMode=0)
+    def __enableMaxRayIntensityChanged(self, value):
+        self._uis["maxRayIntensity"].setEnable(value)
 
-        if path:
-            mc.setAttr("appleseedRenderGlobals.logFilename", path, type="string")
+    def __enableIBLChanged(self, value):
+        self._uis["envSamples"].setEnable(value)
+
+    def __enableDirectLightingChanged(self, value):
+        self._uis["lightSamples"].setEnable(value)
+
+    def __limitPhotonTracingBouncesChanged(self, value):
+        self._uis["photonTracingBounces"].setEnable(value)
+
+    def __limitRadianceEstimationBouncesChanged(self, value):
+        self._uis["radianceEstimationBounces"].setEnable(value)
+
+    def __enableMaxRayIntensitySPPMChanged(self, value):
+        self._uis["maxRayIntensitySPPM"].setEnable(value)
+
+    def __enablePhotonTracingEnvPhotonsChanged(self, value):
+        self._uis["photonTracingEnvPhotons"].setEnable(value)
 
     def create(self):
         # Create default render globals node if needed.
@@ -764,98 +806,730 @@ class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
         pm.setUITemplate("renderGlobalsTemplate", pushTemplate=True)
         pm.setUITemplate("attributeEditorTemplate", pushTemplate=True)
 
-        columnWidth = 400
+        with pm.scrollLayout("lightingScrollLayout", horizontalScrollBarThickness=0):
+            with pm.columnLayout("lightingColumnLayout", adjustableColumn=True, width=g_columnWidth):
+
+                with pm.frameLayout("lightingFrameLayout", label="Lighting", collapsable=True, collapse=False):
+                    with pm.columnLayout("lightingColumnLayout", adjustableColumn=True, width=g_subColumnWidth,
+                                         rowSpacing=2):
+
+                        pm.separator(height=2)
+
+                        self._addControl(
+                            ui=pm.attrEnumOptionMenuGrp(
+                                label="Lighting Engine",
+                                enumeratedItem=self._getAttributeMenuItems("lightingEngine"),
+                                columnAttach=[(1, "right", 4), (2, "right", 0)],
+                                columnWidth=[(1, 120), (2, 240)],
+                                height=22),
+                            attrName="lightingEngine")
+
+                        pm.separator(height=2)
+
+                        with pm.frameLayout("pathTracingFrameLayout", label="Unidirectional Path Tracing",
+                                            collapsable=True, collapse=True):
+                            with pm.columnLayout("pathTracingColumnLayout", adjustableColumn=True,
+                                                 width=g_subColumnWidth - g_margin, rowSpacing=2):
+                                pm.separator(height=2)
+
+                                with pm.rowColumnLayout("pathTracingRowColumnLayout", numberOfRows=2,
+                                                        rowOffset=[(1, "top", 2), (2, "both", 2), (3, "both", 2)],
+                                                        rowSpacing=(2, 2)):
+                                    self._addControl(
+                                        ui=pm.checkBoxGrp(
+                                            label="Caustics",
+                                            columnAttach=(1, "right", 4)),
+                                        attrName="caustics")
+
+                                    self._addControl(
+                                        ui=pm.checkBoxGrp(
+                                            label="Direct Lighting",
+                                            columnAttach=(1, "right", 4),
+                                            changeCommand=self.__enableDirectLightingChanged),
+                                        attrName="enableDirectLighting")
+
+                                    self._addControl(
+                                        ui=pm.checkBoxGrp(
+                                            label="Image-Based Lighting",
+                                            columnAttach=(1, "right", 4),
+                                            changeCommand=self.__enableIBLChanged),
+                                        attrName="enableIBL")
+
+                                    self._addControl(
+                                        ui=pm.checkBoxGrp(
+                                            label="Limit Bounces",
+                                            columnAttach=(1, "right", 4),
+                                            changeCommand=self.__limitBouncesChanged),
+                                        attrName="limitBounces")
+
+                                pm.separator(height=2)
+
+                                limitBounces = mc.getAttr(
+                                    "appleseedRenderGlobals.limitBounces")
+
+                                enableIBL = mc.getAttr(
+                                    "appleseedRenderGlobals.enableIBL")
+
+                                enableDirectLighting = mc.getAttr(
+                                    "appleseedRenderGlobals.enableDirectLighting")
+
+                                self._addControl(
+                                    ui=pm.intSliderGrp(
+                                        label="Global Bounces",
+                                        field=True,
+                                        value=8,
+                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                        minValue=0,
+                                        maxValue=30,
+                                        fieldMinValue=0,
+                                        fieldMaxValue=100),
+                                    attrName="bounces")
+
+                                self._addControl(
+                                    ui=pm.intSliderGrp(
+                                        label="Diffuse Bounces",
+                                        field=True,
+                                        value=8,
+                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                        rowAttach=[(1, "both", 4)],
+                                        enable=limitBounces,
+                                        minValue=0,
+                                        maxValue=30,
+                                        fieldMinValue=0,
+                                        fieldMaxValue=100),
+                                    attrName="diffuseBounces")
+
+                                self._addControl(
+                                    ui=pm.intSliderGrp(
+                                        label="Glossy Bounces",
+                                        field=True,
+                                        value=8,
+                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                        enable=limitBounces,
+                                        minValue=0,
+                                        maxValue=30,
+                                        fieldMinValue=0,
+                                        fieldMaxValue=100),
+                                    attrName="glossyBounces")
+
+                                self._addControl(
+                                    ui=pm.intSliderGrp(
+                                        label="Specular Bounces",
+                                        field=True,
+                                        value=8,
+                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                        enable=limitBounces,
+                                        minValue=0,
+                                        maxValue=30,
+                                        fieldMinValue=0,
+                                        fieldMaxValue=100),
+                                    attrName="specularBounces")
+
+                                pm.separator(height=2)
+
+                                """
+                                self._addControl(
+                                    ui=pm.attrEnumOptionMenuGrp(
+                                        label="Light Sampler",
+                                        enumeratedItem=self._getAttributeMenuItems("lightSamplingAlgorithm"),
+                                        columnAttach=[(1, "right", 2), (2, "right", 0)],
+                                        columnWidth=[(1, 120), (2, 240)]),
+                                    attrName="lightSamplingAlgorithm")
+                                
+                                pm.separator(height=2)
+                                """
+
+                                with pm.rowColumnLayout("pathTracingLightISRowColumnLayout", numberOfRows=1):
+                                    self._addControl(
+                                        ui=pm.checkBoxGrp(
+                                            label1="Lights Importance Sampling",
+                                            height=18,
+                                            columnAttach=[(1, "right", 4), (2, "right", 4)],
+                                            columnWidth=[(1, 86), (2, 200)]),
+                                        attrName="lightImportanceSampling")
+
+                                pm.separator(height=2)
+
+                                self._addControl(
+                                    ui=pm.floatSliderGrp(
+                                        label="Light Samples",
+                                        field=True,
+                                        value=1.0,
+                                        sliderStep=1.0,
+                                        fieldStep=0.1,
+                                        precision=1,
+                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                        rowAttach=[(1, "both", 4)],
+                                        enable=enableDirectLighting,
+                                        minValue=0.0,
+                                        maxValue=20.0,
+                                        fieldMinValue=0.0,
+                                        fieldMaxValue=1000000.0,
+                                        annotation="Number of light samples used to estimate direct lighting."),
+                                    attrName="lightSamples")
+
+                                self._addControl(
+                                    ui=pm.floatSliderGrp(
+                                        label="IBL Samples",
+                                        field=True,
+                                        value=1.0,
+                                        sliderStep=1.0,
+                                        fieldStep=0.1,
+                                        precision=1,
+                                        columnWidth=[(1, 115), (2, 40), (3, 240)],
+                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                        enable=enableIBL,
+                                        minValue=0.0,
+                                        maxValue=20.0,
+                                        fieldMinValue=0.0,
+                                        fieldMaxValue=1000000.0,
+                                        annotation="Number of samples used to estimate environment or image-based lighting."),
+                                    attrName="envSamples")
+
+                                self._addControl(
+                                    ui=pm.floatSliderGrp(
+                                        label="Low Light Threshold",
+                                        field=True,
+                                        value=0.0,
+                                        precision=6,
+                                        columnWidth=[(1, 115), (2, 60), (3, 190)],
+                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                        minValue=0.0,
+                                        maxValue=1.0,
+                                        fieldMinValue=0.0,
+                                        fieldMaxValue=1000.0,
+                                        annotation="Threshold at which shadow rays are terminated."),
+                                    attrName="lowLightThreshold")
+
+                                pm.separator(height=2)
+
+                                enableMaxRayIntensity = True
+
+                                with pm.rowColumnLayout("pathTracingClampingRowColumnLayout", numberOfRows=1):
+                                    self._addControl(
+                                        ui=pm.checkBoxGrp(
+                                            label="Clamp Roughness",
+                                            height=18,
+                                            columnAttach=(1, "right", 4),
+                                            annotation="Clamp roughness on secondary and subsequent rays."),
+                                        attrName="clampRoughness")
+
+                                    self._addControl(
+                                        ui=pm.checkBoxGrp(
+                                            label="Clamp Ray Intensity",
+                                            height=18,
+                                            columnAttach=(1, "right", 4),
+                                            annotation="Clamp secondary and subsequent rays intensity in order to reduce fireflies.",
+                                            changeCommand=self.__enableMaxRayIntensityChanged),
+                                        attrName="enableMaxRayIntensity")
+
+                                    enableMaxRayIntensity = mc.getAttr("appleseedRenderGlobals.enableMaxRayIntensity")
+
+                                pm.separator(height=2)
+
+                                self._addControl(
+                                    ui=pm.floatSliderGrp(
+                                        label="Max Ray Intensity",
+                                        field=True,
+                                        sliderStep=1.0,
+                                        fieldStep=0.1,
+                                        precision=1,
+                                        columnWidth=[(1, 100), (2, 40), (3, 200)],
+                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                        minValue=0.0,
+                                        maxValue=2.0,
+                                        fieldMinValue=0.0,
+                                        fieldMaxValue=10000.0,
+                                        annotation="Maximum ray intensity allowed on secondary and subsequent rays.",
+                                        enable=enableMaxRayIntensity),
+                                    attrName="maxRayIntensity")
+
+                                pm.separator(height=2)
+
+                        with pm.frameLayout("sppmFrameLayout", label="Stochastic Progressive Photon Mapping",
+                                            collapsable=True, collapse=True):
+                            with pm.columnLayout("sppmColumnLayout", adjustableColumn=True,
+                                                 width=g_subColumnWidth - g_margin,
+                                                 rowSpacing=2):
+
+                                pm.separator(height=2)
+
+                                self._addControl(
+                                    ui=pm.attrEnumOptionMenuGrp(
+                                        label="Photon Type",
+                                        enumeratedItem=self._getAttributeMenuItems("photonType"),
+                                        columnAttach=(1, "right", 4),
+                                        annotation="Type of photons for the SPPM engine: single-wavelength or wavelength-dependent"),
+                                    attrName="photonType")
+
+                                self._addControl(
+                                    ui=pm.attrEnumOptionMenuGrp(
+                                        label="Direct Lighting",
+                                        enumeratedItem=self._getAttributeMenuItems("SPPMLightingMode"),
+                                        columnAttach=(1, "right", 4),
+                                        annotation="Type of direct lighting engine to use: raytraced, photon or none."),
+                                    attrName="SPPMLightingMode")
+
+                                pm.separator(height=2)
+
+                                with pm.rowColumnLayout("sppmCheckBoxesRowColumnLayout", numberOfRows=1):
+                                    self._addControl(
+                                        ui=pm.checkBoxGrp(
+                                            label="Caustics",
+                                            columnAttach=(1, "right", 4)),
+                                        attrName="SPPMCaustics")
+
+                                    self._addControl(
+                                        ui=pm.checkBoxGrp(
+                                            label="Image Based Lighting",
+                                            columnAttach=(1, "right", 5),
+                                            changeCommand=self.__enablePhotonTracingEnvPhotonsChanged),
+                                        attrName="SPPMEnableIBL")
+
+                                pm.separator(height=2)
+
+                                with pm.frameLayout("sppmPhotonTracingFrameLayout", font="smallBoldLabelFont",
+                                                    label="Photon Tracing", collapsable=False, collapse=True):
+                                    with pm.columnLayout("sppmPhotonTracingColumnLayout", adjustableColumn=True,
+                                                         width=g_subColumnWidth - g_margin, rowSpacing=2):
+                                        pm.separator(height=2)
+
+                                        self._addControl(
+                                            ui=pm.checkBoxGrp(
+                                                label="Limit Bounces",
+                                                columnAttach=(1, "right", 4),
+                                                annotation="Restrict the number of photon bounces.",
+                                                changeCommand=self.__limitPhotonTracingBouncesChanged),
+                                            attrName="limitPhotonTracingBounces")
+
+                                        limitPhotonTracingBounces = mc.getAttr(
+                                            "appleseedRenderGlobals.limitPhotonTracingBounces")
+
+                                        pm.separator(height=2)
+
+                                        self._addControl(
+                                            ui=pm.intSliderGrp(
+                                                label="Max Bounces",
+                                                field=True,
+                                                value=8,
+                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                                minValue=0,
+                                                maxValue=30,
+                                                fieldMinValue=0,
+                                                fieldMaxValue=100,
+                                                annotation="Maximum number of photon bounces.",
+                                                enable=limitPhotonTracingBounces),
+                                            attrName="photonTracingBounces")
+
+                                        self._addControl(
+                                            ui=pm.intSliderGrp(
+                                                label="RR Starting Bounce",
+                                                field=True,
+                                                value=8,
+                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                                minValue=0,
+                                                maxValue=30,
+                                                fieldMinValue=0,
+                                                fieldMaxValue=100,
+                                                annotation="Discard low contribution paths starting with this bounce."),
+                                            attrName="photonTracingRRMinPathLength")
+
+                                        pm.separator(height=2)
+
+                                        self._addControl(
+                                            ui=pm.intSliderGrp(
+                                                label="Light Photons",
+                                                field=True,
+                                                value=1000000,
+                                                minValue=100000,
+                                                maxValue=10000000,
+                                                fieldMinValue=0,
+                                                fieldMaxValue=100000000,
+                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                                annotation="Number of light photons per render pass."),
+                                            attrName="photonTracingLightPhotons")
+
+                                        SPPMEnableIBL = mc.getAttr(
+                                            "appleseedRenderGlobals.SPPMEnableIBL")
+
+                                        self._addControl(
+                                            ui=pm.intSliderGrp(
+                                                label="IBL Photons",
+                                                field=True,
+                                                value=1000000,
+                                                minValue=100000,
+                                                maxValue=10000000,
+                                                fieldMinValue=0,
+                                                fieldMaxValue=100000000,
+                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                                enable=SPPMEnableIBL,
+                                                annotation="Number of environment photons per render pass."),
+                                            attrName="photonTracingEnvPhotons")
+
+                                with pm.frameLayout("sppmRadianceEstimationFrameLayout", font="smallBoldLabelFont",
+                                                    label="Radiance Estimation", collapsable=False, collapse=True):
+                                    with pm.columnLayout("sppmRadianceEstimationColumnLayout", adjustableColumn=True,
+                                                         width=g_subColumnWidth - g_margin, rowSpacing=2):
+                                        
+                                        pm.separator(height=2)
+
+                                        self._addControl(
+                                            ui=pm.checkBoxGrp(
+                                                label="Limit Bounces",
+                                                columnAttach=(1, "right", 4),
+                                                annotation="Restrict the number of path bounces.",
+                                                changeCommand=self.__limitRadianceEstimationBouncesChanged),
+                                            attrName="limitRadianceEstimationBounces")
+
+                                        limitRadianceEstimationBounces = mc.getAttr(
+                                            "appleseedRenderGlobals.limitRadianceEstimationBounces"
+                                        )
+
+                                        pm.separator(height=2)
+
+                                        self._addControl(
+                                            ui=pm.intSliderGrp(
+                                                label="Maximum Bounces",
+                                                field=True,
+                                                value=8,
+                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                                minValue=0,
+                                                maxValue=30,
+                                                fieldMinValue=0,
+                                                fieldMaxValue=100,
+                                                enable=limitRadianceEstimationBounces,
+                                                annotation="Maximum number of radiance estimation path bounces."),
+                                            attrName="radianceEstimationBounces")
+
+                                        self._addControl(
+                                            ui=pm.intSliderGrp(
+                                                label="RR Starting Bounces",
+                                                field=True,
+                                                value=8,
+                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                                minValue=0,
+                                                maxValue=30,
+                                                fieldMinValue=0,
+                                                fieldMaxValue=100,
+                                                annotation="Discard low contribution paths starting with this bounce."),
+                                            attrName="radianceEstimationRRMinPathLength")
+
+                                        pm.separator(height=2)
+
+                                        self._addControl(
+                                            ui=pm.floatSliderGrp(
+                                                label="Initial Search Radius",
+                                                field=True,
+                                                value=0.1,
+                                                sliderStep=1.0,
+                                                fieldStep=0.1,
+                                                precision=3,
+                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                                minValue=0.01,
+                                                maxValue=0.5,
+                                                fieldMinValue=0.001,
+                                                fieldMaxValue=100.0,
+                                                annotation="Initial photon gathering radius in percent of scene diameter."),
+                                            attrName="radianceEstimationInitialRadius")
+
+                                        self._addControl(
+                                            ui=pm.intSliderGrp(
+                                                label="Maximum Photons",
+                                                field=True,
+                                                value=100,
+                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                                minValue=8,
+                                                maxValue=500,
+                                                fieldMinValue=8,
+                                                fieldMaxValue=1000000000,
+                                                annotation="Maximum number of photons used for radiance estimation."),
+                                            attrName="radianceEstimationMaxPhotons")
+
+                                        self._addControl(
+                                            ui=pm.floatSliderGrp(
+                                                label="Alpha",
+                                                field=True,
+                                                value=0.7,
+                                                sliderStep=1.0,
+                                                fieldStep=0.05,
+                                                precision=3,
+                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                                minValue=0.0,
+                                                maxValue=1.0,
+                                                fieldMinValue=0.0,
+                                                fieldMaxValue=1.0,
+                                                annotation="Evolution rate of photon gathering radius."),
+                                            attrName="radianceEstimationAlpha")
+
+                                        pm.separator(height=2)
+
+                                        self._addControl(
+                                            ui=pm.checkBoxGrp(
+                                                label="Clamp Ray Intensity",
+                                                columnAttach=(1, "right", 4),
+                                                annotation="Clamp secondary and subsequent rays intensity in order to reduce fireflies.",
+                                                changeCommand=self.__enableMaxRayIntensitySPPMChanged),
+                                            attrName="enableMaxRayIntensitySPPM")
+
+                                        enableMaxRayIntensitySPPM = mc.getAttr(
+                                            "appleseedRenderGlobals.enableMaxRayIntensitySPPM"
+                                        )
+
+                                        pm.separator(height=2)
+
+                                        self._addControl(
+                                            ui=pm.floatSliderGrp(
+                                                label="Maximum Ray Intensity",
+                                                field=True,
+                                                value=1.0,
+                                                sliderStep=1.0,
+                                                fieldStep=0.1,
+                                                precision=1,
+                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                                minValue=0.0,
+                                                maxValue=2.0,
+                                                fieldMinValue=0.0,
+                                                fieldMaxValue=10000.0,
+                                                enable=enableMaxRayIntensitySPPM,
+                                                annotation="Maximum Ray Intensity valued allowed on secondary and subsequent rays."),
+                                            attrName="maxRayIntensitySPPM")
+
+        pm.setUITemplate("renderGlobalsTemplate", popTemplate=True)
+        pm.setUITemplate("attributeEditorTemplate", popTemplate=True)
+        pm.formLayout(
+            parentForm,
+            edit=True,
+            attachForm=[
+                ("lightingScrollLayout", "top", 0),
+                ("lightingScrollLayout", "bottom", 0),
+                ("lightingScrollLayout", "left", 0),
+                ("lightingScrollLayout", "right", 0)])
+
+        logger.debug("Created appleseed lighting engines render globals main tab.")
+
+        # Update the newly created tab.
+        self.update()
+
+    def update(self):
+        assert mc.objExists("appleseedRenderGlobals")
+
+
+g_appleseedLightingTab = AppleseedRenderGlobalsLightingTab()
+
+
+class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
+
+    def __prefilterChanged(self, value):
+        self._uis["spikeThreshold"].setEnable(value)
+
+    def __renderStampChanged(self, value):
+        self._uis["renderStampString"].setEnable(value)
+
+    def create(self):
+        # Create default render globals node if needed.
+        createGlobalNodes()
+
+        parentForm = pm.setParent(query=True)
+        pm.setUITemplate("renderGlobalsTemplate", pushTemplate=True)
+        pm.setUITemplate("attributeEditorTemplate", pushTemplate=True)
 
         with pm.scrollLayout("outputScrollLayout", horizontalScrollBarThickness=0):
-            with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=columnWidth):
-                with pm.frameLayout(label="AOVs", collapsable=True, collapse=False):
-                    with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=columnWidth):
-                        self._addControl(ui=pm.checkBoxGrp(label="Diffuse"), attrName="diffuseAOV")
-                        self._addControl(ui=pm.checkBoxGrp(label="Glossy"), attrName="glossyAOV")
-                        self._addControl(ui=pm.checkBoxGrp(label="Emission"), attrName="emissionAOV")
+            with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=g_columnWidth):
 
-                        self._addControl(ui=pm.checkBoxGrp(label="Direct Diffuse"), attrName="directDiffuseAOV")
-                        self._addControl(ui=pm.checkBoxGrp(label="Indirect Diffuse"), attrName="indirectDiffuseAOV")
+                with pm.frameLayout("outputAOVSframeLayout", label="AOVs", collapsable=True, collapse=False):
+                    with pm.rowColumnLayout("outputAOVsColumnLayout", adjustableColumn=True, width=g_columnWidth,
+                                            numberOfColumns=2, rowSpacing=(2, 2)):
 
-                        self._addControl(ui=pm.checkBoxGrp(label="Direct Glossy"), attrName="directGlossyAOV")
-                        self._addControl(ui=pm.checkBoxGrp(label="Indirect Glossy"), attrName="indirectGlossyAOV")
+                        pm.separator(height=2)
+                        pm.separator(height=2)
 
-                        self._addControl(ui=pm.checkBoxGrp(label="Albedo"), attrName="albedoAOV")
-                        self._addControl(ui=pm.checkBoxGrp(label="Normal"), attrName="normalAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="Diffuse",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="diffuseAOV")
 
-                        self._addControl(ui=pm.checkBoxGrp(label="Invalid Samples"), attrName="invalidSamplesAOV")
-                        self._addControl(ui=pm.checkBoxGrp(label="Pixel Sample Count"), attrName="pixelSampleCountAOV")
-                        self._addControl(ui=pm.checkBoxGrp(label="Pixel Time"), attrName="pixelTimeAOV")
-                        self._addControl(ui=pm.checkBoxGrp(label="Pixel Variation"), attrName="pixelVariationAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="Glossy",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="glossyAOV")
 
-                        self._addControl(ui=pm.checkBoxGrp(label="UV"), attrName="uvAOV")
-                        self._addControl(ui=pm.checkBoxGrp(label="Depth"), attrName="depthAOV")
-                        self._addControl(ui=pm.checkBoxGrp(label="Position"), attrName="positionAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="Emission",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="emissionAOV")
 
-                        self._addControl(ui=pm.checkBoxGrp(label="NPR Shading"), attrName="nprShadingAOV")
-                        self._addControl(ui=pm.checkBoxGrp(label="NPR Contours"), attrName="nprContourAOV")
+                        self._addControl(ui=pm.checkBoxGrp(label="Direct Diffuse",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="directDiffuseAOV")
 
-                with pm.frameLayout(label="Denoiser", collapsable=True, collapse=True):
-                    with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=columnWidth):
+                        self._addControl(ui=pm.checkBoxGrp(label="Indirect Diffuse",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="indirectDiffuseAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Direct Glossy",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="directGlossyAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Indirect Glossy",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="indirectGlossyAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Albedo",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="albedoAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Normal",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="normalAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Invalid Samples",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="invalidSamplesAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Pixel Sample Count",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="pixelSampleCountAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Pixel Time",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="pixelTimeAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Pixel Variation",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="pixelVariationAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="UV",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="uvAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Depth",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="depthAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Position",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="positionAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="NPR Shading",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="nprShadingAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="NPR Contours",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="nprContourAOV")
+
+                        pm.separator(height=2)
+                        pm.separator(height=2)
+
+                with pm.frameLayout("outputDenoiserFrameLayout", label="Denoiser", collapsable=True, collapse=True):
+                    with pm.columnLayout("outputDenoiserColumnLayout", adjustableColumn=True, width=g_columnWidth,
+                                         rowSpacing=2):
+
+                        pm.separator(height=2)
+
                         self._addControl(
                             ui=pm.attrEnumOptionMenuGrp(
                                 label="Denoiser",
+                                columnAttach=(1, "right", 4),
                                 enumeratedItem=self._getAttributeMenuItems("denoiser")),
                             attrName="denoiser")
 
-                        self._addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Skip Already Denoised"),
-                            attrName="skipDenoised")
+                        pm.separator(height=2)
 
-                        self._addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Random Pixel Order"),
-                            attrName="randomPixelOrder")
+                        with pm.columnLayout("denoiserCheckboxesRowColumnLayout",
+                                             adjustableColumn=True,
+                                             width=g_columnWidth,
+                                             rowSpacing=2):
 
-                        enablePrefilter = mc.getAttr(
-                            "appleseedRenderGlobals.prefilterSpikes")
-                        self._addControl(
-                            ui=pm.checkBoxGrp(
-                                label="Prefilter Spikes",
-                                changeCommand=self.__prefilterChanged),
-                            attrName="prefilterSpikes")
+                            self._addControl(
+                                ui=pm.checkBoxGrp(
+                                    label="Skip Already Denoised",
+                                    columnAttach=(1, "right", 4)),
+                                attrName="skipDenoised")
+
+                            self._addControl(
+                                ui=pm.checkBoxGrp(
+                                    label="Random Pixel Order",
+                                    columnAttach=(1, "right", 4)),
+                                attrName="randomPixelOrder")
+
+                            enablePrefilter = mc.getAttr(
+                                "appleseedRenderGlobals.prefilterSpikes")
+
+                            self._addControl(
+                                ui=pm.checkBoxGrp(
+                                    label="Prefilter Spikes",
+                                    columnAttach=(1, "right", 4),
+                                    changeCommand=self.__prefilterChanged),
+                                attrName="prefilterSpikes")
+
+                        pm.separator(height=2)
+
                         self._addControl(
                             ui=pm.floatFieldGrp(
-                                label="Spike Thereshold", numberOfFields=1, enable=enablePrefilter),
+                                label="Spike Threshold",
+                                numberOfFields=1,
+                                columnAttach=(1, "right", 4),
+                                enable=enablePrefilter),
                             attrName="spikeThreshold")
 
                         self._addControl(
                             ui=pm.floatFieldGrp(
-                                label="Patch Distance", numberOfFields=1),
+                                label="Patch Distance",
+                                columnAttach=(1, "right", 4),
+                                numberOfFields=1),
                             attrName="patchDistance")
+
                         self._addControl(
                             ui=pm.intFieldGrp(
-                                label="Denoise Scales", numberOfFields=1),
+                                label="Denoise Scales",
+                                columnAttach=(1, "right", 4),
+                                numberOfFields=1),
                             attrName="denoiseScales")
 
-                with pm.frameLayout(label="Render Stamp", collapsable=True, collapse=True):
-                    with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=columnWidth):
-                        self._addControl(ui=pm.checkBoxGrp(label="Enable"), attrName="renderStamp")
+                with pm.frameLayout("outputRenderStampFrameLayout", label="Render Stamp", collapsable=True,
+                                    collapse=True):
+                    with pm.columnLayout("outputRenderStampColumnLayout", adjustableColumn=True, width=g_columnWidth,
+                                         rowSpacing=2):
+
+                        pm.separator(height=2)
+
+                        enableRenderStamp = mc.getAttr(
+                            "appleseedRenderGlobals.renderStamp")
+
+                        self._addControl(
+                            ui=pm.checkBoxGrp(
+                                label="Enable",
+                                height=18,
+                                columnAttach=(1, "right", 4),
+                                changeCommand=self.__renderStampChanged),
+                            attrName="renderStamp")
+
+                        pm.separator(height=2)
+
                         self._addControl(
                             ui=pm.textFieldGrp(
-                                label='Render Stamp'),
+                                label="Render Stamp",
+                                height=22,
+                                columnAttach=(1, "right", 4),
+                                enable=enableRenderStamp,
+                                annotation="Render stamp allows {lib-name|version|cpu-features|config|build-date|build-time}\n{render-time} and {peak-memory}.",
+                                statusBarMessage="Render stamp allows {lib-name|version|cpu-features|config|build-date|build-time}, {render-time} and {peak-memory}."),
                             attrName="renderStampString")
 
-                with pm.frameLayout(label="Logging", collapsable=True, collapse=True):
-                    with pm.columnLayout("outputColumnLayout", adjustableColumn=True, width=columnWidth):
-                        self._addControl(
-                            ui=pm.attrEnumOptionMenuGrp(
-                                label="Log Level",
-                                enumeratedItem=self._getAttributeMenuItems("logLevel")),
-                            attrName="logLevel")
-
-                        self._addControl(
-                            ui=pm.textFieldButtonGrp(
-                                label='Log Filename',
-                                buttonLabel='...',
-                                buttonCommand=self.__chooseLogFilename),
-                            attrName="logFilename")
+                        pm.separator(height=2)
 
         pm.setUITemplate("renderGlobalsTemplate", popTemplate=True)
         pm.setUITemplate("attributeEditorTemplate", popTemplate=True)
@@ -876,4 +1550,120 @@ class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
     def update(self):
         assert mc.objExists("appleseedRenderGlobals")
 
+
 g_appleseedOutputTab = AppleseedRenderGlobalsOutputTab()
+
+
+class AppleseedRenderGlobalsSystemTab(AppleseedRenderGlobalsTab):
+
+    def __chooseLogFilename(self):
+        logger.debug("Choose log filename called!")
+        path = pm.fileDialog2(filemode=0)
+
+        if path:
+            mc.setAttr("appleseedRenderGlobals.logFilename", path, type="string")
+
+    def create(self):
+        # Create default render globals node if needed
+        createGlobalNodes()
+
+        parentForm = pm.setParent(query=True)
+        pm.setUITemplate("renderGlobalsTemplate", pushTemplate=True)
+        pm.setUITemplate("attributeEditorTemplate", pushTemplate=True)
+
+        columnWidth = 400
+
+        with pm.scrollLayout("diagnosticsScrollLayout", horizontalScrollBarThickness=0):
+            with pm.columnLayout("diagnosticsColumnLayout", adjustableColumn=True, width=g_columnWidth):
+
+                with pm.frameLayout("overrideShadersFrameLayout", label="Override Shaders", collapsable=True,
+                                    collapse=True):
+                    with pm.columnLayout("overrideShadersColumnLayout", adjustableColumn=False, width=g_columnWidth):
+
+                        self._addControl(
+                            ui=pm.attrEnumOptionMenuGrp(
+                                label="Override Shaders",
+                                columnAttach=(1, "right", 4),
+                                enumeratedItem=self._getAttributeMenuItems("diagnostics")),
+                            attrName="diagnostics")
+
+                with pm.frameLayout("loggingFrameLayout", label="Logging", collapsable=True, collapse=True):
+                    with pm.columnLayout("LoggingColumnLayout", adjustableColumn=True, width=g_columnWidth):
+
+                        pm.separator(height=2)
+
+                        self._addControl(
+                            ui=pm.attrEnumOptionMenuGrp(
+                                label="Log Level",
+                                height=24,
+                                columnAttach=(1, "right", 4),
+                                enumeratedItem=self._getAttributeMenuItems("logLevel"),
+                                width=200),
+                            attrName="logLevel")
+
+                        pm.separator(height=2)
+
+                        self._addControl(
+                            ui=pm.textFieldButtonGrp(
+                                label="Log Filename",
+                                buttonLabel="...",
+                                height=22,
+                                columnAttach=(1, "right", 4),
+                                buttonCommand=self.__chooseLogFilename),
+                            attrName="logFilename")
+
+                        pm.separator(height=2)
+
+                with pm.frameLayout("systemFrameLayout", label="System", collapsable=True, collapse=False):
+                    with pm.columnLayout("systemColumnLayout", adjustableColumn=True, width=g_columnWidth):
+
+                        pm.separator(height=2)
+
+                        self._addControl(
+                            ui=pm.intFieldGrp(
+                                label="Threads",
+                                columnAttach=(1, "right", 4),
+                                numberOfFields=1),
+                            attrName="threads")
+
+                        self._addControl(
+                            ui=pm.intFieldGrp(
+                                label="Texture Cache Size (MB)",
+                                columnAttach=(1, "right", 4),
+                                numberOfFields=1),
+                            attrName="maxTexCacheSize")
+
+                        pm.separator(height=2)
+
+                with pm.frameLayout("experimentalFrameLayout", label="Experimental", collapsable=True, collapse=False):
+                    with pm.columnLayout("experimentalColumnLayout", adjustableColumn=True, width=g_columnWidth):
+
+                        self._addControl(
+                            ui=pm.checkBoxGrp(
+                                label="Use Embree",
+                                columnAttach=(1, "right", 4),
+                                height=24),
+                            attrName="useEmbree")
+
+        logger.debug("Created appleseed render global diagnostics tab.")
+
+        pm.setUITemplate("renderGlobalsTemplate", popTemplate=True)
+        pm.setUITemplate("attributeEditorTemplate", popTemplate=True)
+        pm.formLayout(
+            parentForm,
+            edit=True,
+            attachForm=[
+                ("diagnosticsScrollLayout", "top", 0),
+                ("diagnosticsScrollLayout", "bottom", 0),
+                ("diagnosticsScrollLayout", "left", 0),
+                ("diagnosticsScrollLayout", "right", 0)])
+
+        # Update the newly created tab.
+        self.update()
+
+    def update(self):
+        assert mc.objExists("appleseedRenderGlobals")
+
+
+g_appleseedSystemTab = AppleseedRenderGlobalsSystemTab()
+

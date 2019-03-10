@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasAscCdl'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='color' type='maya.float3'>
+            <label>Color</label>
+        </attribute>
+        <attribute name='slope' type='maya.float'>
+            <label>Slope</label>
+        </attribute>
+        <attribute name='offset' type='maya.float'>
+            <label>Offset</label>
+        </attribute>
+        <attribute name='power' type='maya.float'>
+            <label>Power</label>
+        </attribute>
+        <attribute name='saturation' type='maya.float'>
+            <label>Saturation</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasAscCdl'>
+        <property name='outColor'/>
+        <property name='color'/>
+        <property name='slope'/>
+        <property name='offset'/>
+        <property name='power'/>
+        <property name='saturation'/>
+    </view>
+</templates>

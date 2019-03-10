@@ -218,6 +218,7 @@ MStatus RenderGlobalsNode::initialize()
     // Render passes.
     m_passes = numAttrFn.create("passes", "passes", MFnNumericData::kInt, 1, &status);
     numAttrFn.setMin(1);
+    numAttrFn.setSoftMax(64);
     CHECKED_ADD_ATTRIBUTE(m_passes, "passes")
 
     // Adaptive sampling.
@@ -228,16 +229,19 @@ MStatus RenderGlobalsNode::initialize()
     // Min pixel samples.
     m_minPixelSamples = numAttrFn.create("minPixelSamples", "minPixelSamples", MFnNumericData::kInt, 16, &status);
     numAttrFn.setMin(0);
+    numAttrFn.setSoftMax(1024);
     CHECKED_ADD_ATTRIBUTE(m_minPixelSamples, "minPixelSamples")
 
     // Max pixel samples.
     m_maxPixelSamples = numAttrFn.create("samples", "samples", MFnNumericData::kInt, 256, &status);
     numAttrFn.setMin(0);
+    numAttrFn.setSoftMax(1024);
     CHECKED_ADD_ATTRIBUTE(m_maxPixelSamples, "samples")
 
     // Batch sample size.
     m_batchSampleSize = numAttrFn.create("batchSampleSize", "batchSampleSize", MFnNumericData::kInt, 16, &status);
     numAttrFn.setMin(1);
+    numAttrFn.setSoftMax(256);
     CHECKED_ADD_ATTRIBUTE(m_batchSampleSize, "batchSampleSize")
 
     // Sample noise threshold.
@@ -249,6 +253,10 @@ MStatus RenderGlobalsNode::initialize()
     // Tile size.
     m_tileSize = numAttrFn.create("tileSize", "tileSize", MFnNumericData::kInt, 64, &status);
     numAttrFn.setMin(1);
+    numAttrFn.setMax(512);
+    numAttrFn.setKeyable(false);
+    numAttrFn.setConnectable(false);
+
     CHECKED_ADD_ATTRIBUTE(m_tileSize, "tileSize")
 
     // Pixel filter.
@@ -278,6 +286,7 @@ MStatus RenderGlobalsNode::initialize()
     // Scene scale.
     m_sceneScale = numAttrFn.create("sceneScale", "sceneScale", MFnNumericData::kFloat, 1.0, &status);
     numAttrFn.setMin(0.0000001);
+    numAttrFn.setSoftMax(1000.0);
     CHECKED_ADD_ATTRIBUTE(m_sceneScale, "sceneScale")
 
     // Lighting engine.
@@ -346,31 +355,37 @@ MStatus RenderGlobalsNode::initialize()
     // Global bounces.
     m_globalBounces = numAttrFn.create("bounces", "bounces", MFnNumericData::kInt, 8, &status);
     numAttrFn.setMin(0);
+    numAttrFn.setSoftMax(32);
     CHECKED_ADD_ATTRIBUTE(m_globalBounces, "bounces")
 
     // Specular bounces.
     m_specularBounces = numAttrFn.create("specularBounces", "specularBounces", MFnNumericData::kInt, 8, &status);
     numAttrFn.setMin(0);
+    numAttrFn.setSoftMax(32);
     CHECKED_ADD_ATTRIBUTE(m_specularBounces, "specularBounces")
 
     // Glossy bounces.
     m_glossyBounces = numAttrFn.create("glossyBounces", "glossyBounces", MFnNumericData::kInt, 8, &status);
     numAttrFn.setMin(0);
+    numAttrFn.setSoftMax(32);
     CHECKED_ADD_ATTRIBUTE(m_glossyBounces, "glossyBounces")
 
     // Diffuse bounces.
     m_diffuseBounces = numAttrFn.create("diffuseBounces", "diffuseBounces", MFnNumericData::kInt, 3, &status);
     numAttrFn.setMin(0);
+    numAttrFn.setSoftMax(32);
     CHECKED_ADD_ATTRIBUTE(m_diffuseBounces, "diffuseBounces")
 
     // Light samples.
     m_lightSamples = numAttrFn.create("lightSamples", "lightSamples", MFnNumericData::kFloat, 1.0, &status);
     numAttrFn.setMin(1.0);
+    numAttrFn.setSoftMax(16.0);
     CHECKED_ADD_ATTRIBUTE(m_lightSamples, "lightSamples")
 
     // Environment samples.
     m_envSamples = numAttrFn.create("envSamples", "envSamples", MFnNumericData::kFloat, 1.0, &status);
     numAttrFn.setMin(1.0);
+    numAttrFn.setSoftMax(16.0);
     CHECKED_ADD_ATTRIBUTE(m_envSamples, "envSamples")
 
     // Caustics.
@@ -432,21 +447,25 @@ MStatus RenderGlobalsNode::initialize()
     // Photon tracing bounces.
     m_sppm_photon_tracing_max_bounces = numAttrFn.create("photonTracingBounces", "photonTracingBounces", MFnNumericData::kInt, 8, &status);
     numAttrFn.setMin(0);
+    numAttrFn.setSoftMax(32);
     CHECKED_ADD_ATTRIBUTE(m_sppm_photon_tracing_max_bounces, "photonTracingBounces")
 
     // Photon tracing russian roulette start bounce.
     m_sppm_photon_tracing_rr_min_path_length = numAttrFn.create("photonTracingRRMinPathLength", "photonTracingRRMinPathLength", MFnNumericData::kInt, 6, &status);
     numAttrFn.setMin(1);
+    numAttrFn.setSoftMax(32);
     CHECKED_ADD_ATTRIBUTE(m_sppm_photon_tracing_rr_min_path_length, "photonTracingRRMinPathLength")
 
     // Photon tracing light photons.
     m_sppm_photon_tracing_light_photons = numAttrFn.create("photonTracingLightPhotons", "photonTracingLightPhotons", MFnNumericData::kInt, 1000000, &status);
     numAttrFn.setMin(0);
+    numAttrFn.setSoftMax(10000000);
     CHECKED_ADD_ATTRIBUTE(m_sppm_photon_tracing_light_photons, "photonTracingLightPhotons")
 
     // Photon tracing environment photons.
     m_sppm_photon_tracing_environment_photons = numAttrFn.create("photonTracingEnvPhotons", "photonTracingEnvPhotons", MFnNumericData::kInt, 1000000, &status);
     numAttrFn.setMin(0);
+    numAttrFn.setSoftMax(10000000);
     CHECKED_ADD_ATTRIBUTE(m_sppm_photon_tracing_environment_photons, "photonTracingEnvPhotons")
 
     // Limit radiance estimation bounces.
@@ -456,6 +475,7 @@ MStatus RenderGlobalsNode::initialize()
     // Radiance estimation bounces.
     m_sppm_radiance_estimation_max_bounces = numAttrFn.create("radianceEstimationBounces", "radianceEstimationBounces", MFnNumericData::kInt, 8, &status);
     numAttrFn.setMin(0);
+    numAttrFn.setSoftMax(32);
     CHECKED_ADD_ATTRIBUTE(m_sppm_radiance_estimation_max_bounces, "radianceEstimationBounces")
 
     // Radiance estimation russian roulette start bounce.
@@ -472,6 +492,7 @@ MStatus RenderGlobalsNode::initialize()
     // Radiance estimation max photons.
     m_sppm_radiance_estimation_max_photons = numAttrFn.create("radianceEstimationMaxPhotons", "radianceEstimationMaxPhotons", MFnNumericData::kInt, 100, &status);
     numAttrFn.setMin(8);
+    numAttrFn.setSoftMax(10000);
     CHECKED_ADD_ATTRIBUTE(m_sppm_radiance_estimation_max_photons, "radianceEstimationMaxPhotons")
 
     // Radiance estimation search radius reduction factor.
@@ -496,14 +517,17 @@ MStatus RenderGlobalsNode::initialize()
 
     m_mbCameraSamples = numAttrFn.create("mbCameraSamples", "mbCameraSamples", MFnNumericData::kInt, 2, &status);
     numAttrFn.setMin(1);
+    numAttrFn.setSoftMax(32);
     CHECKED_ADD_ATTRIBUTE(m_mbCameraSamples, "cameraSamples")
 
     m_mbTransformSamples = numAttrFn.create("mbTransformSamples", "mbTransformSamples", MFnNumericData::kInt, 2, &status);
     numAttrFn.setMin(1);
+    numAttrFn.setSoftMax(32);
     CHECKED_ADD_ATTRIBUTE(m_mbTransformSamples, "xformSamples")
 
     m_mbDeformSamples = numAttrFn.create("mbDeformSamples", "mbDeformSamples", MFnNumericData::kInt, 2, &status);
     numAttrFn.setMin(1);
+    numAttrFn.setSoftMax(32);
     CHECKED_ADD_ATTRIBUTE(m_mbDeformSamples, "deformSamples")
 
     // Shutter open.

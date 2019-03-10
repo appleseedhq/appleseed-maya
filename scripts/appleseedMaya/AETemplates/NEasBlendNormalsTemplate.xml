@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasBlendNormals'>
+        <attribute name='outNormal' type='maya.float3'>
+            <label>Out Normal</label>
+        </attribute>
+        <attribute name='normalA' type='maya.float3'>
+            <label>Normal A</label>
+        </attribute>
+        <attribute name='normalB' type='maya.float3'>
+            <label>Normal B</label>
+        </attribute>
+        <attribute name='weight' type='maya.float'>
+            <label>Weight</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasBlendNormals'>
+        <property name='outNormal'/>
+        <property name='normalA'/>
+        <property name='normalB'/>
+        <property name='weight'/>
+    </view>
+</templates>

@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<templates>
+    <using package='maya'/>
+    <template name='NEasRaySwitchSurface'>
+        <attribute name='outColor' type='maya.float3'>
+            <label>Out Color</label>
+        </attribute>
+        <attribute name='materialCamera' type='maya.float3'>
+            <label>Material Camera</label>
+        </attribute>
+        <attribute name='materialShadow' type='maya.float3'>
+            <label>Material Shadow</label>
+        </attribute>
+        <attribute name='materialTransparency' type='maya.float3'>
+            <label>Material Transparency</label>
+        </attribute>
+        <attribute name='materialDiffuse' type='maya.float3'>
+            <label>Material Diffuse</label>
+        </attribute>
+        <attribute name='materialSpecular' type='maya.float3'>
+            <label>Material Specular</label>
+        </attribute>
+        <attribute name='materialGlossy' type='maya.float3'>
+            <label>Material Glossy</label>
+        </attribute>
+        <attribute name='materialLight' type='maya.float3'>
+            <label>Material Light</label>
+        </attribute>
+        <attribute name='materialSubsurface' type='maya.float3'>
+            <label>Material Subsurface</label>
+        </attribute>
+    </template>
+    <view name='NEDefault' template='NEasRaySwitchSurface'>
+        <property name='outColor'/>
+        <property name='materialCamera'/>
+        <property name='materialShadow'/>
+        <property name='materialTransparency'/>
+        <property name='materialDiffuse'/>
+        <property name='materialSpecular'/>
+        <property name='materialGlossy'/>
+        <property name='materialLight'/>
+        <property name='materialSubsurface'/>
+    </view>
+</templates>

@@ -94,7 +94,7 @@ enum AppleseedMayaTypeIds
     AsMDLMaterialNodeTypeId         = 0x001279f5,   // 1210869
     AsMatcapNodeTypeId              = 0x001279f6,   // 1210870
     AsAngleBetweenNodeTypeId        = 0x001279f7,   // 1210871
-    AsBlendNormalsNodeTypeId        = 0x001279f8,   // 1210872
+    AsAttributesNodeTypeId          = 0x001279f8,   // 1210872
     AsMetalNodeTypeId               = 0x001279f9,   // 1210873
     AsTextureNodeTypeId             = 0x001279fa,   // 1210874
     AsCubeTextureNodeTypeId         = 0x001279fb,   // 1210875
@@ -110,7 +110,10 @@ enum AppleseedMayaTypeIds
     AsManifold2DNodeTypeId          = 0x00127a05,   // 1210885
     AsManifold3DNodeTypeId          = 0x00127a06,   // 1210886
     AsAscCdlNodeTypeId              = 0x00127a07,   // 1210887
-    AsInvColorNodeTypeId            = 0x00127a08,   // 1210888
+    AsInvertColorNodeTypeId         = 0x00127a08,   // 1210888
+    AsBlendNormalsNodeTypeId        = 0x00127a09,   // 1210889
+    AsSurfaceLuminanceNodeTypeId    = 0x00127a0a,   // 1210890
+    AsRaySwitchSurfaceNodeTypeId    = 0x00127a0b,   // 1210891
 
     LastTypeId                      = 0x00127a3f    // 1210943
 };

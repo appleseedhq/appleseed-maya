@@ -4,7 +4,7 @@
 #
 # This software is released under the MIT license.
 #
-# Copyright (c) 2016-2018 Esteban Tovagliari, The appleseedhq Organization
+# Copyright (c) 2016-2019 Esteban Tovagliari, The appleseedhq Organization
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -83,7 +83,16 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
             self.beginLayout('appleseed', collapse=1)
             self.addControl('asIntensityScale', label='Intensity Scale')
             self.addControl('asExposure', label='Exposure')
+            self.addSeparator()
             self.addControl('asNormalize', label='Normalize')
+            self.addSeparator()
+            self.__buildVisibilitySection()
+            self.endLayout()
+
+        elif self.thisNode.type() in {'pointLight', 'spotLight', 'directionalLight'}:
+            self.beginLayout('appleseed', collapse=1)
+            self.addControl('asCastIndirectLight', label='Cast Indirect Light')
+            self.addSeparator()
             self.__buildVisibilitySection()
             self.endLayout()
 
@@ -105,12 +114,21 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
 
         elif self.thisNode.type() == 'mesh':
             self.beginLayout('appleseed', collapse=1)
+
             self.__buildVisibilitySection()
+
+            self.beginLayout('Alpha Map', collapse=1)
             self.callCustom(
                 self.meshAlphaMapNew, self.meshAlphaMapUpdate, 'asAlphaMap')
+            self.endLayout()
+
+            self.beginLayout('Rendering', collapse=1)
             self.addControl('asMediumPriority', label='Medium Priority')
-            self.addControl('asIsPhotonTarget', label='Photon Target')
+            self.addSeparator()
             self.addControl('asSubsurfaceSet', label='SSS Set')
+            self.addSeparator()
+            self.addControl('asIsPhotonTarget', label='SPPM Photon Target')
+            self.endLayout()
 
             self.beginLayout('Export', collapse=1)
             self.addControl('asExportUVs', label='Export UVs')
@@ -118,11 +136,21 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
             self.addControl('asSmoothTangents', label='Smooth Tangents')
             self.endLayout()
 
+            """
+            # Ray bias isn't working as expected yet, disable it for now.
+            self.beginLayout('Advanced', collapse=1)
+            self.addControl('asRayBiasMethod', label='Ray Bias Method')
+            self.addSeparator()
+            self.addControl('asRayBiasDistance', label='Ray Bias Distance')
+            self.endLayout()
+            """
+
             self.endLayout()
 
         elif self.thisNode.type() == 'shadingEngine':
             self.beginLayout('appleseed', collapse=1)
             self.addControl('asDoubleSided', label='Double Sided')
+            self.addSeparator()
             self.addControl('asShadingSamples', label='Shading Samples')
             self.endLayout()
 
