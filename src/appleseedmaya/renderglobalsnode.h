@@ -178,6 +178,8 @@ class RenderGlobalsNode
 
     // AOVs.
     static MObject      m_albedoAOV;
+    static MObject      m_cryptomatteMaterialAOV;
+    static MObject      m_cryptomatteObjectAOV;
     static MObject      m_depthAOV;
     static MObject      m_diffuseAOV;
     static MObject      m_directDiffuseAOV;
@@ -195,6 +197,7 @@ class RenderGlobalsNode
     static MObject      m_pixelVariationAOV;
     static MObject      m_positionAOV;
     static MObject      m_uvAOV;
+    static MObject      m_velocityAOV;
 
     // Render stamp.
     static MObject      m_renderStamp;
