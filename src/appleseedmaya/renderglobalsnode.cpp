@@ -668,7 +668,6 @@ MStatus RenderGlobalsNode::initialize()
     m_velocityAOV = numAttrFn.create("velocityAOV", "velocityAOV", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_velocityAOV, "velocityAOV")
 
-
     // Render stamp enable.
     m_renderStamp = numAttrFn.create("renderStamp", "renderStamp", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_renderStamp, "renderStamp")
