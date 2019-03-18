@@ -149,6 +149,8 @@ MObject RenderGlobalsNode::m_denoiseScales;
 MObject RenderGlobalsNode::m_imageFormat;
 
 MObject RenderGlobalsNode::m_albedoAOV;
+MObject RenderGlobalsNode::m_cryptomatteMaterialAOV;
+MObject RenderGlobalsNode::m_cryptomatteObjectAOV;
 MObject RenderGlobalsNode::m_depthAOV;
 MObject RenderGlobalsNode::m_diffuseAOV;
 MObject RenderGlobalsNode::m_directDiffuseAOV;
@@ -166,6 +168,7 @@ MObject RenderGlobalsNode::m_pixelTimeAOV;
 MObject RenderGlobalsNode::m_pixelVariationAOV;
 MObject RenderGlobalsNode::m_positionAOV;
 MObject RenderGlobalsNode::m_uvAOV;
+MObject RenderGlobalsNode::m_velocityAOV;
 
 MObject RenderGlobalsNode::m_renderStamp;
 MObject RenderGlobalsNode::m_renderStampString;
@@ -602,47 +605,50 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_imageFormat, "imageFormat")
 
     // AOVs.
-    m_diffuseAOV = numAttrFn.create("diffuseAOV", "diffuseAOV", MFnNumericData::kBoolean, false, &status);
-    CHECKED_ADD_ATTRIBUTE(m_diffuseAOV, "diffuseAOV")
-
-    m_glossyAOV = numAttrFn.create("glossyAOV", "glossyAOV", MFnNumericData::kBoolean, false, &status);
-    CHECKED_ADD_ATTRIBUTE(m_glossyAOV, "glossyAOV")
-
-    m_emissionAOV = numAttrFn.create("emissionAOV", "emissionAOV", MFnNumericData::kBoolean, false, &status);
-    CHECKED_ADD_ATTRIBUTE(m_emissionAOV, "emissionAOV")
-
-    m_directDiffuseAOV = numAttrFn.create("directDiffuseAOV", "directDiffuseAOV", MFnNumericData::kBoolean, false, &status);
-    CHECKED_ADD_ATTRIBUTE(m_directDiffuseAOV, "directDiffuseAOV")
-
-    m_indirectDiffuseAOV = numAttrFn.create("indirectDiffuseAOV", "indirectDiffuseAOV", MFnNumericData::kBoolean, false, &status);
-    CHECKED_ADD_ATTRIBUTE(m_indirectDiffuseAOV, "indirectDiffuseAOV")
-
-    m_directGlossyAOV = numAttrFn.create("directGlossyAOV", "directGlossyAOV", MFnNumericData::kBoolean, false, &status);
-    CHECKED_ADD_ATTRIBUTE(m_directGlossyAOV, "directGlossyAOV")
-
-    m_indirectGlossyAOV = numAttrFn.create("indirectGlossyAOV", "indirectGlossyAOV", MFnNumericData::kBoolean, false, &status);
-    CHECKED_ADD_ATTRIBUTE(m_indirectGlossyAOV, "indirectGlossyAOV")
-
     m_albedoAOV = numAttrFn.create("albedoAOV", "albedoAOV", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_albedoAOV, "albedoAOV")
 
-    m_normalAOV = numAttrFn.create("normalAOV", "normalAOV", MFnNumericData::kBoolean, false, &status);
-    CHECKED_ADD_ATTRIBUTE(m_normalAOV, "normalAOV")
+    m_cryptomatteMaterialAOV = numAttrFn.create("cryptomatteMaterialAOV", "cryptomatteMaterialAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_cryptomatteMaterialAOV, "cryptomatteMaterialAOV")
 
-    m_uvAOV = numAttrFn.create("uvAOV", "uvAOV", MFnNumericData::kBoolean, false, &status);
-    CHECKED_ADD_ATTRIBUTE(m_uvAOV, "uvAOV")
+    m_cryptomatteObjectAOV = numAttrFn.create("cryptomatteObjectAOV", "cryptomatteObjectAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_cryptomatteObjectAOV, "cryptomatteObjectAOV")
 
     m_depthAOV = numAttrFn.create("depthAOV", "depthAOV", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_depthAOV, "depthAOV")
 
-    m_nprShadingAOV = numAttrFn.create("nprShadingAOV", "nprShadingAOV", MFnNumericData::kBoolean, false, &status);
-    CHECKED_ADD_ATTRIBUTE(m_nprShadingAOV, "nprShadingAOV")
+    m_diffuseAOV = numAttrFn.create("diffuseAOV", "diffuseAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_diffuseAOV, "diffuseAOV")
+
+    m_directDiffuseAOV = numAttrFn.create("directDiffuseAOV", "directDiffuseAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_directDiffuseAOV, "directDiffuseAOV")
+
+    m_directGlossyAOV = numAttrFn.create("directGlossyAOV", "directGlossyAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_directGlossyAOV, "directGlossyAOV")
+
+    m_emissionAOV = numAttrFn.create("emissionAOV", "emissionAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_emissionAOV, "emissionAOV")
+
+    m_glossyAOV = numAttrFn.create("glossyAOV", "glossyAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_glossyAOV, "glossyAOV")
+
+    m_indirectDiffuseAOV = numAttrFn.create("indirectDiffuseAOV", "indirectDiffuseAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_indirectDiffuseAOV, "indirectDiffuseAOV")
+
+    m_indirectGlossyAOV = numAttrFn.create("indirectGlossyAOV", "indirectGlossyAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_indirectGlossyAOV, "indirectGlossyAOV")
+
+    m_invalidSamplesAOV = numAttrFn.create("invalidSamplesAOV", "invalidSamplesAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_invalidSamplesAOV, "invalidSamplesAOV")
+
+    m_normalAOV = numAttrFn.create("normalAOV", "normalAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_normalAOV, "normalAOV")
 
     m_nprContourAOV = numAttrFn.create("nprContourAOV", "nprContourAOV", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_nprContourAOV, "nprContourAOV")
 
-    m_invalidSamplesAOV = numAttrFn.create("invalidSamplesAOV", "invalidSamplesAOV", MFnNumericData::kBoolean, false, &status);
-    CHECKED_ADD_ATTRIBUTE(m_invalidSamplesAOV, "invalidSamplesAOV")
+    m_nprShadingAOV = numAttrFn.create("nprShadingAOV", "nprShadingAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_nprShadingAOV, "nprShadingAOV")
 
     m_pixelSampleCountAOV = numAttrFn.create("pixelSampleCountAOV", "pixelSampleCountAOV", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_pixelSampleCountAOV, "pixelSampleCountAOV")
@@ -655,6 +661,12 @@ MStatus RenderGlobalsNode::initialize()
 
     m_positionAOV = numAttrFn.create("positionAOV", "positionAOV", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_positionAOV, "positionAOV")
+
+    m_uvAOV = numAttrFn.create("uvAOV", "uvAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_uvAOV, "uvAOV")
+
+    m_velocityAOV = numAttrFn.create("velocityAOV", "velocityAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_velocityAOV, "velocityAOV")
 
     // Render stamp enable.
     m_renderStamp = numAttrFn.create("renderStamp", "renderStamp", MFnNumericData::kBoolean, false, &status);
@@ -1089,6 +1101,12 @@ void RenderGlobalsNode::applyGlobalsToProject(
         if (AttributeUtils::get(MPlug(globals, m_albedoAOV), enabled))
             if (enabled) aovs.insert(registrar.lookup("albedo_aov")->create(params));
 
+        if (AttributeUtils::get(MPlug(globals, m_cryptomatteMaterialAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("cryptomatte_material_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_cryptomatteObjectAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("cryptomatte_object_aov")->create(params));
+
         if (AttributeUtils::get(MPlug(globals, m_depthAOV), enabled))
             if (enabled) aovs.insert(registrar.lookup("depth_aov")->create(params));
 
@@ -1139,6 +1157,9 @@ void RenderGlobalsNode::applyGlobalsToProject(
 
         if (AttributeUtils::get(MPlug(globals, m_uvAOV), enabled))
             if (enabled) aovs.insert(registrar.lookup("uv_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_velocityAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("screen_space_velocity_aov")->create(params));
 
     }
 

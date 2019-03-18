@@ -1422,6 +1422,18 @@ class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
                                                            columnAttach=[(1, "right", 1), (2, "both", 8)]),
                                          attrName="positionAOV")
 
+                        self._addControl(ui=pm.checkBoxGrp(label="Screen Space Velocity",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="velocityAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Cryptomatte Material",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="cryptomatteMaterialAOV")
+
+                        self._addControl(ui=pm.checkBoxGrp(label="Cryptomatte Object",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="cryptomatteObjectAOV")
+
                         self._addControl(ui=pm.checkBoxGrp(label="NPR Shading",
                                                            columnAttach=[(1, "right", 1), (2, "both", 8)]),
                                          attrName="nprShadingAOV")
