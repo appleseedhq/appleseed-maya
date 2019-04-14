@@ -5,7 +5,7 @@
 #
 # This software is released under the MIT license.
 #
-# Copyright (c) 2016-2018 Esteban Tovagliari, The appleseedhq Organization
+# Copyright (c) 2016-2019 Esteban Tovagliari, The appleseedhq Organization
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@
 # CMake configuration.
 #--------------------------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.9 FATAL_ERROR)
 
 
 #--------------------------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ endif ()
 
 set (BOOST_NEEDED_LIBS filesystem system)
 
-find_package (Boost 1.55 REQUIRED ${BOOST_NEEDED_LIBS})
+find_package (Boost 1.61 REQUIRED ${BOOST_NEEDED_LIBS})
 
 add_definitions (-DBOOST_FILESYSTEM_VERSION=3 -DBOOST_FILESYSTEM_NO_DEPRECATED)
 
