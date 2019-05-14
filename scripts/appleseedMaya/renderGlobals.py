@@ -483,7 +483,7 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                             ui=pm.intSliderGrp(
                                 label="Max Samples",
                                 field=True,
-                                value=256,
+                                value=128,
                                 columnWidth=(3, 160),
                                 columnAttach=(1, "right", 4),
                                 minValue=16,
@@ -518,7 +518,7 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                                 minValue=0.0001,
                                 fieldMinValue=0.0,
                                 maxValue=2.0,
-                                fieldMaxValue=10000.0,
+                                fieldMaxValue=25.0,
                                 enable=adaptiveSampling),
                             attrName="sampleNoiseThreshold")
 

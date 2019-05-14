@@ -225,7 +225,7 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_passes, "passes")
 
     // Adaptive sampling.
-    m_adaptiveSampling = numAttrFn.create("adaptiveSampling", "adaptiveSampling", MFnNumericData::kBoolean, true, &status);
+    m_adaptiveSampling = numAttrFn.create("adaptiveSampling", "adaptiveSampling", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_adaptiveSampling, "adaptiveSampling")
 
 
@@ -236,7 +236,7 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_minPixelSamples, "minPixelSamples")
 
     // Max pixel samples.
-    m_maxPixelSamples = numAttrFn.create("samples", "samples", MFnNumericData::kInt, 256, &status);
+    m_maxPixelSamples = numAttrFn.create("samples", "samples", MFnNumericData::kInt, 128, &status);
     numAttrFn.setMin(0);
     numAttrFn.setSoftMax(1024);
     CHECKED_ADD_ATTRIBUTE(m_maxPixelSamples, "samples")
