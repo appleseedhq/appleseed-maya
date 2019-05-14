@@ -5,7 +5,7 @@
 //
 // This software is released under the MIT license.
 //
-// Copyright (c) 2017-2018 Luis Barrancos, The appleseedhq Organization
+// Copyright (c) 2017-2019 Luis Barrancos, The appleseedhq Organization
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,9 @@
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 #include "appleseedmaya/shadingnodemetadata.h"
+
+// Build options header.
+#include "renderer/api/buildoptions.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/utility.h"

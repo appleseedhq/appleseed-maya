@@ -33,6 +33,9 @@
 #include "appleseedmaya/attributeutils.h"
 #include "appleseedmaya/exporters/exporterfactory.h"
 
+// Build options header.
+#include "renderer/api/buildoptions.h"
+
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
 
