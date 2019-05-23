@@ -34,7 +34,7 @@
 #include "appleseedmaya/exporters/shadingnetworkexporter.h"
 
 // Build options header.
-#include "renderer/api/buildoptions.h"
+#include "foundation/core/buildoptions.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/scene.h"
