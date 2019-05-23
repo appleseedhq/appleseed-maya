@@ -30,7 +30,7 @@
 #define APPLESEED_MAYA_RENDERERCONTROLLER_H
 
 // Build options header.
-#include "renderer/api/buildoptions.h"
+#include "foundation/core/buildoptions.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/rendering.h"

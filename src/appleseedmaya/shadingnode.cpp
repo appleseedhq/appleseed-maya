@@ -36,7 +36,7 @@
 #include "appleseedmaya/shadingnoderegistry.h"
 
 // Build options header.
-#include "renderer/api/buildoptions.h"
+#include "foundation/core/buildoptions.h"
 
 // appleseed.foundation headers.
 #include "foundation/math/vector.h"

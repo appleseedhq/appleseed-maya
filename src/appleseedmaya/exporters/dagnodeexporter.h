@@ -37,7 +37,7 @@
 #include "appleseedmaya/utils.h"
 
 // Build options header.
-#include "renderer/api/buildoptions.h"
+#include "foundation/core/buildoptions.h"
 
 // appleseed.renderer headers.
 #include "renderer/api/utility.h"

@@ -30,7 +30,7 @@
 #include "logger.h"
 
 // Build options header.
-#include "renderer/api/buildoptions.h"
+#include "foundation/core/buildoptions.h"
 
 // appleseed.foundation headers.
 #include "foundation/utility/log.h"
