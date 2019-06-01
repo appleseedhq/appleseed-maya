@@ -179,8 +179,7 @@ namespace
                 new asr::MasterRenderer(
                     m_project.ref(),
                     m_project->configurations().get_by_name("final")->get_inherited_parameters(),
-                    resourceSearchPaths,
-                    &m_rendererController));
+                    resourceSearchPaths));
         }
 
         void uninitialize()
@@ -270,7 +269,7 @@ namespace
             m_project->set_frame(frame);
 
             // Render.
-            m_renderer->render();
+            m_renderer->render(m_rendererController);
             copySwatchImage(dstImage);
         }
 

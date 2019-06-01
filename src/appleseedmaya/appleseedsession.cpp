@@ -873,7 +873,6 @@ namespace
                     *m_project,
                     params,
                     g_resourceSearchPaths,
-                    &m_rendererController,
                     static_cast<asr::ITileCallbackFactory*>(m_tileCallbackFactory.get())));
 
             // Render in a thread (non blocking).
@@ -906,11 +905,10 @@ namespace
                     *m_project,
                     params,
                     g_resourceSearchPaths,
-                    &m_rendererController,
                     static_cast<asr::ITileCallbackFactory*>(nullptr)));
 
             // Render in the main thread (blocking).
-            m_renderer->render();
+            m_renderer->render(m_rendererController);
         }
 
         void progressiveRender()
@@ -930,7 +928,7 @@ namespace
 
         void renderFunc()
         {
-            m_renderer->render();
+            m_renderer->render(m_rendererController);
             IdleJobQueue::pushJob(&AppleseedSession::endSession);
         }
 
