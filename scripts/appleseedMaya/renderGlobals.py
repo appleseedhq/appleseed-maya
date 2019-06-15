@@ -939,7 +939,7 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
                                         columnAttach=[(1, "right", 2), (2, "right", 0)],
                                         columnWidth=[(1, 120), (2, 240)]),
                                     attrName="lightSamplingAlgorithm")
-                                
+
                                 pm.separator(height=2)
                                 """
 
@@ -1179,7 +1179,7 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
                                                     label="Radiance Estimation", collapsable=False, collapse=True):
                                     with pm.columnLayout("sppmRadianceEstimationColumnLayout", adjustableColumn=True,
                                                          width=g_subColumnWidth - g_margin, rowSpacing=2):
-                                        
+
                                         pm.separator(height=2)
 
                                         self._addControl(
@@ -1537,8 +1537,7 @@ class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
                                 height=22,
                                 columnAttach=(1, "right", 4),
                                 enable=enableRenderStamp,
-                                annotation="Render stamp allows {lib-name|version|cpu-features|config|build-date|build-time}\n{render-time} and {peak-memory}.",
-                                statusBarMessage="Render stamp allows {lib-name|version|cpu-features|config|build-date|build-time}, {render-time} and {peak-memory}."),
+                                annotation="Render stamp allows {lib-name|version|cpu-features|config|build-date|build-time}\n{render-time} and {peak-memory}."),
                             attrName="renderStampString")
 
                         pm.separator(height=2)
