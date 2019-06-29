@@ -70,6 +70,7 @@ Materials
 * :ref:`asDisneyMaterial <label_as_disney_material>`
 * :ref:`asGlass <label_as_glass>`
 * :ref:`asBlendShader <label_as_blend_shader>`
+* :ref:`asMatte <label_as_matte>`
 * :ref:`asMetal <label_as_metal>`
 * :ref:`asPlastic <label_as_plastic>`
 * :ref:`asSbsPBRMaterial <label_as_sbs_pbrmaterial>`
