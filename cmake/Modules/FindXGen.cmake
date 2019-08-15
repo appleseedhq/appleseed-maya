@@ -41,6 +41,7 @@ if(APPLE)
     "/Applications/Autodesk/maya2019/Maya.app/Contents"
     "/Applications/Autodesk/maya2018/Maya.app/Contents"
     "/Applications/Autodesk/maya2017/Maya.app/Contents"
+  )
 endif(APPLE)
 
 if(UNIX)
