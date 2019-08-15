@@ -859,15 +859,14 @@ namespace
             // Reset the renderer controller.
             m_rendererController.set_status(asr::IRendererController::ContinueRendering);
 
-            // Create the master renderer.
-            asr::Configuration* cfg = m_project->configurations().get_by_name("final");
-            const asr::ParamArray& params = cfg->get_parameters();
-
             // Create a tile callback to render to Maya's render view.
             m_tileCallbackFactory.reset(
                 new RenderViewTileCallbackFactory(m_rendererController, m_computation));
             m_tileCallbackFactory->renderViewStart(*m_project->get_frame());
 
+            // Create the master renderer.
+            asr::Configuration* cfg = m_project->configurations().get_by_name("final");
+            const asr::ParamArray& params = cfg->get_parameters();
             m_renderer.reset(
                 new asr::MasterRenderer(
                     *m_project,
@@ -899,7 +898,6 @@ namespace
             // Create the master renderer.
             asr::Configuration* cfg = m_project->configurations().get_by_name("final");
             const asr::ParamArray& params = cfg->get_parameters();
-
             m_renderer.reset(
                 new asr::MasterRenderer(
                     *m_project,
