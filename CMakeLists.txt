@@ -76,8 +76,8 @@ set (appleseed_maya_version_maturity    beta)
 # Build options.
 #--------------------------------------------------------------------------------------------------
 
-option (USE_STATIC_BOOST    "Use static Boost libraries" ON)
-option (WITH_XGEN           "Build XGen support"         OFF)
+option (USE_STATIC_BOOST    "Use static Boost libraries"    ON)
+option (WITH_XGEN           "Build XGen support"            OFF)
 
 
 #--------------------------------------------------------------------------------------------------
@@ -108,9 +108,7 @@ if (USE_STATIC_BOOST)
     set (Boost_USE_STATIC_LIBS TRUE)
 endif ()
 
-set (BOOST_NEEDED_LIBS filesystem system)
-
-find_package (Boost 1.61 REQUIRED ${BOOST_NEEDED_LIBS})
+find_package (Boost 1.61 REQUIRED filesystem system)
 
 add_definitions (-DBOOST_FILESYSTEM_VERSION=3 -DBOOST_FILESYSTEM_NO_DEPRECATED)
 
