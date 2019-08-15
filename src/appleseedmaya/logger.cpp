@@ -70,12 +70,12 @@ namespace
             const char*                      header,
             const char*                      message)
         {
-            const MString prefix("appleseed:");
+            const MString prefix("appleseed: ");
 
             switch (category)
             {
                 case asf::LogMessage::Debug:
-                    MGlobal::displayInfo(prefix + MString(message));
+                    MGlobal::displayInfo(prefix + message);
                 break;
 
                 case asf::LogMessage::Info:
