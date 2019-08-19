@@ -166,6 +166,7 @@ MObject RenderGlobalsNode::m_invalidSamplesAOV;
 MObject RenderGlobalsNode::m_normalAOV;
 MObject RenderGlobalsNode::m_nprContourAOV;
 MObject RenderGlobalsNode::m_nprShadingAOV;
+MObject RenderGlobalsNode::m_pixelErrorAOV;
 MObject RenderGlobalsNode::m_pixelSampleCountAOV;
 MObject RenderGlobalsNode::m_pixelTimeAOV;
 MObject RenderGlobalsNode::m_pixelVariationAOV;
@@ -652,6 +653,9 @@ MStatus RenderGlobalsNode::initialize()
 
     m_nprShadingAOV = numAttrFn.create("nprShadingAOV", "nprShadingAOV", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_nprShadingAOV, "nprShadingAOV")
+
+    m_pixelErrorAOV = numAttrFn.create("pixelErrorAOV", "pixelErrorAOV", MFnNumericData::kBoolean, false, &status);
+    CHECKED_ADD_ATTRIBUTE(m_pixelErrorAOV, "pixelErrorAOV")
 
     m_pixelSampleCountAOV = numAttrFn.create("pixelSampleCountAOV", "pixelSampleCountAOV", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_pixelSampleCountAOV, "pixelSampleCountAOV")
@@ -1145,6 +1149,9 @@ void RenderGlobalsNode::applyGlobalsToProject(
 
         if (AttributeUtils::get(MPlug(globals, m_nprShadingAOV), enabled))
             if (enabled) aovs.insert(registrar.lookup("npr_shading_aov")->create(params));
+
+        if (AttributeUtils::get(MPlug(globals, m_pixelErrorAOV), enabled))
+            if (enabled) aovs.insert(registrar.lookup("pixel_error_aov")->create(params));
 
         if (AttributeUtils::get(MPlug(globals, m_pixelSampleCountAOV), enabled))
             if (enabled) aovs.insert(registrar.lookup("pixel_sample_count_aov")->create(params));

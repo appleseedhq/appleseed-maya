@@ -195,6 +195,7 @@ class RenderGlobalsNode
     static MObject      m_normalAOV;
     static MObject      m_nprContourAOV;
     static MObject      m_nprShadingAOV;
+    static MObject      m_pixelErrorAOV;
     static MObject      m_pixelSampleCountAOV;
     static MObject      m_pixelTimeAOV;
     static MObject      m_pixelVariationAOV;

@@ -1398,6 +1398,10 @@ class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
                                                            columnAttach=[(1, "right", 1), (2, "both", 8)]),
                                          attrName="invalidSamplesAOV")
 
+                        self._addControl(ui=pm.checkBoxGrp(label="Pixel Error",
+                                                           columnAttach=[(1, "right", 1), (2, "both", 8)]),
+                                         attrName="pixelErrorAOV")
+
                         self._addControl(ui=pm.checkBoxGrp(label="Pixel Sample Count",
                                                            columnAttach=[(1, "right", 1), (2, "both", 8)]),
                                          attrName="pixelSampleCountAOV")
