@@ -111,7 +111,7 @@ def createMenu():
         to=True,
         parent='appleseedMenu')
     mc.menuItem(
-        label='Create Sky Dome',
+        label='Create Dome Light',
         parent='appleseedLightMenu',
         command='import appleseedMaya.menu\nappleseedMaya.menu.createSkyDomeLight()')
     mc.menuItem(
