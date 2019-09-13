@@ -83,7 +83,7 @@ Specular Parameters
    This shader allows the user to texture map the specular weight, to control the specular term intensity, but it does not provide a way to *tint* or color the specular term. That is intentional sually only dielectrics [#]_ have subsurface scattering, and dielectrics have no tinted specular highlights.
 
 *Specular Roughness*
-    The apparent surface roughness of the material. The distribution used is the *GGX* :cite:`Walter:2007:MMR:2383847.2383874`, and energy conservation to take into account multiple scattering :cite:`Heitz:2016:MMB:2897824.2925943` is applied automatically.
+    The apparent surface roughness of the material. The distribution used is the *GGX* :cite:`Walter2007`, and energy conservation to take into account multiple scattering :cite:`Heitz:2016:MMB:2897824.2925943` is applied automatically.
 
 Anisotropy Parameters
 """""""""""""""""""""

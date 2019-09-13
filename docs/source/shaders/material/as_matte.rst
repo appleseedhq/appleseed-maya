@@ -3,7 +3,7 @@
 .. fix_img_align::
 
 |
- 
+
 .. image:: /_images/icons/asMatte.png
    :width: 128px
    :align: left
@@ -101,7 +101,7 @@ Screenshots
 
    Exterior shape using glass, with a light grey interior diffuse sphere with a transparent matte set to blue color.
 
-.. thumbnail:: /_images/screenshots/matte/as_matte_shot3_alpha.png
+.. thumbnail:: /_images/screenshots/matte/as_matte_shot3_alpha.jpg
    :group: shots_as_matte_group_A
    :width: 10%
    :title:

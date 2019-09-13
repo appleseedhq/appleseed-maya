@@ -3,7 +3,7 @@
 .. fix_img_align::
 
 |
- 
+
 .. image:: /_images/icons/asPlastic.png
    :width: 128px
    :align: left
@@ -48,25 +48,12 @@ Specular Parameters
 *Index of Refraction*
     The index of refraction for the (dielectric [#]_) Fresnel term.
 
-*Distribution*
-    The microfacet distribution function [#]_ to use on the specular BRDF.
-    The Beckmann :cite:`beckmann1963scattering` :cite:`Cook:1982:RMC:357290.357293` distribution produces the sharpest highlights. The GGX :cite:`Walter:2007:MMR:2383847.2383874` distribution produces a slight veil like effect that softens the specular highlights a bit, and the GTR :cite:`McAuley:2012:PPS:2343483.2343493` distribution accentuates this even further. The Student's t-MDF :cite:`10.1111:cgf.13137` allows the user to control this softening - the *tails* of the specular highlights - via a second parameter *Specular Spread*, which as the name suggests, controls the spreading of the specular highlights.
-    The *Distribution* parameter can then take the following values
-
-        * Beckmann 
-        * GGX
-        * GTR
-        * Student's t-MDF
-
 *Specular Roughness*
     The apparent surface roughness, with a value near 0 producing sharp highlights, and a value of 1.0 producing soft diffuse like highlights.
 
 .. note::
 
-    As specular roughness values increase, there is energy loss due to the lack of multiple scattering :cite:`Heitz:2016:MMB:2897824.2925943`. Appleseed however does compensate for this energy loss, but only for the *Beckmann* and *GGX* distributions. There is no compensation applied on the *GTR* nor Student's t-MDF.
-
-*Specular Spread*
-    This parameter controls the *tails* of the specular highlights of the Student's t-MDF, softening it, and creating the appearance of a slight veil or *haze*. It has no effect on the other microfacet distribution functions.
+    As specular roughness values increase, there is energy loss due to the lack of multiple scattering :cite:`Heitz:2016:MMB:2897824.2925943`. Appleseed however does compensate for this energy loss.
 
 -----
 

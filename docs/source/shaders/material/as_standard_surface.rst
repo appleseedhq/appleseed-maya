@@ -3,7 +3,7 @@
 .. fix_img_align::
 
 |
- 
+
 .. image:: /_images/icons/asStandardSurface.png
    :width: 128px
    :align: left
@@ -84,11 +84,9 @@ Specular Parameters
 *Specular Roughness*
     The apparent surface roughness affecting the specular highlights.
 
-*Specular Spread*
-    Specular highlights *tails*, with low values producing sharp highlights, and higher values producing soft veiled highlights. [#]_
 
 Fresnel
-^^^^^^^
+~~~~~~~
 
 *Fresnel Type*
     Allows the user to choose the specular mode, of a dielectric such as plastic or glass, or of a conductor or metal.
@@ -105,7 +103,7 @@ Fresnel
     Reflectance at grazing incidence.
 
 Anisotropy
-^^^^^^^^^^
+~~~~~~~~~~
 
 *Anisotropy Amount*
     Overall intensity of the anisotropy effect, with a value of 0.0 representing a isotropic specular highlight.
@@ -122,7 +120,7 @@ Refraction Parameters
 ^^^^^^^^^^^^^^^^^^^^^
 
 *Refraction Amount*
-    Intensity of the refraction, only taking place when *Fresnel* is *dielectric* :cite:`Walter:2007:MMR:2383847.2383874`.
+    Intensity of the refraction, only taking place when *Fresnel* is *dielectric* :cite:`Walter2007`.
 
 *Refraction Tint*
     Overall tinting factor, it affects the BTDF equally, unlike volumetric absorption.
@@ -131,12 +129,10 @@ Volumetric Absorption
 ~~~~~~~~~~~~~~~~~~~~~
 
 *Absorption Depth*
-    Sets the depth at which full absorption takes place. Low values result in dense absorbing materials, high values in transparent appearance ones. [#]_
+    Sets the depth at which full absorption takes place. Low values result in dense absorbing materials, high values in transparent appearance ones.
 
 *Absorption Color*
     The color used for the volumetric absorption.
-
-.. warning:: The refraction BSDF cannot presently support layered coatings nor coating absorption. This will be covered in a future release supporting layered closures.
 
 -----
 
@@ -185,7 +181,7 @@ Options
     Normalize by the object area, so that object deformations keep the incandescence energy. If unset, deforming the object will retain the incandescence color.
 
 *Tonemap EDF*
-    Tonemaps the potentially high energy result of the blackbody radiator into the [0,1] range.
+    Tonemaps the potentially high energy result of the blackbody radiator into the [0,1] range. Disabled by default.
 
 .. note:: The *tonemap EDF* option has effect **only** when *incandescence type* is set to *blackbody*.
 
@@ -195,7 +191,7 @@ Transparency Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 *Transparency*
-    Color transparency. Affects the *presence* of an object. When transparency is binary (full opaque or full transparent, with no in-between values), appleseed alpha masks should be used instead.
+   Affects the *presence* of an object. When transparency is binary (full opaque or full transparent, with no in-between values), appleseed alpha masks should be used instead.
 
 -----
 
@@ -388,8 +384,6 @@ Screenshots
 .. rubric:: Footnotes
 
 .. [#] The diffuse BRDF used is the Oren-Nayar BRDF :cite:`Oren:1994:GLR:192161.192213`
-
-.. [#] The specular (microfacet) BRDF is using Student's t-distribution :cite:`10.1111:cgf.13137`. This includes the Beckmann :cite:`beckmann1963scattering`, :cite:`Cook:1982:RMC:357290.357293` and GGX :cite:`Walter:2007:MMR:2383847.2383874` distributions.
 
 .. [#] See also `Extending the Disney BRDF to a BSDF with Integrated Subsurface Scattering <http://blog.selfshadow.com/publications/s2015-shading-course/burley/s2015_pbs_disney_bsdf_notes.pdf>`_ for details.
 

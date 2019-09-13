@@ -38,17 +38,11 @@ Fresnel Parameters
 Specular Parameters
 ^^^^^^^^^^^^^^^^^^^ 
 
-*Distribution*
-    The microfacet distribution function to use, it can be one of
-
-        * GGX :cite:`Walter:2007:MMR:2383847.2383874`
-        * Beckmann :cite:`Cook:1982:RMC:357290.357293`
-
 *Roughness*
     The apparent surface roughness.
 
 *Energy Compensation*
-    Microfacet models typically fail to take into account multiple scattering :cite:`Heitz:2016:MMB:2897824.2925943`, and as such, with high roughness values there is a substancial energy loss. To what extent it depends mostly on the MDF used, with *GGX* exhibiting considerable energy loss, and more so than the *Beckmann* MDF.
+    Microfacet models typically fail to take into account multiple scattering :cite:`Heitz:2016:MMB:2897824.2925943`, and as such, with high roughness values there is a substancial energy loss. To what extent it depends mostly on the MDF used, with *GGX* exhibiting considerable energy loss.
 
     In order to negate the impact of this energy loss a separate compensation term is applied. This parameter scales the contribution of this compensation term, with a value of 1.0 trying to compensate for all the energy lost, and a value of 0.0 essentially disabling any compensation.
 

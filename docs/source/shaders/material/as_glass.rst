@@ -3,7 +3,7 @@
 .. fix_img_align::
 
 |
- 
+
 .. image:: /_images/icons/asGlass.png
    :width: 128px
    :align: left
@@ -13,7 +13,7 @@
 asGlass
 *******
 
-A Glass BSDF :cite:`Walter:2007:MMR:2383847.2383874`, with volumetric absorption.
+A Glass BSDF :cite:`Walter2007`, with volumetric absorption.
 
 |
 
@@ -47,20 +47,8 @@ Specular Parameters
 *Index of Refraction*
     Absolute index of refraction
 
-*Distribution*
-    Microfacet distribution function, it can be
-
-    1. *Beckmann* :cite:`Cook:1982:RMC:357290.357293`
-    2. *GGX* :cite:`heitz:hal-00996995` 
-    3. *Student's t-distribution* :cite:`10.1111:cgf.13137`
-
 *Roughness*
     The apparent surface roughness, affecting both the reflection and refraction equally.
-
-*Specular Spread*
-    Specular highlights spread. This controls the *tails* of the specular highlights, with high values producing a softer looking highlights, and lower values producing sharper looking highlights.
-    
-.. note:: This parameter is valid only for Student's t-distribution only. Higher values approach the GGX distribution, and lower spread values, therefore sharper highlights, approach the Beckmann distribution.
 
 *Anisotropy Amount*
     Overall intensity of the anisotropy effect, with a value of 0.0 representing isotropic specular highlights.
