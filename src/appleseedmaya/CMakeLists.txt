@@ -175,6 +175,8 @@ if (MSVC)
     add_definitions (-DNT_PLUGIN)
     add_definitions (-DBits64_)
     add_definitions (-DARCH64)
+elseif (APPLE)
+    add_definitions (-DOSMac_)
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_definitions (-DLINUX)
 endif ()
@@ -192,6 +194,8 @@ set_target_properties (appleseedMaya PROPERTIES PREFIX "")
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set_target_properties (appleseedMaya PROPERTIES SUFFIX ".mll")
+elseif (APPLE)
+    set_target_properties (appleseedMaya PROPERTIES SUFFIX ".bundle")
 endif ()
 
 
