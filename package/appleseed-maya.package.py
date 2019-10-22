@@ -33,6 +33,7 @@ from xml.etree.ElementTree import ElementTree
 import glob
 import os
 import platform
+import re
 import shutil
 import stat
 import subprocess
@@ -40,7 +41,6 @@ import sys
 import time
 import traceback
 import urllib
-import re
 
 
 #--------------------------------------------------------------------------------------------------
@@ -381,6 +381,7 @@ class PackageBuilder(object):
         info("Running command line: {0}".format(cmdline))
         os.system(cmdline)
 
+
 # -------------------------------------------------------------------------------------------------
 # Mac package builder.
 # -------------------------------------------------------------------------------------------------
@@ -447,7 +448,7 @@ class MacPackageBuilder(PackageBuilder):
         # Copy needed libs to lib directory.
         for lib in all_libs:
 
-            # Don't copy Python, this dependency will be relink to
+            # Don't copy Python, this dependency will be relinked to
             # Maya's Python later in the packaging process
             if os.path.basename(lib) == "Python":
                 continue
@@ -456,7 +457,7 @@ class MacPackageBuilder(PackageBuilder):
                 info("  Copying {0} to {1}...".format(lib, lib_dir))
             dest = os.path.join(lib_dir, os.path.basename(lib))
 
-            # its possible for the dylib to link ot same lib in multiple paths
+            # It is possible for the dylib to link to same lib in multiple paths
             # check that is not already copied
             if not os.path.exists(dest):
                 shutil.copy(lib, lib_dir)
@@ -564,7 +565,6 @@ class MacPackageBuilder(PackageBuilder):
         self.run('install_name_tool -change "{0}" "{1}" {2}'.format(old, new, target))
 
     def __get_lib_search_paths(self, filepath):
-
         returncode, out, err = run_subprocess(["otool", "-l", filepath])
         if returncode != 0:
             fatal("Failed to invoke otool(1) to get rpath for {0}: {1}".format(filepath, err))
@@ -590,7 +590,7 @@ class MacPackageBuilder(PackageBuilder):
         DYLD_FALLBACK_LIBRARY_PATH = os.environ.get("DYLD_FALLBACK_LIBRARY_PATH", "").split(":")
 
         search_paths = []
-        # DYLD_LIBRARY_PATH overides rpaths
+        # DYLD_LIBRARY_PATH overrides rpaths
         for path in DYLD_LIBRARY_PATH:
             if os.path.exists(path):
                 search_paths.append(path)
@@ -604,7 +604,6 @@ class MacPackageBuilder(PackageBuilder):
                 search_paths.append(path)
 
         return search_paths
-
 
     def __get_dependencies_for_file(self, filepath, fix_paths=True):
         filename = os.path.basename(filepath)
