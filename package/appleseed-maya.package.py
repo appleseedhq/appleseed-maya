@@ -33,6 +33,7 @@ from xml.etree.ElementTree import ElementTree
 import glob
 import os
 import platform
+import re
 import shutil
 import stat
 import subprocess
@@ -381,6 +382,338 @@ class PackageBuilder(object):
         os.system(cmdline)
 
 
+# -------------------------------------------------------------------------------------------------
+# Mac package builder.
+# -------------------------------------------------------------------------------------------------
+
+class MacPackageBuilder(PackageBuilder):
+
+    SYSTEM_LIBS_PREFIXES = [
+        "/System/Library/",
+        "/usr/lib/libcurl",
+        "/usr/lib/libc++",
+        "/usr/lib/libbz2",
+        "/usr/lib/libiconv",
+        "/usr/lib/libSystem",
+        "/usr/lib/libxml",
+        "/usr/lib/libexpat",
+        "/usr/lib/libz",
+        "/usr/lib/libncurses",
+        "/usr/lib/libobjc.A.dylib"
+    ]
+
+    def plugin_extension(self):
+        return ".bundle"
+
+    def generate_module_file(self):
+        self.do_generate_module_file("mac")
+
+    def copy_dependencies(self):
+        progress("Mac-specific: Copying dependencies")
+
+        # Create destination directory.
+        lib_dir = os.path.join(self.settings.package_output_path, "lib")
+        safe_make_directory(lib_dir)
+
+        # Copy appleseed libraries.
+        for lib in ["libappleseed.dylib", "libappleseed.shared.dylib"]:
+            shutil.copy(os.path.join(os.path.expandvars(self.settings.appleseed_lib_path), lib), lib_dir)
+
+        libs_to_check = set()
+        all_libs = set()
+
+        for bin in glob.glob(os.path.join(os.path.expandvars(self.settings.root_dir), "appleseed", "bin", "*")):
+            libs = self.__get_dependencies_for_file(bin)
+            libs_to_check = libs_to_check.union(libs)
+
+        appleseedpython_libs = self.__get_dependencies_for_file(
+                    os.path.join(self.settings.package_output_path, "scripts", "appleseed", "_appleseedpython.so"))
+        libs_to_check = libs_to_check.union(appleseedpython_libs)
+
+        # find all dependencies
+        while libs_to_check:
+            current_lib = libs_to_check.pop()
+            for lib in self.__get_dependencies_for_file(current_lib):
+                if lib not in all_libs:
+                    libs_to_check.add(lib)
+
+            all_libs.add(current_lib)
+
+        if True:
+            # Print dependencies.
+            info("    Dependencies:")
+            for lib in all_libs:
+                info("      {0}".format(lib))
+
+        # Copy needed libs to lib directory.
+        for lib in all_libs:
+
+            # Don't copy Python, this dependency will be relinked to
+            # Maya's Python later in the packaging process
+            if os.path.basename(lib) == "Python":
+                continue
+
+            if True:
+                info("  Copying {0} to {1}...".format(lib, lib_dir))
+            dest = os.path.join(lib_dir, os.path.basename(lib))
+
+            # It is possible for the dylib to link to same lib in multiple paths
+            # check that is not already copied
+            if not os.path.exists(dest):
+                shutil.copy(lib, lib_dir)
+
+    def post_process_package(self):
+        progress("Mac-specific: Post-processing package")
+        self.__fixup_binaries()
+
+    def __fixup_binaries(self):
+        progress("Mac-specific: Fixing up binaries")
+        self.__fix_permissions();
+        self.set_libraries_ids()
+        self.__change_library_paths_in_libraries()
+        self.__change_library_paths_in_executables()
+
+    def __fix_permissions(self):
+        lib_dir = os.path.join(self.settings.package_output_path, "lib")
+        for dirpath, dirnames, filenames in os.walk(lib_dir):
+            for filename in filenames:
+                ext = os.path.splitext(filename)[1]
+                if ext == ".dylib" or ext == ".so":
+                    lib_path = os.path.join(dirpath, filename)
+                    self.run("chmod 777 {}".format(lib_path))
+
+        bin_dir =  os.path.join(self.settings.package_output_path, "bin")
+        for dirpath, dirnames, filenames in os.walk(bin_dir):
+            for filename in filenames:
+                ext = os.path.splitext(filename)[1]
+                if ext != ".py" and ext != ".conf":
+                    exe_path = os.path.join(dirpath, filename)
+                    self.run("chmod 777 {}".format(exe_path))
+
+    def set_libraries_ids(self):
+        lib_dir = os.path.join(self.settings.package_output_path, "lib")
+        for dirpath, dirnames, filenames in os.walk(lib_dir):
+            for filename in filenames:
+                ext = os.path.splitext(filename)[1]
+                if ext == ".dylib" or ext == ".so":
+                    lib_path = os.path.join(dirpath, filename)
+                    self.__set_library_id(lib_path, filename)
+
+        plugins_dir = os.path.join(self.settings.package_output_path, "plug-ins", self.settings.maya_version)
+        for plugin_path in glob.glob(os.path.join(plugins_dir, "*.bundle")):
+            filename = os.path.basename(plugin_path)
+            self.__set_library_id(plugin_path, filename)
+
+        python_plugin = os.path.join(self.settings.package_output_path, "scripts", "appleseed")
+        for plugin_path in glob.glob(os.path.join(python_plugin, "*.so")):
+            filename = os.path.basename(plugin_path)
+            self.__set_library_id(plugin_path, filename)
+
+    def __change_library_paths_in_libraries(self):
+        lib_dir = os.path.join(self.settings.package_output_path, "lib")
+        for dirpath, dirnames, filenames in os.walk(lib_dir):
+            for filename in filenames:
+                ext = os.path.splitext(filename)[1]
+                if ext == ".dylib" or ext == ".so":
+                    lib_path = os.path.join(dirpath, filename)
+                    self.__change_library_paths_in_binary(lib_path)
+
+        plugins_dir = os.path.join(self.settings.package_output_path, "plug-ins", self.settings.maya_version)
+        for plugin_path in glob.glob(os.path.join(plugins_dir, "*.bundle")):
+            filename = os.path.basename(plugin_path)
+            self.__change_library_paths_in_binary(plugin_path)
+
+        python_plugin = os.path.join(self.settings.package_output_path, "scripts", "appleseed")
+        for plugin_path in glob.glob(os.path.join(python_plugin, "*.so")):
+            filename = os.path.basename(plugin_path)
+            self.__change_library_paths_in_binary(plugin_path)
+
+    def __change_library_paths_in_executables(self):
+        bin_dir =  os.path.join(self.settings.package_output_path, "bin")
+        for dirpath, dirnames, filenames in os.walk(bin_dir):
+            for filename in filenames:
+                ext = os.path.splitext(filename)[1]
+                if ext != ".py" and ext != ".conf":
+                    exe_path = os.path.join(dirpath, filename)
+                    self.__change_library_paths_in_binary(exe_path)
+
+    # Can be used on executables and dynamic libraries.
+    def __change_library_paths_in_binary(self, bin_path):
+        progress("Patching {0}".format(bin_path))
+        bin_dir = os.path.dirname(bin_path)
+        lib_dir = os.path.join(self.settings.package_output_path, "lib")
+
+        path_to_appleseed_lib = os.path.relpath(lib_dir, bin_dir)
+        # fix_paths set to False because we must retrieve the unmodified dependency in order to replace it by the correct one.
+        for lib_path in self.__get_dependencies_for_file(bin_path, fix_paths=False):
+            lib_name = os.path.basename(lib_path)
+
+            # relink python dependencies to maya's embed python
+            if lib_name == "Python":
+                maya_python = "@executable_path/../Frameworks/Python.framework/Versions/2.7/Python"
+                self.__change_library_path(bin_path, lib_path,  maya_python)
+
+            elif path_to_appleseed_lib == ".":
+                self.__change_library_path(bin_path, lib_path, "@loader_path/{0}".format(lib_name))
+            else:
+                self.__change_library_path(bin_path, lib_path, "@loader_path/{0}/{1}".format(path_to_appleseed_lib, lib_name))
+
+    def __set_library_id(self, target, name):
+        self.run('install_name_tool -id "{0}" {1}'.format(name, target))
+
+    def __change_library_path(self, target, old, new):
+        self.run('install_name_tool -change "{0}" "{1}" {2}'.format(old, new, target))
+
+    def __get_lib_search_paths(self, filepath):
+        returncode, out, err = run_subprocess(["otool", "-l", filepath])
+        if returncode != 0:
+            fatal("Failed to invoke otool(1) to get rpath for {0}: {1}".format(filepath, err))
+
+        lc_path_found = False
+
+        rpaths = []
+        # parse otool output for rpaths, there can be multiple
+        for line in out.split("\n"):
+            line = line.strip()
+
+            if lc_path_found and line.startswith("path"):
+                path_split = line.split(' ')
+                if len(path_split) < 2:
+                    fatal("Failed to parse line from otool(1) output: " + line)
+                rpaths.append(path_split[1])
+                lc_path_found = False
+
+            if line == "cmd LC_RPATH":
+                lc_path_found = True
+
+        DYLD_LIBRARY_PATH = os.environ.get("DYLD_LIBRARY_PATH", "").split(":")
+        DYLD_FALLBACK_LIBRARY_PATH = os.environ.get("DYLD_FALLBACK_LIBRARY_PATH", "").split(":")
+
+        search_paths = []
+        # DYLD_LIBRARY_PATH overrides rpaths
+        for path in DYLD_LIBRARY_PATH:
+            if os.path.exists(path):
+                search_paths.append(path)
+
+        for path in rpaths:
+            if os.path.exists(path):
+                search_paths.append(path)
+
+        for path in DYLD_FALLBACK_LIBRARY_PATH:
+            if os.path.exists(path):
+                search_paths.append(path)
+
+        return search_paths
+
+    def __get_dependencies_for_file(self, filepath, fix_paths=True):
+        filename = os.path.basename(filepath)
+
+        search_paths = self.__get_lib_search_paths(filepath)
+        loader_path = os.path.dirname(filepath)
+
+        if True:
+            info("Gathering dependencies for file")
+            info("    {0}".format(filepath))
+            info("with @loader_path set to")
+            info("    {0}".format(loader_path))
+            info("and @rpath search path to:")
+            for path in search_paths:
+                info("    {0}".format(path))
+
+        returncode, out, err = run_subprocess(["otool", "-L", filepath])
+        if returncode != 0:
+            fatal("Failed to invoke otool(1) to get dependencies for {0}: {1}".format(filepath, err))
+
+        libs = set()
+
+        for line in out.split("\n")[1:]:    # skip the first line
+            line = line.strip()
+
+            # Ignore empty lines.
+            if len(line) == 0:
+                continue
+
+            if line.startswith("@executable_path"):
+                continue
+
+            # Parse the line.
+            m = re.match(r"(.*) \(compatibility version .*, current version .*\)", line)
+            if not m:
+                fatal("Failed to parse line from otool(1) output: " + line)
+            lib = m.group(1)
+
+            # Ignore self-references (why do these happen?).
+            if lib == filename:
+                continue
+
+            # Ignore system libs.
+            if self.__is_system_lib(lib):
+                continue
+
+            # Ignore Qt frameworks.
+            if re.search(r"Qt.*\.framework", lib):
+                continue
+
+            if fix_paths:
+                # handle no search paths case
+                if not search_paths:
+                    fixed_lib = lib.replace("@loader_path", loader_path)
+                    if os.path.exists(fixed_lib):
+                        lib = fixed_lib
+                    else:
+                        # Try to handle other relative libs.
+                        candidate = os.path.join(loader_path, fixed_lib)
+                        if not os.path.exists(candidate):
+                            fatal("Unable to Resolve lib {}", lib)
+                        lib = candidate
+
+                for path in search_paths:
+                    # Handle libs relative to @loader_path.
+                    fixed_lib = lib.replace("@loader_path", loader_path)
+
+                    # Handle libs relative to @rpath.
+                    fixed_lib = fixed_lib.replace("@rpath", path)
+
+                    if os.path.exists(fixed_lib):
+                        lib = fixed_lib
+                        break
+
+                    # Try to handle other relative libs.
+                    elif not os.path.isabs(fixed_lib):
+                        candidate = os.path.join(loader_path, fixed_lib)
+                        if not os.path.exists(candidate):
+                            candidate = os.path.join(path, fixed_lib)
+                        if os.path.exists(candidate):
+                            info("Resolved relative dependency {0} as {1}".format(fixed_lib, candidate))
+                            lib = candidate
+                            break
+
+            libs.add(lib)
+
+        if True:
+            info("Dependencies for file {0}:".format(filepath))
+            for lib in libs:
+                if os.path.isfile(lib):
+                    info(u"      found:{0}".format(lib))
+                else:
+                    info(u"    missing:{0}".format(lib))
+
+        # Don't check for missing dependencies if we didn't attempt to fix them.
+        if fix_paths:
+            for lib in libs:
+                if not os.path.isfile(lib):
+                    fatal("Dependency {0} could not be found on disk".format(lib))
+
+        return libs
+
+    def __is_system_lib(self, lib):
+        for prefix in self.SYSTEM_LIBS_PREFIXES:
+            if lib.startswith(prefix):
+                return True
+
+        return False
+
+
 #--------------------------------------------------------------------------------------------------
 # Linux package builder.
 #--------------------------------------------------------------------------------------------------
@@ -540,6 +873,8 @@ def main():
 
     if os.name == "nt":
         package_builder = WindowsPackageBuilder(settings)
+    elif os.name == "posix" and platform.mac_ver()[0] != "":
+        package_builder = MacPackageBuilder(settings)
     elif os.name == "posix" and platform.mac_ver()[0] == "":
         package_builder = LinuxPackageBuilder(settings)
     else:
