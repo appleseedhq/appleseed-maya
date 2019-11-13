@@ -349,6 +349,15 @@ class AppleseedRenderGlobalsTab(object):
         attr = pm.Attribute("appleseedRenderGlobals." + attrName)
         pm.connectControl(ui, attr, index=connectIndex)
 
+    def _addFieldSliderControl(self, attrName, **kwargs):
+        for key in ('field', 'value', 'numberOfFields'):
+            kwargs.pop(key, "")
+
+        attr = pm.Attribute("appleseedRenderGlobals." + attrName)
+        self._uis[attrName] = pm.attrFieldSliderGrp(
+            attribute=attr,
+            **kwargs)
+
     def _getAttributeMenuItems(self, attrName):
         attr = pm.Attribute("appleseedRenderGlobals." + attrName)
         menuItems = [
@@ -446,17 +455,16 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         pm.separator(height=2)
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Render Passes",
-                                field=True,
-                                value=1,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=1,
-                                fieldMinValue=1,
-                                maxValue=100,
-                                fieldMaxValue=1000000),
+                        self._addFieldSliderControl(
+                            label="Render Passes",
+                            field=True,
+                            value=1,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=1,
+                            fieldMinValue=1,
+                            maxValue=100,
+                            fieldMaxValue=1000000,
                             attrName="passes")
 
                         pm.separator(height=2)
@@ -473,45 +481,42 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         adaptiveSampling = mc.getAttr("appleseedRenderGlobals.adaptiveSampling")
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Min Samples",
-                                field=True,
-                                value=16,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=0,
-                                fieldMinValue=0,
-                                maxValue=256,
-                                fieldMaxValue=1000000,
-                                enable=adaptiveSampling),
+                        self._addFieldSliderControl(
+                            label="Min Samples",
+                            field=True,
+                            value=16,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=0,
+                            fieldMinValue=0,
+                            maxValue=256,
+                            fieldMaxValue=1000000,
+                            enable=adaptiveSampling,
                             attrName="minPixelSamples")
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Max Samples",
-                                field=True,
-                                value=128,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=16,
-                                fieldMinValue=0,
-                                maxValue=1024,
-                                fieldMaxValue=1000000),
+                        self._addFieldSliderControl(
+                            label="Max Samples",
+                            field=True,
+                            value=128,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=16,
+                            fieldMinValue=0,
+                            maxValue=1024,
+                            fieldMaxValue=1000000,
                             attrName="samples")
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Batch Sample Size",
-                                field=True,
-                                value=16,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=1,
-                                fieldMinValue=1,
-                                maxValue=128,
-                                fieldMaxValue=1000000,
-                                enable=adaptiveSampling),
+                        self._addFieldSliderControl(
+                            label="Batch Sample Size",
+                            field=True,
+                            value=16,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=1,
+                            fieldMinValue=1,
+                            maxValue=128,
+                            fieldMaxValue=1000000,
+                            enable=adaptiveSampling,
                             attrName="batchSampleSize")
 
                         self._addControl(
@@ -554,17 +559,16 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                                 fieldMaxValue=20.0),
                             attrName="pixelFilterSize")
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Tile Size",
-                                field=True,
-                                value=64,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=8,
-                                fieldMinValue=1,
-                                maxValue=1024,
-                                fieldMaxValue=65536),
+                        self._addFieldSliderControl(
+                            label="Tile Size",
+                            field=True,
+                            value=64,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=8,
+                            fieldMinValue=1,
+                            maxValue=1024,
+                            fieldMaxValue=65536,
                             attrName="tileSize")
 
                         pm.separator(height=2)
@@ -581,17 +585,16 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         pm.separator(height=2)
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Sampling Pattern Seed",
-                                field=True,
-                                value=0,
-                                columnWidth=(3, 160),
-                                minValue=-65536,
-                                fieldMinValue=-2147483648,
-                                maxValue=65535,
-                                enable=lockSamplingPattern,
-                                fieldMaxValue=2147483647),
+                        self._addFieldSliderControl(
+                            label="Sampling Pattern Seed",
+                            field=True,
+                            value=0,
+                            columnWidth=(3, 160),
+                            minValue=-65536,
+                            fieldMinValue=-2147483648,
+                            maxValue=65535,
+                            enable=lockSamplingPattern,
+                            fieldMaxValue=2147483647,
                             attrName="noiseSeed")
 
                         pm.separator(height=2)
@@ -615,46 +618,43 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                         enableMotionBlur = mc.getAttr(
                             "appleseedRenderGlobals.motionBlur")
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Camera Samples",
-                                field=True,
-                                value=2,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=2,
-                                fieldMinValue=2,
-                                maxValue=30,
-                                fieldMaxValue=1000,
-                                enable=enableMotionBlur),
+                        self._addFieldSliderControl(
+                            label="Camera Samples",
+                            field=True,
+                            value=2,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=2,
+                            fieldMinValue=2,
+                            maxValue=30,
+                            fieldMaxValue=1000,
+                            enable=enableMotionBlur,
                             attrName="mbCameraSamples")
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Transformation Samples",
-                                field=True,
-                                value=2,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=2,
-                                fieldMinValue=2,
-                                maxValue=30,
-                                fieldMaxValue=1000,
-                                enable=enableMotionBlur),
+                        self._addFieldSliderControl(
+                            label="Transformation Samples",
+                            field=True,
+                            value=2,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=2,
+                            fieldMinValue=2,
+                            maxValue=30,
+                            fieldMaxValue=1000,
+                            enable=enableMotionBlur,
                             attrName="mbTransformSamples")
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Deformation Samples",
-                                field=True,
-                                value=2,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=2,
-                                fieldMinValue=2,
-                                maxValue=30,
-                                fieldMaxValue=1000,
-                                enable=enableMotionBlur),
+                        self._addFieldSliderControl(
+                            label="Deformation Samples",
+                            field=True,
+                            value=2,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=2,
+                            fieldMinValue=2,
+                            maxValue=30,
+                            fieldMaxValue=1000,
+                            enable=enableMotionBlur,
                             attrName="mbDeformSamples")
 
                         pm.separator(height=2)
@@ -1689,4 +1689,3 @@ class AppleseedRenderGlobalsSystemTab(AppleseedRenderGlobalsTab):
 
 
 g_appleseedSystemTab = AppleseedRenderGlobalsSystemTab()
-
