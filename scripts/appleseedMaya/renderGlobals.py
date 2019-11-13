@@ -230,10 +230,13 @@ def addRenderGlobalsScriptJobs():
     g_nodeRemovedCallbackID = om.MDGMessage.addNodeRemovedCallback(
         __nodeRemoved)
 
+    # This is evalDeferred so it doesn't get
+    # called before createMayaSoftwareCommonGlobalsTab
+    python_script = "import appleseedMaya.renderGlobals; appleseedMaya.renderGlobals.currentRendererChanged()"
     mc.scriptJob(
         attributeChange=[
             "defaultRenderGlobals.currentRenderer",
-            "import appleseedMaya.renderGlobals; appleseedMaya.renderGlobals.currentRendererChanged()"
+             lambda: mc.evalDeferred(python_script, lowestPriority=True),
         ]
     )
 
