@@ -287,7 +287,10 @@ def currentRendererChanged():
     # If the render globals window does not exist, create it.
     if not mc.window("unifiedRenderGlobalsWindow", exists=True):
         mel.eval("unifiedRenderGlobalsWindow")
-        mc.window("unifiedRenderGlobalsWindow", edit=True, visible=False)
+        if pm.versions.current() >= 2017000:
+            mc.workspaceControl("unifiedRenderGlobalsWindow", edit=True, visible=False)
+        else:
+            mc.window("unifiedRenderGlobalsWindow", edit=True, visible=False)
 
     # "Customize" the image formats menu.
     mc.setParent("unifiedRenderGlobalsWindow")
