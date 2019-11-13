@@ -881,60 +881,56 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
                                 enableDirectLighting = mc.getAttr(
                                     "appleseedRenderGlobals.enableDirectLighting")
 
-                                self._addControl(
-                                    ui=pm.intSliderGrp(
-                                        label="Global Bounces",
-                                        field=True,
-                                        value=8,
-                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                        minValue=0,
-                                        maxValue=30,
-                                        fieldMinValue=0,
-                                        fieldMaxValue=100),
+                                self._addFieldSliderControl(
+                                    label="Global Bounces",
+                                    field=True,
+                                    value=8,
+                                    columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                    minValue=0,
+                                    maxValue=30,
+                                    fieldMinValue=0,
+                                    fieldMaxValue=100,
                                     attrName="bounces")
 
-                                self._addControl(
-                                    ui=pm.intSliderGrp(
-                                        label="Diffuse Bounces",
-                                        field=True,
-                                        value=8,
-                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                        rowAttach=[(1, "both", 4)],
-                                        enable=limitBounces,
-                                        minValue=0,
-                                        maxValue=30,
-                                        fieldMinValue=0,
-                                        fieldMaxValue=100),
+                                self._addFieldSliderControl(
+                                    label="Diffuse Bounces",
+                                    field=True,
+                                    value=8,
+                                    columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                    rowAttach=[(1, "both", 4)],
+                                    enable=limitBounces,
+                                    minValue=0,
+                                    maxValue=30,
+                                    fieldMinValue=0,
+                                    fieldMaxValue=100,
                                     attrName="diffuseBounces")
 
-                                self._addControl(
-                                    ui=pm.intSliderGrp(
-                                        label="Glossy Bounces",
-                                        field=True,
-                                        value=8,
-                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                        enable=limitBounces,
-                                        minValue=0,
-                                        maxValue=30,
-                                        fieldMinValue=0,
-                                        fieldMaxValue=100),
+                                self._addFieldSliderControl(
+                                    label="Glossy Bounces",
+                                    field=True,
+                                    value=8,
+                                    columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                    enable=limitBounces,
+                                    minValue=0,
+                                    maxValue=30,
+                                    fieldMinValue=0,
+                                    fieldMaxValue=100,
                                     attrName="glossyBounces")
 
-                                self._addControl(
-                                    ui=pm.intSliderGrp(
-                                        label="Specular Bounces",
-                                        field=True,
-                                        value=8,
-                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                        enable=limitBounces,
-                                        minValue=0,
-                                        maxValue=30,
-                                        fieldMinValue=0,
-                                        fieldMaxValue=100),
+                                self._addFieldSliderControl(
+                                    label="Specular Bounces",
+                                    field=True,
+                                    value=8,
+                                    columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                    enable=limitBounces,
+                                    minValue=0,
+                                    maxValue=30,
+                                    fieldMinValue=0,
+                                    fieldMaxValue=100,
                                     attrName="specularBounces")
 
                                 pm.separator(height=2)
@@ -1120,67 +1116,63 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         pm.separator(height=2)
 
-                                        self._addControl(
-                                            ui=pm.intSliderGrp(
-                                                label="Max Bounces",
-                                                field=True,
-                                                value=8,
-                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                                minValue=0,
-                                                maxValue=30,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=100,
-                                                annotation="Maximum number of photon bounces.",
-                                                enable=limitPhotonTracingBounces),
+                                        self._addFieldSliderControl(
+                                            label="Max Bounces",
+                                            field=True,
+                                            value=8,
+                                            columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                            minValue=0,
+                                            maxValue=30,
+                                            fieldMinValue=0,
+                                            fieldMaxValue=100,
+                                            annotation="Maximum number of photon bounces.",
+                                            enable=limitPhotonTracingBounces,
                                             attrName="photonTracingBounces")
 
-                                        self._addControl(
-                                            ui=pm.intSliderGrp(
-                                                label="RR Starting Bounce",
-                                                field=True,
-                                                value=8,
-                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                                minValue=0,
-                                                maxValue=30,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=100,
-                                                annotation="Discard low contribution paths starting with this bounce."),
+                                        self._addFieldSliderControl(
+                                            label="RR Starting Bounce",
+                                            field=True,
+                                            value=8,
+                                            columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                            minValue=0,
+                                            maxValue=30,
+                                            fieldMinValue=0,
+                                            fieldMaxValue=100,
+                                            annotation="Discard low contribution paths starting with this bounce.",
                                             attrName="photonTracingRRMinPathLength")
 
                                         pm.separator(height=2)
 
-                                        self._addControl(
-                                            ui=pm.intSliderGrp(
-                                                label="Light Photons",
-                                                field=True,
-                                                value=1000000,
-                                                minValue=100000,
-                                                maxValue=10000000,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=100000000,
-                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                                annotation="Number of light photons per render pass."),
+                                        self._addFieldSliderControl(
+                                            label="Light Photons",
+                                            field=True,
+                                            value=1000000,
+                                            minValue=100000,
+                                            maxValue=10000000,
+                                            fieldMinValue=0,
+                                            fieldMaxValue=100000000,
+                                            columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                            annotation="Number of light photons per render pass.",
                                             attrName="photonTracingLightPhotons")
 
                                         SPPMEnableIBL = mc.getAttr(
                                             "appleseedRenderGlobals.SPPMEnableIBL")
 
-                                        self._addControl(
-                                            ui=pm.intSliderGrp(
-                                                label="IBL Photons",
-                                                field=True,
-                                                value=1000000,
-                                                minValue=100000,
-                                                maxValue=10000000,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=100000000,
-                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                                enable=SPPMEnableIBL,
-                                                annotation="Number of environment photons per render pass."),
+                                        self._addFieldSliderControl(
+                                            label="IBL Photons",
+                                            field=True,
+                                            value=1000000,
+                                            minValue=100000,
+                                            maxValue=10000000,
+                                            fieldMinValue=0,
+                                            fieldMaxValue=100000000,
+                                            columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                            enable=SPPMEnableIBL,
+                                            annotation="Number of environment photons per render pass.",
                                             attrName="photonTracingEnvPhotons")
 
                                 with pm.frameLayout("sppmRadianceEstimationFrameLayout", font="smallBoldLabelFont",
@@ -1204,33 +1196,31 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         pm.separator(height=2)
 
-                                        self._addControl(
-                                            ui=pm.intSliderGrp(
-                                                label="Maximum Bounces",
-                                                field=True,
-                                                value=8,
-                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                                minValue=0,
-                                                maxValue=30,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=100,
-                                                enable=limitRadianceEstimationBounces,
-                                                annotation="Maximum number of radiance estimation path bounces."),
+                                        self._addFieldSliderControl(
+                                            label="Maximum Bounces",
+                                            field=True,
+                                            value=8,
+                                            columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                            minValue=0,
+                                            maxValue=30,
+                                            fieldMinValue=0,
+                                            fieldMaxValue=100,
+                                            enable=limitRadianceEstimationBounces,
+                                            annotation="Maximum number of radiance estimation path bounces.",
                                             attrName="radianceEstimationBounces")
 
-                                        self._addControl(
-                                            ui=pm.intSliderGrp(
-                                                label="RR Starting Bounces",
-                                                field=True,
-                                                value=8,
-                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                                minValue=0,
-                                                maxValue=30,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=100,
-                                                annotation="Discard low contribution paths starting with this bounce."),
+                                        self._addFieldSliderControl(
+                                            label="RR Starting Bounces",
+                                            field=True,
+                                            value=8,
+                                            columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                            minValue=0,
+                                            maxValue=30,
+                                            fieldMinValue=0,
+                                            fieldMaxValue=100,
+                                            annotation="Discard low contribution paths starting with this bounce.",
                                             attrName="radianceEstimationRRMinPathLength")
 
                                         pm.separator(height=2)
@@ -1252,18 +1242,17 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
                                                 annotation="Initial photon gathering radius in percent of scene diameter."),
                                             attrName="radianceEstimationInitialRadius")
 
-                                        self._addControl(
-                                            ui=pm.intSliderGrp(
-                                                label="Maximum Photons",
-                                                field=True,
-                                                value=100,
-                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                                minValue=8,
-                                                maxValue=500,
-                                                fieldMinValue=8,
-                                                fieldMaxValue=1000000000,
-                                                annotation="Maximum number of photons used for radiance estimation."),
+                                        self._addFieldSliderControl(
+                                            label="Maximum Photons",
+                                            field=True,
+                                            value=100,
+                                            columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                            minValue=8,
+                                            maxValue=500,
+                                            fieldMinValue=8,
+                                            fieldMaxValue=1000000000,
+                                            annotation="Maximum number of photons used for radiance estimation.",
                                             attrName="radianceEstimationMaxPhotons")
 
                                         self._addControl(
