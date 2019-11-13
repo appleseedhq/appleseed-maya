@@ -266,9 +266,11 @@ def imageFormatChanged():
     if newFormat == 0:  # EXR
         mc.setAttr("defaultRenderGlobals.imageFormat", 51)
         mc.setAttr("defaultRenderGlobals.imfkey", "exr", type="string")
+        mc.optionMenuGrp("imageMenuMayaSW", edit=True, select=newFormat + 1)
     elif newFormat == 1:  # PNG
         mc.setAttr("defaultRenderGlobals.imageFormat", 32)
         mc.setAttr("defaultRenderGlobals.imfkey", "png", type="string")
+        mc.optionMenuGrp("imageMenuMayaSW", edit=True, select=newFormat + 1)
     else:
         raise RuntimeError("Unknown render global image file format")
 
