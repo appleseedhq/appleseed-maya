@@ -953,56 +953,53 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                 pm.separator(height=2)
 
-                                self._addControl(
-                                    ui=pm.floatSliderGrp(
-                                        label="Light Samples",
-                                        field=True,
-                                        value=1.0,
-                                        sliderStep=1.0,
-                                        fieldStep=0.1,
-                                        precision=1,
-                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
-                                        rowAttach=[(1, "both", 4)],
-                                        enable=enableDirectLighting,
-                                        minValue=0.0,
-                                        maxValue=20.0,
-                                        fieldMinValue=0.0,
-                                        fieldMaxValue=1000000.0,
-                                        annotation="Number of light samples used to estimate direct lighting."),
+                                self._addFieldSliderControl(
+                                    label="Light Samples",
+                                    field=True,
+                                    value=1.0,
+                                    sliderStep=1.0,
+                                    fieldStep=0.1,
+                                    precision=1,
+                                    columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                    rowAttach=[(1, "both", 4)],
+                                    enable=enableDirectLighting,
+                                    minValue=0.0,
+                                    maxValue=20.0,
+                                    fieldMinValue=0.0,
+                                    fieldMaxValue=1000000.0,
+                                    annotation="Number of light samples used to estimate direct lighting.",
                                     attrName="lightSamples")
 
-                                self._addControl(
-                                    ui=pm.floatSliderGrp(
-                                        label="IBL Samples",
-                                        field=True,
-                                        value=1.0,
-                                        sliderStep=1.0,
-                                        fieldStep=0.1,
-                                        precision=1,
-                                        columnWidth=[(1, 115), (2, 40), (3, 240)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
-                                        enable=enableIBL,
-                                        minValue=0.0,
-                                        maxValue=20.0,
-                                        fieldMinValue=0.0,
-                                        fieldMaxValue=1000000.0,
-                                        annotation="Number of samples used to estimate environment or image-based lighting."),
+                                self._addFieldSliderControl(
+                                    label="IBL Samples",
+                                    field=True,
+                                    value=1.0,
+                                    sliderStep=1.0,
+                                    fieldStep=0.1,
+                                    precision=1,
+                                    columnWidth=[(1, 115), (2, 40), (3, 240)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                    enable=enableIBL,
+                                    minValue=0.0,
+                                    maxValue=20.0,
+                                    fieldMinValue=0.0,
+                                    fieldMaxValue=1000000.0,
+                                    annotation="Number of samples used to estimate environment or image-based lighting.",
                                     attrName="envSamples")
 
-                                self._addControl(
-                                    ui=pm.floatSliderGrp(
-                                        label="Low Light Threshold",
-                                        field=True,
-                                        value=0.0,
-                                        precision=6,
-                                        columnWidth=[(1, 115), (2, 60), (3, 190)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
-                                        minValue=0.0,
-                                        maxValue=1.0,
-                                        fieldMinValue=0.0,
-                                        fieldMaxValue=1000.0,
-                                        annotation="Threshold at which shadow rays are terminated."),
+                                self._addFieldSliderControl(
+                                    label="Low Light Threshold",
+                                    field=True,
+                                    value=0.0,
+                                    precision=6,
+                                    columnWidth=[(1, 115), (2, 60), (3, 190)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                    minValue=0.0,
+                                    maxValue=1.0,
+                                    fieldMinValue=0.0,
+                                    fieldMaxValue=1000.0,
+                                    annotation="Threshold at which shadow rays are terminated.",
                                     attrName="lowLightThreshold")
 
                                 pm.separator(height=2)
@@ -1031,21 +1028,20 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                 pm.separator(height=2)
 
-                                self._addControl(
-                                    ui=pm.floatSliderGrp(
-                                        label="Max Ray Intensity",
-                                        field=True,
-                                        sliderStep=1.0,
-                                        fieldStep=0.1,
-                                        precision=1,
-                                        columnWidth=[(1, 100), (2, 40), (3, 200)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
-                                        minValue=0.0,
-                                        maxValue=2.0,
-                                        fieldMinValue=0.0,
-                                        fieldMaxValue=10000.0,
-                                        annotation="Maximum ray intensity allowed on secondary and subsequent rays.",
-                                        enable=enableMaxRayIntensity),
+                                self._addFieldSliderControl(
+                                    label="Max Ray Intensity",
+                                    field=True,
+                                    sliderStep=1.0,
+                                    fieldStep=0.1,
+                                    precision=1,
+                                    columnWidth=[(1, 100), (2, 40), (3, 200)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                    minValue=0.0,
+                                    maxValue=2.0,
+                                    fieldMinValue=0.0,
+                                    fieldMaxValue=10000.0,
+                                    annotation="Maximum ray intensity allowed on secondary and subsequent rays.",
+                                    enable=enableMaxRayIntensity,
                                     attrName="maxRayIntensity")
 
                                 pm.separator(height=2)
@@ -1220,21 +1216,20 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         pm.separator(height=2)
 
-                                        self._addControl(
-                                            ui=pm.floatSliderGrp(
-                                                label="Initial Search Radius",
-                                                field=True,
-                                                value=0.1,
-                                                sliderStep=1.0,
-                                                fieldStep=0.1,
-                                                precision=3,
-                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
-                                                minValue=0.01,
-                                                maxValue=0.5,
-                                                fieldMinValue=0.001,
-                                                fieldMaxValue=100.0,
-                                                annotation="Initial photon gathering radius in percent of scene diameter."),
+                                        self._addFieldSliderControl(
+                                            label="Initial Search Radius",
+                                            field=True,
+                                            value=0.1,
+                                            sliderStep=1.0,
+                                            fieldStep=0.1,
+                                            precision=3,
+                                            columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                            minValue=0.01,
+                                            maxValue=0.5,
+                                            fieldMinValue=0.001,
+                                            fieldMaxValue=100.0,
+                                            annotation="Initial photon gathering radius in percent of scene diameter.",
                                             attrName="radianceEstimationInitialRadius")
 
                                         self._addFieldSliderControl(
@@ -1250,21 +1245,20 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
                                             annotation="Maximum number of photons used for radiance estimation.",
                                             attrName="radianceEstimationMaxPhotons")
 
-                                        self._addControl(
-                                            ui=pm.floatSliderGrp(
-                                                label="Alpha",
-                                                field=True,
-                                                value=0.7,
-                                                sliderStep=1.0,
-                                                fieldStep=0.05,
-                                                precision=3,
-                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
-                                                minValue=0.0,
-                                                maxValue=1.0,
-                                                fieldMinValue=0.0,
-                                                fieldMaxValue=1.0,
-                                                annotation="Evolution rate of photon gathering radius."),
+                                        self._addFieldSliderControl(
+                                            label="Alpha",
+                                            field=True,
+                                            value=0.7,
+                                            sliderStep=1.0,
+                                            fieldStep=0.05,
+                                            precision=3,
+                                            columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                            minValue=0.0,
+                                            maxValue=1.0,
+                                            fieldMinValue=0.0,
+                                            fieldMaxValue=1.0,
+                                            annotation="Evolution rate of photon gathering radius.",
                                             attrName="radianceEstimationAlpha")
 
                                         pm.separator(height=2)
@@ -1283,22 +1277,21 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         pm.separator(height=2)
 
-                                        self._addControl(
-                                            ui=pm.floatSliderGrp(
-                                                label="Maximum Ray Intensity",
-                                                field=True,
-                                                value=1.0,
-                                                sliderStep=1.0,
-                                                fieldStep=0.1,
-                                                precision=1,
-                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
-                                                minValue=0.0,
-                                                maxValue=2.0,
-                                                fieldMinValue=0.0,
-                                                fieldMaxValue=10000.0,
-                                                enable=enableMaxRayIntensitySPPM,
-                                                annotation="Maximum Ray Intensity valued allowed on secondary and subsequent rays."),
+                                        self._addFieldSliderControl(
+                                            label="Maximum Ray Intensity",
+                                            field=True,
+                                            value=1.0,
+                                            sliderStep=1.0,
+                                            fieldStep=0.1,
+                                            precision=1,
+                                            columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                            minValue=0.0,
+                                            maxValue=2.0,
+                                            fieldMinValue=0.0,
+                                            fieldMaxValue=10000.0,
+                                            enable=enableMaxRayIntensitySPPM,
+                                            annotation="Maximum Ray Intensity valued allowed on secondary and subsequent rays.",
                                             attrName="maxRayIntensitySPPM")
 
         pm.setUITemplate("renderGlobalsTemplate", popTemplate=True)
