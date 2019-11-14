@@ -350,9 +350,6 @@ class AppleseedRenderGlobalsTab(object):
         pm.connectControl(ui, attr, index=connectIndex)
 
     def _addFieldSliderControl(self, attrName, **kwargs):
-        for key in ('field', 'value', 'numberOfFields'):
-            kwargs.pop(key, "")
-
         attr = pm.Attribute("appleseedRenderGlobals." + attrName)
         self._uis[attrName] = pm.attrFieldSliderGrp(
             attribute=attr,
@@ -457,8 +454,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         self._addFieldSliderControl(
                             label="Render Passes",
-                            field=True,
-                            value=1,
                             columnWidth=(3, 160),
                             columnAttach=(1, "right", 4),
                             minValue=1,
@@ -483,8 +478,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         self._addFieldSliderControl(
                             label="Min Samples",
-                            field=True,
-                            value=16,
                             columnWidth=(3, 160),
                             columnAttach=(1, "right", 4),
                             minValue=0,
@@ -496,8 +489,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         self._addFieldSliderControl(
                             label="Max Samples",
-                            field=True,
-                            value=128,
                             columnWidth=(3, 160),
                             columnAttach=(1, "right", 4),
                             minValue=16,
@@ -508,8 +499,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         self._addFieldSliderControl(
                             label="Batch Sample Size",
-                            field=True,
-                            value=16,
                             columnWidth=(3, 160),
                             columnAttach=(1, "right", 4),
                             minValue=1,
@@ -521,8 +510,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         self._addFieldSliderControl(
                             label="Noise Threshold",
-                            field=True,
-                            value=0.1,
                             step=0.02,
                             precision=4,
                             columnWidth=(3, 160),
@@ -545,8 +532,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         self._addFieldSliderControl(
                             label="Pixel Filter Size",
-                            field=True,
-                            value=1.5,
                             sliderStep=0.5,
                             precision=1,
                             columnWidth=(3, 160),
@@ -559,8 +544,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         self._addFieldSliderControl(
                             label="Tile Size",
-                            field=True,
-                            value=64,
                             columnWidth=(3, 160),
                             columnAttach=(1, "right", 4),
                             minValue=8,
@@ -585,8 +568,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         self._addFieldSliderControl(
                             label="Sampling Pattern Seed",
-                            field=True,
-                            value=0,
                             columnWidth=(3, 160),
                             minValue=-65536,
                             fieldMinValue=-2147483648,
@@ -618,8 +599,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         self._addFieldSliderControl(
                             label="Camera Samples",
-                            field=True,
-                            value=2,
                             columnWidth=(3, 160),
                             columnAttach=(1, "right", 4),
                             minValue=2,
@@ -631,8 +610,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         self._addFieldSliderControl(
                             label="Transformation Samples",
-                            field=True,
-                            value=2,
                             columnWidth=(3, 160),
                             columnAttach=(1, "right", 4),
                             minValue=2,
@@ -644,8 +621,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         self._addFieldSliderControl(
                             label="Deformation Samples",
-                            field=True,
-                            value=2,
                             columnWidth=(3, 160),
                             columnAttach=(1, "right", 4),
                             minValue=2,
@@ -659,7 +634,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         self._addFieldSliderControl(
                             label="Shutter Open",
-                            field=True, value=-0.25,
                             sliderStep=0.05,
                             precision=2,
                             columnWidth=(3, 160),
@@ -673,8 +647,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         self._addFieldSliderControl(
                             label="Shutter Close",
-                            field=True,
-                            value=0.25,
                             sliderStep=0.05,
                             precision=2,
                             columnWidth=(3, 160),
@@ -696,8 +668,6 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         self._addFieldSliderControl(
                             label="Scene Scale",
-                            field=True,
-                            value=1.0,
                             sliderStep=0.1,
                             precision=2,
                             columnWidth=(3, 160),
@@ -878,8 +848,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                 self._addFieldSliderControl(
                                     label="Global Bounces",
-                                    field=True,
-                                    value=8,
                                     columnWidth=[(1, 115), (2, 40), (3, 200)],
                                     columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
                                     minValue=0,
@@ -890,8 +858,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                 self._addFieldSliderControl(
                                     label="Diffuse Bounces",
-                                    field=True,
-                                    value=8,
                                     columnWidth=[(1, 115), (2, 40), (3, 200)],
                                     columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
                                     rowAttach=[(1, "both", 4)],
@@ -904,8 +870,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                 self._addFieldSliderControl(
                                     label="Glossy Bounces",
-                                    field=True,
-                                    value=8,
                                     columnWidth=[(1, 115), (2, 40), (3, 200)],
                                     columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
                                     enable=limitBounces,
@@ -917,8 +881,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                 self._addFieldSliderControl(
                                     label="Specular Bounces",
-                                    field=True,
-                                    value=8,
                                     columnWidth=[(1, 115), (2, 40), (3, 200)],
                                     columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
                                     enable=limitBounces,
@@ -955,8 +917,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                 self._addFieldSliderControl(
                                     label="Light Samples",
-                                    field=True,
-                                    value=1.0,
                                     sliderStep=1.0,
                                     fieldStep=0.1,
                                     precision=1,
@@ -973,8 +933,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                 self._addFieldSliderControl(
                                     label="IBL Samples",
-                                    field=True,
-                                    value=1.0,
                                     sliderStep=1.0,
                                     fieldStep=0.1,
                                     precision=1,
@@ -990,8 +948,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                 self._addFieldSliderControl(
                                     label="Low Light Threshold",
-                                    field=True,
-                                    value=0.0,
                                     precision=6,
                                     columnWidth=[(1, 115), (2, 60), (3, 190)],
                                     columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
@@ -1030,7 +986,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                 self._addFieldSliderControl(
                                     label="Max Ray Intensity",
-                                    field=True,
                                     sliderStep=1.0,
                                     fieldStep=0.1,
                                     precision=1,
@@ -1109,8 +1064,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         self._addFieldSliderControl(
                                             label="Max Bounces",
-                                            field=True,
-                                            value=8,
                                             columnWidth=[(1, 125), (2, 40), (3, 100)],
                                             columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
                                             minValue=0,
@@ -1123,8 +1076,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         self._addFieldSliderControl(
                                             label="RR Starting Bounce",
-                                            field=True,
-                                            value=8,
                                             columnWidth=[(1, 125), (2, 40), (3, 100)],
                                             columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
                                             minValue=0,
@@ -1138,8 +1089,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         self._addFieldSliderControl(
                                             label="Light Photons",
-                                            field=True,
-                                            value=1000000,
                                             minValue=100000,
                                             maxValue=10000000,
                                             fieldMinValue=0,
@@ -1154,8 +1103,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         self._addFieldSliderControl(
                                             label="IBL Photons",
-                                            field=True,
-                                            value=1000000,
                                             minValue=100000,
                                             maxValue=10000000,
                                             fieldMinValue=0,
@@ -1189,8 +1136,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         self._addFieldSliderControl(
                                             label="Maximum Bounces",
-                                            field=True,
-                                            value=8,
                                             columnWidth=[(1, 125), (2, 40), (3, 100)],
                                             columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
                                             minValue=0,
@@ -1203,8 +1148,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         self._addFieldSliderControl(
                                             label="RR Starting Bounces",
-                                            field=True,
-                                            value=8,
                                             columnWidth=[(1, 125), (2, 40), (3, 100)],
                                             columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
                                             minValue=0,
@@ -1218,8 +1161,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         self._addFieldSliderControl(
                                             label="Initial Search Radius",
-                                            field=True,
-                                            value=0.1,
                                             sliderStep=1.0,
                                             fieldStep=0.1,
                                             precision=3,
@@ -1234,8 +1175,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         self._addFieldSliderControl(
                                             label="Maximum Photons",
-                                            field=True,
-                                            value=100,
                                             columnWidth=[(1, 125), (2, 60), (3, 100)],
                                             columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
                                             minValue=8,
@@ -1247,8 +1186,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         self._addFieldSliderControl(
                                             label="Alpha",
-                                            field=True,
-                                            value=0.7,
                                             sliderStep=1.0,
                                             fieldStep=0.05,
                                             precision=3,
@@ -1279,8 +1216,6 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         self._addFieldSliderControl(
                                             label="Maximum Ray Intensity",
-                                            field=True,
-                                            value=1.0,
                                             sliderStep=1.0,
                                             fieldStep=0.1,
                                             precision=1,
