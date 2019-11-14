@@ -240,6 +240,17 @@ def addRenderGlobalsScriptJobs():
         ]
     )
 
+    # For opening new scene with default renderer appleseed
+    mc.scriptJob(
+        event=[
+            'NewSceneOpened',
+            lambda: mc.evalDeferred(python_script, lowestPriority=True),
+        ]
+    )
+
+    # For maya startup empty scene default renderer appleseed
+    mc.evalDeferred(python_script, lowestPriority=True)
+
 
 def removeRenderGlobalsScriptJobs():
     global g_nodeAddedCallbackID
@@ -293,6 +304,15 @@ def currentRendererChanged():
             mc.workspaceControl("unifiedRenderGlobalsWindow", edit=True, visible=False)
         else:
             mc.window("unifiedRenderGlobalsWindow", edit=True, visible=False)
+
+    # This can happen if currentRendererChanged is called too soon during startup
+    # and unifiedRenderGlobalsWindow isn't complete or delayed for some reason.
+    # Known to happen if default renderer is appleseed and the scene is opened as
+    # a commandline arg. In that case the NewSceneOpened scriptjob will be call
+    # the currentRendererChanged function again later.
+    if not mc.optionMenuGrp('imageMenuMayaSW', q=True, ex=True):
+        logger.warn("imageMenuMayaSW does not exists yet")
+        return
 
     # "Customize" the image formats menu.
     mc.setParent("unifiedRenderGlobalsWindow")
