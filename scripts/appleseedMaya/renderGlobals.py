@@ -519,20 +519,19 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                             enable=adaptiveSampling,
                             attrName="batchSampleSize")
 
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Noise Threshold",
-                                field=True,
-                                value=0.1,
-                                step=0.02,
-                                precision=4,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=0.0001,
-                                fieldMinValue=0.0,
-                                maxValue=2.0,
-                                fieldMaxValue=25.0,
-                                enable=adaptiveSampling),
+                        self._addFieldSliderControl(
+                            label="Noise Threshold",
+                            field=True,
+                            value=0.1,
+                            step=0.02,
+                            precision=4,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=0.0001,
+                            fieldMinValue=0.0,
+                            maxValue=2.0,
+                            fieldMaxValue=25.0,
+                            enable=adaptiveSampling,
                             attrName="sampleNoiseThreshold")
 
                         pm.separator(height=2)
@@ -544,19 +543,18 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                                 enumeratedItem=self._getAttributeMenuItems("pixelFilter")),
                             attrName="pixelFilter")
 
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Pixel Filter Size",
-                                field=True,
-                                value=1.5,
-                                sliderStep=0.5,
-                                precision=1,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=0.5,
-                                fieldMinValue=0.5,
-                                maxValue=4.0,
-                                fieldMaxValue=20.0),
+                        self._addFieldSliderControl(
+                            label="Pixel Filter Size",
+                            field=True,
+                            value=1.5,
+                            sliderStep=0.5,
+                            precision=1,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=0.5,
+                            fieldMinValue=0.5,
+                            maxValue=4.0,
+                            fieldMaxValue=20.0,
                             attrName="pixelFilterSize")
 
                         self._addFieldSliderControl(
@@ -659,35 +657,33 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         pm.separator(height=2)
 
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Shutter Open",
-                                field=True, value=-0.25,
-                                sliderStep=0.05,
-                                precision=2,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=-1.0,
-                                fieldMinValue=-1.0,
-                                maxValue=0.0,
-                                fieldMaxValue=0.0,
-                                enable=enableMotionBlur),
+                        self._addFieldSliderControl(
+                            label="Shutter Open",
+                            field=True, value=-0.25,
+                            sliderStep=0.05,
+                            precision=2,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=-1.0,
+                            fieldMinValue=-1.0,
+                            maxValue=0.0,
+                            fieldMaxValue=0.0,
+                            enable=enableMotionBlur,
                             attrName="shutterOpen")
 
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Shutter Close",
-                                field=True,
-                                value=0.25,
-                                sliderStep=0.05,
-                                precision=2,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=0.0,
-                                fieldMinValue=0.0,
-                                maxValue=1.0,
-                                fieldMaxValue=1.0,
-                                enable=enableMotionBlur),
+                        self._addFieldSliderControl(
+                            label="Shutter Close",
+                            field=True,
+                            value=0.25,
+                            sliderStep=0.05,
+                            precision=2,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=0.0,
+                            fieldMinValue=0.0,
+                            maxValue=1.0,
+                            fieldMaxValue=1.0,
+                            enable=enableMotionBlur,
                             attrName="shutterClose")
 
                         pm.separator(height=2)
@@ -698,19 +694,18 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         pm.separator(height=2)
 
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Scene Scale",
-                                field=True,
-                                value=1.0,
-                                sliderStep=0.1,
-                                precision=2,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=0.01,
-                                fieldMinValue=1.0e-6,
-                                maxValue=100,
-                                fieldMaxValue=1.0e+6),
+                        self._addFieldSliderControl(
+                            label="Scene Scale",
+                            field=True,
+                            value=1.0,
+                            sliderStep=0.1,
+                            precision=2,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=0.01,
+                            fieldMinValue=1.0e-6,
+                            maxValue=100,
+                            fieldMaxValue=1.0e+6,
                             attrName="sceneScale")
 
                         pm.separator(height=2)
