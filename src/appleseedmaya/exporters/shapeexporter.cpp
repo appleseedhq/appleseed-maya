@@ -162,6 +162,10 @@ void ShapeExporter::createObjectInstance(const MString& objectName)
         bool isPhotonTarget = false;
         if (AttributeUtils::get(node(), "asIsPhotonTarget", isPhotonTarget))
             params.insert("photon_target", isPhotonTarget);
+
+        float shadowTerminatorCorrection = 0.0f;
+        if (AttributeUtils::get(node(), "asShadowTerminatorCorrection", shadowTerminatorCorrection))
+            params.insert("shadow_terminator_correction", shadowTerminatorCorrection);
     }
 
     m_objectInstance.reset(

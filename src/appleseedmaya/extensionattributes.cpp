@@ -176,6 +176,21 @@ namespace
         AttributeUtils::makeInput(numAttrFn);
         modifier.addExtensionAttribute(nodeClass, attr);
 
+        attr = createNumericAttribute<float>(
+            numAttrFn,
+            "asShadowTerminatorCorrection",
+            "asShadowTerminatorCorrection",
+            MFnNumericData::kFloat,
+            0.0f,
+            status);
+        numAttrFn.setSoftMin(0.0f);
+        numAttrFn.setSoftMax(0.5f);
+        numAttrFn.setMin(0.0f);
+        numAttrFn.setMax(0.5f);
+        numAttrFn.setKeyable(true);
+        AttributeUtils::makeInput(numAttrFn);
+        modifier.addExtensionAttribute(nodeClass, attr);
+
         MFnTypedAttribute typedAttrFn;
         attr = typedAttrFn.create("asSubsurfaceSet", "asSubsurfaceSet", MFnData::kString);
         AttributeUtils::makeInput(typedAttrFn);
@@ -208,32 +223,6 @@ namespace
             MFnNumericData::kBoolean,
             false,
             status);
-        AttributeUtils::makeInput(numAttrFn);
-        modifier.addExtensionAttribute(nodeClass, attr);
-
-        MFnEnumAttribute enumAttrFn;
-        attr = enumAttrFn.create(
-            "asRayBiasMethod",
-            "asRayBiasMethod",
-            0);
-        enumAttrFn.addField("None", 0);
-        enumAttrFn.addField("Normal", 1);
-        enumAttrFn.addField("Incoming Direction", 2);
-        enumAttrFn.addField("Outgoing Direction", 3);
-        enumAttrFn.setKeyable(false);
-        AttributeUtils::makeInput(enumAttrFn);
-        modifier.addExtensionAttribute(nodeClass, attr);
-
-        attr = createNumericAttribute<double>(
-            numAttrFn,
-            "asRayBiasDistance",
-            "asRayBiasDistance",
-            MFnNumericData::kDouble,
-            0.0,
-            status);
-        numAttrFn.setSoftMin(0.0);
-        numAttrFn.setSoftMax(1.0);
-        numAttrFn.setKeyable(true);
         AttributeUtils::makeInput(numAttrFn);
         modifier.addExtensionAttribute(nodeClass, attr);
 
