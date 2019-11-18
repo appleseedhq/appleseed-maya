@@ -435,32 +435,9 @@ MurmurHash MeshExporter::hash() const
     return m_hash;
 }
 
+// Insert mesh object params here.
 void MeshExporter::meshAttributesToParams(renderer::ParamArray& params)
 {
-    int mediumPriority = 0;
-    if (AttributeUtils::get(node(), "asMediumPriority", mediumPriority))
-        params.insert("medium_priority", mediumPriority);
-
-    bool isPhotonTarget = false;
-    if (AttributeUtils::get(node(), "asIsPhotonTarget", isPhotonTarget))
-        params.insert("photon_target", isPhotonTarget);
-
-    short rayBiasMethodIndex = 0; // MFnEnumAttr index is short
-
-#if 0
-    // Ray bias isn't fully working, hide it for now.
-    if (AttributeUtils::get(node(), "asRayBiasMethod", rayBiasMethodIndex))
-    {
-        const std::array<std::string, 4> biasMethods = {
-            "none", "normal", "incoming_direction", "outgoing_direction"
-        };
-        params.insert("ray_bias_method", biasMethods.at(static_cast<size_t>(rayBiasMethodIndex)));
-    }
-
-    double rayBiasDistance = 0.0;
-    if (AttributeUtils::get(node(), "asRayBiasDistance", rayBiasDistance))
-        params.insert("ray_bias_distance", rayBiasDistance);
-#endif
 }
 
 int MeshExporter::getSmoothLevel(MStatus* ReturnStatus) const
