@@ -240,7 +240,7 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_minPixelSamples, "minPixelSamples")
 
     // Max pixel samples.
-    m_maxPixelSamples = numAttrFn.create("samples", "samples", MFnNumericData::kInt, 128, &status);
+    m_maxPixelSamples = numAttrFn.create("samples", "samples", MFnNumericData::kInt, 32, &status);
     numAttrFn.setMin(0);
     numAttrFn.setSoftMax(1024);
     CHECKED_ADD_ATTRIBUTE(m_maxPixelSamples, "samples")
