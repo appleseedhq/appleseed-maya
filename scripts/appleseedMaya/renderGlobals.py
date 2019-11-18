@@ -230,12 +230,28 @@ def addRenderGlobalsScriptJobs():
     g_nodeRemovedCallbackID = om.MDGMessage.addNodeRemovedCallback(
         __nodeRemoved)
 
+    # This is evalDeferred so it doesn't get
+    # called before createMayaSoftwareCommonGlobalsTab
+    python_script = "import appleseedMaya.renderGlobals; appleseedMaya.renderGlobals.currentRendererChanged()"
     mc.scriptJob(
         attributeChange=[
             "defaultRenderGlobals.currentRenderer",
-            "import appleseedMaya.renderGlobals; appleseedMaya.renderGlobals.currentRendererChanged()"
+             lambda: mc.evalDeferred(python_script, lowestPriority=True),
         ]
     )
+
+    # For fixing the render globals common tab when opening new scene
+    # and the default renderer is appleseed
+    mc.scriptJob(
+        event=[
+            'NewSceneOpened',
+            lambda: mc.evalDeferred(python_script, lowestPriority=True),
+        ]
+    )
+
+    # For fixing the render globals common tab on initial startup of maya
+    # when the default renderer is appleseed
+    mc.evalDeferred(python_script, lowestPriority=True)
 
 
 def removeRenderGlobalsScriptJobs():
@@ -263,9 +279,11 @@ def imageFormatChanged():
     if newFormat == 0:  # EXR
         mc.setAttr("defaultRenderGlobals.imageFormat", 51)
         mc.setAttr("defaultRenderGlobals.imfkey", "exr", type="string")
+        mc.optionMenuGrp("imageMenuMayaSW", edit=True, select=newFormat + 1)
     elif newFormat == 1:  # PNG
         mc.setAttr("defaultRenderGlobals.imageFormat", 32)
         mc.setAttr("defaultRenderGlobals.imfkey", "png", type="string")
+        mc.optionMenuGrp("imageMenuMayaSW", edit=True, select=newFormat + 1)
     else:
         raise RuntimeError("Unknown render global image file format")
 
@@ -284,7 +302,19 @@ def currentRendererChanged():
     # If the render globals window does not exist, create it.
     if not mc.window("unifiedRenderGlobalsWindow", exists=True):
         mel.eval("unifiedRenderGlobalsWindow")
-        mc.window("unifiedRenderGlobalsWindow", edit=True, visible=False)
+        if pm.versions.current() >= 2017000:
+            mc.workspaceControl("unifiedRenderGlobalsWindow", edit=True, visible=False)
+        else:
+            mc.window("unifiedRenderGlobalsWindow", edit=True, visible=False)
+
+    # This can happen if currentRendererChanged is called too soon during startup
+    # and unifiedRenderGlobalsWindow isn't complete or delayed for some reason.
+    # Known to happen if default renderer is appleseed and the scene is opened as
+    # a commandline argument. In that case the NewSceneOpened scriptjob will call the
+    # currentRendererChanged function again later.
+    if not mc.optionMenuGrp('imageMenuMayaSW', q=True, ex=True):
+        logger.warn("imageMenuMayaSW does not exists yet")
+        return
 
     # "Customize" the image formats menu.
     mc.setParent("unifiedRenderGlobalsWindow")
@@ -340,6 +370,12 @@ class AppleseedRenderGlobalsTab(object):
         self._uis[attrName] = ui
         attr = pm.Attribute("appleseedRenderGlobals." + attrName)
         pm.connectControl(ui, attr, index=connectIndex)
+
+    def _addFieldSliderControl(self, attrName, **kwargs):
+        attr = pm.Attribute("appleseedRenderGlobals." + attrName)
+        self._uis[attrName] = pm.attrFieldSliderGrp(
+            attribute=attr,
+            **kwargs)
 
     def _getAttributeMenuItems(self, attrName):
         attr = pm.Attribute("appleseedRenderGlobals." + attrName)
@@ -438,17 +474,14 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         pm.separator(height=2)
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Render Passes",
-                                field=True,
-                                value=1,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=1,
-                                fieldMinValue=1,
-                                maxValue=100,
-                                fieldMaxValue=1000000),
+                        self._addFieldSliderControl(
+                            label="Render Passes",
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=1,
+                            fieldMinValue=1,
+                            maxValue=100,
+                            fieldMaxValue=1000000,
                             attrName="passes")
 
                         pm.separator(height=2)
@@ -465,61 +498,49 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         adaptiveSampling = mc.getAttr("appleseedRenderGlobals.adaptiveSampling")
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Min Samples",
-                                field=True,
-                                value=16,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=0,
-                                fieldMinValue=0,
-                                maxValue=256,
-                                fieldMaxValue=1000000,
-                                enable=adaptiveSampling),
+                        self._addFieldSliderControl(
+                            label="Min Samples",
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=0,
+                            fieldMinValue=0,
+                            maxValue=256,
+                            fieldMaxValue=1000000,
+                            enable=adaptiveSampling,
                             attrName="minPixelSamples")
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Max Samples",
-                                field=True,
-                                value=128,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=16,
-                                fieldMinValue=0,
-                                maxValue=1024,
-                                fieldMaxValue=1000000),
+                        self._addFieldSliderControl(
+                            label="Max Samples",
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=16,
+                            fieldMinValue=0,
+                            maxValue=1024,
+                            fieldMaxValue=1000000,
                             attrName="samples")
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Batch Sample Size",
-                                field=True,
-                                value=16,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=1,
-                                fieldMinValue=1,
-                                maxValue=128,
-                                fieldMaxValue=1000000,
-                                enable=adaptiveSampling),
+                        self._addFieldSliderControl(
+                            label="Batch Sample Size",
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=1,
+                            fieldMinValue=1,
+                            maxValue=128,
+                            fieldMaxValue=1000000,
+                            enable=adaptiveSampling,
                             attrName="batchSampleSize")
 
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Noise Threshold",
-                                field=True,
-                                value=0.1,
-                                step=0.02,
-                                precision=4,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=0.0001,
-                                fieldMinValue=0.0,
-                                maxValue=2.0,
-                                fieldMaxValue=25.0,
-                                enable=adaptiveSampling),
+                        self._addFieldSliderControl(
+                            label="Noise Threshold",
+                            step=0.02,
+                            precision=4,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=0.0001,
+                            fieldMinValue=0.0,
+                            maxValue=2.0,
+                            fieldMaxValue=25.0,
+                            enable=adaptiveSampling,
                             attrName="sampleNoiseThreshold")
 
                         pm.separator(height=2)
@@ -531,32 +552,26 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                                 enumeratedItem=self._getAttributeMenuItems("pixelFilter")),
                             attrName="pixelFilter")
 
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Pixel Filter Size",
-                                field=True,
-                                value=1.5,
-                                sliderStep=0.5,
-                                precision=1,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=0.5,
-                                fieldMinValue=0.5,
-                                maxValue=4.0,
-                                fieldMaxValue=20.0),
+                        self._addFieldSliderControl(
+                            label="Pixel Filter Size",
+                            sliderStep=0.5,
+                            precision=1,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=0.5,
+                            fieldMinValue=0.5,
+                            maxValue=4.0,
+                            fieldMaxValue=20.0,
                             attrName="pixelFilterSize")
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Tile Size",
-                                field=True,
-                                value=64,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=8,
-                                fieldMinValue=1,
-                                maxValue=1024,
-                                fieldMaxValue=65536),
+                        self._addFieldSliderControl(
+                            label="Tile Size",
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=8,
+                            fieldMinValue=1,
+                            maxValue=1024,
+                            fieldMaxValue=65536,
                             attrName="tileSize")
 
                         pm.separator(height=2)
@@ -573,17 +588,14 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         pm.separator(height=2)
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Sampling Pattern Seed",
-                                field=True,
-                                value=0,
-                                columnWidth=(3, 160),
-                                minValue=-65536,
-                                fieldMinValue=-2147483648,
-                                maxValue=65535,
-                                enable=lockSamplingPattern,
-                                fieldMaxValue=2147483647),
+                        self._addFieldSliderControl(
+                            label="Sampling Pattern Seed",
+                            columnWidth=(3, 160),
+                            minValue=-65536,
+                            fieldMinValue=-2147483648,
+                            maxValue=65535,
+                            enable=lockSamplingPattern,
+                            fieldMaxValue=2147483647,
                             attrName="noiseSeed")
 
                         pm.separator(height=2)
@@ -607,79 +619,65 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                         enableMotionBlur = mc.getAttr(
                             "appleseedRenderGlobals.motionBlur")
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Camera Samples",
-                                field=True,
-                                value=2,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=2,
-                                fieldMinValue=2,
-                                maxValue=30,
-                                fieldMaxValue=1000,
-                                enable=enableMotionBlur),
+                        self._addFieldSliderControl(
+                            label="Camera Samples",
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=2,
+                            fieldMinValue=2,
+                            maxValue=30,
+                            fieldMaxValue=1000,
+                            enable=enableMotionBlur,
                             attrName="mbCameraSamples")
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Transformation Samples",
-                                field=True,
-                                value=2,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=2,
-                                fieldMinValue=2,
-                                maxValue=30,
-                                fieldMaxValue=1000,
-                                enable=enableMotionBlur),
+                        self._addFieldSliderControl(
+                            label="Transformation Samples",
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=2,
+                            fieldMinValue=2,
+                            maxValue=30,
+                            fieldMaxValue=1000,
+                            enable=enableMotionBlur,
                             attrName="mbTransformSamples")
 
-                        self._addControl(
-                            ui=pm.intSliderGrp(
-                                label="Deformation Samples",
-                                field=True,
-                                value=2,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=2,
-                                fieldMinValue=2,
-                                maxValue=30,
-                                fieldMaxValue=1000,
-                                enable=enableMotionBlur),
+                        self._addFieldSliderControl(
+                            label="Deformation Samples",
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=2,
+                            fieldMinValue=2,
+                            maxValue=30,
+                            fieldMaxValue=1000,
+                            enable=enableMotionBlur,
                             attrName="mbDeformSamples")
 
                         pm.separator(height=2)
 
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Shutter Open",
-                                field=True, value=-0.25,
-                                sliderStep=0.05,
-                                precision=2,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=-1.0,
-                                fieldMinValue=-1.0,
-                                maxValue=0.0,
-                                fieldMaxValue=0.0,
-                                enable=enableMotionBlur),
+                        self._addFieldSliderControl(
+                            label="Shutter Open",
+                            sliderStep=0.05,
+                            precision=2,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=-1.0,
+                            fieldMinValue=-1.0,
+                            maxValue=0.0,
+                            fieldMaxValue=0.0,
+                            enable=enableMotionBlur,
                             attrName="shutterOpen")
 
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Shutter Close",
-                                field=True,
-                                value=0.25,
-                                sliderStep=0.05,
-                                precision=2,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=0.0,
-                                fieldMinValue=0.0,
-                                maxValue=1.0,
-                                fieldMaxValue=1.0,
-                                enable=enableMotionBlur),
+                        self._addFieldSliderControl(
+                            label="Shutter Close",
+                            sliderStep=0.05,
+                            precision=2,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=0.0,
+                            fieldMinValue=0.0,
+                            maxValue=1.0,
+                            fieldMaxValue=1.0,
+                            enable=enableMotionBlur,
                             attrName="shutterClose")
 
                         pm.separator(height=2)
@@ -690,19 +688,16 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
 
                         pm.separator(height=2)
 
-                        self._addControl(
-                            ui=pm.floatSliderGrp(
-                                label="Scene Scale",
-                                field=True,
-                                value=1.0,
-                                sliderStep=0.1,
-                                precision=2,
-                                columnWidth=(3, 160),
-                                columnAttach=(1, "right", 4),
-                                minValue=0.01,
-                                fieldMinValue=1.0e-6,
-                                maxValue=100,
-                                fieldMaxValue=1.0e+6),
+                        self._addFieldSliderControl(
+                            label="Scene Scale",
+                            sliderStep=0.1,
+                            precision=2,
+                            columnWidth=(3, 160),
+                            columnAttach=(1, "right", 4),
+                            minValue=0.01,
+                            fieldMinValue=1.0e-6,
+                            maxValue=100,
+                            fieldMaxValue=1.0e+6,
                             attrName="sceneScale")
 
                         pm.separator(height=2)
@@ -873,60 +868,48 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
                                 enableDirectLighting = mc.getAttr(
                                     "appleseedRenderGlobals.enableDirectLighting")
 
-                                self._addControl(
-                                    ui=pm.intSliderGrp(
-                                        label="Global Bounces",
-                                        field=True,
-                                        value=8,
-                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                        minValue=0,
-                                        maxValue=30,
-                                        fieldMinValue=0,
-                                        fieldMaxValue=100),
+                                self._addFieldSliderControl(
+                                    label="Global Bounces",
+                                    columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                    minValue=0,
+                                    maxValue=30,
+                                    fieldMinValue=0,
+                                    fieldMaxValue=100,
                                     attrName="bounces")
 
-                                self._addControl(
-                                    ui=pm.intSliderGrp(
-                                        label="Diffuse Bounces",
-                                        field=True,
-                                        value=8,
-                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                        rowAttach=[(1, "both", 4)],
-                                        enable=limitBounces,
-                                        minValue=0,
-                                        maxValue=30,
-                                        fieldMinValue=0,
-                                        fieldMaxValue=100),
+                                self._addFieldSliderControl(
+                                    label="Diffuse Bounces",
+                                    columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                    rowAttach=[(1, "both", 4)],
+                                    enable=limitBounces,
+                                    minValue=0,
+                                    maxValue=30,
+                                    fieldMinValue=0,
+                                    fieldMaxValue=100,
                                     attrName="diffuseBounces")
 
-                                self._addControl(
-                                    ui=pm.intSliderGrp(
-                                        label="Glossy Bounces",
-                                        field=True,
-                                        value=8,
-                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                        enable=limitBounces,
-                                        minValue=0,
-                                        maxValue=30,
-                                        fieldMinValue=0,
-                                        fieldMaxValue=100),
+                                self._addFieldSliderControl(
+                                    label="Glossy Bounces",
+                                    columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                    enable=limitBounces,
+                                    minValue=0,
+                                    maxValue=30,
+                                    fieldMinValue=0,
+                                    fieldMaxValue=100,
                                     attrName="glossyBounces")
 
-                                self._addControl(
-                                    ui=pm.intSliderGrp(
-                                        label="Specular Bounces",
-                                        field=True,
-                                        value=8,
-                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                        enable=limitBounces,
-                                        minValue=0,
-                                        maxValue=30,
-                                        fieldMinValue=0,
-                                        fieldMaxValue=100),
+                                self._addFieldSliderControl(
+                                    label="Specular Bounces",
+                                    columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                    enable=limitBounces,
+                                    minValue=0,
+                                    maxValue=30,
+                                    fieldMinValue=0,
+                                    fieldMaxValue=100,
                                     attrName="specularBounces")
 
                                 pm.separator(height=2)
@@ -954,56 +937,47 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                 pm.separator(height=2)
 
-                                self._addControl(
-                                    ui=pm.floatSliderGrp(
-                                        label="Light Samples",
-                                        field=True,
-                                        value=1.0,
-                                        sliderStep=1.0,
-                                        fieldStep=0.1,
-                                        precision=1,
-                                        columnWidth=[(1, 115), (2, 40), (3, 200)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
-                                        rowAttach=[(1, "both", 4)],
-                                        enable=enableDirectLighting,
-                                        minValue=0.0,
-                                        maxValue=20.0,
-                                        fieldMinValue=0.0,
-                                        fieldMaxValue=1000000.0,
-                                        annotation="Number of light samples used to estimate direct lighting."),
+                                self._addFieldSliderControl(
+                                    label="Light Samples",
+                                    sliderStep=1.0,
+                                    fieldStep=0.1,
+                                    precision=1,
+                                    columnWidth=[(1, 115), (2, 40), (3, 200)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                    rowAttach=[(1, "both", 4)],
+                                    enable=enableDirectLighting,
+                                    minValue=0.0,
+                                    maxValue=20.0,
+                                    fieldMinValue=0.0,
+                                    fieldMaxValue=1000000.0,
+                                    annotation="Number of light samples used to estimate direct lighting.",
                                     attrName="lightSamples")
 
-                                self._addControl(
-                                    ui=pm.floatSliderGrp(
-                                        label="IBL Samples",
-                                        field=True,
-                                        value=1.0,
-                                        sliderStep=1.0,
-                                        fieldStep=0.1,
-                                        precision=1,
-                                        columnWidth=[(1, 115), (2, 40), (3, 240)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
-                                        enable=enableIBL,
-                                        minValue=0.0,
-                                        maxValue=20.0,
-                                        fieldMinValue=0.0,
-                                        fieldMaxValue=1000000.0,
-                                        annotation="Number of samples used to estimate environment or image-based lighting."),
+                                self._addFieldSliderControl(
+                                    label="IBL Samples",
+                                    sliderStep=1.0,
+                                    fieldStep=0.1,
+                                    precision=1,
+                                    columnWidth=[(1, 115), (2, 40), (3, 240)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                    enable=enableIBL,
+                                    minValue=0.0,
+                                    maxValue=20.0,
+                                    fieldMinValue=0.0,
+                                    fieldMaxValue=1000000.0,
+                                    annotation="Number of samples used to estimate environment or image-based lighting.",
                                     attrName="envSamples")
 
-                                self._addControl(
-                                    ui=pm.floatSliderGrp(
-                                        label="Low Light Threshold",
-                                        field=True,
-                                        value=0.0,
-                                        precision=6,
-                                        columnWidth=[(1, 115), (2, 60), (3, 190)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
-                                        minValue=0.0,
-                                        maxValue=1.0,
-                                        fieldMinValue=0.0,
-                                        fieldMaxValue=1000.0,
-                                        annotation="Threshold at which shadow rays are terminated."),
+                                self._addFieldSliderControl(
+                                    label="Low Light Threshold",
+                                    precision=6,
+                                    columnWidth=[(1, 115), (2, 60), (3, 190)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                    minValue=0.0,
+                                    maxValue=1.0,
+                                    fieldMinValue=0.0,
+                                    fieldMaxValue=1000.0,
+                                    annotation="Threshold at which shadow rays are terminated.",
                                     attrName="lowLightThreshold")
 
                                 pm.separator(height=2)
@@ -1032,21 +1006,19 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                 pm.separator(height=2)
 
-                                self._addControl(
-                                    ui=pm.floatSliderGrp(
-                                        label="Max Ray Intensity",
-                                        field=True,
-                                        sliderStep=1.0,
-                                        fieldStep=0.1,
-                                        precision=1,
-                                        columnWidth=[(1, 100), (2, 40), (3, 200)],
-                                        columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
-                                        minValue=0.0,
-                                        maxValue=2.0,
-                                        fieldMinValue=0.0,
-                                        fieldMaxValue=10000.0,
-                                        annotation="Maximum ray intensity allowed on secondary and subsequent rays.",
-                                        enable=enableMaxRayIntensity),
+                                self._addFieldSliderControl(
+                                    label="Max Ray Intensity",
+                                    sliderStep=1.0,
+                                    fieldStep=0.1,
+                                    precision=1,
+                                    columnWidth=[(1, 100), (2, 40), (3, 200)],
+                                    columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                    minValue=0.0,
+                                    maxValue=2.0,
+                                    fieldMinValue=0.0,
+                                    fieldMaxValue=10000.0,
+                                    annotation="Maximum ray intensity allowed on secondary and subsequent rays.",
+                                    enable=enableMaxRayIntensity,
                                     attrName="maxRayIntensity")
 
                                 pm.separator(height=2)
@@ -1112,67 +1084,55 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         pm.separator(height=2)
 
-                                        self._addControl(
-                                            ui=pm.intSliderGrp(
-                                                label="Max Bounces",
-                                                field=True,
-                                                value=8,
-                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                                minValue=0,
-                                                maxValue=30,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=100,
-                                                annotation="Maximum number of photon bounces.",
-                                                enable=limitPhotonTracingBounces),
+                                        self._addFieldSliderControl(
+                                            label="Max Bounces",
+                                            columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                            minValue=0,
+                                            maxValue=30,
+                                            fieldMinValue=0,
+                                            fieldMaxValue=100,
+                                            annotation="Maximum number of photon bounces.",
+                                            enable=limitPhotonTracingBounces,
                                             attrName="photonTracingBounces")
 
-                                        self._addControl(
-                                            ui=pm.intSliderGrp(
-                                                label="RR Starting Bounce",
-                                                field=True,
-                                                value=8,
-                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                                minValue=0,
-                                                maxValue=30,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=100,
-                                                annotation="Discard low contribution paths starting with this bounce."),
+                                        self._addFieldSliderControl(
+                                            label="RR Starting Bounce",
+                                            columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                            minValue=0,
+                                            maxValue=30,
+                                            fieldMinValue=0,
+                                            fieldMaxValue=100,
+                                            annotation="Discard low contribution paths starting with this bounce.",
                                             attrName="photonTracingRRMinPathLength")
 
                                         pm.separator(height=2)
 
-                                        self._addControl(
-                                            ui=pm.intSliderGrp(
-                                                label="Light Photons",
-                                                field=True,
-                                                value=1000000,
-                                                minValue=100000,
-                                                maxValue=10000000,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=100000000,
-                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                                annotation="Number of light photons per render pass."),
+                                        self._addFieldSliderControl(
+                                            label="Light Photons",
+                                            minValue=100000,
+                                            maxValue=10000000,
+                                            fieldMinValue=0,
+                                            fieldMaxValue=100000000,
+                                            columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                            annotation="Number of light photons per render pass.",
                                             attrName="photonTracingLightPhotons")
 
                                         SPPMEnableIBL = mc.getAttr(
                                             "appleseedRenderGlobals.SPPMEnableIBL")
 
-                                        self._addControl(
-                                            ui=pm.intSliderGrp(
-                                                label="IBL Photons",
-                                                field=True,
-                                                value=1000000,
-                                                minValue=100000,
-                                                maxValue=10000000,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=100000000,
-                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                                enable=SPPMEnableIBL,
-                                                annotation="Number of environment photons per render pass."),
+                                        self._addFieldSliderControl(
+                                            label="IBL Photons",
+                                            minValue=100000,
+                                            maxValue=10000000,
+                                            fieldMinValue=0,
+                                            fieldMaxValue=100000000,
+                                            columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                            enable=SPPMEnableIBL,
+                                            annotation="Number of environment photons per render pass.",
                                             attrName="photonTracingEnvPhotons")
 
                                 with pm.frameLayout("sppmRadianceEstimationFrameLayout", font="smallBoldLabelFont",
@@ -1196,83 +1156,68 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         pm.separator(height=2)
 
-                                        self._addControl(
-                                            ui=pm.intSliderGrp(
-                                                label="Maximum Bounces",
-                                                field=True,
-                                                value=8,
-                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                                minValue=0,
-                                                maxValue=30,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=100,
-                                                enable=limitRadianceEstimationBounces,
-                                                annotation="Maximum number of radiance estimation path bounces."),
+                                        self._addFieldSliderControl(
+                                            label="Maximum Bounces",
+                                            columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                            minValue=0,
+                                            maxValue=30,
+                                            fieldMinValue=0,
+                                            fieldMaxValue=100,
+                                            enable=limitRadianceEstimationBounces,
+                                            annotation="Maximum number of radiance estimation path bounces.",
                                             attrName="radianceEstimationBounces")
 
-                                        self._addControl(
-                                            ui=pm.intSliderGrp(
-                                                label="RR Starting Bounces",
-                                                field=True,
-                                                value=8,
-                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                                minValue=0,
-                                                maxValue=30,
-                                                fieldMinValue=0,
-                                                fieldMaxValue=100,
-                                                annotation="Discard low contribution paths starting with this bounce."),
+                                        self._addFieldSliderControl(
+                                            label="RR Starting Bounces",
+                                            columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                            minValue=0,
+                                            maxValue=30,
+                                            fieldMinValue=0,
+                                            fieldMaxValue=100,
+                                            annotation="Discard low contribution paths starting with this bounce.",
                                             attrName="radianceEstimationRRMinPathLength")
 
                                         pm.separator(height=2)
 
-                                        self._addControl(
-                                            ui=pm.floatSliderGrp(
-                                                label="Initial Search Radius",
-                                                field=True,
-                                                value=0.1,
-                                                sliderStep=1.0,
-                                                fieldStep=0.1,
-                                                precision=3,
-                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
-                                                minValue=0.01,
-                                                maxValue=0.5,
-                                                fieldMinValue=0.001,
-                                                fieldMaxValue=100.0,
-                                                annotation="Initial photon gathering radius in percent of scene diameter."),
+                                        self._addFieldSliderControl(
+                                            label="Initial Search Radius",
+                                            sliderStep=1.0,
+                                            fieldStep=0.1,
+                                            precision=3,
+                                            columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                            minValue=0.01,
+                                            maxValue=0.5,
+                                            fieldMinValue=0.001,
+                                            fieldMaxValue=100.0,
+                                            annotation="Initial photon gathering radius in percent of scene diameter.",
                                             attrName="radianceEstimationInitialRadius")
 
-                                        self._addControl(
-                                            ui=pm.intSliderGrp(
-                                                label="Maximum Photons",
-                                                field=True,
-                                                value=100,
-                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
-                                                minValue=8,
-                                                maxValue=500,
-                                                fieldMinValue=8,
-                                                fieldMaxValue=1000000000,
-                                                annotation="Maximum number of photons used for radiance estimation."),
+                                        self._addFieldSliderControl(
+                                            label="Maximum Photons",
+                                            columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 8)],
+                                            minValue=8,
+                                            maxValue=500,
+                                            fieldMinValue=8,
+                                            fieldMaxValue=1000000000,
+                                            annotation="Maximum number of photons used for radiance estimation.",
                                             attrName="radianceEstimationMaxPhotons")
 
-                                        self._addControl(
-                                            ui=pm.floatSliderGrp(
-                                                label="Alpha",
-                                                field=True,
-                                                value=0.7,
-                                                sliderStep=1.0,
-                                                fieldStep=0.05,
-                                                precision=3,
-                                                columnWidth=[(1, 125), (2, 60), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
-                                                minValue=0.0,
-                                                maxValue=1.0,
-                                                fieldMinValue=0.0,
-                                                fieldMaxValue=1.0,
-                                                annotation="Evolution rate of photon gathering radius."),
+                                        self._addFieldSliderControl(
+                                            label="Alpha",
+                                            sliderStep=1.0,
+                                            fieldStep=0.05,
+                                            precision=3,
+                                            columnWidth=[(1, 125), (2, 60), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                            minValue=0.0,
+                                            maxValue=1.0,
+                                            fieldMinValue=0.0,
+                                            fieldMaxValue=1.0,
+                                            annotation="Evolution rate of photon gathering radius.",
                                             attrName="radianceEstimationAlpha")
 
                                         pm.separator(height=2)
@@ -1291,22 +1236,19 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                         pm.separator(height=2)
 
-                                        self._addControl(
-                                            ui=pm.floatSliderGrp(
-                                                label="Maximum Ray Intensity",
-                                                field=True,
-                                                value=1.0,
-                                                sliderStep=1.0,
-                                                fieldStep=0.1,
-                                                precision=1,
-                                                columnWidth=[(1, 125), (2, 40), (3, 100)],
-                                                columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
-                                                minValue=0.0,
-                                                maxValue=2.0,
-                                                fieldMinValue=0.0,
-                                                fieldMaxValue=10000.0,
-                                                enable=enableMaxRayIntensitySPPM,
-                                                annotation="Maximum Ray Intensity valued allowed on secondary and subsequent rays."),
+                                        self._addFieldSliderControl(
+                                            label="Maximum Ray Intensity",
+                                            sliderStep=1.0,
+                                            fieldStep=0.1,
+                                            precision=1,
+                                            columnWidth=[(1, 125), (2, 40), (3, 100)],
+                                            columnAttach=[(1, "right", 4), (2, "right", 2), (3, "right", 0)],
+                                            minValue=0.0,
+                                            maxValue=2.0,
+                                            fieldMinValue=0.0,
+                                            fieldMaxValue=10000.0,
+                                            enable=enableMaxRayIntensitySPPM,
+                                            annotation="Maximum Ray Intensity valued allowed on secondary and subsequent rays.",
                                             attrName="maxRayIntensitySPPM")
 
         pm.setUITemplate("renderGlobalsTemplate", popTemplate=True)
@@ -1681,4 +1623,3 @@ class AppleseedRenderGlobalsSystemTab(AppleseedRenderGlobalsTab):
 
 
 g_appleseedSystemTab = AppleseedRenderGlobalsSystemTab()
-
