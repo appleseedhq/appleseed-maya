@@ -391,6 +391,10 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
         self._uis["minPixelSamples"].setEnable(value)
         self._uis["batchSampleSize"].setEnable(value)
         self._uis["sampleNoiseThreshold"].setEnable(value)
+        if value:
+            mc.setAttr("appleseedRenderGlobals.samples", 256)
+        else:
+            mc.setAttr("appleseedRenderGlobals.samples", 32)
 
     def __motionBlurChanged(self, value):
         self._uis["mbCameraSamples"].setEnable(value)
