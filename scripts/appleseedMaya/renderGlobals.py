@@ -240,7 +240,8 @@ def addRenderGlobalsScriptJobs():
         ]
     )
 
-    # For opening new scene with default renderer appleseed
+    # For fixing the render globals common tab when opening new scene
+    # and the default renderer is appleseed
     mc.scriptJob(
         event=[
             'NewSceneOpened',
@@ -248,7 +249,8 @@ def addRenderGlobalsScriptJobs():
         ]
     )
 
-    # For maya startup empty scene default renderer appleseed
+    # For fixing the render globals common tab on initial startup of maya
+    # when the default renderer is appleseed
     mc.evalDeferred(python_script, lowestPriority=True)
 
 
@@ -308,8 +310,8 @@ def currentRendererChanged():
     # This can happen if currentRendererChanged is called too soon during startup
     # and unifiedRenderGlobalsWindow isn't complete or delayed for some reason.
     # Known to happen if default renderer is appleseed and the scene is opened as
-    # a commandline arg. In that case the NewSceneOpened scriptjob will be call
-    # the currentRendererChanged function again later.
+    # a commandline argument. In that case the NewSceneOpened scriptjob will call the
+    # currentRendererChanged function again later.
     if not mc.optionMenuGrp('imageMenuMayaSW', q=True, ex=True):
         logger.warn("imageMenuMayaSW does not exists yet")
         return
