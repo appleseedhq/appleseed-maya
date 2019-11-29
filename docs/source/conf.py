@@ -23,7 +23,7 @@ from docutils.parsers.rst.directives.admonitions import BaseAdmonition
 from sphinx.util import compat
 compat.make_admonition = BaseAdmonition
 
-needs_sphinx = '1.6'
+needs_sphinx = '1.8'
 
 # For automagical GIT versioning (describe, tags)
 #
@@ -61,7 +61,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinxcontrib.bibtex',
     'sphinxcontrib.images',
-    'sphinxcontrib.css3image',
+#    'sphinxcontrib.css3image',
     'sphinx_autorun'
     ]
 
