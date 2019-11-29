@@ -27,7 +27,6 @@ Contents
     installation/installation
     features/supported_nodes
     shaders/shaders
-    tutorials/tutorials
     about/about
     bibliography/bibliography
 
