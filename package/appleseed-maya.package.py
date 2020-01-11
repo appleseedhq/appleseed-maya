@@ -416,7 +416,7 @@ class MacPackageBuilder(PackageBuilder):
         safe_make_directory(lib_dir)
 
         # Copy appleseed libraries.
-        for lib in ["libappleseed.dylib", "libappleseed.shared.dylib"]:
+        for lib in ["libappleseed.dylib"]:
             shutil.copy(os.path.join(os.path.expandvars(self.settings.appleseed_lib_path), lib), lib_dir)
 
         libs_to_check = set()
@@ -762,7 +762,7 @@ class LinuxPackageBuilder(PackageBuilder):
         safe_make_directory(lib_dir)
 
         # Copy appleseed libraries.
-        libraries_to_copy = ["libappleseed.so", "libappleseed.shared.so"]
+        libraries_to_copy = ["libappleseed.so"]
         for lib in libraries_to_copy:
             shutil.copy(os.path.join(os.path.expandvars(self.settings.appleseed_lib_path), lib), lib_dir)
 
@@ -852,7 +852,7 @@ class WindowsPackageBuilder(PackageBuilder):
     def copy_dependencies(self):
         bin_dir = os.path.join(self.settings.package_output_path, "bin")
 
-        dlls_to_copy = ["appleseed.dll", "appleseed.shared.dll"]
+        dlls_to_copy = ["appleseed.dll"]
         for dll in dlls_to_copy:
             shutil.copy(os.path.join(self.settings.appleseed_bin_path, dll), bin_dir)
 
