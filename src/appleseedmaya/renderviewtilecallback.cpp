@@ -272,6 +272,7 @@ namespace
             const size_t        tile_x,
             const size_t        tile_y)
         {
+            assert(frame != nullptr);
             const foundation::Tile& tile = frame->image().tile(tile_x, tile_y);
             assert(tile.get_pixel_format() == foundation::PixelFormatFloat);
             assert(tile.get_channel_count() == 4);
