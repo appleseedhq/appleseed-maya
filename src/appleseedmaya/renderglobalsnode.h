@@ -150,6 +150,7 @@ class RenderGlobalsNode
     static MObject      m_sppm_radiance_estimation_alpha;
     static MObject      m_sppm_max_ray_intensity_set;
     static MObject      m_sppm_max_ray_intensity;
+    static MObject      m_sppm_enable_importons;
 
     // Motion blur.
     static MObject      m_motionBlur;

@@ -517,7 +517,7 @@ class AppleseedRenderGlobalsMainTab(AppleseedRenderGlobalsTab):
                             label="Max Samples",
                             columnWidth=(3, 160),
                             columnAttach=(1, "right", 4),
-                            minValue=16,
+                            minValue=1,
                             fieldMinValue=0,
                             maxValue=1024,
                             fieldMaxValue=1000000,
@@ -1071,10 +1071,9 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
 
                                 with pm.frameLayout("sppmPhotonTracingFrameLayout", font="smallBoldLabelFont",
                                                     label="Photon Tracing", collapsable=False, collapse=True):
-                                    with pm.columnLayout("sppmPhotonTracingColumnLayout", adjustableColumn=True,
-                                                         width=g_subColumnWidth - g_margin, rowSpacing=2):
-                                        pm.separator(height=2)
 
+                                    with pm.rowColumnLayout("sppmCheckBoxesRowColumnLayout", numberOfRows=1):
+                                        pm.separator(height=2)
                                         self._addControl(
                                             ui=pm.checkBoxGrp(
                                                 label="Limit Bounces",
@@ -1086,6 +1085,15 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
                                         limitPhotonTracingBounces = mc.getAttr(
                                             "appleseedRenderGlobals.limitPhotonTracingBounces")
 
+                                        self._addControl(
+                                            ui=pm.checkBoxGrp(
+                                                label="Importon Tracing",
+                                                columnAttach=(1, "right", 5),
+                                                annotation="Importons are traced to determine important parts of the scene and later photons are only stored in these important parts"),
+                                            attrName="SPPMEnableImportons")
+
+                                    with pm.columnLayout("sppmPhotonTracingColumnLayout", adjustableColumn=True,
+                                        width=g_subColumnWidth - g_margin, rowSpacing=2):
                                         pm.separator(height=2)
 
                                         self._addFieldSliderControl(
@@ -1206,7 +1214,7 @@ class AppleseedRenderGlobalsLightingTab(AppleseedRenderGlobalsTab):
                                             minValue=8,
                                             maxValue=500,
                                             fieldMinValue=8,
-                                            fieldMaxValue=1000000000,
+                                            fieldMaxValue=10000,
                                             annotation="Maximum number of photons used for radiance estimation.",
                                             attrName="radianceEstimationMaxPhotons")
 
