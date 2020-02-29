@@ -123,6 +123,7 @@ MObject RenderGlobalsNode::m_sppm_radiance_estimation_max_photons;
 MObject RenderGlobalsNode::m_sppm_radiance_estimation_alpha;
 MObject RenderGlobalsNode::m_sppm_max_ray_intensity_set;
 MObject RenderGlobalsNode::m_sppm_max_ray_intensity;
+MObject RenderGlobalsNode::m_sppm_enable_importons;
 
 MObject RenderGlobalsNode::m_backgroundEmitsLight;
 MObject RenderGlobalsNode::m_envLightNode;
@@ -518,6 +519,14 @@ MStatus RenderGlobalsNode::initialize()
     numAttrFn.setMax(1000.0);
     CHECKED_ADD_ATTRIBUTE(m_sppm_max_ray_intensity, "maxRayIntensitySPPM")
 
+    // SPPM Importon tracing.
+    m_sppm_enable_importons = numAttrFn.create("SPPMEnableImportons", "SPPMEnableImportons", MFnNumericData::kBoolean, true, &status);
+    CHECKED_ADD_ATTRIBUTE(m_sppm_enable_importons, "SPPMEnableImportons")
+
+    //
+    // Motion blur.
+    //
+
     // Motion blur enable.
     m_motionBlur = numAttrFn.create("motionBlur", "motionBlur", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_motionBlur, "motionBlur")
@@ -852,7 +861,7 @@ void RenderGlobalsNode::applyGlobalsToProject(
         INSERT_PATH_IN_CONFIGS("light_sampler.enable_importance_sampling", enableLightImportanceSampling);
 
     //
-    // Path Tracing
+    // Path Tracing.
     //
 
     // Direct lighting parameters.
@@ -1020,7 +1029,14 @@ void RenderGlobalsNode::applyGlobalsToProject(
             INSERT_PATH_IN_CONFIGS("sppm.path_tracing_max_ray_intensity", sppm_max_ray_int);
     }
 
+    bool SPPMEnableImportons = true;
+    if (AttributeUtils::get(MPlug(globals, m_sppm_enable_importons), SPPMEnableImportons))
+        INSERT_PATH_IN_CONFIGS("sppm.enable_importons", SPPMEnableImportons);
+
+    //
     // Sytem params.
+    //
+
     // Only save rendering threads for interactive renders.
     if (sessionMode == AppleseedSession::FinalRenderSession ||
         sessionMode == AppleseedSession::ProgressiveRenderSession)
@@ -1047,7 +1063,10 @@ void RenderGlobalsNode::applyGlobalsToProject(
     if (AttributeUtils::get(MPlug(globals, m_useEmbree), useEmbree))
         INSERT_PATH_IN_CONFIGS("use_embree", useEmbree)
 
+    //
     // Denoiser params.
+    //
+
     int denoiserMode;
     if (AttributeUtils::get(MPlug(globals, m_denoiserMode), denoiserMode))
     {
@@ -1097,7 +1116,10 @@ void RenderGlobalsNode::applyGlobalsToProject(
             "denoise_scales", denoiseScales);
     }
 
+    //
     // AOVs.
+    //
+
     if (sessionMode != AppleseedSession::ProgressiveRenderSession)
     {
         asr::AOVFactoryRegistrar registrar;
