@@ -36,8 +36,8 @@
 #include "foundation/core/buildoptions.h"
 
 // appleseed.foundation headers.
+#include "foundation/containers/dictionary.h"
 #include "foundation/core/concepts/noncopyable.h"
-#include "foundation/utility/containers/dictionary.h"
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"

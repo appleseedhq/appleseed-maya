@@ -95,7 +95,9 @@ namespace
         virtual void on_tile_begin(
             const asr::Frame*       frame,
             const size_t            tile_x,
-            const size_t            tile_y) override
+            const size_t            tile_y,
+            const size_t            thread_index,
+            const size_t            thread_count) override
         {
             // Temporarily disabled.
             /*

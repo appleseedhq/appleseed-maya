@@ -39,7 +39,7 @@
 #include "renderer/api/shadergroup.h"
 
 // appleseed.foundation headers.
-#include "foundation/utility/autoreleaseptr.h"
+#include "foundation/memory/autoreleaseptr.h"
 #include "foundation/utility/iostreamop.h"
 
 // Maya headers.

@@ -61,14 +61,14 @@
 #include "renderer/api/utility.h"
 
 // appleseed.foundation headers.
+#include "foundation/log/log.h"
 #include "foundation/math/scalar.h"
+#include "foundation/memory/autoreleaseptr.h"
 #include "foundation/platform/timers.h"
-#include "foundation/utility/autoreleaseptr.h"
+#include "foundation/string/string.h"
 #include "foundation/utility/iostreamop.h"
-#include "foundation/utility/log.h"
 #include "foundation/utility/searchpaths.h"
 #include "foundation/utility/stopwatch.h"
-#include "foundation/utility/string.h"
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"

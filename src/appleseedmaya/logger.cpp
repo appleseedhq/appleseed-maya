@@ -33,8 +33,8 @@
 #include "foundation/core/buildoptions.h"
 
 // appleseed.foundation headers.
-#include "foundation/utility/log.h"
-#include "foundation/utility/string.h"
+#include "foundation/log/log.h"
+#include "foundation/string/string.h"
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"

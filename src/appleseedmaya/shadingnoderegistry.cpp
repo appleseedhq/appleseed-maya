@@ -43,10 +43,10 @@
 #include "renderer/api/shadergroup.h"
 
 // appleseed.foundation headers.
-#include "foundation/utility/autoreleaseptr.h"
-#include "foundation/utility/containers/dictionary.h"
+#include "foundation/containers/dictionary.h"
+#include "foundation/memory/autoreleaseptr.h"
+#include "foundation/string/string.h"
 #include "foundation/utility/searchpaths.h"
-#include "foundation/utility/string.h"
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"

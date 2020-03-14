@@ -40,7 +40,7 @@
 
 // appleseed.foundation headers.
 #include "foundation/math/vector.h"
-#include "foundation/utility/string.h"
+#include "foundation/string/string.h"
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
