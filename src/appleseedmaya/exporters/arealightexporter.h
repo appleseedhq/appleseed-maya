@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_AREALIGHTEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_AREALIGHTEXPORTER_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
@@ -86,4 +85,3 @@ class AreaLightExporter
     ShadingNetworkExporterPtr                       m_lightNetworkExporter;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_AREALIGHTEXPORTER_H

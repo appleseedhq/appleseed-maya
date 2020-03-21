@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RAMP_UTILS_H
-#define APPLESEED_MAYA_RAMP_UTILS_H
+#pragma once
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
@@ -115,4 +114,3 @@ void serializeRamp(
     outPositions = ssp.str();
 }
 
-#endif  // !APPLESEED_MAYA_RAMP_UTILS_H

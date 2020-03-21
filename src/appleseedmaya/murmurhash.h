@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_MURMURHASH_H
-#define APPLESEED_MAYA_MURMURHASH_H
+#pragma once
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
@@ -109,4 +108,3 @@ class MurmurHash
 
 std::ostream& operator<<(std::ostream& o, const MurmurHash& hash);
 
-#endif  // !APPLESEED_MAYA_MURMURHASH_H

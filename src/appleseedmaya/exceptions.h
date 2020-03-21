@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXCEPTIONS_H
-#define APPLESEED_MAYA_EXCEPTIONS_H
+#pragma once
 
 // Standard headers.
 #include <exception>
@@ -56,4 +55,3 @@ struct AbortRequested
 {
 };
 
-#endif  // !APPLESEED_MAYA_EXCEPTIONS_H

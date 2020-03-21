@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SHADINGNODETEMPLATEBUILDER_H
-#define APPLESEED_MAYA_SHADINGNODETEMPLATEBUILDER_H
+#pragma once
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
@@ -40,4 +39,3 @@ class OSLShaderInfo;
 // Build and execute an attribute editor template procedure for an OSL shader.
 MStatus buildAndRegisterAETemplate(const OSLShaderInfo& shaderInfo);
 
-#endif  // !APPLESEED_MAYA_SHADINGNODETEMPLATEBUILDER_H

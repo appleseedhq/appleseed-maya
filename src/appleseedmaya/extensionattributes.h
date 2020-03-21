@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXTENSIONATTRIBUTES_H
-#define APPLESEED_MAYA_EXTENSIONATTRIBUTES_H
+#pragma once
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
@@ -37,4 +36,3 @@
 // Add appleseed extension attributes to Maya nodes.
 MStatus addExtensionAttributes();
 
-#endif  // !APPLESEED_MAYA_EXTENSIONATTRIBUTES_H

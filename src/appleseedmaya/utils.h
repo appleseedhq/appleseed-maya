@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_UTILS_H
-#define APPLESEED_MAYA_UTILS_H
+#pragma once
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
@@ -256,4 +255,3 @@ struct ArrayDeleter
     }
 };
 
-#endif  // !APPLESEED_MAYA_UTILS_H

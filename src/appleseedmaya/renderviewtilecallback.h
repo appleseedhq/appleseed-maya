@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDERVIEWTILECALLBACK_H
-#define APPLESEED_MAYA_RENDERVIEWTILECALLBACK_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/renderercontroller.h"
@@ -78,4 +77,3 @@ class RenderViewTileCallbackFactory
     foundation::AABB2i  m_dataWindow;
 };
 
-#endif  // !APPLESEED_MAYA_RENDERVIEWTILECALLBACK_H

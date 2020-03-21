@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/exporters/alphamapexporterfwd.h"
@@ -117,4 +116,3 @@ class MeshExporter
     MurmurHash                                  m_hash;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_MESHEXPORTER_H

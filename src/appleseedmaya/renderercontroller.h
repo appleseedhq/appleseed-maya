@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDERERCONTROLLER_H
-#define APPLESEED_MAYA_RENDERERCONTROLLER_H
+#pragma once
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
@@ -58,4 +57,3 @@ class RendererController
     Status m_status;
 };
 
-#endif  // !APPLESEED_MAYA_RENDERERCONTROLLER_H

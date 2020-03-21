@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_ENVLIGHTEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_ENVLIGHTEXPORTER_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
@@ -121,4 +120,3 @@ class SkyDomeLightExporter
       AppleseedEntityPtr<renderer::TextureInstance> m_mapTextureInstance;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_ENVLIGHTEXPORTER_H

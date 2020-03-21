@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_H
+#pragma once
 
 // Forward declaration header.
 #include "dagnodeexporterfwd.h"
@@ -150,4 +149,3 @@ class DagNodeExporter
     renderer::Assembly&           m_mainAssembly;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTER_H

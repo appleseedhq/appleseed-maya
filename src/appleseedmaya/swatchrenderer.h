@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SWATCHRENDERER_H
-#define APPLESEED_MAYA_SWATCHRENDERER_H
+#pragma once
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
@@ -58,4 +57,3 @@ class SwatchRenderer
         int     imageResolution);
 };
 
-#endif  // !APPLESEED_MAYA_SWATCHRENDERER_H

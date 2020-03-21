@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTERFWD_H
-#define APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTERFWD_H
+#pragma once
 
 // Standard headers.
 #include <memory>
@@ -35,4 +34,3 @@
 class DagNodeExporter;
 typedef std::shared_ptr<DagNodeExporter> DagNodeExporterPtr;
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_DAGNODEEXPORTERFWD_H

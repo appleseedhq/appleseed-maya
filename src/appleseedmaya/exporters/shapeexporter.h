@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
@@ -89,4 +88,3 @@ class ShapeExporter
 
 typedef std::shared_ptr<ShapeExporter> ShapeExporterPtr;
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_SHAPEEXPORTER_H

@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
@@ -73,4 +72,3 @@ class LightExporter
     AppleseedEntityPtr<renderer::ColorEntity> m_lightColor;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_LIGHTEXPORTER_H

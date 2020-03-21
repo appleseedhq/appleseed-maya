@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_XGENEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_XGENEXPORTER_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
@@ -74,4 +73,3 @@ class XGenExporter
 
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_XGENEXPORTER_H

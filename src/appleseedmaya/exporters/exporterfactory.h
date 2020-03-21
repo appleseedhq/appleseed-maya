@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_EXPORTERFACTORY_H
-#define APPLESEED_MAYA_EXPORTERS_EXPORTERFACTORY_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/appleseedsession.h"
@@ -101,4 +100,3 @@ class NodeExporterFactory
         AppleseedSession::SessionMode   sessionMode);
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_EXPORTERFACTORY_H

@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_IDLEJOBQUEUE_H
-#define APPLESEED_MAYA_IDLEJOBQUEUE_H
+#pragma once
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
@@ -54,4 +53,3 @@ void pushJob(std::function<void()> job);
 
 } // IdleJobQueue
 
-#endif  // !APPLESEED_MAYA_IDLEJOBQUEUE_H

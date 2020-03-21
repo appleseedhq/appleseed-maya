@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_SHADINGENGINEEXPORTERFWD_H
-#define APPLESEED_MAYA_EXPORTERS_SHADINGENGINEEXPORTERFWD_H
+#pragma once
 
 // Standard headers.
 #include <memory>
@@ -35,4 +34,3 @@
 class ShadingEngineExporter;
 typedef std::shared_ptr<ShadingEngineExporter> ShadingEngineExporterPtr;
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_SHADINGENGINEEXPORTERFWD_H

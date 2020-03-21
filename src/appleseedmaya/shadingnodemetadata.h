@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SHADINGNODEMETADATA_H
-#define APPLESEED_MAYA_SHADINGNODEMETADATA_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/utils.h"
@@ -174,4 +173,3 @@ class OSLShaderInfo
     std::vector<OSLParamInfo> paramInfo;
 };
 
-#endif  // !APPLESEED_MAYA_SHADINGNODEMETADATA_H

@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_CONFIG_H
-#define APPLESEED_MAYA_CONFIG_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/logger.h"
@@ -95,5 +94,3 @@
         return s_;\
     }\
 }
-
-#endif  // !APPLESEED_MAYA_CONFIG_H

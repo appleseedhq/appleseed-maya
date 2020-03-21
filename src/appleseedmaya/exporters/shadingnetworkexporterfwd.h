@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_SHADINGNETWORKEXPORTERFWD_H
-#define APPLESEED_MAYA_EXPORTERS_SHADINGNETWORKEXPORTERFWD_H
+#pragma once
 
 // Standard headers.
 #include <memory>
@@ -47,4 +46,3 @@ enum ShadingNetworkContext
 class ShadingNetworkExporter;
 typedef std::shared_ptr<ShadingNetworkExporter> ShadingNetworkExporterPtr;
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_SHADINGNETWORKEXPORTERFWD_H

@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTER_H
+#pragma once
 
 // Forward declaration header.
 #include "alphamapexporterfwd.h"
@@ -87,5 +86,3 @@ class AlphaMapExporter
     AppleseedEntityPtr<renderer::Texture>           m_texture;
     AppleseedEntityPtr<renderer::TextureInstance>   m_textureInstance;
 };
-
-#endif  // !APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTER_H

@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SKYDOMELIGHTNODE_H
-#define APPLESEED_MAYA_SKYDOMELIGHTNODE_H
+#pragma once
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
@@ -122,4 +121,3 @@ class SkyDomeLightDrawOverride
         const MUserData*                data);
 };
 
-#endif  // !APPLESEED_MAYA_SKYDOMELIGHTNODE_H

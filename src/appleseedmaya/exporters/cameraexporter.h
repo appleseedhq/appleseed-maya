@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/exporters/dagnodeexporter.h"
@@ -72,4 +71,3 @@ class CameraExporter
     AppleseedEntityPtr<renderer::Camera> m_camera;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_CAMERAEXPORTER_H

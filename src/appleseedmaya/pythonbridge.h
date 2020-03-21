@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_PYTHONBRIDGE_H
-#define APPLESEED_MAYA_PYTHONBRIDGE_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/utils.h"
@@ -65,4 +64,3 @@ class PythonBridge
     static void clearCurrentProject();
 };
 
-#endif  // !APPLESEED_MAYA_PYTHONBRIDGE_H

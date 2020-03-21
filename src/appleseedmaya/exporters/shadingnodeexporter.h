@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_SHADINGNODEEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_SHADINGNODEEXPORTER_H
+#pragma once
 
 // Forward declaration header.
 #include "shadingnodeexporterfwd.h"
@@ -151,4 +150,3 @@ class ShadingNodeExporter
     renderer::ShaderGroup&          m_shaderGroup;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_SHADINGNODEEXPORTER_H

@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_TYPEIDS_H
-#define APPLESEED_MAYA_TYPEIDS_H
+#pragma once
 
 //
 // Maya typeids assigned to appleseedhq.
@@ -118,4 +117,3 @@ enum AppleseedMayaTypeIds
     LastTypeId                      = 0x00127a3f    // 1210943
 };
 
-#endif  // !APPLESEED_MAYA_TYPEIDS_H

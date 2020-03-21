@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_SHADINGNODEREGISTRY_H
-#define APPLESEED_MAYA_SHADINGNODEREGISTRY_H
+#pragma once
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
@@ -63,4 +62,3 @@ namespace ShadingNodeRegistry
     bool isShaderSupported(const MString& nodeName);
 } // namespace ShadingNodeRegistry
 
-#endif  // !APPLESEED_MAYA_SHADINGNODEREGISTRY_H

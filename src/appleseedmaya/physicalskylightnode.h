@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_PHYSICALSKYLIGHTNODE_H
-#define APPLESEED_MAYA_PHYSICALSKYLIGHTNODE_H
+#pragma once
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
@@ -121,4 +120,3 @@ class PhysicalSkyLightDrawOverride
         const MUserData*                data);
 };
 
-#endif  // !APPLESEED_MAYA_PHYSICALSKYLIGHTNODE_H

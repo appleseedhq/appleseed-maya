@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H
-#define APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/exporters/shapeexporter.h"
@@ -68,4 +67,3 @@ class InstanceExporter
     const ShapeExporter& m_masterShape;
 };
 
-#endif  // !APPLESEED_MAYA_EXPORTERS_INSTANCEEXPORTER_H

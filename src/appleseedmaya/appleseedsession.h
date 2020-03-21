@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_APPLESEEDSESSION_H
-#define APPLESEED_MAYA_APPLESEEDSESSION_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/exporters/alphamapexporterfwd.h"
@@ -174,4 +173,3 @@ const Options& options();
 
 } // namespace AppleseedSession.
 
-#endif  // !APPLESEED_MAYA_APPLESEEDSESSION_H

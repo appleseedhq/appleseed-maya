@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_ALPHAMAPNODE_H
-#define APPLESEED_MAYA_ALPHAMAPNODE_H
+#pragma once
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
@@ -70,4 +69,3 @@ class AlphaMapNode
     static MObject m_map;
 };
 
-#endif  // !APPLESEED_MAYA_ALPHAMAPNODE_H

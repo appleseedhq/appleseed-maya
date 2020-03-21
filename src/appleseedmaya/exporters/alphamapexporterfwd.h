@@ -26,13 +26,10 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTERFWD_H
-#define APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTERFWD_H
+#pragma once
 
 // Standard headers.
 #include <memory>
 
 class AlphaMapExporter;
 typedef std::shared_ptr<AlphaMapExporter> AlphaMapExporterPtr;
-
-#endif  // !APPLESEED_MAYA_EXPORTERS_ALPHAMAPEXPORTERFWD_H

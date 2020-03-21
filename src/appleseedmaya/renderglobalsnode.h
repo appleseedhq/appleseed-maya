@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_RENDERGLOBALSNODE_H
-#define APPLESEED_MAYA_RENDERGLOBALSNODE_H
+#pragma once
 
 // appleseed-maya headers.
 #include "appleseedmaya/appleseedsession.h"
@@ -213,4 +212,3 @@ class RenderGlobalsNode
     static MObject      m_logFilename;
 };
 
-#endif  // !APPLESEED_MAYA_RENDERGLOBALSNODE_H

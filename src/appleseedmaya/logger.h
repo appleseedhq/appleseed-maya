@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_LOGGER_H
-#define APPLESEED_MAYA_LOGGER_H
+#pragma once
 
 // Build options header.
 #include "foundation/core/buildoptions.h"
@@ -84,4 +83,3 @@ class ScopedLogTarget
     foundation::auto_release_ptr<foundation::ILogTarget> m_logTarget;
 };
 
-#endif  // !APPLESEED_MAYA_LOGGER_H

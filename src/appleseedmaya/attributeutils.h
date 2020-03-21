@@ -26,8 +26,7 @@
 // THE SOFTWARE.
 //
 
-#ifndef APPLESEED_MAYA_ATTRIBUTEUTILS_H
-#define APPLESEED_MAYA_ATTRIBUTEUTILS_H
+#pragma once
 
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
@@ -89,4 +88,3 @@ MStatus makeOutput(MFnAttribute& attr);
 
 } // AttributeUtils.
 
-#endif  // !APPLESEED_MAYA_ATTRIBUTEUTILS_H
