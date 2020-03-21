@@ -113,7 +113,7 @@ void LightExporter::createEntities(
     MFnDependencyNode depNodeFn(node());
 
     MStatus status;
-    MPlug plug = depNodeFn.findPlug("intensity", false, &status);
+    MPlug plug = depNodeFn.findPlug("intensity", /*wantNetworkedPlug=*/ false, &status);
     if (plug.isConnected())
     {
         // todo: add warning here...
@@ -122,7 +122,7 @@ void LightExporter::createEntities(
     float intensity = 1.0;
     AttributeUtils::get(plug, intensity);
 
-    plug = depNodeFn.findPlug("color", false, &status);
+    plug = depNodeFn.findPlug("color", /*wantNetworkedPlug=*/ false, &status);
     if (plug.isConnected())
     {
         // todo: add warning here...

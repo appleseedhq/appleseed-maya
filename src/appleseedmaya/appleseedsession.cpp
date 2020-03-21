@@ -477,7 +477,7 @@ namespace
                 MObject appleseedRenderGlobalsNode;
                 getDependencyNodeByName("appleseedRenderGlobals", appleseedRenderGlobalsNode);
                 MFnDependencyNode depNodeFn(appleseedRenderGlobalsNode);
-                MPlug dstPlug = depNodeFn.findPlug("envLight", false);
+                MPlug dstPlug = depNodeFn.findPlug("envLight", /*wantNetworkedPlug=*/ false);
                 MPlug srcPlug;
 
                 // Find the environment light connected to the globals node.
@@ -1363,7 +1363,7 @@ bool doExportSwatch(
 bool exportMaterialSwatch(asr::Project& project, const MObject& node)
 {
     MFnDependencyNode depNodeFn(node);
-    MPlug outputPlug = depNodeFn.findPlug("outColor");
+    MPlug outputPlug = depNodeFn.findPlug("outColor", /*wantNetworkedPlug=*/ false);
 
     if (outputPlug.isNull())
         return false;
@@ -1380,11 +1380,11 @@ bool exportTextureSwatch(asr::Project& project, const MObject& node)
     MFnDependencyNode depNodeFn(node);
 
     // Try outColor first.
-    MPlug outputPlug = depNodeFn.findPlug("outColor");
+    MPlug outputPlug = depNodeFn.findPlug("outColor", /*wantNetworkedPlug=*/ false);
 
     // Try outAlpha next.
     if (outputPlug.isNull())
-        outputPlug = depNodeFn.findPlug("outAlpha");
+        outputPlug = depNodeFn.findPlug("outAlpha", /*wantNetworkedPlug=*/ false);
 
     // Give up if we don't have a plug.
     if (outputPlug.isNull())

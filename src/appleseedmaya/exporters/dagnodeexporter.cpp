@@ -194,16 +194,16 @@ bool DagNodeExporter::isObjectRenderable(const MDagPath& path)
 
     // Skip templated objects.
     MStatus status;
-    MPlug plug = dagNodeFn.findPlug("template", false, &status);
+    MPlug plug = dagNodeFn.findPlug("template", /*wantNetworkedPlug=*/ false, &status);
     if (status == MS::kSuccess && plug.asBool())
         return false;
 
     // Skip invisible objects.
-    plug = dagNodeFn.findPlug("visibility", false, &status);
+    plug = dagNodeFn.findPlug("visibility", /*wantNetworkedPlug=*/ false, &status);
     if (status == MS::kSuccess && plug.asBool() == false)
         return false;
 
-    plug = dagNodeFn.findPlug("overrideVisibility", false, &status);
+    plug = dagNodeFn.findPlug("overrideVisibility", /*wantNetworkedPlug=*/ false, &status);
     if (status == MS::kSuccess && plug.asBool() == false)
         return false;
 
@@ -262,7 +262,7 @@ bool DagNodeExporter::isAnimated(MObject object, bool checkParent)
     NodesToCheckStruct nodeStruct;
     for (; !iter.isDone(); iter.next())
     {
-        MObject node = iter.thisNode();
+        MObject node = iter.currentItem();
 
         if (
             node.hasFn(MFn::kPluginDependNode) ||

@@ -51,6 +51,8 @@ class ShadingNode
 
     void postConstructor() override;
 
+    SchedulingType schedulingType() const override;
+
   private:
     static void report_error(
         const OSLShaderInfo&    shaderInfo,

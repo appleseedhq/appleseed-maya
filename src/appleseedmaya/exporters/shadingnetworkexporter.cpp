@@ -220,7 +220,7 @@ void ShadingNetworkExporter::createShaderNodeExporters(const MObject& node)
             if (paramInfo.isOutput)
                 continue;
 
-            MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, false, &status);
+            MPlug plug = depNodeFn.findPlug(paramInfo.mayaAttributeName, /*wantNetworkedPlug=*/ false, &status);
             if (!status)
             {
                 RENDERER_LOG_WARNING(

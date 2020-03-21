@@ -106,7 +106,7 @@ void RemapHsvExporter::exportParameterValue(
 
     if (paramInfo.paramName == "in_hue_Position")
     {
-        MPlug plug = depNodeFn.findPlug("hue", false, &status);
+        MPlug plug = depNodeFn.findPlug("hue", /*wantNetworkedPlug=*/ false, &status);
 
         std::vector<RemapHsvEntry> remapHue;
         remapHue.reserve(plug.numElements());
@@ -152,7 +152,7 @@ void RemapHsvExporter::exportParameterValue(
     }
     else if (paramInfo.paramName == "in_saturation_Position")
     {
-        MPlug plug = depNodeFn.findPlug("saturation", false, &status);
+        MPlug plug = depNodeFn.findPlug("saturation", /*wantNetworkedPlug=*/ false, &status);
 
         std::vector<RemapHsvEntry> remapSaturation;
         remapSaturation.reserve(plug.numElements());
@@ -198,7 +198,7 @@ void RemapHsvExporter::exportParameterValue(
     }
     else if (paramInfo.paramName == "in_value_Position")
     {
-        MPlug plug = depNodeFn.findPlug("value", false, &status);
+        MPlug plug = depNodeFn.findPlug("value", /*wantNetworkedPlug=*/ false, &status);
 
         std::vector<RemapHsvEntry> remapValue;
         remapValue.reserve(plug.numElements());

@@ -86,7 +86,7 @@ MStatus FinalRenderCommand::doIt(const MArgList& args)
     getDependencyNodeByName("defaultRenderGlobals", globalsNode);
 
     MFnDependencyNode depNodeFn(globalsNode);
-    if (depNodeFn.findPlug("useRenderRegion", false).asBool())
+    if (depNodeFn.findPlug("useRenderRegion", /*wantNetworkedPlug=*/ false).asBool())
     {
         options.m_renderRegion = true;
         AttributeUtils::get(depNodeFn, "leftRegion"  , options.m_xmin);

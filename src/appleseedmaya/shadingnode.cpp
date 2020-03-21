@@ -510,17 +510,18 @@ MStatus ShadingNode::initialize()
     return MS::kSuccess;
 }
 
-ShadingNode::ShadingNode()
-{
-}
+ShadingNode::ShadingNode() = default;
 
 void ShadingNode::postConstructor()
 {
     MPxNode::postConstructor();
-    setMPSafe(true);
-
     setExistWithoutInConnections(true);
     setExistWithoutOutConnections(true);
+}
+
+MPxNode::SchedulingType ShadingNode::schedulingType() const
+{
+    return kParallel;
 }
 
 void ShadingNode::report_error(

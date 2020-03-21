@@ -85,7 +85,7 @@ void RampExporter::exportParameterValue(
 
     if (paramInfo.paramName == "in_position")
     {
-        MPlug plug = depNodeFn.findPlug("colorEntryList", false, &status);
+        MPlug plug = depNodeFn.findPlug("colorEntryList", /*wantNetworkedPlug=*/ false, &status);
 
         std::vector<RampEntry<MColor>> rampColors;
         rampColors.reserve(plug.numElements());
@@ -105,7 +105,7 @@ void RampExporter::exportParameterValue(
             rampColors.push_back(RampEntry<MColor>(i, p, c));
         }
 
-        plug = depNodeFn.findPlug("type", false, &status);
+        plug = depNodeFn.findPlug("type", /*wantNetworkedPlug=*/ false, &status);
         int rampType;
         AttributeUtils::get(plug, rampType);
 

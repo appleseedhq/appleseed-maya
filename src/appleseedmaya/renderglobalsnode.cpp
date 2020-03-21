@@ -409,7 +409,7 @@ MStatus RenderGlobalsNode::initialize()
     numAttrFn.setMin(0.0);
     CHECKED_ADD_ATTRIBUTE(m_maxRayIntensity, "maxRayIntensity")
 
-    // Roughness clamping. 
+    // Roughness clamping.
     m_clampRoughness = numAttrFn.create("clampRoughness", "clampRoughness", MFnNumericData::kBoolean, false, &status);
     CHECKED_ADD_ATTRIBUTE(m_clampRoughness, "clampRoughness")
 
@@ -713,7 +713,7 @@ MStatus RenderGlobalsNode::initialize()
     return status;
 }
 
-MStatus RenderGlobalsNode::compute(const MPlug& plug, MDataBlock& dataBlock)
+MStatus RenderGlobalsNode::compute(const MPlug& /*plug*/, MDataBlock& /*dataBlock*/)
 {
     return MS::kSuccess;
 }
@@ -831,7 +831,7 @@ void RenderGlobalsNode::applyGlobalsToProject(
     {
         switch (lightingEngine)
         {
-          case 0:     
+          case 0:
             finalParams.insert_path("lighting_engine", "pt");
             break;
           case 1:

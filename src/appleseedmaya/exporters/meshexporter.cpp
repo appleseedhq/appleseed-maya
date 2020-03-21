@@ -135,7 +135,7 @@ void MeshExporter::createExporters(const AppleseedSession::IExporterFactory& exp
 
     MStatus status;
     MFnDependencyNode depNodeFn(node(), &status);
-    MPlug plug = depNodeFn.findPlug("instObjGroups", false, &status);
+    MPlug plug = depNodeFn.findPlug("instObjGroups", /*wantNetworkedPlug=*/ false, &status);
     plug = plug.elementByLogicalIndex(instanceNumber);
 
     if (plug.isConnected())
@@ -207,7 +207,7 @@ void MeshExporter::createExporters(const AppleseedSession::IExporterFactory& exp
 
     // Create an alpha map exporter if needed.
     depNodeFn.setObject(node());
-    plug = depNodeFn.findPlug("asAlphaMap", false, &status);
+    plug = depNodeFn.findPlug("asAlphaMap", /*wantNetworkedPlug=*/ false, &status);
 
     MPlugArray connections;
     plug.connectedTo(connections, true, false);
@@ -444,12 +444,12 @@ int MeshExporter::getSmoothLevel(MStatus* ReturnStatus) const
 {
     MFnMesh meshFn(node());
 
-    if (meshFn.findPlug("displaySmoothMesh", false).asBool())
+    if (meshFn.findPlug("displaySmoothMesh", /*wantNetworkedPlug=*/ false).asBool())
     {
-        int smoothLevel = meshFn.findPlug("smoothLevel", false, ReturnStatus).asInt();
+        int smoothLevel = meshFn.findPlug("smoothLevel", /*wantNetworkedPlug=*/ false, ReturnStatus).asInt();
 
-        if (!meshFn.findPlug("useSmoothPreviewForRender", false, ReturnStatus).asBool())
-            smoothLevel = meshFn.findPlug("renderSmoothLevel", false, ReturnStatus).asInt();
+        if (!meshFn.findPlug("useSmoothPreviewForRender", /*wantNetworkedPlug=*/ false, ReturnStatus).asBool())
+            smoothLevel = meshFn.findPlug("renderSmoothLevel", /*wantNetworkedPlug=*/ false, ReturnStatus).asInt();
 
         return smoothLevel;
     }

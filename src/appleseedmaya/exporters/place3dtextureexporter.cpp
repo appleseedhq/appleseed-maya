@@ -78,8 +78,8 @@ void Place3dTextureExporter::exportShaderParameters(
     renderer::ParamArray&    shaderParams) const
 {
     // Save the place3dTexture matrix.
-    MStatus status;
-    MDagPath dagPath = MDagPath::getAPathTo(node(), &status);
+    MDagPath dagPath;
+    MDagPath::getAPathTo(node(), dagPath);
     MMatrix matrixValue = dagPath.inclusiveMatrixInverse();
 
     std::stringstream ss;
