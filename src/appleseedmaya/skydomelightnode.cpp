@@ -110,7 +110,7 @@ MStatus SkyDomeLightNode::initialize()
         "exposure",
         "exposure",
         MFnNumericData::kFloat,
-        1.0,
+        0.0,
         &status);
     APPLESEED_MAYA_CHECK_MSTATUS_RET_MSG(status, "appleseedMaya: Failed to create envLight attribute");
     numAttrFn.setMin(0.0);
