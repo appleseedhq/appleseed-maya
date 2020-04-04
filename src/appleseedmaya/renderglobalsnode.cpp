@@ -259,12 +259,11 @@ MStatus RenderGlobalsNode::initialize()
     CHECKED_ADD_ATTRIBUTE(m_sampleNoiseThreshold, "sampleNoiseThreshold")
 
     // Tile size.
-    m_tileSize = numAttrFn.create("tileSize", "tileSize", MFnNumericData::kInt, 64, &status);
+    m_tileSize = numAttrFn.create("tileSize", "tileSize", MFnNumericData::kInt, 32, &status);
     numAttrFn.setMin(1);
     numAttrFn.setMax(512);
     numAttrFn.setKeyable(false);
     numAttrFn.setConnectable(false);
-
     CHECKED_ADD_ATTRIBUTE(m_tileSize, "tileSize")
 
     // Pixel filter.
