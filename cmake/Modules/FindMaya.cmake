@@ -32,9 +32,9 @@ if(APPLE)
         HINTS
             "${MAYA_LOCATION}"
             "$ENV{MAYA_LOCATION}"
+            "/Applications/Autodesk/maya2020"
             "/Applications/Autodesk/maya2019"
             "/Applications/Autodesk/maya2018"
-            "/Applications/Autodesk/maya2017"
         DOC
             "Maya installation root directory"
     )
@@ -55,9 +55,8 @@ elseif(UNIX)
         HINTS
             "${MAYA_LOCATION}"
             "$ENV{MAYA_LOCATION}"
+            "/usr/autodesk/maya2020"
             "/usr/autodesk/maya2019"
-            "/usr/autodesk/maya2018"
-            "/usr/autodesk/maya2017"
         DOC
             "Maya installation root directory"
     )
@@ -78,6 +77,8 @@ elseif(WIN32)
         HINTS
             "${MAYA_LOCATION}"
             "$ENV{MAYA_LOCATION}"
+            ${MAYA_DEFAULT_LOCATION}
+            "C:/Program Files/Autodesk/Maya2020"
             "C:/Program Files/Autodesk/Maya2019"
             "C:/Program Files/Autodesk/Maya2018"
         DOC
@@ -90,6 +91,7 @@ elseif(WIN32)
             "$ENV{MAYA_LOCATION}"
             "${MAYA_BASE_DIR}"
         PATH_SUFFIXES
+            ${LIB_SUFFIX}
             lib/
         DOC
             "Maya's libraries path"
@@ -99,7 +101,8 @@ endif()
 find_path(MAYA_INCLUDE_DIR
         maya/MFn.h
     HINTS
-        "${MAYA_LOCATION}"
+        ${MAYA_LOCATION}
+        ${MAYA_DEFAULT_LOCATION}
         "$ENV{MAYA_LOCATION}"
         "${MAYA_BASE_DIR}"
     PATH_SUFFIXES
@@ -110,12 +113,14 @@ find_path(MAYA_INCLUDE_DIR
 )
 
 find_path(MAYA_LIBRARY_DIR
-        OpenMaya
+        ${OPEN_MAYA}
     HINTS
-        "${MAYA_LOCATION}"
-        "$ENV{MAYA_LOCATION}"
+        ${MAYA_LOCATION}
+        $ENV{MAYA_LOCATION}
+        ${MAYA_DEFAULT_LOCATION}
         "${MAYA_BASE_DIR}"
     PATH_SUFFIXES
+        ../../lib/
         ../../devkit/include/
         include/
     DOC
