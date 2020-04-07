@@ -38,9 +38,9 @@
 if(APPLE)
   find_path(MAYA_BASE_DIR ../../devkit/include/maya/MFn.h PATH
     ENV MAYA_LOCATION
+    "/Applications/Autodesk/maya2020/Maya.app/Contents"
     "/Applications/Autodesk/maya2019/Maya.app/Contents"
     "/Applications/Autodesk/maya2018/Maya.app/Contents"
-    "/Applications/Autodesk/maya2017/Maya.app/Contents"
   )
 endif(APPLE)
 
@@ -48,9 +48,8 @@ if(UNIX)
   find_path(MAYA_BASE_DIR include/maya/MFn.h
     PATH
       ENV MAYA_LOCATION
+      "/usr/autodesk/maya2020"
       "/usr/autodesk/maya2019"
-      "/usr/autodesk/maya2018"
-      "/usr/autodesk/maya2017"
   )
 endif(UNIX)
 
@@ -58,6 +57,7 @@ if(WIN32)
   find_path(MAYA_BASE_DIR include/maya/MFn.h
     PATH
       ENV MAYA_LOCATION
+        "C:/Program Files/Autodesk/Maya2020"
         "C:/Program Files/Autodesk/Maya2019"
         "C:/Program Files/Autodesk/Maya2018"
   )
