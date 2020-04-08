@@ -4,7 +4,7 @@
 
 ## Overview
 
-appleseed-maya is an appleseed plugin for [Autodesk® Maya®](http://www.autodesk.com/products/maya/overview) 2017 and 2018.
+appleseed-maya is an appleseed plugin for [Autodesk® Maya®](http://www.autodesk.com/products/maya/overview) 2018 (Windows only), 2019 and 2020.
 
 * [**Download** the latest release](https://github.com/appleseedhq/appleseed-maya/releases/latest)
 * [**Read** the documentation](https://appleseed-maya.readthedocs.io)
@@ -14,4 +14,4 @@ appleseed-maya is an appleseed plugin for [Autodesk® Maya®](http://www.autodes
 
 appleseed and its accompanying software is released under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 
-© 2010-2018 The appleseedhq Organization
+© 2010-2020 The appleseedhq Organization
