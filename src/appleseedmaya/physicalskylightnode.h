@@ -59,10 +59,10 @@ class PhysicalSkyLightNode
     MBoundingBox boundingBox() const override;
 
     void draw(
-        M3dView&                view,
+        MUIDrawManager&         view,
         const MDagPath&         path,
         M3dView::DisplayStyle   style,
-        M3dView::DisplayStatus  status) override;
+        M3dView::DisplayStatus  status);
 
     MStatus compute(const MPlug& plug, MDataBlock& data) override;
 

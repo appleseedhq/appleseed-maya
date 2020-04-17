@@ -42,6 +42,7 @@
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MFnUnitAttribute.h>
+#include <maya/MUIDrawManager.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
 const MString SkyDomeLightNode::nodeName("appleseedSkyDomeLight");
@@ -167,7 +168,7 @@ MStatus SkyDomeLightNode::compute(const MPlug& plug, MDataBlock& dataBlock)
 }
 
 void SkyDomeLightNode::draw(
-    M3dView&                view,
+    MUIDrawManager&         view,
     const MDagPath&         path,
     M3dView::DisplayStyle   style,
     M3dView::DisplayStatus  status)
@@ -175,37 +176,32 @@ void SkyDomeLightNode::draw(
     float size = 1.0f;
     AttributeUtils::get(thisMObject(), "size", size);
 
-    view.beginGL();
     glPushAttrib(GL_CURRENT_BIT);
 
     switch (status)
     {
       case M3dView::kActive:
-        view.setDrawColor(18, M3dView::kActiveColors);
+          view.setColorIndex(18);
       break;
 
       case M3dView::kActiveAffected:
-        view.setDrawColor(19, M3dView::kActiveColors);
+          view.setColorIndex(19);
       break;
 
       case M3dView::kLead:
-        view.setDrawColor(22, M3dView::kActiveColors);
+          view.setColorIndex(22);
       break;
 
       default:
-        view.setDrawColor(3, M3dView::kActiveColors);
+          view.setColorIndex(3);
       break;
     }
 
-    if (style == M3dView::kFlatShaded || style == M3dView::kGouraudShaded)
-        drawSphereWireframe(size);
-    else
-        drawSphereWireframe(size);
+    drawSphereWireframe(size);
 
     drawAppleseedLogo(size);
 
     glPopAttrib();
-    view.endGL();
 }
 
 MStringArray SkyDomeLightNode::getFilesToArchive(

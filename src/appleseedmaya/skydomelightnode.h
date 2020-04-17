@@ -61,10 +61,10 @@ class SkyDomeLightNode
     MBoundingBox boundingBox() const override;
 
     void draw(
-        M3dView&                view,
-        const MDagPath&         path,
+        MUIDrawManager& view,
+        const MDagPath& path,
         M3dView::DisplayStyle   style,
-        M3dView::DisplayStatus  status) override;
+        M3dView::DisplayStatus  status);
 
     MStringArray getFilesToArchive(
         bool                    shortName,

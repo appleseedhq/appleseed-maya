@@ -40,6 +40,7 @@
 #include <maya/MFnMessageAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnUnitAttribute.h>
+#include <maya/MUIDrawManager.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
 const MString PhysicalSkyLightNode::nodeName("appleseedPhysicalSkyLight");
@@ -257,7 +258,7 @@ MBoundingBox PhysicalSkyLightNode::boundingBox() const
 }
 
 void PhysicalSkyLightNode::draw(
-    M3dView&                view,
+    MUIDrawManager&         view,
     const MDagPath&         path,
     M3dView::DisplayStyle   style,
     M3dView::DisplayStatus  status)
@@ -265,37 +266,32 @@ void PhysicalSkyLightNode::draw(
     float size = 1.0f;
     AttributeUtils::get(thisMObject(), "size", size);
 
-    view.beginGL();
     glPushAttrib(GL_CURRENT_BIT);
 
     switch (status)
     {
       case M3dView::kActive:
-        view.setDrawColor(18, M3dView::kActiveColors);
+        view.setColorIndex(18);
       break;
 
       case M3dView::kActiveAffected:
-        view.setDrawColor(19, M3dView::kActiveColors);
+        view.setColorIndex(19);
       break;
 
       case M3dView::kLead:
-        view.setDrawColor(22, M3dView::kActiveColors);
+        view.setColorIndex(22);
       break;
 
       default:
-        view.setDrawColor(3, M3dView::kActiveColors);
+        view.setColorIndex(3);
       break;
     }
 
-    if (style == M3dView::kFlatShaded || style == M3dView::kGouraudShaded)
-        drawSphereWireframe(size);
-    else
-        drawSphereWireframe(size);
+    drawSphereWireframe(size);
 
     drawAppleseedLogo(size);
 
     glPopAttrib();
-    view.endGL();
 }
 
 MStatus PhysicalSkyLightNode::compute(const MPlug& plug, MDataBlock& dataBlock)
@@ -344,7 +340,7 @@ MUserData* PhysicalSkyLightDrawOverride::prepareForDraw(
     MUserData*                      oldData)
 {
     // Retrieve data cache (create if does not exist)
-    PhysicalSkyLightData* data = dynamic_cast<PhysicalSkyLightData*>(oldData);
+    auto data = dynamic_cast<PhysicalSkyLightData*>(oldData);
 
     if (!data)
         data = new PhysicalSkyLightData();
@@ -359,7 +355,7 @@ void PhysicalSkyLightDrawOverride::draw(
     const MHWRender::MDrawContext&  context,
     const MUserData*                data)
 {
-    const PhysicalSkyLightData* drawData = dynamic_cast<const PhysicalSkyLightData*>(data);
+    const auto drawData = dynamic_cast<const PhysicalSkyLightData*>(data);
     if (!drawData)
         return;
 
