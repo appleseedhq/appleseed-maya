@@ -58,6 +58,13 @@ namespace
         AttributeUtils::get(node, "asCastIndirectLight", castIndirectLight);
         lightParams.insert_path("cast_indirect_light", castIndirectLight);
     }
+
+    void addCastShadowControls(const MObject& node, asr::ParamArray& lightParams)
+    {
+        bool castShadows = true;
+        AttributeUtils::get(node, "asCastShadows", castShadows);
+        lightParams.insert_path("cast_shadows", castShadows);
+    }
 };
 
 void LightExporter::registerExporter()
@@ -148,6 +155,7 @@ void LightExporter::createEntities(
         lightParams.insert("irradiance_multiplier", intensity);
 
         addIndirectLightControls(node(), lightParams);
+        addCastShadowControls(node(), lightParams);
     }
     else if (depNodeFn.typeName() == "pointLight")
     {
@@ -156,6 +164,7 @@ void LightExporter::createEntities(
         lightParams.insert("intensity_multiplier", intensity);
 
         addIndirectLightControls(node(), lightParams);
+        addCastShadowControls(node(), lightParams);
     }
     else if (depNodeFn.typeName() == "spotLight")
     {
@@ -173,6 +182,7 @@ void LightExporter::createEntities(
         lightParams.insert("outer_angle", outerAngle);
 
         addIndirectLightControls(node(), lightParams);
+        addCastShadowControls(node(), lightParams);
     }
     else
     {

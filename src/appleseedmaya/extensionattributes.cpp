@@ -302,6 +302,17 @@ namespace
             AttributeUtils::makeInput(numAttrFn);
             modifier.addExtensionAttribute(nodeClass, attr);
 
+            attr = createNumericAttribute<bool>(
+                numAttrFn,
+                "asCastShadows",
+                "asCastShadows",
+                MFnNumericData::kBoolean,
+                true,
+                status);
+            numAttrFn.setKeyable(false);
+            AttributeUtils::makeInput(numAttrFn);
+            modifier.addExtensionAttribute(nodeClass, attr);
+
             addVisibilityExtensionAttributes(nodeClass, modifier);
             modifier.doIt();
         }

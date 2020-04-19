@@ -92,6 +92,7 @@ class AEappleseedNodeTemplate(pm.ui.AETemplate):
         elif self.thisNode.type() in {'pointLight', 'spotLight', 'directionalLight'}:
             self.beginLayout('appleseed', collapse=1)
             self.addControl('asCastIndirectLight', label='Cast Indirect Light')
+            self.addControl('asCastShadows', label='Cast Shadows')
             self.addSeparator()
             self.__buildVisibilitySection()
             self.endLayout()
