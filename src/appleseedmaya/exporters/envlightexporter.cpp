@@ -138,7 +138,6 @@ void PhysicalSkyLightExporter::createEntities(
     MAngle angle;
     float val;
 
-    MGlobal::displayInfo("testing info");
     AttributeUtils::get(node(), "sunTheta", angle);
     params.insert("sun_theta", angle.asDegrees());
 

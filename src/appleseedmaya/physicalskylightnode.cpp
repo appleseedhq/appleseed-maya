@@ -484,13 +484,10 @@ MStatus PhysicalSkyLightNode::compute(const MPlug& plug, MDataBlock& dataBlock)
 {
     static MAngle sunPhi = 0.0f;
 
-    MGlobal::displayInfo(plug.info());
-
     if (dataBlock.inputValue(m_sunPositioningSystem).asInt() == 1)
     {
         if (strstr(plug.info().asChar(), "sunTheta") != nullptr)
         {
-
             renderer::ParamArray param;
             param.insert("hour", dataBlock.inputValue(m_hour).asInt());
             param.insert("minute", dataBlock.inputValue(m_minute).asInt());
