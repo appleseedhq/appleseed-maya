@@ -45,6 +45,7 @@
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MFnDagNode.h>
+#include <maya/MGlobal.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
@@ -137,6 +138,7 @@ void PhysicalSkyLightExporter::createEntities(
     MAngle angle;
     float val;
 
+    MGlobal::displayInfo("testing info");
     AttributeUtils::get(node(), "sunTheta", angle);
     params.insert("sun_theta", angle.asDegrees());
 

@@ -44,6 +44,8 @@
 #include <maya/MViewport2Renderer.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
+#include "renderer/api/scene.h"
+
 class PhysicalSkyLightNode
   : public MPxLocatorNode
 {
@@ -67,8 +69,19 @@ class PhysicalSkyLightNode
     MStatus compute(const MPlug& plug, MDataBlock& data) override;
 
   private:
+    static MObject m_sunPositioningSystem;
     static MObject m_sunTheta;
     static MObject m_sunPhi;
+    static MObject m_hour;
+    static MObject m_minute;
+    static MObject m_second;
+    static MObject m_month;
+    static MObject m_day;
+    static MObject m_year;
+    static MObject m_timezone;
+    static MObject m_north;
+    static MObject m_latitude;
+    static MObject m_longitude;
     static MObject m_turbidity;
     static MObject m_turbidityMultiplier;
     static MObject m_luminanceMultiplier;
@@ -81,6 +94,12 @@ class PhysicalSkyLightNode
     static MObject m_sunSizeMultiplier;
     static MObject m_message;
     static MObject m_displaySize;
+
+    enum SunPositioningSystem
+    {
+        Analytical,
+        TimeLocation
+    };
 };
 
 class PhysicalSkyLightData
