@@ -1293,6 +1293,7 @@ class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
 
     def __renderStampChanged(self, value):
         self._uis["renderStampString"].setEnable(value)
+        self._uis["renderStampScaleFactor"].setEnable(value)
 
     def create(self):
         # Create default render globals node if needed.
@@ -1497,6 +1498,22 @@ class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
                                 enable=enableRenderStamp,
                                 annotation="Render stamp allows {lib-name|version|cpu-features|config|build-date|build-time}\n{render-time} and {peak-memory}."),
                             attrName="renderStampString")
+
+                        pm.separator(height=2)
+
+                        self._addFieldSliderControl(
+                                    label="Scale Factor",
+                                    sliderStep=0.1,
+                                    precision=2,
+                                    columnWidth=(3, 160),
+                                    columnAttach=(1, "right", 4),
+                                    enable=enableRenderStamp,
+                                    minValue=0.2,
+                                    maxValue=20.0,
+                                    fieldMinValue=0.1,
+                                    fieldMaxValue=30.0,
+                                    annotation="Render stamp scale factor.",
+                                    attrName="renderStampScaleFactor")
 
                         pm.separator(height=2)
 

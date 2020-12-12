@@ -176,6 +176,7 @@ MObject RenderGlobalsNode::m_uvAOV;
 MObject RenderGlobalsNode::m_velocityAOV;
 
 MObject RenderGlobalsNode::m_renderStamp;
+MObject RenderGlobalsNode::m_renderStampScaleFactor;
 MObject RenderGlobalsNode::m_renderStampString;
 
 MObject RenderGlobalsNode::m_logLevel;
@@ -692,6 +693,11 @@ MStatus RenderGlobalsNode::initialize()
     m_renderStampString = typedAttrFn.create("renderStampString", "renderStampString", MFnData::kString, defaultString, &status);
     CHECKED_ADD_ATTRIBUTE(m_renderStampString, "m_renderStampString")
 
+    // Render stamp scale factor.
+    m_renderStampScaleFactor = numAttrFn.create("renderStampScaleFactor", "renderStampScaleFactor", MFnNumericData::kFloat, 1.0, &status);
+    CHECKED_ADD_ATTRIBUTE(m_renderStampScaleFactor, "renderStampScaleFactor")
+
+
     // Log level.
     const short defaultLogLevel = static_cast<short>(asf::LogMessage::Info);
     m_logLevel = enumAttrFn.create("logLevel", "logLevel", defaultLogLevel, &status);
@@ -1206,18 +1212,25 @@ void RenderGlobalsNode::applyPostProcessStagesToFrame(const MObject& globals, as
     {
         if (enabled)
         {
+            asr::Frame* frame = project.get_frame();
+            auto stampParams = asr::ParamArray();
+
+            float renderStampScaleFactor;
+            if (AttributeUtils::get(MPlug(globals, m_renderStampScaleFactor), renderStampScaleFactor))
+            {
+                stampParams.insert("scale_factor", renderStampScaleFactor);
+            }
+
             MString string;
             if (AttributeUtils::get(MPlug(globals, m_renderStampString), string))
             {
-                asr::Frame* frame = project.get_frame();
-
-                frame->post_processing_stages().insert(
-                    asr::RenderStampPostProcessingStageFactory().create(
-                        "render_stamp",
-                        asr::ParamArray()
-                            .insert("order", 0)
-                            .insert("format_string", string.asChar())));
+                stampParams.insert("order", 0);
+                stampParams.insert("format_string", string.asChar());
             }
+
+            frame->post_processing_stages().insert(
+                asr::RenderStampPostProcessingStageFactory().create(
+                    "render_stamp", stampParams));
         }
     }
 }
