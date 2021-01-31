@@ -697,7 +697,6 @@ MStatus RenderGlobalsNode::initialize()
     m_renderStampScaleFactor = numAttrFn.create("renderStampScaleFactor", "renderStampScaleFactor", MFnNumericData::kFloat, 1.0, &status);
     CHECKED_ADD_ATTRIBUTE(m_renderStampScaleFactor, "renderStampScaleFactor")
 
-
     // Log level.
     const short defaultLogLevel = static_cast<short>(asf::LogMessage::Info);
     m_logLevel = enumAttrFn.create("logLevel", "logLevel", defaultLogLevel, &status);
@@ -1213,7 +1212,7 @@ void RenderGlobalsNode::applyPostProcessStagesToFrame(const MObject& globals, as
         if (enabled)
         {
             asr::Frame* frame = project.get_frame();
-            auto stampParams = asr::ParamArray();
+            asr::ParamArray stampParams;
 
             float renderStampScaleFactor;
             if (AttributeUtils::get(MPlug(globals, m_renderStampScaleFactor), renderStampScaleFactor))
@@ -1224,10 +1223,10 @@ void RenderGlobalsNode::applyPostProcessStagesToFrame(const MObject& globals, as
             MString string;
             if (AttributeUtils::get(MPlug(globals, m_renderStampString), string))
             {
-                stampParams.insert("order", 0);
                 stampParams.insert("format_string", string.asChar());
             }
 
+            stampParams.insert("order", 0);
             frame->post_processing_stages().insert(
                 asr::RenderStampPostProcessingStageFactory().create(
                     "render_stamp", stampParams));

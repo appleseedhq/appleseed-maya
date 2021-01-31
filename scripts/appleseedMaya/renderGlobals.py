@@ -1508,7 +1508,7 @@ class AppleseedRenderGlobalsOutputTab(AppleseedRenderGlobalsTab):
                                     columnWidth=(3, 160),
                                     columnAttach=(1, "right", 4),
                                     enable=enableRenderStamp,
-                                    minValue=0.2,
+                                    minValue=0.1,
                                     maxValue=20.0,
                                     fieldMinValue=0.1,
                                     fieldMaxValue=30.0,
