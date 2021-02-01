@@ -205,6 +205,7 @@ class RenderGlobalsNode
 
     // Render stamp.
     static MObject      m_renderStamp;
+    static MObject      m_renderStampScaleFactor;
     static MObject      m_renderStampString;
 
     // Logging.
