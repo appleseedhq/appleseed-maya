@@ -32,6 +32,40 @@ import pymel.core as pm
 # appleseedMaya imports.
 from appleseedMaya.logger import logger
 
+global changesunPositioningSystem
+
+def changesunPositioningSystem(nodeName):
+        sunPositioningSystem = pm.getAttr(nodeName + ".sunPositioningSystem")
+        if sunPositioningSystem == 0:
+            pm.setAttr(nodeName + ".sunTheta", lock=False)
+            pm.setAttr(nodeName + ".sunPhi", lock=False)
+
+            pm.setAttr(nodeName + ".hour", lock=True)
+            pm.setAttr(nodeName + ".minute", lock=True)
+            pm.setAttr(nodeName + ".second", lock=True)
+            pm.setAttr(nodeName + ".month", lock=True)
+            pm.setAttr(nodeName + ".day", lock=True)
+            pm.setAttr(nodeName + ".year", lock=True)
+            pm.setAttr(nodeName + ".timezone", lock=True)
+            pm.setAttr(nodeName + ".north", lock=True)
+            pm.setAttr(nodeName + ".latitude", lock=True)
+            pm.setAttr(nodeName + ".longitude", lock=True)
+        else:
+            pm.setAttr(nodeName + ".sunTheta", lock=True)
+            pm.setAttr(nodeName + ".sunPhi", lock=True)
+
+            pm.setAttr(nodeName + ".hour", lock=False)
+            pm.setAttr(nodeName + ".minute", lock=False)
+            pm.setAttr(nodeName + ".second", lock=False)
+            pm.setAttr(nodeName + ".month", lock=False)
+            pm.setAttr(nodeName + ".day", lock=False)
+            pm.setAttr(nodeName + ".year", lock=False)
+            pm.setAttr(nodeName + ".timezone", lock=False)
+            pm.setAttr(nodeName + ".north", lock=False)
+            pm.setAttr(nodeName + ".latitude", lock=False)
+            pm.setAttr(nodeName + ".longitude", lock=False)
+
+
 
 class AEappleseedPhysicalSkyLightTemplate(pm.ui.AETemplate):
 
@@ -50,8 +84,6 @@ class AEappleseedPhysicalSkyLightTemplate(pm.ui.AETemplate):
 
     def buildBody(self, nodeName):
         self.beginLayout('Sky Attributes', collapse=0)
-        self.addControl('sunTheta')
-        self.addControl('sunPhi')
         self.addSeparator()
         self.addControl('turbidity')
         self.addControl('turbidityScale')
@@ -62,6 +94,25 @@ class AEappleseedPhysicalSkyLightTemplate(pm.ui.AETemplate):
         self.addSeparator()
         self.addControl('horizonShift')
         self.addControl('groundAlbedo')
+        self.addControl('sunPositioningSystem', changeCommand=changesunPositioningSystem)
+
+        self.beginLayout('Sun Theta/Sun Phi', collapse=0)
+        self.addControl('sunTheta')
+        self.addControl('sunPhi')
+        self.endLayout()
+
+        self.beginLayout('Time and Location', collapse=0)
+        self.addControl('hour')
+        self.addControl('minute')
+        self.addControl('second')
+        self.addControl('month')
+        self.addControl('day')
+        self.addControl('year')
+        self.addControl('timezone')
+        self.addControl('north')
+        self.addControl('latitude')
+        self.addControl('longitude')
+        self.endLayout()
         self.endLayout()
 
         self.beginLayout('Sun Attributes', collapse=0)

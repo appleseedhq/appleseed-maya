@@ -45,6 +45,7 @@
 // Maya headers.
 #include "appleseedmaya/_beginmayaheaders.h"
 #include <maya/MFnDagNode.h>
+#include <maya/MGlobal.h>
 #include "appleseedmaya/_endmayaheaders.h"
 
 namespace asf = foundation;
